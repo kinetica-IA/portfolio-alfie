@@ -1,0 +1,58 @@
+:root {
+  --main-bg: #f0f9f9;
+  --accent-color: #90a7a5;
+  --text-color: #222;
+  --muted-text: #555;
+  --font-family: 'Montserrat', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--main-bg);
+  font-family: var(--font-family);
+}
+
+body {
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ====== Intro Section personalizada en index.astro ====== */
+.intro {
+  text-align: center;
+  padding: 6rem 2rem 2rem;
+  background: #fdfdfb;
+}
+
+.intro h1 {
+  font-size: 2.25rem;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.intro p {
+  color: #444;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+/* === Espaciado vertical uniforme entre secciones === */
+section {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}

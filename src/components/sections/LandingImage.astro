@@ -1,0 +1,23 @@
+---
+--- 
+<div class="image-container">
+  <img src="/assets/p2.png" alt="Decoración IA" />
+</div>
+
+<style>
+  .image-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 240px;
+    opacity: 0.1;
+    animation: float 10s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(20px); }
+    100% { transform: translateY(0); }
+  }
+</style>

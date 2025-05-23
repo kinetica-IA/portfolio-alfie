@@ -1,0 +1,39 @@
+---
+import '../styles/global.css';
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portfolio de Alfonso Navarro, físico, biomecánico y osteópata especializado en IA aplicada a la salud." />
+    <title>{Astro.props.title || 'Portfolio Alfonso Navarro'}</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <header>
+      <slot name="header" />
+    </header>
+    <main class="main-wrapper">
+      <slot />
+    </main>
+    <footer>
+      <slot name="footer" />
+    </footer>
+  </body>
+</html>
+
+<style>
+  .main-wrapper {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  @media(min-width: 1024px) {
+    .main-wrapper {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+  }
+</style>
