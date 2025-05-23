@@ -1,47 +1,48 @@
-# Astro Starter Kit: Minimal
+# Portfolio · Alfonso Navarro
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Bienvenido al portfolio de Alfonso Navarro, físico, biomecánico y osteópata con especialización en IA aplicada a la salud.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+> “Exploro la inteligencia más allá del código. Este portfolio es técnico, humano y real.”
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## 🧠 Sobre mí
 
-Inside of your Astro project, you'll see the following folders and files:
+Físico y osteópata especializado en biomecánica clínica, IA médica y entrenamiento en condiciones extremas. Desarrollo tecnologías para mejorar la salud humana con ciencia y empatía.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Practico deportes de riesgo, reeduco patologías complejas y creo asistentes cognitivos con capacidades multimodales y memoria progresiva.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+---
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## 🧩 Proyectos destacados
 
-Any static assets, like images, can be placed in the `public/` directory.
+### 🧬 [ALFIE · Asistente Médico Modular](public/assets/ALFIE.pdf)
+Sistema local con IA multimodal (voz, texto, imagen) para evaluación clínica y acompañamiento humano.  
+**Tecnologías:** FastAPI · Ollama · Astro · SQLite
 
-## 🧞 Commands
+### 🧠 [IA & Empatía](public/assets/IA-y-Empatía.pdf)
+Estudio sobre LLMs como espejos de introspección clínica y emocional.  
+**Tecnologías:** GPT-4 · LLaMA · Análisis cualitativo
 
-All commands are run from the root of the project, from a terminal:
+### ⚙️ [Optimización NN · ARM64](public/assets/Optimizacion-ARM64.pdf)
+Ejecutables neuronales eficientes para Apple Silicon con SYCL y Metal.  
+**Tecnologías:** ONNX · SYCL · NEON · Metal
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+---
 
-## 👀 Want to learn more?
+## 🛠 Servicios
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Consultoría en IA médica local y ética.
+- Análisis biomecánico y reeducación postural.
+- Optimización de modelos neuronales clínicos.
+
+---
+
+## 📬 Contacto
+
+- **Email:** [alfon.atman@gmail.com](mailto:alfon.atman@gmail.com)  
+- **LinkedIn:** [linkedin.com/in/navarro-kinetica-ai](https://www.linkedin.com/in/navarro-kinetica-ai)
+
+---
+
+> “Mi trabajo no es solo construir código. Es entender el cuerpo, traducir la experiencia y devolver sentido.”
