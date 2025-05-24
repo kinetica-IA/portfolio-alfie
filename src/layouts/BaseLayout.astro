@@ -5,9 +5,16 @@ import '../styles/global.css';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Portfolio de Alfonso Navarro, físico, biomecánico y osteópata especializado en IA aplicada a la salud.">
-    <title>{Astro.props.title || 'Portfolio Alfonso Navarro'}</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
+
+    <!-- Meta SEO Básico -->
+    <meta name="title" content="Alfonso Navarro – Kinetica AI">
+    <meta name="description" content="Portfolio técnico, humano y real: biomecánica, IA aplicada a la salud, desarrollo estructural y empatía aplicada.">
+    <meta name="author" content="Alfonso Navarro Arredondo">
+    <meta name="keywords" content="Biomecánica, IA médica, Alfonso Navarro, salud, osteopatía, inteligencia artificial, Kinetica AI, entrenamiento personalizado, asistentes médicos, portfolio humano, Astro, FastAPI">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="es">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
 
     <!-- Meta preview image -->
     <meta property="og:title" content="Alfonso Navarro – Kinetica AI">
@@ -16,12 +23,14 @@ import '../styles/global.css';
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
+    <title>{Astro.props.title || 'Portfolio Alfonso Navarro'}</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800&display=swap" rel="stylesheet">
   </head>
   <body>
     <header>
       <slot name="header" />
     </header>
-    <main>
+    <main class="main-wrapper">
       <slot />
     </main>
     <footer>
@@ -29,3 +38,19 @@ import '../styles/global.css';
     </footer>
   </body>
 </html>
+
+<style>
+  .main-wrapper {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  @media(min-width: 1024px) {
+    .main-wrapper {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+  }
+</style>
