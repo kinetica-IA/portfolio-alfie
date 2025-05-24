@@ -1,0 +1,16 @@
+{
+  "name": "Portfolio Alfonso Navarro",
+  "short_name": "KineticaAI",
+  "description": "Portfolio técnico, humano y real de Alfonso Navarro",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}
