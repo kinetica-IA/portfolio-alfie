@@ -1,80 +1,90 @@
 ---
----
-<section id="projects" class="projects-section">
-  <h2>Proyectos Destacados</h2>
-  <div class="project-list">
-    <article class="project-card">
-      <img src="/assets/ALFIE.png" alt="ALFIE" class="project-icon" />
-      <h3>
-        <a href="/assets/ALFIE.pdf" target="_blank" class="project-link">
-          <strong>ALFIE · Asistente Médico Modular</strong>
-        </a>
-      </h3>
-      <p>Sistema local con IA multimodal (voz · texto · imagen) para diagnóstico y seguimiento clínico.</p>
-      <p><em>FastAPI · Ollama · Astro · SQLite</em></p>
-    </article>
-    <article class="project-card">
-      <img src="/assets/IA-y-Empatia.png" alt="IA y Empatía" class="project-icon" />
-      <h3>
-        <a href="/assets/IA-y-Empatia.pdf" target="_blank" class="project-link">
-          <strong>IA & Empatía · LLMs e Introspección</strong>
-        </a>
-      </h3>
-      <p>Investigación sobre modelos de lenguaje como espejos cognitivos: ejes clínicos, técnicos y éticos.</p>
-      <p><em>GPT-4 · LLaMA · Análisis cualitativo</em></p>
-    </article>
-    <article class="project-card">
-      <img src="/assets/Optimizacion-ARM64.png" alt="Optimización ARM64" class="project-icon" />
-      <h3>
-        <a href="/assets/Optimizacion-ARM64.pdf" target="_blank" class="project-link">
-          <strong>Optimización NN · Apple Silicon / ARM64</strong>
-        </a>
-      </h3>
-      <p>SYCL SIMD, NEON y Metal GPU para ejecución local eficiente de modelos neuronales clínicos.</p>
-      <p><em>ONNX · SYCL · Metal · Apple M2</em></p>
-    </article>
-  </div>
-</section>
+    ---
+    <section id="projects" class="projects-section">
+      <h2>Proyectos Destacados</h2>
+      <div class="project-list">
+        <article class="project-card">
+          <img src="/assets/ALFIE.png" alt="ALFIE" class="project-icon" />
+          <h3>
+            <a href="/assets/ALFIE.pdf" target="_blank" class="project-link">
+              <strong>ALFIE · Asistente Médico Modular</strong>
+            </a>
+          </h3>
+          <p>Sistema local con IA multimodal (voz · texto · imagen) para diagnóstico y seguimiento clínico.</p>
+          <p><em>FastAPI · Ollama · Astro · SQLite</em></p>
+        </article>
+        <article class="project-card">
+          <img src="/assets/IA-y-Empatia.png" alt="IA y Empatía" class="project-icon" />
+          <h3>
+            <a href="/assets/IA-y-Empatia.pdf" target="_blank" class="project-link">
+              <strong>IA & Empatía · LLMs e Introspección</strong>
+            </a>
+          </h3>
+          <p>Investigación sobre modelos de lenguaje como espejos cognitivos: ejes clínicos, técnicos y éticos.</p>
+          <p><em>GPT-4 · LLaMA · Análisis cualitativo</em></p>
+        </article>
+        <article class="project-card">
+          <img src="/assets/Optimizacion-ARM64.png" alt="Optimización ARM64" class="project-icon" />
+          <h3>
+            <a href="/assets/Optimizacion-ARM64.pdf" target="_blank" class="project-link">
+              <strong>Optimización NN · Apple Silicon / ARM64</strong>
+            </a>
+          </h3>
+          <p>SYCL SIMD, NEON y Metal GPU para ejecución local eficiente de modelos neuronales clínicos.</p>
+          <p><em>ONNX · SYCL · Metal · Apple M2</em></p>
+        </article>
+        <article class="project-card">
+          <img src="/assets/IA-y-Empatia.png" alt="Building Systems with ChatGPT" class="project-icon" />
+          <h3>
+            <a href="https://github.com/kinetica-IA/building-systems-chatgpt-project" target="_blank" class="project-link">
+              <strong>Building Systems with ChatGPT API: Titanic Analysis</strong>
+            </a>
+          </h3>
+          <p>Mini proyecto con dataset de Titanic usando Python, pandas, seaborn y un modelo de regresión logística. Demuestra cómo integrar sistemas multi-etapa con prompts y la API de ChatGPT.</p>
+          <p><em>Python · scikit‑learn · Jupyter · ChatGPT API</em></p>
+        </article>
+      </div>
+    </section>
 
-<style>
-  .projects-section {
-    text-align: center;
-    padding: 4rem 2rem;
-  }
+    <style>
+      .projects-section {
+        text-align: center;
+        padding: 4rem 2rem;
+      }
 
-  .project-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-  }
+      .project-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+      }
 
-  .project-card {
-    background: #ffffffee;
-    border-radius: 12px;
-    padding: 1.5rem;
-    width: 300px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease;
-  }
+      .project-card {
+        background: #ffffffee;
+        border-radius: 12px;
+        padding: 1.5rem;
+        width: 300px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+      }
 
-  .project-card:hover {
-    transform: translateY(-5px);
-  }
+      .project-card:hover {
+        transform: translateY(-5px);
+      }
 
-  .project-icon {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-  }
+      .project-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+      }
 
-  .project-link {
-    text-decoration: none;
-    color: inherit;
-  }
+      .project-link {
+        text-decoration: none;
+        color: inherit;
+      }
 
-  .project-link:hover {
-    text-decoration: underline;
-  }
-</style>
+      .project-link:hover {
+        text-decoration: underline;
+      }
+    </style>
