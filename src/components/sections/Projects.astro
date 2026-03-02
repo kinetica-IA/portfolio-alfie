@@ -1,90 +1,132 @@
 ---
-    ---
-    <section id="projects" class="projects-section">
-      <h2>Proyectos Destacados</h2>
-      <div class="project-list">
-        <article class="project-card">
-          <img src="/assets/ALFIE.png" alt="ALFIE" class="project-icon" />
-          <h3>
-            <a href="/assets/ALFIE.pdf" target="_blank" class="project-link">
-              <strong>ALFIE · Asistente Médico Modular</strong>
-            </a>
-          </h3>
-          <p>Sistema local con IA multimodal (voz · texto · imagen) para diagnóstico y seguimiento clínico.</p>
-          <p><em>FastAPI · Ollama · Astro · SQLite</em></p>
-        </article>
-        <article class="project-card">
-          <img src="/assets/IA-y-Empatia.png" alt="IA y Empatía" class="project-icon" />
-          <h3>
-            <a href="/assets/IA-y-Empatia.pdf" target="_blank" class="project-link">
-              <strong>IA & Empatía · LLMs e Introspección</strong>
-            </a>
-          </h3>
-          <p>Investigación sobre modelos de lenguaje como espejos cognitivos: ejes clínicos, técnicos y éticos.</p>
-          <p><em>GPT-4 · LLaMA · Análisis cualitativo</em></p>
-        </article>
-        <article class="project-card">
-          <img src="/assets/Optimizacion-ARM64.png" alt="Optimización ARM64" class="project-icon" />
-          <h3>
-            <a href="/assets/Optimizacion-ARM64.pdf" target="_blank" class="project-link">
-              <strong>Optimización NN · Apple Silicon / ARM64</strong>
-            </a>
-          </h3>
-          <p>SYCL SIMD, NEON y Metal GPU para ejecución local eficiente de modelos neuronales clínicos.</p>
-          <p><em>ONNX · SYCL · Metal · Apple M2</em></p>
-        </article>
-        <article class="project-card">
-          <img src="/assets/IA-y-Empatia.png" alt="Building Systems with ChatGPT" class="project-icon" />
-          <h3>
-            <a href="https://github.com/kinetica-IA/building-systems-chatgpt-project" target="_blank" class="project-link">
-              <strong>Building Systems with ChatGPT API: Titanic Analysis</strong>
-            </a>
-          </h3>
-          <p>Mini proyecto con dataset de Titanic usando Python, pandas, seaborn y un modelo de regresión logística. Demuestra cómo integrar sistemas multi-etapa con prompts y la API de ChatGPT.</p>
-          <p><em>Python · scikit‑learn · Jupyter · ChatGPT API</em></p>
-        </article>
-      </div>
-    </section>
+---
+<section id="projects" class="projects-section">
+  <h2>Projects</h2>
+  <div class="project-list">
 
-    <style>
-      .projects-section {
-        text-align: center;
-        padding: 4rem 2rem;
-      }
+    <article class="project-card featured">
+      <div class="badge">Evidence-based · Public repo · N=1 · Reproducible</div>
+      <h3>ANS-Based Symptom Prediction in Post-Lyme Fatigue</h3>
+      <p class="project-sub">N=1 Longitudinal Study · Consumer Wearable + AI Pipeline</p>
+      <p>48-hour prediction of symptomatic exacerbations using autonomic wearable data. ANS status predicts severe symptom days with 81% sensitivity (AUC=0.656). Sleep metrics show zero predictive value — the signal lives in the autonomic nervous system. Pipeline runs entirely local via IO. Scripts and methodology public.</p>
+      <p class="stack"><em>Python · scikit-learn · LangGraph · Polar Grit X2 · ChromaDB</em></p>
+      <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="project-btn">View on GitHub →</a>
+    </article>
 
-      .project-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 2rem;
-      }
+    <article class="project-card">
+      <div class="badge">Local · No cloud · Open source · Clinical use case</div>
+      <h3>IO · Local-First Clinical AI Agent</h3>
+      <p class="project-sub">Autonomous Orchestration · RAG · ALMA Framework</p>
+      <p>Autonomous AI agent running locally on Mac Mini M4. Orchestrates LLMs (qwen3:14b + Claude) via LangGraph, enriches context with RAG/ChromaDB, and applies ALMA — an ethical-cognitive framework for clinical reasoning. Demonstrated use case: autonomic monitoring and 48-hour symptom prediction in post-infectious fatigue.</p>
+      <p class="stack"><em>LangGraph · Ollama · qwen3:14b · ChromaDB · MCP · Python</em></p>
+      <a href="https://github.com/kinetica-IA" target="_blank" class="project-btn">View on GitHub →</a>
+    </article>
 
-      .project-card {
-        background: #ffffffee;
-        border-radius: 12px;
-        padding: 1.5rem;
-        width: 300px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease;
-      }
+    <article class="project-card">
+      <img src="/assets/IA-y-Empatia.png" alt="LLMs as Cognitive Mirrors" class="project-icon" />
+      <h3>LLMs as Cognitive Mirrors: Clinical &amp; Ethical Dimensions</h3>
+      <p>Research on the capabilities and limits of LLMs in clinical contexts — cognitive, ethical, and applied dimensions.</p>
+      <p class="stack"><em>GPT-4 · LLaMA · Qualitative analysis</em></p>
+    </article>
 
-      .project-card:hover {
-        transform: translateY(-5px);
-      }
+  </div>
+</section>
 
-      .project-icon {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 1rem;
-        border-radius: 8px;
-      }
+<style>
+  .projects-section {
+    padding: 4rem 2rem;
+  }
 
-      .project-link {
-        text-decoration: none;
-        color: inherit;
-      }
+  .projects-section h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
 
-      .project-link:hover {
-        text-decoration: underline;
-      }
-    </style>
+  .project-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .project-card {
+    background: #ffffffee;
+    border-radius: 12px;
+    padding: 1.8rem;
+    width: 320px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    text-align: left;
+  }
+
+  .project-card.featured {
+    border-left: 3px solid var(--accent-color);
+  }
+
+  .project-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 20px;
+    padding: 0.2rem 0.7rem;
+    margin-bottom: 0.9rem;
+    opacity: 0.85;
+  }
+
+  .project-card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.35;
+  }
+
+  .project-sub {
+    font-size: 0.82rem;
+    color: var(--muted-text);
+    margin-bottom: 0.8rem;
+    font-style: italic;
+  }
+
+  .project-card p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin-bottom: 0.8rem;
+    color: #445;
+  }
+
+  .stack {
+    font-size: 0.8rem !important;
+    color: #778 !important;
+  }
+
+  .project-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  .project-btn {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.84rem;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 4px;
+    padding: 0.35rem 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .project-btn:hover {
+    background: var(--accent-color);
+    color: #fff;
+    text-decoration: none;
+  }
+</style>

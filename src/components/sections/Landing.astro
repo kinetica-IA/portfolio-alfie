@@ -1,1 +1,122 @@
-<section id="landing" class="landing-section"> <div class="landing-content"> <div class="text-block"> <h1>Hola, soy Alfonso Navarro</h1> <p>Exploro la inteligencia más allá del código.</p> <p>Este es mi portfolio: técnico, humano y real.</p> </div> <div class="image-block"> <img src="/assets/p2.png" alt="Decoración IA" class="landing-image hover-fade"/> </div> </div> </section> <style> .landing-section { padding: 6rem 2rem; background-color: var(--astro-background); display: flex; justify-content: center; align-items: center; } .landing-content { display: flex; align-items: center; justify-content: center; max-width: 960px; width: 100%; gap: 4rem; flex-wrap: wrap; } .text-block { flex: 1 1 100%; text-align: center; } .text-block h1 { font-size: 2.5rem; margin-bottom: 1.5rem; } .text-block p { font-size: 1.25rem; margin: 0.5rem 0; } .image-block { width: 240px; height: 240px; border-radius: 50%; overflow: hidden; background-color: rgba(255, 255, 255, 0.3); display: flex; justify-content: center; align-items: center; } .landing-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.2; transition: opacity 0.5s ease-in-out; } .landing-image.hover-fade:hover { opacity: 0.8; } </style>
+---
+/* No cambiar aquí nada de los imports */
+---
+
+<section id="landing-minimal" class="landing-minimal">
+  <svg class="background-geo" width="100%" height="100%" viewBox="0 0 1440 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="220" y="90" width="320" height="320" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+    <rect x="650" y="70" width="280" height="280" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.08"/>
+    <rect x="1020" y="120" width="180" height="180" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.08"/>
+  </svg>
+
+  <div class="center-content">
+    <!-- Cada letra en span para opacidad individual -->
+    <h1 class="brand">
+      <span class="solid">A</span><span>L</span><span>F</span><span>O</span><span>N</span><span>S</span><span>O</span>&nbsp;
+      <span class="solid">N</span><span>A</span><span>V</span><span>A</span><span>R</span><span>R</span><span>O</span>
+    </h1>
+
+    <h2>Osteopath · Clinical AI Builder · Biomechanics</h2>
+    <p class="tagline">"Building AI systems that work in clinical reality —<br/>not just in theory."</p>
+    <div class="scroll-indicator">— scroll down —</div>
+  </div>
+</section>
+
+<!-- Tipografía Poppins ligera -->
+<style is:global>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+</style>
+
+<style>
+.landing-minimal {
+  min-height: 92vh;
+  width: 100vw;
+  background: var(--main-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.background-geo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 60vh;
+  pointer-events: none;
+}
+.center-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+}
+
+/* === TITULAR POR LETRA === */
+.brand {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 3.2rem;
+  letter-spacing: 0.13em;
+  margin-bottom: 1.2rem;
+  line-height: 1.05;
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.brand span {
+  color: var(--text-color);
+  opacity: 0.28;                /* tenue por defecto */
+  transition: opacity 0.3s ease;
+}
+.brand span.solid { opacity: 1; }/* letras destacadas */
+.brand span:hover { opacity: 0.6; }
+
+/* Subtítulo */
+.center-content h2 {
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--muted-text);
+  letter-spacing: 0.18em;
+  margin-bottom: 1.4rem;
+  text-align: center;
+}
+
+/* Tagline */
+.tagline {
+  font-size: 0.98rem;
+  font-style: italic;
+  color: var(--muted-text);
+  letter-spacing: 0.03em;
+  opacity: 0.72;
+  margin-bottom: 1rem;
+  text-align: center;
+  max-width: 560px;
+  padding: 0 1rem;
+  line-height: 1.6;
+}
+
+/* Indicador scroll */
+.scroll-indicator {
+  font-size: 0.99rem;
+  letter-spacing: 0.10em;
+  color: var(--accent-color);
+  opacity: 0.66;
+  margin-top: 2.6rem;
+  user-select: none;
+  transition: opacity 0.18s;
+  cursor: default;
+}
+.scroll-indicator:hover { opacity: 0.9; }
+
+/* Responsivo */
+@media (max-width: 800px) {
+  .background-geo { height: 40vh; }
+  .brand { font-size: 2.1rem; }
+  .center-content h2 { font-size: 1.01rem; }
+}
+</style>
