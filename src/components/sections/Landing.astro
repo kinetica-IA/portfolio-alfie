@@ -9,6 +9,8 @@
     <rect x="1020" y="120" width="180" height="180" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.08"/>
   </svg>
 
+  <canvas id="hrv-bg" aria-hidden="true"></canvas>
+
   <div class="center-content">
     <!-- Cada letra en span para opacidad individual -->
     <h1 class="brand">
@@ -18,7 +20,13 @@
 
     <h2>Osteopath · Clinical AI Builder · Biomechanics</h2>
     <p class="tagline">"Building AI systems that work in clinical reality —<br/>not just in theory."</p>
-    <div class="scroll-indicator">— scroll down —</div>
+    <div class="scroll-cue">
+      <span class="scroll-line"></span>
+    </div>
+
+    <p class="landing-context">
+      Osteopath · Physics · Clinical AI · Remote worldwide
+    </p>
   </div>
 </section>
 
@@ -26,6 +34,48 @@
 <style is:global>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 </style>
+
+<script>
+const canvas = document.getElementById('hrv-bg');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // 3 líneas HRV a distintas opacidades
+    [[0.06, 0.38], [0.035, 0.52], [0.02, 0.65]].forEach(([opacity, yRatio]) => {
+      const yBase = canvas.height * yRatio;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(144,167,165,${opacity})`;
+      ctx.lineWidth = 1.2;
+      for (let x = 0; x <= canvas.width; x += 3) {
+        const beat = Math.exp(-Math.pow((x % 140 - 70), 2) / 100) * 35;
+        const wave = Math.sin(x * 0.012 + t) * 12;
+        const y = yBase - beat - wave;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+    // Línea de scan suave
+    const scanX = (t * 55) % (canvas.width + 160) - 80;
+    const grad = ctx.createLinearGradient(scanX - 60, 0, scanX + 20, 0);
+    grad.addColorStop(0, 'rgba(144,167,165,0)');
+    grad.addColorStop(0.7, 'rgba(144,167,165,0.08)');
+    grad.addColorStop(1, 'rgba(144,167,165,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(scanX - 60, 0, 80, canvas.height);
+    t += 0.007;
+    requestAnimationFrame(draw);
+  }
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+}
+</script>
 
 <style>
 .landing-minimal {
@@ -46,6 +96,14 @@
   width: 100vw;
   height: 60vh;
   pointer-events: none;
+}
+#hrv-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
 }
 .center-content {
   position: relative;
@@ -100,18 +158,40 @@
   line-height: 1.6;
 }
 
-/* Indicador scroll */
-.scroll-indicator {
-  font-size: 0.99rem;
-  letter-spacing: 0.10em;
-  color: var(--accent-color);
-  opacity: 0.66;
-  margin-top: 2.6rem;
-  user-select: none;
-  transition: opacity 0.18s;
-  cursor: default;
+.scroll-cue {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.scroll-indicator:hover { opacity: 0.9; }
+.scroll-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(
+    to bottom,
+    rgba(144,167,165,0.6),
+    rgba(144,167,165,0)
+  );
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  40%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  60%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+.landing-context {
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  opacity: 0.65;
+}
 
 /* Responsivo */
 @media (max-width: 800px) {

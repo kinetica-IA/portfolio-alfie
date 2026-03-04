@@ -4,6 +4,9 @@
   --text-color: #222;
   --muted-text: #555;
   --font-family: 'Montserrat', sans-serif;
+  --organic-warm: #c4855a;
+  --organic-green2: #6b9e7a;
+  --organic-green3: #3d7a5c;
 }
 
 * {
@@ -56,3 +59,15 @@ section {
   margin-top: 4rem;
   margin-bottom: 4rem;
 }
+
+section + section {
+  border-top: 1px solid rgba(144,167,165,0.12);
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }

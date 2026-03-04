@@ -4,8 +4,21 @@
   <h2>Projects</h2>
   <div class="project-list">
 
-    <article class="project-card featured">
-      <div class="badge">Evidence-based · Public repo · N=1 · Reproducible</div>
+    <article class="project-card featured reveal" data-delay="0">
+      <svg class="ecg-mini" viewBox="0 0 200 36"
+           width="110" height="22" aria-hidden="true">
+        <polyline
+          points="0,18 18,18 26,4 34,32 42,18 70,18 78,7 86,29 94,18 122,18 130,4 138,32 146,18 174,18 182,7 190,29 200,18"
+          fill="none" stroke="#90a7a5" stroke-width="1.4"
+          stroke-dasharray="400" stroke-dashoffset="400">
+          <animate attributeName="stroke-dashoffset"
+                   from="400" to="-400" dur="3s"
+                   repeatCount="indefinite"/>
+        </polyline>
+      </svg>
+      <div class="badge badge-published">
+        <span class="badge-dot"></span>Published · Public repo · N=1 · Reproducible
+      </div>
       <h3>ANS-Based Symptom Prediction in Post-Lyme Fatigue</h3>
       <p class="project-sub">N=1 Longitudinal Study · Consumer Wearable + AI Pipeline</p>
       <p>48-hour prediction of symptomatic exacerbations using autonomic wearable data. ANS status predicts severe symptom days with 81% sensitivity (AUC=0.656). Sleep metrics show zero predictive value — the signal lives in the autonomic nervous system. Pipeline runs entirely local via IO. Scripts and methodology public.</p>
@@ -13,16 +26,55 @@
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="project-btn">View on GitHub →</a>
     </article>
 
-    <article class="project-card">
-      <div class="badge">Local · No cloud · Private · Clinical use case</div>
+    <article class="project-card reveal" data-delay="120">
+      <svg class="node-graph" viewBox="0 0 120 36"
+           width="110" height="30" aria-hidden="true">
+        <circle cx="20" cy="18" r="4" fill="none"
+                stroke="#90a7a5" stroke-width="1.2"/>
+        <circle cx="60" cy="18" r="4" fill="none"
+                stroke="#90a7a5" stroke-width="1.2"/>
+        <circle cx="100" cy="18" r="4" fill="none"
+                stroke="#90a7a5" stroke-width="1.2"/>
+        <line x1="24" y1="18" x2="56" y2="18"
+              stroke="#90a7a5" stroke-width="1"
+              stroke-dasharray="4,3" opacity="0.5"/>
+        <line x1="64" y1="18" x2="96" y2="18"
+              stroke="#90a7a5" stroke-width="1"
+              stroke-dasharray="4,3" opacity="0.5"/>
+        <text x="20" y="30" text-anchor="middle"
+              font-size="5" fill="#90a7a5" opacity="0.6"
+              font-family="monospace">dispatch</text>
+        <text x="60" y="30" text-anchor="middle"
+              font-size="5" fill="#90a7a5" opacity="0.6"
+              font-family="monospace">respond</text>
+        <text x="100" y="30" text-anchor="middle"
+              font-size="5" fill="#90a7a5" opacity="0.6"
+              font-family="monospace">alma</text>
+        <circle cx="20" cy="18" r="4" fill="rgba(144,167,165,0.15)">
+          <animate attributeName="r" values="4;8;4"
+                   dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.4;0;0.4"
+                   dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <div class="badge badge-progress">
+        <span class="badge-dot"></span>In progress · Local · Private · Clinical use case
+      </div>
       <h3>IO · Local-First Clinical AI Agent</h3>
       <p class="project-sub">Autonomous Orchestration · RAG · ALMA Framework</p>
       <p>Autonomous AI agent running locally on Mac Mini M4. Orchestrates LLMs (qwen3:14b + Claude) via LangGraph, enriches context with RAG/ChromaDB, and applies ALMA — an ethical-cognitive framework for clinical reasoning. Demonstrated use case: autonomic monitoring and 48-hour symptom prediction in post-infectious fatigue.</p>
       <p class="stack"><em>LangGraph · Ollama · qwen3:14b · ChromaDB · MCP · Python</em></p>
+      <a href="https://github.com/kinetica-IA/polar-lyme-predictor"
+         target="_blank" class="project-btn">
+        See clinical use case →
+      </a>
     </article>
 
-    <article class="project-card">
+    <article class="project-card reveal" data-delay="240">
       <img src="/assets/IA-y-Empatia.png" alt="LLMs as Cognitive Mirrors" class="project-icon" />
+      <div class="badge badge-research">
+        <span class="badge-dot"></span>Research · Qualitative · In development
+      </div>
       <h3>LLMs as Cognitive Mirrors: Clinical &amp; Ethical Dimensions</h3>
       <p>Research on the capabilities and limits of LLMs in clinical contexts — cognitive, ethical, and applied dimensions.</p>
       <p class="stack"><em>GPT-4 · LLaMA · Qualitative analysis</em></p>
@@ -50,33 +102,85 @@
   }
 
   .project-card {
-    background: #ffffffee;
+    background: #ffffff;
+    border: 1px solid rgba(144,167,165,0.18);
     border-radius: 12px;
-    padding: 1.8rem;
+    padding: 2rem;
     width: 320px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease;
+    box-shadow: 0 2px 16px rgba(144,167,165,0.08),
+                0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
     text-align: left;
   }
 
-  .project-card.featured {
-    border-left: 3px solid var(--accent-color);
-  }
-
   .project-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(144,167,165,0.15),
+                0 2px 8px rgba(0,0,0,0.06);
+    border-color: rgba(144,167,165,0.4);
   }
 
+  .project-card.featured {
+    border-left: 3px solid #90a7a5;
+  }
+
+  .ecg-mini {
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .node-graph {
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.8;
+  }
+
+  /* Badge system */
   .badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
-    color: var(--accent-color);
-    border: 1px solid var(--accent-color);
-    border-radius: 20px;
-    padding: 0.2rem 0.7rem;
-    margin-bottom: 0.9rem;
-    opacity: 0.85;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.85rem;
+    border-radius: 2rem;
+    margin-bottom: 1rem;
+  }
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .badge-published {
+    background: rgba(144,167,165,0.1);
+    color: #4a8a78;
+    border: 1px solid rgba(144,167,165,0.3);
+  }
+  .badge-published .badge-dot {
+    background: #4db896;
+    box-shadow: 0 0 6px rgba(77,184,150,0.6);
+    animation: pulse-green 2s infinite;
+  }
+  .badge-progress {
+    background: rgba(196,133,90,0.08);
+    color: #a06040;
+    border: 1px solid rgba(196,133,90,0.25);
+  }
+  .badge-progress .badge-dot { background: var(--organic-warm); }
+  .badge-research {
+    background: rgba(144,167,165,0.06);
+    color: #888;
+    border: 1px solid rgba(144,167,165,0.15);
+  }
+  .badge-research .badge-dot { background: #aaa; }
+
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 4px rgba(77,184,150,0.6); }
+    50% { box-shadow: 0 0 10px rgba(77,184,150,0.9); }
   }
 
   .project-card h3 {
@@ -112,20 +216,26 @@
   }
 
   .project-btn {
-    display: inline-block;
-    margin-top: 0.4rem;
-    font-size: 0.84rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding: 0.55rem 1.2rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
     color: var(--accent-color);
-    border: 1px solid var(--accent-color);
-    border-radius: 4px;
-    padding: 0.35rem 0.9rem;
+    border: 1px solid rgba(144,167,165,0.35);
+    border-radius: 6px;
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: background 0.25s ease,
+                border-color 0.25s ease,
+                gap 0.25s ease;
   }
 
   .project-btn:hover {
-    background: var(--accent-color);
-    color: #fff;
+    background: rgba(144,167,165,0.08);
+    border-color: var(--accent-color);
+    gap: 0.75rem;
     text-decoration: none;
   }
 </style>
