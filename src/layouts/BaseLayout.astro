@@ -58,6 +58,20 @@ import '../styles/global.css';
     <footer>
       <slot name="footer" />
     </footer>
+    <script>
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const delay = Number(e.target.dataset.delay) || 0;
+            setTimeout(() => e.target.classList.add('visible'), delay);
+          }
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach((el, i) => {
+        if (!el.dataset.delay) el.dataset.delay = String(i * 80);
+        obs.observe(el);
+      });
+    </script>
   </body>
 </html>
 

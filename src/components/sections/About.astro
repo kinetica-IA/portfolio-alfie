@@ -10,8 +10,8 @@
     </figure>
 
     <div class="bio">
-      <h2 class=”about-title”>
-        <span class=”solid”>A</span><span>b</span><span>o</span><span>u</span><span>t</span>
+      <h2 class="about-title">
+        <span class="solid">A</span><span>b</span><span>o</span><span>u</span><span>t</span>
       </h2>
 
       <p>
@@ -37,6 +37,7 @@
         decision support — regardless of location.
       </p>
     </div>
+
 
   </div>
 </section>
@@ -83,38 +84,14 @@
 /* BIO */
 .bio { flex: 1; min-width: 280px; }
 
-/* ——— Título “About” con trama ——— */
 .about-title {
-  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
   font-weight: 300;
-  font-size: 1.8rem;   /* mantiene tu tamaño original */
-  letter-spacing: 0.13em;
-  margin-bottom: 1rem;
-  display: inline-flex;
-  flex-wrap: wrap;
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 0.5rem;
-}
-.about-title span {
-  color: transparent;
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--text-color) 0px,
-    var(--text-color) 2px,
-    transparent 2px,
-    transparent 6px
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  transition: opacity 0.3s ease;
-}
-.about-title span.solid {
+  letter-spacing: 0.08em;
   color: var(--text-color);
-  background: none;
-  -webkit-background-clip: border-box;
-  background-clip: border-box;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
 }
-.about-title span:hover { opacity: 0.7; }
 
 /* Párrafos */
 .bio p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem; }
