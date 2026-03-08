@@ -18,8 +18,20 @@
       <span class="solid">N</span><span>A</span><span>V</span><span>A</span><span>R</span><span>R</span><span>O</span>
     </h1>
 
-    <h2>Osteopath · Clinical AI Builder · Biomechanics</h2>
-    <p class="tagline">"Building AI systems that work in clinical reality —<br/>not just in theory."</p>
+    <h2>Clinician-built AI for autonomic monitoring<br/>and post-infectious fatigue research.</h2>
+    <p class="tagline">Physics + 10 years clinical practice + AI systems —<br/>the combination that makes the difference in clinical contexts where AI alone fails.</p>
+
+    <div class="avail-block">
+      <div class="badge-avail">
+        <span class="badge-dot-avail"></span>· Open to remote collaboration ·
+      </div>
+      <p class="avail-services">Clinical AI consulting · AI model evaluation · Wearable data pipelines</p>
+      <div class="avail-links">
+        <a href="mailto:alfon.atman@gmail.com" class="avail-link">Contact →</a>
+        <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" class="avail-link">LinkedIn →</a>
+      </div>
+    </div>
+
     <div class="scroll-cue">
       <span class="scroll-line"></span>
     </div>
@@ -192,6 +204,64 @@ if (canvas) {
   text-transform: uppercase;
   opacity: 0.65;
 }
+
+.avail-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+.badge-avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(144,167,165,0.35);
+  background: rgba(144,167,165,0.07);
+  color: #4a8a78;
+}
+.badge-dot-avail {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4db896;
+  box-shadow: 0 0 6px rgba(77,184,150,0.6);
+  animation: pulse-avail 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-avail {
+  0%, 100% { box-shadow: 0 0 4px rgba(77,184,150,0.6); }
+  50%       { box-shadow: 0 0 10px rgba(77,184,150,0.9); }
+}
+.avail-services {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-text);
+  opacity: 0.75;
+  text-align: center;
+}
+.avail-links {
+  display: flex;
+  gap: 1.2rem;
+}
+.avail-link {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--accent-color);
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.avail-link:hover { opacity: 1; }
 
 /* Responsivo */
 @media (max-width: 800px) {
