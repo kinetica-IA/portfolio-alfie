@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>IO Agent — Architecture · Kinetica AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── DESIGN TOKENS — exact match kineticaai.com ── */
+  :root {
+    --bg:           #f0f9f9;
+    --surface:      #ffffff;
+    --surface2:     #e8f4f4;
+    --accent:       #90a7a5;
+    --accent-dark:  #6b8a88;
+    --accent-warm:  #c4855a;
+    --accent-green: #6b9e7a;
+    --accent-green2:#3d7a5c;
+    --text:         #1a2a28;
+    --text-muted:   #4a6a66;
+    --text-dim:     #90a7a5;
+    --border:       rgba(144,167,165,0.18);
+    --border-med:   rgba(144,167,165,0.32);
+    --shadow:       0 4px 24px rgba(144,167,165,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HRV CANVAS BG — same as landing ── */
+  #hrv-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── GEO BACKGROUND ── */
+  .background-geo {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+  }
+
+  /* ── BACK LINK ── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s, gap 0.2s;
+  }
+  .back-link:hover { opacity: 1; gap: 0.75rem; }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .hero-left {}
+
+  .eyebrow {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pulse-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px rgba(107,158,122,0.7);
+    animation: pulse-glow 2.5s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 4px rgba(107,158,122,0.5); }
+    50%      { box-shadow: 0 0 14px rgba(107,158,122,0.9); }
+  }
+
+  .page-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .page-title .solid { font-weight: 700; }
+  .page-title em { font-style: italic; color: var(--accent); }
+
+  .page-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    max-width: 480px;
+    line-height: 1.75;
+  }
+
+  .hero-meta {
+    text-align: right;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    line-height: 2;
+    flex-shrink: 0;
+  }
+
+  .meta-green { color: var(--accent-green); font-weight: 500; }
+
+  /* ── DIVIDER LINE (same as site) ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* ── SECTION EYEBROW ── */
+  .section-eyebrow {
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    opacity: 0.65;
+  }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-item {
+    flex: 1;
+    background: var(--surface);
+    padding: 1.25rem 1rem;
+    text-align: center;
+    min-width: 80px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-val {
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-label {
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ── PHILOSOPHY BLOCK ── */
+  .philosophy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .philosophy p {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.85;
+    margin-bottom: 1rem;
+  }
+  .philosophy p:last-child { margin-bottom: 0; }
+  .philosophy strong { color: var(--text); font-weight: 500; }
+
+  /* ── MODULE GRID ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1rem 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    animation: fadeUp 0.45s ease both;
+  }
+
+  .module-card:hover {
+    border-color: var(--c);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+
+  .module-card.active {
+    border-color: var(--c);
+    background: color-mix(in srgb, var(--c) 6%, white);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--c) 15%, transparent);
+  }
+
+  .module-icon {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+    color: var(--c);
+  }
+
+  .module-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.01em;
+  }
+
+  .module-short {
+    font-size: 0.63rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+
+  .module-badge {
+    position: absolute;
+    top: 0.6rem; right: 0.75rem;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--c);
+    opacity: 0.55;
+    text-transform: uppercase;
+  }
+
+  /* ── DETAIL PANEL ── */
+  .detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-med);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    display: none;
+    animation: fadeUp 0.2s ease both;
+  }
+  .detail-panel.show { display: block; }
+
+  .detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-icon-box {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .detail-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .detail-badge-label {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .detail-summary {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  .code-block {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.6rem;
+    border-left: 2px solid var(--border-med);
+    transition: border-color 0.2s;
+  }
+
+  .code-block:hover { border-left-color: var(--c, var(--accent)); }
+
+  .code-block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.35rem;
+  }
+
+  .code-block-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .code-block-lines {
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .code-block-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  /* ── VS LLM BLOCK ── */
+  .vs-llm {
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+    border: 1px solid var(--border);
+  }
+
+  .vs-llm-label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .vs-llm-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  /* ── FLOW SECTION ── */
+  .flow-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .flow-section h3 {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .flow-section p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .flow-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .flow-node {
+    font-size: 0.62rem;
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    border: 1px solid;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .flow-node:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(144,167,165,0.2);
+  }
+
+  .flow-arrow { font-size: 0.75rem; color: var(--text-dim); }
+
+  .flow-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: var(--accent-dark);
+    background: var(--surface2);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+
+  /* ── ISSUES SECTION ── */
+  .issues-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .issues-intro {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .issue-row {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.4s ease both;
+  }
+  .issue-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .issue-id {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--accent-warm);
+    min-width: 36px;
+    padding-top: 0.1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .issue-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .issue-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 0.3rem;
+  }
+
+  .issue-fix {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--accent-green);
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .roadmap-intro {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .roadmap-row {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .roadmap-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .roadmap-ver {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 28px;
+    padding-top: 0.1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .roadmap-body { flex: 1; }
+
+  .roadmap-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .roadmap-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .roadmap-pill {
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 0.15rem;
+  }
+
+  .pill-done    { background: rgba(107,158,122,0.12); color: var(--accent-green); }
+  .pill-active  { background: rgba(144,167,165,0.12); color: var(--accent); }
+  .pill-next    { background: rgba(196,133,90,0.10);  color: var(--accent-warm); }
+  .pill-future  { background: rgba(144,167,165,0.06); color: var(--text-dim); }
+
+  /* ── ECG ANIMATION — same as portfolio card ── */
+  .ecg-mini {
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    font-size: 0.62rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer-link {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s, letter-spacing 0.2s;
+  }
+  .footer-link:hover { opacity: 0.65; letter-spacing: 0.12em; }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .page-wrap { padding: 2rem 1.25rem 4rem; }
+    .module-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .stats-row { flex-wrap: wrap; }
+    .stat-item { min-width: 80px; }
+    .page-hero { flex-direction: column; }
+    .hero-meta { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HRV CANVAS — same as landing page -->
+<canvas id="hrv-bg" aria-hidden="true"></canvas>
+
+<!-- GEO SHAPES — same as landing page -->
+<svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="200" y="80" width="320" height="320" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.06"/>
+  <rect x="700" y="60" width="280" height="280" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="1080" y="130" width="200" height="200" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="50" y="400" width="160" height="160" rx="30" fill="none" stroke="#c4855a" stroke-width="1" opacity="0.04"/>
+</svg>
+
+<div class="page-wrap">
+
+  <!-- BACK LINK -->
+  <a href="https://www.kineticaai.com" class="back-link">← kineticaai.com</a>
+
+  <!-- HERO -->
+  <div class="page-hero reveal">
+    <div class="hero-left">
+      <div class="eyebrow">
+        <span class="pulse-dot"></span>
+        Kinetica AI · IO Agent · Architecture
+      </div>
+      <h1 class="page-title">
+        <span class="solid">IO</span><br>
+        <em>is not a chatbot.</em>
+      </h1>
+      <p class="page-desc">
+        IO is a context engine — a persistent orchestration layer that enriches every 
+        prompt with personal RAG, ethical reasoning (ALMA), and real-time data 
+        before any LLM processes it. The model is interchangeable. IO is not.
+      </p>
+    </div>
+    <div class="hero-meta">
+      <div>v2.1 · cleanup/minimal-rebuild</div>
+      <div>Mac Mini M4 · Local-first · Private</div>
+      <div>qwen3:14b + mxbai-embed-large</div>
+      <div>LangGraph · ChromaDB · Ollama</div>
+      <div class="meta-green">✓ 6/6 benchmarks passing</div>
+      <div class="meta-green">✓ P-1 P-3 P-4 fixed · 33aab81</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <span class="stat-val">97</span>
+      <span class="stat-label">RAG chunks</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">5</span>
+      <span class="stat-label">Graph nodes</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">8</span>
+      <span class="stat-label">Finalizers</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">3</span>
+      <span class="stat-label">LLM providers</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">6</span>
+      <span class="stat-label">ALMA principles</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">0</span>
+      <span class="stat-label">Cloud deps</span>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <div class="section-eyebrow reveal">Design philosophy</div>
+  <div class="philosophy reveal">
+    <p>
+      Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get text back, 
+      with no memory of who you are or what you've discussed before. IO is architecturally different. 
+      Before any LLM sees your input, IO has already retrieved your personal context from ChromaDB, 
+      classified the intent of your query using keyword and embedding heuristics, selected the right tool 
+      (web search, RAG, clinical research synthesis), and enriched the prompt with everything relevant.
+    </p>
+    <p>
+      After the LLM responds, <strong>ALMA</strong> evaluates the output against six principles — 
+      Care, Clarity, Limit, Awareness, Pragmatism, Silence. These are not safety filters. They are 
+      the grammar of a different kind of intelligence: conditions for IO's own coherence when 
+      operating in clinical contexts where ambiguity causes harm. If a principle is violated, 
+      IO rewrites. Every correction logs to <strong>alma_training.jsonl</strong> — 
+      a growing dataset for future LoRA distillation.
+    </p>
+    <p>
+      The LLM — whether local (qwen3:14b via Ollama), OpenAI, or Anthropic — is a 
+      <strong>replaceable component</strong>. IO is the layer that persists across models, 
+      sessions, and interactions. That is the architectural bet behind this project.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- MODULE GRID -->
+  <div class="section-eyebrow reveal">Click any module to explore in detail</div>
+  <div class="module-grid" id="grid"></div>
+  <div class="detail-panel" id="detail"></div>
+
+  <div class="section-divider"></div>
+
+  <!-- EXECUTION FLOW -->
+  <div class="flow-section reveal">
+    <div class="section-eyebrow">Execution flow</div>
+    <h3>How a single query moves through IO</h3>
+    <p>
+      Every input passes through intent classification, tool execution, LLM generation, 
+      and ethical verification — in that order. No step is skipped. Click nodes to explore.
+    </p>
+    <div class="flow-row" id="flow"></div>
+    <div class="flow-note">
+      <strong>Loop logic:</strong> If <code>answer = None</code> after respond_node and 
+      <code>step &lt; max_steps</code>, the graph cycles back to dispatch. 
+      Typical web+RAG queries run 2 cycles: cycle 1 fetches web context and returns 
+      <code>answer=None</code>, signaling the need for personal data; 
+      cycle 2 cross-references web results with ChromaDB and produces the final answer.<br><br>
+      <strong>Deterministic vs LLM paths:</strong> time queries, ingest operations, and system 
+      queries never touch an LLM — they execute deterministically in dispatch_node and return 
+      directly. Only queries requiring reasoning or synthesis reach respond_node and the LLM.
+    </div>
+  </div>
+
+  <!-- KNOWN ISSUES -->
+  <div class="issues-section reveal">
+    <div class="section-eyebrow">Known issues · Honest engineering</div>
+    <p class="issues-intro">
+      IO is a working system under active development, not a polished product. 
+      These are real bugs identified via code inspection of io_agent.py and fixed 
+      in commit <code>33aab81</code>. Documenting them publicly is intentional — 
+      knowing what broke and why is what separates a system builder from a prompt engineer.
+    </p>
+    <div id="issues"></div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="roadmap-section reveal">
+    <div class="section-eyebrow">Roadmap</div>
+    <p class="roadmap-intro">
+      IO evolves in versioned milestones, each with a concrete clinical deliverable. 
+      The research and the engineering inform each other — findings from the Polar 
+      predictor drive the technical requirements for the next version of IO.
+    </p>
+    <div id="roadmap"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer reveal">
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
+    <div class="footer-links">
+      <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="footer-link">Clinical use case →</a>
+      <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" class="footer-link">LinkedIn →</a>
+      <a href="https://www.kineticaai.com" class="footer-link">kineticaai.com →</a>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+/* ── HRV CANVAS — exact replica of landing page script ── */
+const c = document.getElementById('hrv-bg');
+if (c) {
+  const ctx = c.getContext('2d');
+  let t = 0;
+  const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+  const draw = () => {
+    ctx.clearRect(0, 0, c.width, c.height);
+    [[0.05, 0.38], [0.03, 0.52], [0.018, 0.65]].forEach(([alpha, yFrac]) => {
+      const y = c.height * yFrac;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(144,167,165,${alpha})`;
+      ctx.lineWidth = 1.2;
+      for (let x = 0; x <= c.width; x += 3) {
+        const spike = Math.exp(-Math.pow(x % 140 - 70, 2) / 100) * 35;
+        const wave  = Math.sin(x * 0.012 + t) * 12;
+        const py    = y - spike - wave;
+        x === 0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py);
+      }
+      ctx.stroke();
+    });
+    // scan line
+    const sx = (t * 55) % (c.width + 160) - 80;
+    const grad = ctx.createLinearGradient(sx - 60, 0, sx + 20, 0);
+    grad.addColorStop(0,   'rgba(144,167,165,0)');
+    grad.addColorStop(0.7, 'rgba(144,167,165,0.07)');
+    grad.addColorStop(1,   'rgba(144,167,165,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(sx - 60, 0, 80, c.height);
+    t += 0.007;
+    requestAnimationFrame(draw);
+  };
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+}
+
+/* ── DATA ── */
+const modules = [
+  {
+    id: "io_agent", name: "io_agent.py", icon: "⬡", color: "#90a7a5", badge: "CORE",
+    short: "The complete agent · 1600 lines",
+    summary: "The central file. Defines the LangGraph StateGraph, all nodes, conditional routing, the 8-branch finalizer chain in respond_node, and the ALMA check/rewrite pipeline. Everything else in the project is a dependency of this file.",
+    sections: [
+      { name: "State (TypedDict)", lines: "35–63",
+        desc: "The shared memory dict that flows between nodes. Contains: goal, run_id, step, tool_result, web_context, RAG hits, ALMA flags, session_history, remote_calls counter, and budget limits. Every node reads from the full state and writes back only the fields it modifies." },
+      { name: "Tool hint classifier", lines: "71–284",
+        desc: "Keyword-based intent detection. Runs without any LLM call — fast and deterministic. Classifies queries into: time, web search, RAG, research analysis, or direct. 4-step pipeline: (1) internal system check, (2) keyword lists, (3) semantic embedding similarity, (4) fallback to direct." },
+      { name: "Semantic classifier", lines: "317–430",
+        desc: "Cosine similarity between the query embedding and prototype vectors (_PROTO_RAG, _PROTO_WEB). Activates when keyword hints are insufficient. Uses mxbai-embed-large (512-dim) via Ollama. Threshold: 0.50. If Ollama is unavailable, returns None → falls back to direct plan." },
+      { name: "dispatch_node", lines: "749–835",
+        desc: "Node 1 of the graph. Executes the classified tool (web_search, rag_search, time_madrid, research_analysis) and stores the result in State. Does NOT call any LLM. Pure deterministic orchestration." },
+      { name: "respond_node + 8 finalizers", lines: "900–1261",
+        desc: "Node 2. Selects from 8 prompt-construction strategies based on what's in State: smalltalk, time, web, research, web+RAG cross, RAG, tool_failed, generic. Each finalizer builds a tailored system+user prompt before calling the LLM." },
+      { name: "ALMA check / rewrite", lines: "1276–1457",
+        desc: "Post-generation ethical gate. Step 1: YES/NO verdict in ~10 tokens. Step 2 (if YES): double-check with 3 explicit evaluation questions. If violation confirmed: alma_rewrite_node rewrites the response and logs the (original, rewrite) pair to alma_training.jsonl." },
+      { name: "build_graph()", lines: "1474–1502",
+        desc: "Assembles the LangGraph StateGraph with conditional edges: START → dispatch → [research? →] respond → [alma_check → alma_rewrite? →] END." },
+      { name: "run()", lines: "1505–1599",
+        desc: "Entry point. Loads session_history from SQLite, initializes state with budget limits from Policy, invokes graph, persists memory_delta to ChromaDB, saves run to io_state.sqlite3." },
+    ],
+    vsLLM: "A raw LLM receives text and returns text. io_agent.py orchestrates a graph: classifies intent without an LLM call, executes tools, verifies the response ethically, and persists state across sessions — all in a single execution. Changing the LLM requires one environment variable. Changing the orchestration logic requires changing IO."
+  },
+  {
+    id: "rag", name: "rag.py", icon: "◈", color: "#c4855a", badge: "MEMORY",
+    short: "Semantic retrieval · ChromaDB",
+    summary: "ChromaDB-backed personal knowledge retrieval. Converts your documents — clinical notes, Polar study findings, project context, professional background — into vector embeddings and retrieves the most relevant chunks before any prompt is constructed.",
+    sections: [
+      { name: "ChromaDB (io_chroma/)", lines: "97 chunks indexed",
+        desc: "Personal knowledge base embedded with mxbai-embed-large (512-dim vectors). Contents include: clinical context, IO project documentation, Polar ANS predictor study findings, ALMA principles, professional history. Reindexed by memory_delta.py after each session." },
+      { name: "search()", lines: "rag.py:100–180",
+        desc: "Query → embedding → cosine similarity → top-K chunks with scores and source metadata. If ChromaDB has 0 documents (uninitialized), returns ok=True with empty hits. This edge case was bug P-4 — now handled in respond_node by redirecting to finalizer_generic." },
+      { name: "reindex_chroma.py", lines: "standalone",
+        desc: "Rebuilds the ChromaDB index from /knowledge/ directory. Must be run after adding new documents. Called automatically by memory_delta.py at the end of each session to keep the index current without manual intervention." },
+    ],
+    vsLLM: "A plain LLM knows nothing about you. Every conversation starts from zero. RAG retrieves YOUR context — personal notes, wearable data, project state — and injects only what's relevant for the current query. Without RAG, IO would be a generic assistant. With RAG, it's a specialized clinical context engine."
+  },
+  {
+    id: "llm_runtime", name: "llm_runtime.py", icon: "◆", color: "#9b8ab5", badge: "ENGINE",
+    short: "LLM abstraction layer",
+    summary: "Wrapper that decouples agent logic from the specific LLM provider. Handles provider selection, token budget enforcement, retry logic, and dual-LLM semantic routing (expand vs collapse modes).",
+    sections: [
+      { name: "llm_chat()", lines: "642–700",
+        desc: "Base LLM call. Selects provider (Ollama/OpenAI/Anthropic) based on current state budget, enforces max_output_tokens, increments remote_calls counter in State, and retries on transient failures. All LLM calls in IO go through this function." },
+      { name: "llm_chat_semantic()", lines: "700–742",
+        desc: "Dual-LLM routing based on semantic mode. Expand (philosophical, emotional, exploratory) → GPT-4o. Collapse (code, action, structured output) → Claude. This specialization allows IO to use the best model for each cognitive task type." },
+      { name: "chat_dual()", lines: "742–800",
+        desc: "Parallel execution of expand + collapse. Both models receive the same prompt simultaneously; responses are merged. Used for complex queries that benefit from both expansive reasoning and precise structure." },
+    ],
+    vsLLM: "IO can switch the underlying model (Ollama → OpenAI → Anthropic → any new provider) by changing one environment variable. The agent logic — routing, RAG, ALMA, memory — remains identical. The LLM is a commodity. The orchestration is the product."
+  },
+  {
+    id: "router", name: "router.py", icon: "⌬", color: "#6b9e7a", badge: "ROUTING",
+    short: "Complexity & semantic classifier",
+    summary: "Scores query complexity (0–10) and determines local vs remote routing. Also assigns semantic mode (expand/collapse/both/local) based on linguistic patterns in the query.",
+    sections: [
+      { name: "decide()", lines: "router.py",
+        desc: "Computes complexity_score from query length + detected patterns: analytical, creative, multistep, multitool, delegation, synthesis. Score ≥ IO_REMOTE_COMPLEXITY_THRESHOLD (default: 6) → remote API. Score < 6 → local Ollama." },
+      { name: "Semantic mode assignment", lines: "router.py",
+        desc: "Expressive signals (emotions, philosophy, reflection, uncertainty) → expand mode (GPT-4o). Action signals (code, commands, structure, data analysis) → collapse mode (Claude). Mixed signals → both in parallel. Simple or no signals → local only." },
+    ],
+    vsLLM: "A plain LLM processes every query identically regardless of complexity or nature. IO routes cheap queries to free local compute and reserves API budget for complex reasoning — adapting the cognitive resource to the task, not the other way around."
+  },
+  {
+    id: "tools", name: "tools.py + tools_web.py", icon: "⌘", color: "#7a9bb5", badge: "ACTIONS",
+    short: "External capabilities registry",
+    summary: "IO's tool registry. Separates internal tools (document ingestion, system queries, time) from web tools (Tavily real-time search). Tools are called by dispatch_node — the LLM never directly invokes tools.",
+    sections: [
+      { name: "tools.py", lines: "15KB",
+        desc: "Internal tools: document ingest (adds new chunks to ChromaDB), time_madrid (current time with timezone), system info queries. Execute deterministically — no LLM involved. Ingest is the main mechanism for expanding IO's personal knowledge base at runtime." },
+      { name: "tools_web.py", lines: "3.9KB",
+        desc: "Tavily web search with geolocation bias (Madrid). Returns title, URL, snippet, and publication date for each result. Used for current events, clinical literature search, and real-time data queries. Requires TAVILY_API_KEY." },
+      { name: "research_analysis.py", lines: "22KB",
+        desc: "Specialized research node (not just a tool). Runs 3 parallel Tavily queries (ANS post-infectious 2024-25, HRV RMSSD ME/CFS, post-Lyme wearable), loads personal Polar data, generates a comparative dashboard (personal vs literature ranges), and saves an interactive Plotly HTML." },
+    ],
+    vsLLM: "A plain LLM is limited to its training data — knowledge frozen at a cutoff date. IO searches in real time, ingests new documents on demand, and cross-references external findings with your personal clinical data. The research node produced the ANS-PEM lag analysis dashboard from the polar-lyme-predictor study."
+  },
+  {
+    id: "memory", name: "memory_delta.py", icon: "◉", color: "#b58a9b", badge: "PERSISTENCE",
+    short: "Cross-session state · SQLite",
+    summary: "Computes what changed during the current session and persists it. IO remembers previous conversations by loading session_history from SQLite at the start of each run — not from in-context messages that get truncated.",
+    sections: [
+      { name: "memory_delta()", lines: "4KB",
+        desc: "Calculates the semantic delta between the current run and previous state. Writes new knowledge as individual files to knowledge/deltas/, then triggers reindex_chroma.py to update ChromaDB. Only new content is indexed — delta compression keeps the process efficient." },
+      { name: "io_state.sqlite3", lines: "2.2MB",
+        desc: "Persistent session store. All historical runs with timestamps, goals, answers, ALMA verdicts, and metadata. IO loads the last N sessions as context at startup — session_history is injected into the prompt of every finalizer in respond_node." },
+    ],
+    vsLLM: "Without memory, every conversation starts from zero. A plain LLM has no persistence beyond the current context window. IO persists session history in SQLite and uses delta compression to avoid re-embedding unchanged content — the knowledge base grows without repetition."
+  },
+  {
+    id: "providers", name: "providers/", icon: "◎", color: "#90a7a5", badge: "ABSTRACTION",
+    short: "Ollama · OpenAI · Anthropic",
+    summary: "Provider abstraction layer. All three providers implement the same base interface. IO's agent logic never calls provider APIs directly — only through llm_runtime.py, which selects the provider based on State budget and routing decision.",
+    sections: [
+      { name: "ollama_provider.py", lines: "—",
+        desc: "Local inference via Ollama. Default model: qwen3:14b. No API key. No data leaves the device. Used for all queries when IO_ALLOW_REMOTE=false, and for low-complexity queries below the routing threshold." },
+      { name: "openai_provider.py", lines: "—",
+        desc: "GPT-4o and compatible models. Used for expand semantic mode (philosophical, emotional queries) and queries scoring above complexity threshold 6. Requires OPENAI_API_KEY." },
+      { name: "anthropic_provider.py", lines: "—",
+        desc: "Claude. Used for collapse semantic mode (code generation, structured output, action planning). Also the preferred provider for ALMA rewrite when remote budget allows. Requires ANTHROPIC_API_KEY." },
+      { name: "base.py + types.py", lines: "—",
+        desc: "Abstract interface all providers implement. Defines the contract: given messages and parameters, return a response. Adding a new provider requires implementing this interface — no changes to io_agent.py." },
+    ],
+    vsLLM: "IO is model-agnostic by design. The same agent, same orchestration, same ALMA principles, same RAG — running with Ollama (free, local, private), OpenAI (cloud, capable), or Anthropic (cloud, precise). The abstraction layer makes the model a configuration choice, not an architectural one."
+  },
+  {
+    id: "alma", name: "ALMA framework", icon: "◍", color: "#c4855a", badge: "ETHICS",
+    short: "Post-generation ethical gate",
+    summary: "ALMA (six principles) is not a list of rules imposed on a chatbot. It is the grammar of a different kind of intelligence — defining conditions for IO's own coherence when operating in clinical contexts where ambiguity causes harm.",
+    sections: [
+      { name: "The 6 principles", lines: "msu/clinical_role.md",
+        desc: "Care — acknowledge suffering before informing. Clarity — no ambiguity in clinical context. Limit — separate physiological data from vital life decisions. Awareness — know the boundaries of your knowledge. Pragmatism — useful over correct. Silence — knowing when not to respond is a structural property of clinical intelligence, not a human virtue." },
+      { name: "alma_check_node", lines: "io_agent.py:1276",
+        desc: "Evaluates the generated response in ~10 tokens (YES/NO). If YES: asks 3 explicit evaluation questions (which principle? how severe? is rewrite needed?) before confirming. Skipped for deterministic responses. Budget guard (P-1 fix): if local_only mode → skip, return {alma_violation: False}." },
+      { name: "alma_rewrite_node", lines: "io_agent.py:1380",
+        desc: "Generates a corrected response applying the violated principle explicitly. Logs the (original_response, rewrite, principles_violated) triple to alma_training.jsonl with structured metadata." },
+      { name: "alma_training.jsonl", lines: "15KB · growing",
+        desc: "Dataset for future LoRA fine-tuning. Roadmap: 300+ validated pairs → LoRA distillation of ALMA reasoning into a small specialized model → ALMA moves from active LLM call (cost: ~10 tokens/response) to passive embedded verification (cost: 0 tokens). Currently: collecting and reviewing." },
+    ],
+    vsLLM: "Standard LLM safety filters are trained-in constraints applied before generation. ALMA operates post-generation: the LLM produces its best answer, then ALMA evaluates it against clinical-ethical principles it was never trained on. ALMA can rewrite responses for reasons the original LLM would never flag — because ALMA's principles are specific to the clinical context IO was built for."
+  },
+];
+
+const flowNodes = [
+  { label: "User input", color: "#6b8a88" }, { label: "→" },
+  { label: "dispatch_node", color: "#90a7a5", id: "io_agent" }, { label: "→" },
+  { label: "tool / RAG / web", color: "#c4855a", id: "tools" }, { label: "→" },
+  { label: "respond_node", color: "#9b8ab5", id: "io_agent" }, { label: "→" },
+  { label: "LLM call", color: "#7a9bb5", id: "llm_runtime" }, { label: "→" },
+  { label: "ALMA check", color: "#c4855a", id: "alma" }, { label: "→" },
+  { label: "Output", color: "#6b9e7a" },
+];
+
+const issues = [
+  {
+    id: "P-1", title: "alma_check bypasses remote call budget",
+    desc: "alma_check_node called chat_messages() directly without going through llm_chat() or _effective_mode_for_budget(). With IO_MAX_REMOTE_CALLS=2, the finalizer used 1 call, then ALMA check + double-check consumed 1–2 more — silently exceeding the budget without any counter update or error.",
+    fix: "Fixed in 33aab81: budget guard at start of alma_check_node. If _effective_mode_for_budget returns local_only → skip ALMA LLM check entirely, return {alma_violation: False}."
+  },
+  {
+    id: "P-3", title: "session_history absent in web / research finalizers",
+    desc: "session_history was injected only in finalizer_rag and finalizer_generic. finalizer_web (~line 877), finalizer_research (~line 917), and finalizer_web_rag (~line 956) did not include _format_session_context() — IO had no memory of previous turns when answering web or clinical research queries.",
+    fix: "Fixed in 33aab81: _session_block added to all 3 missing finalizers. Now session_history is injected in every LLM-based finalizer."
+  },
+  {
+    id: "P-4", title: "RAG 0 hits → silent hallucination path",
+    desc: "If ChromaDB returned 0 hits, rag_search() returned ok=True with empty hits. respond_node passed the string '(sin datos relevantes en el knowledge base)' to the LLM as context — which could then generate plausible-sounding but entirely invented information with no warning or error.",
+    fix: "Fixed in 33aab81: if hits == [] and tool == rag_search → redirect to finalizer_generic instead of constructing an empty RAG prompt."
+  },
+];
+
+const roadmap = [
+  { ver: "v1", title: "N=1 predictor · ANS lag analysis",
+    desc: "Logistic regression on 34 diary+wearable pairs. LOO-CV. AUC=0.656, sensitivity=81%. PEM mechanism identified: ANS elevation at t-2 predicts symptomatic crash at t-0. r=−0.679 (n=8) was a positional .shift(2) bug — corrected to r=+0.431 (n=34, p=0.016) using date-based lag. Published.",
+    status: "done" },
+  { ver: "v2", title: "Core graph + ALMA + RAG · 6/6 benchmarks",
+    desc: "LangGraph 5-node graph. ChromaDB 97 chunks. ALMA 6-principle post-check with LoRA training pipeline. 3 bugs fixed (P-1 budget guard, P-3 session history, P-4 RAG redirect). Verified: web search, personal RAG, research node, ALMA detection and rewrite.",
+    status: "active" },
+  { ver: "v3", title: "Deterministic Context Engine",
+    desc: "Replace the current LLM-based routing heuristics with a fully deterministic Context Engine (RAG + rules + embeddings). Clean separation: context assembly (deterministic, testable) vs generation (LLM, interchangeable). Goal: zero hallucination in context selection.",
+    status: "next" },
+  { ver: "v4", title: "Kubios HRV + non-linear metrics",
+    desc: "Add DFA α1, SD1/SD2, LF/HF from Kubios Pro export to the predictor pipeline. These non-linear metrics are more sensitive biomarkers than Polar RMSSD for chronic fatigue patterns. Expected to increase AUC and reduce prediction window variance.",
+    status: "future" },
+  { ver: "v5", title: "Multi-case replication · n=5–10",
+    desc: "Same 87-day protocol applied to patients with post-infectious fatigue, fibromyalgia, or autonomic dysfunction. Converts N=1 study to pilot multi-case. Publishable in clinical AI venues. Each case generates ~34 pairs for the predictor and ~30 ALMA training examples.",
+    status: "future" },
+  { ver: "v6", title: "ALMA LoRA distillation",
+    desc: "300+ validated pairs in alma_training.jsonl → LoRA fine-tune on qwen3:14b or equivalent → ALMA moves from active LLM call (~10 tokens per response) to passive embedded reasoning (0 tokens). ALMA becomes a property of the model, not of the graph.",
+    status: "future" },
+];
+
+/* ── RENDER ── */
+let activeId = null;
+
+function renderGrid() {
+  document.getElementById('grid').innerHTML = modules.map((m, i) => `
+    <div class="module-card reveal ${activeId === m.id ? 'active' : ''}"
+         style="--c:${m.color}; transition-delay: ${i * 0.05}s"
+         onclick="toggle('${m.id}')">
+      <div class="module-icon">${m.icon}</div>
+      <div class="module-name">${m.name}</div>
+      <div class="module-short">${m.short}</div>
+      <div class="module-badge">${m.badge}</div>
+    </div>
+  `).join('');
+  setupReveal();
+}
+
+function renderDetail(m) {
+  const panel = document.getElementById('detail');
+  if (!m) { panel.classList.remove('show'); return; }
+  panel.style.borderColor = m.color + '50';
+  panel.style.setProperty('--c', m.color);
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-icon-box" style="background:color-mix(in srgb,${m.color} 8%,white);border-color:${m.color}30">
+        <span style="color:${m.color};font-size:1.3rem">${m.icon}</span>
+      </div>
+      <div>
+        <div class="detail-name">${m.name}</div>
+        <div class="detail-badge-label" style="color:${m.color}">${m.badge}</div>
+      </div>
+    </div>
+    <div class="detail-summary">${m.summary}</div>
+    ${m.sections.map(s => `
+      <div class="code-block">
+        <div class="code-block-head">
+          <span class="code-block-name">${s.name}</span>
+          <span class="code-block-lines">${s.lines}</span>
+        </div>
+        <div class="code-block-desc">${s.desc}</div>
+      </div>
+    `).join('')}
+    <div class="vs-llm" style="background:color-mix(in srgb,${m.color} 5%,white);border-color:${m.color}25">
+      <div class="vs-llm-label">IO vs plain LLM</div>
+      <div class="vs-llm-text">${m.vsLLM}</div>
+    </div>
+  `;
+  panel.classList.add('show');
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
+
+function toggle(id) {
+  activeId = activeId === id ? null : id;
+  renderGrid();
+  renderDetail(modules.find(m => m.id === activeId));
+}
+
+function renderFlow() {
+  document.getElementById('flow').innerHTML = flowNodes.map(n =>
+    n.label === "→"
+      ? `<span class="flow-arrow">→</span>`
+      : `<span class="flow-node"
+             style="color:${n.color};border-color:${n.color}45;background:${n.color}12"
+             ${n.id ? `onclick="toggle('${n.id}')" title="Click to explore"` : ''}
+         >${n.label}</span>`
+  ).join('');
+}
+
+function renderIssues() {
+  document.getElementById('issues').innerHTML = issues.map((issue, i) => `
+    <div class="issue-row" style="animation-delay:${i*0.08}s">
+      <div class="issue-id">${issue.id}</div>
+      <div>
+        <div class="issue-title">${issue.title}</div>
+        <div class="issue-desc">${issue.desc}</div>
+        <div class="issue-fix">✓ ${issue.fix}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRoadmap() {
+  const pillClass = { done:'pill-done', active:'pill-active', next:'pill-next', future:'pill-future' };
+  const pillLabel = { done:'done', active:'active', next:'next', future:'planned' };
+  document.getElementById('roadmap').innerHTML = roadmap.map(item => `
+    <div class="roadmap-row">
+      <div class="roadmap-ver">${item.ver}</div>
+      <div class="roadmap-body">
+        <div class="roadmap-title">${item.title}</div>
+        <div class="roadmap-desc">${item.desc}</div>
+      </div>
+      <div class="roadmap-pill ${pillClass[item.status]}">${pillLabel[item.status]}</div>
+    </div>
+  `).join('');
+}
+
+/* ── SCROLL REVEAL ── */
+function setupReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        const delay = Number(el.target.dataset.delay) || 0;
+        setTimeout(() => el.target.classList.add('visible'), delay);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    if (!el.dataset.delay) el.dataset.delay = String(i * 60);
+    obs.observe(el);
+  });
+}
+
+renderGrid();
+renderFlow();
+renderIssues();
+renderRoadmap();
+setupReveal();
+</script>
+</body>
+</html>
