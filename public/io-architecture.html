@@ -695,23 +695,23 @@
       </p>
     </div>
     <div class="hero-meta">
-      <div>v2.1 · cleanup/minimal-rebuild</div>
+      <div>v3.0 · cleanup/minimal-rebuild</div>
       <div>Mac Mini M4 · Local-first · Private</div>
       <div>qwen3:14b + mxbai-embed-large</div>
       <div>LangGraph · ChromaDB · Ollama</div>
-      <div class="meta-green">✓ 6/6 benchmarks passing</div>
-      <div class="meta-green">✓ P-1 P-3 P-4 fixed · 33aab81</div>
+      <div class="meta-green">✓ 32/32 benchmarks passing</div>
+      <div class="meta-green">✓ PR #1 merged · dd1d863</div>
     </div>
   </div>
 
   <!-- STATS -->
   <div class="stats-row reveal">
     <div class="stat-item">
-      <span class="stat-val">97</span>
+      <span class="stat-val">811</span>
       <span class="stat-label">RAG chunks</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">5</span>
+      <span class="stat-val">10</span>
       <span class="stat-label">Graph nodes</span>
     </div>
     <div class="stat-item">
@@ -738,17 +738,21 @@
     <p>
       Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get text back, 
       with no memory of who you are or what you've discussed before. IO is architecturally different. 
-      Before any LLM sees your input, IO has already retrieved your personal context from ChromaDB, 
-      classified the intent of your query using keyword and embedding heuristics, selected the right tool 
-      (web search, RAG, clinical research synthesis), and enriched the prompt with everything relevant.
+      Before any LLM sees your input, IO has already classified the intent of your query —
+      deterministically via keyword dispatch for simple queries, or via an LLM planner for
+      complex multi-tool tasks. A retrieval loop with self-assessment evaluates whether the
+      recovered context is sufficient before synthesis; if not, IO reformulates and retries.
+      Only then does the LLM receive an enriched, verified prompt.
     </p>
     <p>
-      After the LLM responds, <strong>ALMA</strong> evaluates the output against six principles — 
-      Care, Clarity, Limit, Awareness, Pragmatism, Silence. These are not safety filters. They are 
-      the grammar of a different kind of intelligence: conditions for IO's own coherence when 
-      operating in clinical contexts where ambiguity causes harm. If a principle is violated, 
-      IO rewrites. Every correction logs to <strong>alma_training.jsonl</strong> — 
-      a growing dataset for future LoRA distillation.
+      After the LLM responds, <strong>ALMA</strong> evaluates the output against six principles —
+      Care, Clarity, Limit, Awareness, Pragmatism, Silence. These are not safety filters. They are
+      the grammar of a different kind of intelligence: conditions for IO's own coherence when
+      operating in clinical contexts where ambiguity causes harm. ALMA evaluates each principle
+      individually, cites the specific text that violates it, and explains why — evidence-based
+      reasoning, not tone classification. If a violation is found at medium or high severity,
+      IO rewrites with targeted corrections. Every correction logs to <strong>alma_training.jsonl</strong> —
+      structured reasoning pairs for future LoRA distillation.
     </p>
     <p>
       The LLM — whether local (qwen3:14b via Ollama), OpenAI, or Anthropic — is a 
@@ -864,8 +868,8 @@ if (c) {
 const modules = [
   {
     id: "io_agent", name: "io_agent.py", icon: "⬡", color: "#90a7a5", badge: "CORE",
-    short: "The complete agent · 1600 lines",
-    summary: "The central file. Defines the LangGraph StateGraph, all nodes, conditional routing, the 8-branch finalizer chain in respond_node, and the ALMA check/rewrite pipeline. Everything else in the project is a dependency of this file.",
+    short: "The complete agent · 2400 lines",
+    summary: "The central file. Defines the LangGraph StateGraph with 10 nodes, conditional routing, hybrid dispatch (keyword + LLM planner), retrieval loop with self-assessment evaluator, ALMA genuine reasoning pipeline, research_analysis clinical pipeline, and external action connectors. Everything else in the project is a dependency of this file.",
     sections: [
       { name: "State (TypedDict)", lines: "35–63",
         desc: "The shared memory dict that flows between nodes. Contains: goal, run_id, step, tool_result, web_context, RAG hits, ALMA flags, session_history, remote_calls counter, and budget limits. Every node reads from the full state and writes back only the fields it modifies." },
@@ -975,12 +979,12 @@ const modules = [
     sections: [
       { name: "The 6 principles", lines: "msu/clinical_role.md",
         desc: "Care — acknowledge suffering before informing. Clarity — no ambiguity in clinical context. Limit — separate physiological data from vital life decisions. Awareness — know the boundaries of your knowledge. Pragmatism — useful over correct. Silence — knowing when not to respond is a structural property of clinical intelligence, not a human virtue." },
-      { name: "alma_check_node", lines: "io_agent.py:1276",
-        desc: "Evaluates the generated response in ~10 tokens (YES/NO). If YES: asks 3 explicit evaluation questions (which principle? how severe? is rewrite needed?) before confirming. Skipped for deterministic responses. Budget guard (P-1 fix): if local_only mode → skip, return {alma_violation: False}." },
-      { name: "alma_rewrite_node", lines: "io_agent.py:1380",
-        desc: "Generates a corrected response applying the violated principle explicitly. Logs the (original_response, rewrite, principles_violated) triple to alma_training.jsonl with structured metadata." },
-      { name: "alma_training.jsonl", lines: "15KB · growing",
-        desc: "Dataset for future LoRA fine-tuning. Roadmap: 300+ validated pairs → LoRA distillation of ALMA reasoning into a small specialized model → ALMA moves from active LLM call (cost: ~10 tokens/response) to passive embedded verification (cost: 0 tokens). Currently: collecting and reviewing." },
+      { name: "alma_check_node", lines: "io_agent.py:2046",
+        desc: "Evaluates the generated response against each of the six principles individually. Returns structured JSON with per-principle verdict, evidence citation, reasoning, and severity (high/medium/low/none). Only medium and high severity trigger rewrite — low severity is logged but not rewritten. Single LLM call (~400 tokens), robust JSON extraction." },
+      { name: "alma_rewrite_node", lines: "io_agent.py:2111",
+        desc: "Evidence-aware rewrite. Receives the exact violation — which principle, which text fragment, why it violates. Applies type-specific correction: Silencio → admit limitation directly; Límite → reformulate with correct certainty level; Cuidado → remove or reframe with balanced evidence. Rejects rewrites longer than 1.4× original (hallucination guard)." },
+      { name: "alma_training.jsonl", lines: "growing · LoRA-ready",
+        desc: "Structured reasoning pairs for LoRA fine-tuning. Each entry records: original response, rewritten response, full per-principle evaluation with evidence, severity, primary principle violated, and quality tag (accepted/rejected/passthrough). Roadmap: 300+ validated pairs → LoRA distillation → ALMA reasoning embedded in the model, not in the graph." },
     ],
     vsLLM: "Standard LLM safety filters are trained-in constraints applied before generation. ALMA operates post-generation: the LLM produces its best answer, then ALMA evaluates it against clinical-ethical principles it was never trained on. ALMA can rewrite responses for reasons the original LLM would never flag — because ALMA's principles are specific to the clinical context IO was built for."
   },
@@ -1018,11 +1022,11 @@ const roadmap = [
   { ver: "v1", title: "N=1 predictor · ANS lag analysis",
     desc: "Logistic regression on 34 diary+wearable pairs. LOO-CV. AUC=0.656, sensitivity=81%. PEM mechanism identified: ANS elevation at t-2 predicts symptomatic crash at t-0. r=−0.679 (n=8) was a positional .shift(2) bug — corrected to r=+0.431 (n=34, p=0.016) using date-based lag. Published.",
     status: "done" },
-  { ver: "v2", title: "Core graph + ALMA + RAG · 6/6 benchmarks",
-    desc: "LangGraph 5-node graph. ChromaDB 97 chunks. ALMA 6-principle post-check with LoRA training pipeline. 3 bugs fixed (P-1 budget guard, P-3 session history, P-4 RAG redirect). Verified: web search, personal RAG, research node, ALMA detection and rewrite.",
-    status: "active" },
-  { ver: "v3", title: "Deterministic Context Engine",
-    desc: "Replace the current LLM-based routing heuristics with a fully deterministic Context Engine (RAG + rules + embeddings). Clean separation: context assembly (deterministic, testable) vs generation (LLM, interchangeable). Goal: zero hallucination in context selection.",
+  { ver: "v2", title: "Core graph + ALMA + RAG · 32/32 benchmarks",
+    desc: "LangGraph 10-node graph. ChromaDB 811 chunks. Hybrid routing: keyword dispatch + LLM planner for complex queries. Retrieval loop with self-assessment (max 4 iterations + stagnation guard). ALMA genuine reasoning: per-principle evaluation with evidence citation, severity gate, LoRA-ready training pairs. research_analysis_node wired: Tavily + Polar CSV + statistical dashboard. 32/32 regression tests passing.",
+    status: "done" },
+  { ver: "v3", title: "Connectors — Gmail · GitHub · Supervisor gate",
+    desc: "HTTP supervisor endpoints replacing CLI input() gate. Gmail connector for draft and send. GitHub connector with full REST API. External action pipeline fully operational outside terminal context.",
     status: "next" },
   { ver: "v4", title: "Kubios HRV + non-linear metrics",
     desc: "Add DFA α1, SD1/SD2, LF/HF from Kubios Pro export to the predictor pipeline. These non-linear metrics are more sensitive biomarkers than Polar RMSSD for chronic fatigue patterns. Expected to increase AUC and reduce prediction window variance.",
