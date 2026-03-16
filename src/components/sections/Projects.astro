@@ -27,6 +27,32 @@
     </article>
 
     <article class="project-card reveal" data-delay="120">
+      <svg class="ecg-mini" viewBox="0 0 200 36"
+           width="110" height="22" aria-hidden="true">
+        <polyline
+          points="0,18 20,18 30,6 38,30 46,18 80,18 88,10 96,26 104,18 140,18 148,5 156,31 164,18 194,18 200,18"
+          fill="none" stroke="#c4855a" stroke-width="1.4"
+          stroke-dasharray="400" stroke-dashoffset="400">
+          <animate attributeName="stroke-dashoffset"
+                   from="400" to="-400" dur="4s"
+                   repeatCount="indefinite"/>
+        </polyline>
+      </svg>
+      <div class="badge badge-published">
+        <span class="badge-dot"></span>Published · Field observation
+      </div>
+      <h3>ANS as Lyme Biomarker</h3>
+      <p class="project-sub">Longitudinal HRV · Polar Grit X2 · Kubios</p>
+      <p>87-day longitudinal dataset combining continuous nocturnal HRV monitoring (Polar Grit X2) with a 7-domain symptom diary. Finding: ANS status predicts Post-Exertional Malaise 48 hours ahead (Spearman ρ=+0.431, p=.016, AUC=0.656, sensitivity 81%). Serology oscillates. The nervous system doesn't.</p>
+      <p class="stack"><em>Polar Grit X2 · Kubios HRV · Python · scipy · Spearman · Kinetica AI</em></p>
+      <a href="/lyme-hrv" class="project-btn">Read clinical article →</a>
+      <a href="https://github.com/kinetica-IA/polar-lyme-predictor"
+         target="_blank" class="project-btn" style="margin-left:0.5rem">
+        View dataset →
+      </a>
+    </article>
+
+    <article class="project-card reveal" data-delay="240">
       <svg class="node-graph" viewBox="0 0 120 36"
            width="110" height="30" aria-hidden="true">
         <circle cx="20" cy="18" r="4" fill="none"
