@@ -689,38 +689,34 @@
         <em>is not a chatbot.</em>
       </h1>
       <p class="page-desc">
-        IO is a context engine — a persistent orchestration layer that enriches every 
-        prompt with personal RAG, ethical reasoning (ALMA), and real-time data 
-        before any LLM processes it. The model is interchangeable. IO is not.
+        IO is a context engine — a persistent orchestration layer that enriches every
+        prompt with personal RAG, clinical rules, and ethical reasoning before any LLM
+        processes it. The model is interchangeable. IO is not.
       </p>
     </div>
     <div class="hero-meta">
-      <div>v3.0 · cleanup/minimal-rebuild</div>
+      <div>phase1/react-graph · commit 835b892</div>
       <div>Mac Mini M4 · Local-first · Private</div>
-      <div>qwen3:14b + mxbai-embed-large</div>
-      <div>LangGraph · ChromaDB · Ollama</div>
+      <div>LLM: Anthropic Claude (Ollama eliminated — architectural decision)</div>
+      <div>Embeddings: sentence-transformers (mxbai-embed-large → migrating)</div>
+      <div>RAG: ChromaDB (→ LanceDB pending)</div>
       <div class="meta-green">✓ 32/32 benchmarks passing</div>
-      <div class="meta-green">✓ PR #1 merged · dd1d863</div>
     </div>
   </div>
 
   <!-- STATS -->
   <div class="stats-row reveal">
     <div class="stat-item">
-      <span class="stat-val">811</span>
-      <span class="stat-label">RAG chunks</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">10</span>
+      <span class="stat-val">7</span>
       <span class="stat-label">Graph nodes</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">8</span>
-      <span class="stat-label">Finalizers</span>
+      <span class="stat-val">20</span>
+      <span class="stat-label">Tools</span>
     </div>
     <div class="stat-item">
       <span class="stat-val">3</span>
-      <span class="stat-label">LLM providers</span>
+      <span class="stat-label">Autonomous loops</span>
     </div>
     <div class="stat-item">
       <span class="stat-val">6</span>
@@ -730,33 +726,34 @@
       <span class="stat-val">0</span>
       <span class="stat-label">Cloud deps</span>
     </div>
+    <div class="stat-item">
+      <span class="stat-val">811</span>
+      <span class="stat-label">RAG chunks</span>
+    </div>
   </div>
 
   <!-- PHILOSOPHY -->
   <div class="section-eyebrow reveal">Design philosophy</div>
   <div class="philosophy reveal">
     <p>
-      Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get text back, 
-      with no memory of who you are or what you've discussed before. IO is architecturally different. 
-      Before any LLM sees your input, IO has already classified the intent of your query —
-      deterministically via keyword dispatch for simple queries, or via an LLM planner for
-      complex multi-tool tasks. A retrieval loop with self-assessment evaluates whether the
-      recovered context is sufficient before synthesis; if not, IO reformulates and retries.
-      Only then does the LLM receive an enriched, verified prompt.
+      Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get
+      text back. IO is architecturally different. Before any LLM sees your input, the
+      Context Engine has already loaded your profile, retrieved relevant RAG chunks from
+      811 knowledge base entries, assembled <code>enriched_context</code> as a structured
+      markdown block, and injected clinical rules from <code>rules/clinical_rules.yaml</code>.
+      The LLM receives a fully enriched prompt every time, without being asked.
     </p>
     <p>
       After the LLM responds, <strong>ALMA</strong> evaluates the output against six principles —
       Care, Clarity, Limit, Awareness, Pragmatism, Silence. These are not safety filters. They are
       the grammar of a different kind of intelligence: conditions for IO's own coherence when
-      operating in clinical contexts where ambiguity causes harm. ALMA evaluates each principle
-      individually, cites the specific text that violates it, and explains why — evidence-based
-      reasoning, not tone classification. If a violation is found at medium or high severity,
-      IO rewrites with targeted corrections. Every correction logs to <strong>alma_training.jsonl</strong> —
-      structured reasoning pairs for future LoRA distillation.
+      operating in clinical contexts where ambiguity causes harm. Every correction logs to
+      <strong>training/active/alma_training.jsonl</strong> — structured reasoning pairs for
+      future LoRA distillation.
     </p>
     <p>
-      The LLM — whether local (qwen3:14b via Ollama), OpenAI, or Anthropic — is a 
-      <strong>replaceable component</strong>. IO is the layer that persists across models, 
+      The LLM — whether Anthropic Claude (production) or any future provider — is a
+      <strong>replaceable component</strong>. IO is the layer that persists across models,
       sessions, and interactions. That is the architectural bet behind this project.
     </p>
   </div>
@@ -775,19 +772,41 @@
     <div class="section-eyebrow">Execution flow</div>
     <h3>How a single query moves through IO</h3>
     <p>
-      Every input passes through intent classification, tool execution, LLM generation, 
-      and ethical verification — in that order. No step is skipped. Click nodes to explore.
+      Every input passes through the Context Engine before the router sees it.
+      No LLM call happens without <code>enriched_context</code>. No output leaves without ALMA evaluation.
     </p>
     <div class="flow-row" id="flow"></div>
     <div class="flow-note">
-      <strong>Loop logic:</strong> If <code>answer = None</code> after respond_node and 
-      <code>step &lt; max_steps</code>, the graph cycles back to dispatch. 
-      Typical web+RAG queries run 2 cycles: cycle 1 fetches web context and returns 
-      <code>answer=None</code>, signaling the need for personal data; 
-      cycle 2 cross-references web results with ChromaDB and produces the final answer.<br><br>
-      <strong>Deterministic vs LLM paths:</strong> time queries, ingest operations, and system 
-      queries never touch an LLM — they execute deterministically in dispatch_node and return 
-      directly. Only queries requiring reasoning or synthesis reach respond_node and the LLM.
+      <strong>Context Engine (L0):</strong> Deterministic — no LLM call. Runs ~200–400ms.
+      Loads profile, retrieves RAG chunks, assembles <code>enriched_context</code>, injects clinical rules.
+      Every node downstream receives a fully enriched state.<br><br>
+      <strong>5-priority router:</strong> external_action → autonomous_loop → tool_dispatch →
+      rag_query → direct_response. Priority order replaces the old <code>needs_planner()</code> gate.
+    </div>
+  </div>
+
+  <!-- EVOLUTION NARRATIVE -->
+  <div class="flow-section reveal">
+    <div class="section-eyebrow">Evolution</div>
+    <h3>How IO evolved</h3>
+    <p>
+      Two versions. One architectural decision that changed everything.
+    </p>
+    <div class="flow-note" style="border-top:none;padding-top:0">
+      <strong>v1 (cleanup/minimal-rebuild, dd1d863):</strong> Monolithic <code>io_agent.py</code>
+      (2400 lines). Keyword routing. Ollama + qwen3:14b for all inference. ChromaDB RAG.
+      10-node graph. 32/32 benchmarks passing. The problem: routing failure was the primary
+      failure mode. <code>needs_planner()</code> gated most queries before the planner was
+      ever reached. Capability audit score: 28/52.<br><br>
+      <strong>v2 (phase1/react-graph, 835b892):</strong> <code>io_agent.py</code> split into
+      modular components under <code>io_core/</code>. Ollama eliminated — architectural
+      decision, not a failure. Anthropic Claude as sole LLM provider. Context Engine extracted
+      as deterministic L0 node (no LLM, ~200–400ms). 5-priority router replaces
+      <code>needs_planner()</code>. Connector pipeline verified end-to-end.
+      3 autonomous loops operational.<br><br>
+      <strong>What changed and why:</strong> The LLM was never the persistent layer — IO is.
+      Separating context construction (deterministic, auditable) from generation (stochastic,
+      interchangeable) is the architectural bet this project is built on.
     </div>
   </div>
 
@@ -795,10 +814,9 @@
   <div class="issues-section reveal">
     <div class="section-eyebrow">Known issues · Honest engineering</div>
     <p class="issues-intro">
-      IO is a working system under active development, not a polished product. 
-      These are real bugs identified via code inspection of io_agent.py and fixed 
-      in commit <code>33aab81</code>. Documenting them publicly is intentional — 
-      knowing what broke and why is what separates a system builder from a prompt engineer.
+      IO is a working system under active development, not a polished product.
+      Current open items documented publicly — knowing the gap between what works
+      and what's next is what separates a system builder from a prompt engineer.
     </p>
     <div id="issues"></div>
   </div>
@@ -807,9 +825,8 @@
   <div class="roadmap-section reveal">
     <div class="section-eyebrow">Roadmap</div>
     <p class="roadmap-intro">
-      IO evolves in versioned milestones, each with a concrete clinical deliverable. 
-      The research and the engineering inform each other — findings from the Polar 
-      predictor drive the technical requirements for the next version of IO.
+      Current state of IO as of phase1/react-graph (commit 835b892).
+      ✅ shipped · 🔄 in progress · 📅 planned.
     </p>
     <div id="roadmap"></div>
   </div>
@@ -867,175 +884,186 @@ if (c) {
 /* ── DATA ── */
 const modules = [
   {
-    id: "io_agent", name: "io_agent.py", icon: "⬡", color: "#90a7a5", badge: "CORE",
-    short: "The complete agent · 2400 lines",
-    summary: "The central file. Defines the LangGraph StateGraph with 10 nodes, conditional routing, hybrid dispatch (keyword + LLM planner), retrieval loop with self-assessment evaluator, ALMA genuine reasoning pipeline, research_analysis clinical pipeline, and external action connectors. Everything else in the project is a dependency of this file.",
+    id: "context_engine", name: "context_engine/", icon: "⬡", color: "#90a7a5", badge: "CORE",
+    short: "L0 deterministic pipeline",
+    summary: "The Context Engine is the first node in every execution. Deterministic — no LLM call. Runs ~200–400ms. Before the router sees the input, the Context Engine has already loaded the user profile, retrieved relevant RAG chunks from ChromaDB, assembled enriched_context as a structured markdown block, and injected clinical rules from rules/clinical_rules.yaml. Every downstream node receives a fully enriched state.",
     sections: [
-      { name: "State (TypedDict)", lines: "35–63",
-        desc: "The shared memory dict that flows between nodes. Contains: goal, run_id, step, tool_result, web_context, RAG hits, ALMA flags, session_history, remote_calls counter, and budget limits. Every node reads from the full state and writes back only the fields it modifies." },
-      { name: "Tool hint classifier", lines: "71–284",
-        desc: "Keyword-based intent detection. Runs without any LLM call — fast and deterministic. Classifies queries into: time, web search, RAG, research analysis, or direct. 4-step pipeline: (1) internal system check, (2) keyword lists, (3) semantic embedding similarity, (4) fallback to direct." },
-      { name: "Semantic classifier", lines: "317–430",
-        desc: "Cosine similarity between the query embedding and prototype vectors (_PROTO_RAG, _PROTO_WEB). Activates when keyword hints are insufficient. Uses mxbai-embed-large (512-dim) via Ollama. Threshold: 0.50. If Ollama is unavailable, returns None → falls back to direct plan." },
-      { name: "dispatch_node", lines: "749–835",
-        desc: "Node 1 of the graph. Executes the classified tool (web_search, rag_search, time_madrid, research_analysis) and stores the result in State. Does NOT call any LLM. Pure deterministic orchestration." },
-      { name: "respond_node + 8 finalizers", lines: "900–1261",
-        desc: "Node 2. Selects from 8 prompt-construction strategies based on what's in State: smalltalk, time, web, research, web+RAG cross, RAG, tool_failed, generic. Each finalizer builds a tailored system+user prompt before calling the LLM." },
-      { name: "ALMA check / rewrite", lines: "1276–1457",
-        desc: "Post-generation ethical gate. Step 1: YES/NO verdict in ~10 tokens. Step 2 (if YES): double-check with 3 explicit evaluation questions. If violation confirmed: alma_rewrite_node rewrites the response and logs the (original, rewrite) pair to alma_training.jsonl." },
-      { name: "build_graph()", lines: "1474–1502",
-        desc: "Assembles the LangGraph StateGraph with conditional edges: START → dispatch → [research? →] respond → [alma_check → alma_rewrite? →] END." },
-      { name: "run()", lines: "1505–1599",
-        desc: "Entry point. Loads session_history from SQLite, initializes state with budget limits from Policy, invokes graph, persists memory_delta to ChromaDB, saves run to io_state.sqlite3." },
+      { name: "Profile loader", lines: "context_engine/profile.py",
+        desc: "Loads the personal profile (professional background, clinical context, project state) as a structured block. Injected into enriched_context at position 0. Always present — not retrieved, always loaded." },
+      { name: "RAG retrieval", lines: "context_engine/rag_retriever.py",
+        desc: "Query → embedding → cosine similarity → top-K chunks from ChromaDB (811 entries). Cross-encoder reranking on retrieved candidates. Appended to enriched_context as ranked evidence blocks with source metadata." },
+      { name: "Clinical rules injector", lines: "context_engine/rules_injector.py",
+        desc: "Loads rules/clinical_rules.yaml and injects applicable rules into enriched_context. Rule selection is keyword-based and deterministic — no LLM involved. Ensures clinical constraints are present in every prompt before generation." },
     ],
-    vsLLM: "A raw LLM receives text and returns text. io_agent.py orchestrates a graph: classifies intent without an LLM call, executes tools, verifies the response ethically, and persists state across sessions — all in a single execution. Changing the LLM requires one environment variable. Changing the orchestration logic requires changing IO."
-  },
-  {
-    id: "rag", name: "rag.py", icon: "◈", color: "#c4855a", badge: "MEMORY",
-    short: "Semantic retrieval · ChromaDB",
-    summary: "ChromaDB-backed personal knowledge retrieval. Converts your documents — clinical notes, Polar study findings, project context, professional background — into vector embeddings and retrieves the most relevant chunks before any prompt is constructed.",
-    sections: [
-      { name: "ChromaDB (io_chroma/)", lines: "97 chunks indexed",
-        desc: "Personal knowledge base embedded with mxbai-embed-large (512-dim vectors). Contents include: clinical context, IO project documentation, Polar ANS predictor study findings, ALMA principles, professional history. Reindexed by memory_delta.py after each session." },
-      { name: "search()", lines: "rag.py:100–180",
-        desc: "Query → embedding → cosine similarity → top-K chunks with scores and source metadata. If ChromaDB has 0 documents (uninitialized), returns ok=True with empty hits. This edge case was bug P-4 — now handled in respond_node by redirecting to finalizer_generic." },
-      { name: "reindex_chroma.py", lines: "standalone",
-        desc: "Rebuilds the ChromaDB index from /knowledge/ directory. Must be run after adding new documents. Called automatically by memory_delta.py at the end of each session to keep the index current without manual intervention." },
-    ],
-    vsLLM: "A plain LLM knows nothing about you. Every conversation starts from zero. RAG retrieves YOUR context — personal notes, wearable data, project state — and injects only what's relevant for the current query. Without RAG, IO would be a generic assistant. With RAG, it's a specialized clinical context engine."
-  },
-  {
-    id: "llm_runtime", name: "llm_runtime.py", icon: "◆", color: "#9b8ab5", badge: "ENGINE",
-    short: "LLM abstraction layer",
-    summary: "Wrapper that decouples agent logic from the specific LLM provider. Handles provider selection, token budget enforcement, retry logic, and dual-LLM semantic routing (expand vs collapse modes).",
-    sections: [
-      { name: "llm_chat()", lines: "642–700",
-        desc: "Base LLM call. Selects provider (Ollama/OpenAI/Anthropic) based on current state budget, enforces max_output_tokens, increments remote_calls counter in State, and retries on transient failures. All LLM calls in IO go through this function." },
-      { name: "llm_chat_semantic()", lines: "700–742",
-        desc: "Dual-LLM routing based on semantic mode. Expand (philosophical, emotional, exploratory) → GPT-4o. Collapse (code, action, structured output) → Claude. This specialization allows IO to use the best model for each cognitive task type." },
-      { name: "chat_dual()", lines: "742–800",
-        desc: "Parallel execution of expand + collapse. Both models receive the same prompt simultaneously; responses are merged. Used for complex queries that benefit from both expansive reasoning and precise structure." },
-    ],
-    vsLLM: "IO can switch the underlying model (Ollama → OpenAI → Anthropic → any new provider) by changing one environment variable. The agent logic — routing, RAG, ALMA, memory — remains identical. The LLM is a commodity. The orchestration is the product."
+    vsLLM: "A plain LLM receives whatever the user typed. The Context Engine receives the same input and produces an enriched_context block before any LLM sees it. The LLM's quality ceiling is determined by what it receives, not just what it knows."
   },
   {
     id: "router", name: "router.py", icon: "⌬", color: "#6b9e7a", badge: "ROUTING",
-    short: "Complexity & semantic classifier",
-    summary: "Scores query complexity (0–10) and determines local vs remote routing. Also assigns semantic mode (expand/collapse/both/local) based on linguistic patterns in the query.",
+    short: "5-priority classifier",
+    summary: "5-priority intent classifier that replaced the old needs_planner() gate. Priority order: external_action → autonomous_loop → tool_dispatch → rag_query → direct_response. The classifier runs after enriched_context is available — routing decisions can use the full context.",
     sections: [
-      { name: "decide()", lines: "router.py",
-        desc: "Computes complexity_score from query length + detected patterns: analytical, creative, multistep, multitool, delegation, synthesis. Score ≥ IO_REMOTE_COMPLEXITY_THRESHOLD (default: 6) → remote API. Score < 6 → local Ollama." },
-      { name: "Semantic mode assignment", lines: "router.py",
-        desc: "Expressive signals (emotions, philosophy, reflection, uncertainty) → expand mode (GPT-4o). Action signals (code, commands, structure, data analysis) → collapse mode (Claude). Mixed signals → both in parallel. Simple or no signals → local only." },
+      { name: "Priority 1 — external_action", lines: "router.py",
+        desc: "Detects queries that require external system interaction: GitHub API calls, portfolio git push, LinkedIn draft generation. Routes to connector.py. This was the primary unrouted category in v1 — needs_planner() gated most external action queries before they reached execution." },
+      { name: "Priority 2–4 — autonomous, tool, RAG", lines: "router.py",
+        desc: "autonomous_loop: routes to autonomous/runner.py for scheduled loop execution. tool_dispatch: routes to tool execution (20-tool registry). rag_query: routes to ChromaDB retrieval path. In v1, these three competed under a single needs_planner() gate — now they have independent priority lanes." },
+      { name: "Priority 5 — direct_response", lines: "router.py",
+        desc: "Fallback for queries that need only LLM synthesis with enriched_context. No tool call. The LLM receives the fully enriched prompt and generates directly. This path was the v1 default — now it's the fallback of last resort." },
     ],
-    vsLLM: "A plain LLM processes every query identically regardless of complexity or nature. IO routes cheap queries to free local compute and reserves API budget for complex reasoning — adapting the cognitive resource to the task, not the other way around."
+    vsLLM: "A plain LLM routes nothing — every input is processed identically. IO's 5-priority classifier ensures external actions are never buried under planner complexity, and direct responses are never confused with tool requirements."
   },
   {
-    id: "tools", name: "tools.py + tools_web.py", icon: "⌘", color: "#7a9bb5", badge: "ACTIONS",
-    short: "External capabilities registry",
-    summary: "IO's tool registry. Separates internal tools (document ingestion, system queries, time) from web tools (Tavily real-time search). Tools are called by dispatch_node — the LLM never directly invokes tools.",
+    id: "orchestrator", name: "orchestrator.py", icon: "◆", color: "#9b8ab5", badge: "AGENT",
+    short: "ReAct loop + connector_mode",
+    summary: "The orchestrator runs the ReAct (Reason + Act) loop. Receives enriched_context from the Context Engine and routing decision from the router. In connector_mode (commit 444abed), generates structured output for external actions instead of free-text responses — enabling the connector pipeline to parse and execute without LLM post-processing.",
     sections: [
-      { name: "tools.py", lines: "15KB",
-        desc: "Internal tools: document ingest (adds new chunks to ChromaDB), time_madrid (current time with timezone), system info queries. Execute deterministically — no LLM involved. Ingest is the main mechanism for expanding IO's personal knowledge base at runtime." },
-      { name: "tools_web.py", lines: "3.9KB",
-        desc: "Tavily web search with geolocation bias (Madrid). Returns title, URL, snippet, and publication date for each result. Used for current events, clinical literature search, and real-time data queries. Requires TAVILY_API_KEY." },
-      { name: "research_analysis.py", lines: "22KB",
-        desc: "Specialized research node (not just a tool). Runs 3 parallel Tavily queries (ANS post-infectious 2024-25, HRV RMSSD ME/CFS, post-Lyme wearable), loads personal Polar data, generates a comparative dashboard (personal vs literature ranges), and saves an interactive Plotly HTML." },
+      { name: "ReAct loop", lines: "orchestrator.py",
+        desc: "Reason: LLM call with enriched_context + routing decision + session history. Act: tool dispatch if tool call detected in response. Observe: tool result injected back into context. Repeat until answer or max_steps. ALMA evaluation happens after final answer is generated." },
+      { name: "connector_mode", lines: "orchestrator.py (commit 444abed)",
+        desc: "When router detects external_action, orchestrator switches to connector_mode. LLM generates structured JSON output (action_type, target, payload) instead of free text. connector.py parses this output directly — no regex extraction, no ambiguity." },
     ],
-    vsLLM: "A plain LLM is limited to its training data — knowledge frozen at a cutoff date. IO searches in real time, ingests new documents on demand, and cross-references external findings with your personal clinical data. The research node produced the ANS-PEM lag analysis dashboard from the polar-lyme-predictor study."
+    vsLLM: "A plain LLM generates text. The orchestrator generates text only as an intermediate step — the actual output is a verified action (external connector call, tool execution, or ethical-gated response). connector_mode makes external actions first-class outputs, not text parsed by downstream code."
   },
   {
-    id: "memory", name: "memory_delta.py", icon: "◉", color: "#b58a9b", badge: "PERSISTENCE",
-    short: "Cross-session state · SQLite",
-    summary: "Computes what changed during the current session and persists it. IO remembers previous conversations by loading session_history from SQLite at the start of each run — not from in-context messages that get truncated.",
+    id: "tools", name: "tools.py", icon: "⌘", color: "#7a9bb5", badge: "TOOLS",
+    short: "20-tool registry",
+    summary: "IO's tool registry. 20 tools covering: Polar wearable data access, ANS predictor, LinkedIn content, arXiv paper search, PubMed clinical literature, Obsidian note access, git operations, web search, chart generation, and system utilities. Tools are called by the orchestrator ReAct loop — never directly invoked by the LLM.",
     sections: [
-      { name: "memory_delta()", lines: "4KB",
-        desc: "Calculates the semantic delta between the current run and previous state. Writes new knowledge as individual files to knowledge/deltas/, then triggers reindex_chroma.py to update ChromaDB. Only new content is indexed — delta compression keeps the process efficient." },
-      { name: "io_state.sqlite3", lines: "2.2MB",
-        desc: "Persistent session store. All historical runs with timestamps, goals, answers, ALMA verdicts, and metadata. IO loads the last N sessions as context at startup — session_history is injected into the prompt of every finalizer in respond_node." },
+      { name: "Clinical tools", lines: "tools.py",
+        desc: "polar_data: reads Polar Grit X2 exports (HRV, RMSSD, sleep, activity). predictor: runs the ANS-based symptom prediction model on current wearable data. research_analysis: Tavily literature search + personal Polar data + statistical comparison + interactive HTML dashboard." },
+      { name: "Knowledge tools", lines: "tools.py",
+        desc: "arxiv_search: arXiv paper search with abstract retrieval. pubmed_search: PubMed clinical literature search. obsidian_read: reads Obsidian vault notes by title or tag. web_search: Tavily real-time web search with date filtering." },
+      { name: "Action tools", lines: "tools.py",
+        desc: "git_commit, git_push: git operations with supervisor gate confirmation. chart_generate: Plotly interactive HTML chart generation. linkedin_draft: formats content for LinkedIn post draft. All action tools require supervisor approval before execution." },
     ],
-    vsLLM: "Without memory, every conversation starts from zero. A plain LLM has no persistence beyond the current context window. IO persists session history in SQLite and uses delta compression to avoid re-embedding unchanged content — the knowledge base grows without repetition."
+    vsLLM: "A plain LLM knows about arXiv and PubMed from training data. IO queries them in real time, retrieves current papers, and cross-references findings with personal clinical data. The research node produced the ANS-PEM lag analysis dashboard from the polar-lyme-predictor study."
   },
   {
-    id: "providers", name: "providers/", icon: "◎", color: "#90a7a5", badge: "ABSTRACTION",
-    short: "Ollama · OpenAI · Anthropic",
-    summary: "Provider abstraction layer. All three providers implement the same base interface. IO's agent logic never calls provider APIs directly — only through llm_runtime.py, which selects the provider based on State budget and routing decision.",
+    id: "alma", name: "alma_gate.py", icon: "◍", color: "#c4855a", badge: "ETHICS",
+    short: "Per-principle evaluation + LoRA pair logging",
+    summary: "ALMA (six principles) is not a list of rules imposed on a chatbot. It is the grammar of a different kind of intelligence — defining conditions for IO's own coherence when operating in clinical contexts where ambiguity causes harm. Every evaluation logs structured reasoning pairs to training/active/alma_training.jsonl for future LoRA distillation.",
     sections: [
-      { name: "ollama_provider.py", lines: "—",
-        desc: "Local inference via Ollama. Default model: qwen3:14b. No API key. No data leaves the device. Used for all queries when IO_ALLOW_REMOTE=false, and for low-complexity queries below the routing threshold." },
-      { name: "openai_provider.py", lines: "—",
-        desc: "GPT-4o and compatible models. Used for expand semantic mode (philosophical, emotional queries) and queries scoring above complexity threshold 6. Requires OPENAI_API_KEY." },
-      { name: "anthropic_provider.py", lines: "—",
-        desc: "Claude. Used for collapse semantic mode (code generation, structured output, action planning). Also the preferred provider for ALMA rewrite when remote budget allows. Requires ANTHROPIC_API_KEY." },
-      { name: "base.py + types.py", lines: "—",
-        desc: "Abstract interface all providers implement. Defines the contract: given messages and parameters, return a response. Adding a new provider requires implementing this interface — no changes to io_agent.py." },
-    ],
-    vsLLM: "IO is model-agnostic by design. The same agent, same orchestration, same ALMA principles, same RAG — running with Ollama (free, local, private), OpenAI (cloud, capable), or Anthropic (cloud, precise). The abstraction layer makes the model a configuration choice, not an architectural one."
-  },
-  {
-    id: "alma", name: "ALMA framework", icon: "◍", color: "#c4855a", badge: "ETHICS",
-    short: "Post-generation ethical gate",
-    summary: "ALMA (six principles) is not a list of rules imposed on a chatbot. It is the grammar of a different kind of intelligence — defining conditions for IO's own coherence when operating in clinical contexts where ambiguity causes harm.",
-    sections: [
-      { name: "The 6 principles", lines: "msu/clinical_role.md",
+      { name: "The 6 principles", lines: "rules/clinical_rules.yaml",
         desc: "Care — acknowledge suffering before informing. Clarity — no ambiguity in clinical context. Limit — separate physiological data from vital life decisions. Awareness — know the boundaries of your knowledge. Pragmatism — useful over correct. Silence — knowing when not to respond is a structural property of clinical intelligence, not a human virtue." },
-      { name: "alma_check_node", lines: "io_agent.py:2046",
-        desc: "Evaluates the generated response against each of the six principles individually. Returns structured JSON with per-principle verdict, evidence citation, reasoning, and severity (high/medium/low/none). Only medium and high severity trigger rewrite — low severity is logged but not rewritten. Single LLM call (~400 tokens), robust JSON extraction." },
-      { name: "alma_rewrite_node", lines: "io_agent.py:2111",
-        desc: "Evidence-aware rewrite. Receives the exact violation — which principle, which text fragment, why it violates. Applies type-specific correction: Silencio → admit limitation directly; Límite → reformulate with correct certainty level; Cuidado → remove or reframe with balanced evidence. Rejects rewrites longer than 1.4× original (hallucination guard)." },
-      { name: "alma_training.jsonl", lines: "growing · LoRA-ready",
-        desc: "Structured reasoning pairs for LoRA fine-tuning. Each entry records: original response, rewritten response, full per-principle evaluation with evidence, severity, primary principle violated, and quality tag (accepted/rejected/passthrough). Roadmap: 300+ validated pairs → LoRA distillation → ALMA reasoning embedded in the model, not in the graph." },
+      { name: "alma_check_node", lines: "alma_gate.py",
+        desc: "Evaluates the generated response against each of the six principles individually. Returns structured JSON with per-principle verdict, evidence citation, reasoning, and severity (high/medium/low/none). Only medium and high severity trigger rewrite." },
+      { name: "LoRA pair logging", lines: "training/active/alma_training.jsonl",
+        desc: "Every ALMA evaluation logs a structured reasoning pair: original response, rewritten response, per-principle evaluation with evidence, severity, primary principle violated, quality tag. Target: 200 golden pairs → LoRA distillation → ALMA reasoning embedded in the model, not in the graph." },
     ],
-    vsLLM: "Standard LLM safety filters are trained-in constraints applied before generation. ALMA operates post-generation: the LLM produces its best answer, then ALMA evaluates it against clinical-ethical principles it was never trained on. ALMA can rewrite responses for reasons the original LLM would never flag — because ALMA's principles are specific to the clinical context IO was built for."
+    vsLLM: "Standard LLM safety filters are trained-in constraints applied before generation. ALMA operates post-generation: the LLM produces its best answer, then ALMA evaluates it against clinical-ethical principles it was never trained on. ALMA can rewrite for reasons the original LLM would never flag."
+  },
+  {
+    id: "connector", name: "connector.py", icon: "◎", color: "#90a7a5", badge: "CONNECTORS",
+    short: "Supervisor gate + GitHub + portfolio + LinkedIn",
+    summary: "The connector pipeline handles all external system interactions. Every action passes through a supervisor gate before execution — IO cannot push to GitHub or post to LinkedIn without explicit confirmation. Verified end-to-end on 2026-03-16: GitHub API + portfolio git push + LinkedIn draft.",
+    sections: [
+      { name: "Supervisor gate", lines: "connector.py",
+        desc: "All connector actions require supervisor approval. In sandbox_env.py (Cowork/CI), IO_SUPERVISOR_AUTO_APPROVE=false — actions are logged and queued. In interactive mode, the user confirms each action before execution. No external action bypasses this gate." },
+      { name: "GitHub connector", lines: "connector.py",
+        desc: "Full GitHub REST API: create issues, update files, commit, push. Used by the Career Amplifier autonomous loop to publish portfolio updates. Verified: portfolio git push via GitHub API (commit 537a697)." },
+      { name: "LinkedIn connector", lines: "connector.py",
+        desc: "LinkedIn draft generation and post scheduling. Formats orchestrator structured output into LinkedIn-compliant post format. Verified end-to-end: LinkedIn draft created from IO connector pipeline (2026-03-16)." },
+    ],
+    vsLLM: "A plain LLM can suggest a GitHub commit message. IO can open the PR. The connector pipeline is the boundary between language generation and world-state change — and every action at that boundary requires explicit authorization."
+  },
+  {
+    id: "loops", name: "autonomous/runner.py", icon: "◉", color: "#b58a9b", badge: "LOOPS",
+    short: "Clinical Monitor · Career Amplifier · LoRA Flywheel",
+    summary: "Three autonomous loops that run on schedule without user prompt. Each loop uses the full IO pipeline — Context Engine, router, orchestrator, tools, ALMA — and produces real external actions. Not demos. Working loops.",
+    sections: [
+      { name: "Clinical Monitor", lines: "autonomous/clinical_monitor.py",
+        desc: "Scheduled loop. Reads Polar wearable data, runs the ANS predictor, evaluates against clinical rules, generates a symptom forecast. If risk threshold exceeded, queues a clinical alert. All evaluations pass through ALMA before output." },
+      { name: "Career Amplifier", lines: "autonomous/career_amplifier.py",
+        desc: "Scheduled loop. Monitors arXiv and PubMed for relevant publications, cross-references with personal research context from ChromaDB, drafts LinkedIn content, pushes portfolio updates via GitHub connector. Runs without user prompt — produces real posts and commits." },
+      { name: "LoRA Flywheel", lines: "autonomous/lora_flywheel.py",
+        desc: "Monitors training/active/alma_training.jsonl for new reasoning pairs. When target count is reached (200 golden pairs), triggers LoRA fine-tuning pipeline. Closes the loop: IO generates training data, trains on its own corrections, improves without retraining from scratch." },
+    ],
+    vsLLM: "A plain LLM waits to be asked. IO's autonomous loops monitor, evaluate, and act on schedule. The distinction is not capability — it's architecture. Loops are the difference between a tool you use and a system that works."
   },
 ];
 
 const flowNodes = [
-  { label: "User input", color: "#6b8a88" }, { label: "→" },
-  { label: "dispatch_node", color: "#90a7a5", id: "io_agent" }, { label: "→" },
-  { label: "tool / RAG / web", color: "#c4855a", id: "tools" }, { label: "→" },
-  { label: "respond_node", color: "#9b8ab5", id: "io_agent" }, { label: "→" },
-  { label: "LLM call", color: "#7a9bb5", id: "llm_runtime" }, { label: "→" },
-  { label: "ALMA check", color: "#c4855a", id: "alma" }, { label: "→" },
-  { label: "Output", color: "#6b9e7a" },
+  { label: "goal", color: "#6b8a88" }, { label: "→" },
+  { label: "context_engine", color: "#90a7a5", id: "context_engine" }, { label: "→" },
+  { label: "router: 5-priority", color: "#6b9e7a", id: "router" }, { label: "→" },
+  { label: "orchestrator: ReAct", color: "#9b8ab5", id: "orchestrator" }, { label: "→" },
+  { label: "tool_execute: 20 tools", color: "#7a9bb5", id: "tools" }, { label: "→" },
+  { label: "respond", color: "#6b8a88" }, { label: "→" },
+  { label: "alma_gate", color: "#c4855a", id: "alma" }, { label: "→" },
+  { label: "connector", color: "#90a7a5", id: "connector" }, { label: "→" },
+  { label: "END", color: "#6b9e7a" },
 ];
 
 const issues = [
   {
-    id: "P-1", title: "alma_check bypasses remote call budget",
-    desc: "alma_check_node called chat_messages() directly without going through llm_chat() or _effective_mode_for_budget(). With IO_MAX_REMOTE_CALLS=2, the finalizer used 1 call, then ALMA check + double-check consumed 1–2 more — silently exceeding the budget without any counter update or error.",
-    fix: "Fixed in 33aab81: budget guard at start of alma_check_node. If _effective_mode_for_budget returns local_only → skip ALMA LLM check entirely, return {alma_violation: False}."
+    id: "I-1", title: "ChromaDB → LanceDB migration pending",
+    desc: "ChromaDB works but LanceDB offers better performance for the query patterns IO uses (dense vector + metadata filter). Migration is a data-layer swap — the Context Engine interface is already abstracted, so no orchestration changes required.",
+    fix: "Planned. ChromaDB remains production until LanceDB migration is validated on the full 811-chunk index."
   },
   {
-    id: "P-3", title: "session_history absent in web / research finalizers",
-    desc: "session_history was injected only in finalizer_rag and finalizer_generic. finalizer_web (~line 877), finalizer_research (~line 917), and finalizer_web_rag (~line 956) did not include _format_session_context() — IO had no memory of previous turns when answering web or clinical research queries.",
-    fix: "Fixed in 33aab81: _session_block added to all 3 missing finalizers. Now session_history is injected in every LLM-based finalizer."
+    id: "I-2", title: "mxbai-embed-large → sentence-transformers migration pending",
+    desc: "Embedding model is being migrated from mxbai-embed-large to sentence-transformers (all-MiniLM or similar). The change affects RAG retrieval quality and speed. Current production index was built with mxbai — migration requires full reindex.",
+    fix: "In progress. New model selected, reindex on staging. Requires benchmark comparison before production cutover."
   },
   {
-    id: "P-4", title: "RAG 0 hits → silent hallucination path",
-    desc: "If ChromaDB returned 0 hits, rag_search() returned ok=True with empty hits. respond_node passed the string '(sin datos relevantes en el knowledge base)' to the LLM as context — which could then generate plausible-sounding but entirely invented information with no warning or error.",
-    fix: "Fixed in 33aab81: if hits == [] and tool == rag_search → redirect to finalizer_generic instead of constructing an empty RAG prompt."
+    id: "I-3", title: "rule_engine.py stub — clinical rules loaded but not applied to routing",
+    desc: "Clinical rules from rules/clinical_rules.yaml are loaded and injected into enriched_context by the Context Engine. However, rule_engine.py (which should evaluate rules against routing decisions) is currently a stub — rules inform the LLM prompt but do not gate routing.",
+    fix: "Planned. rule_engine.py needs to implement conditional routing based on active clinical rules before v2 is considered feature-complete."
+  },
+  {
+    id: "I-4", title: "Dual-mode orchestration in progress",
+    desc: "Orchestrator expand/collapse temperature modes (expand: temp=0.4 for exploratory, collapse: temp=0.2 for structured output) are designed and partially implemented. connector_mode uses collapse by default. Full dual-mode routing based on query classification is not yet wired end-to-end.",
+    fix: "Active development. connector_mode (collapse) verified. Expand mode pending integration with router classification output."
   },
 ];
 
 const roadmap = [
-  { ver: "v1", title: "N=1 predictor · ANS lag analysis",
-    desc: "Logistic regression on 34 diary+wearable pairs. LOO-CV. AUC=0.656, sensitivity=81%. PEM mechanism identified: ANS elevation at t-2 predicts symptomatic crash at t-0. r=−0.679 (n=8) was a positional .shift(2) bug — corrected to r=+0.431 (n=34, p=0.016) using date-based lag. Published.",
+  { ver: "✅", title: "7-node LangGraph — context_engine → router → orchestrator → respond → alma_gate → connector",
+    desc: "Full graph operational. All nodes wired with conditional edges. State flows correctly through the pipeline.",
     status: "done" },
-  { ver: "v2", title: "Core graph + ALMA + RAG · 32/32 benchmarks",
-    desc: "LangGraph 10-node graph. ChromaDB 811 chunks. Hybrid routing: keyword dispatch + LLM planner for complex queries. Retrieval loop with self-assessment (max 4 iterations + stagnation guard). ALMA genuine reasoning: per-principle evaluation with evidence citation, severity gate, LoRA-ready training pairs. research_analysis_node wired: Tavily + Polar CSV + statistical dashboard. 32/32 regression tests passing.",
+  { ver: "✅", title: "Context Engine L0 — profile + RAG + clinical rules before every LLM call",
+    desc: "Deterministic. No LLM call. ~200–400ms. enriched_context assembled and injected into state before router sees the input.",
     status: "done" },
-  { ver: "v3", title: "Connectors — Gmail · GitHub · Supervisor gate",
-    desc: "HTTP supervisor endpoints replacing CLI input() gate. Gmail connector for draft and send. GitHub connector with full REST API. External action pipeline fully operational outside terminal context.",
+  { ver: "✅", title: "ALMA gate — ethical filter + LoRA pair logging",
+    desc: "Per-principle evaluation, severity gate, evidence-aware rewrite, training pairs logged to training/active/alma_training.jsonl.",
+    status: "done" },
+  { ver: "✅", title: "5-priority router — external_action first",
+    desc: "Replaces needs_planner() gate. Priority order: external_action → autonomous_loop → tool_dispatch → rag_query → direct_response.",
+    status: "done" },
+  { ver: "✅", title: "Connector pipeline — supervisor gate + GitHub API + portfolio git push + LinkedIn draft",
+    desc: "Verified end-to-end 2026-03-16. All three connectors operational with supervisor gate.",
+    status: "done" },
+  { ver: "✅", title: "Orchestrator connector_mode — structured output for external actions",
+    desc: "commit 444abed. LLM generates structured JSON for external actions — no regex extraction downstream.",
+    status: "done" },
+  { ver: "✅", title: "20-tool registry — Polar, predictor, LinkedIn, arXiv, PubMed, Obsidian, git, web, charts",
+    desc: "All 20 tools registered and smoke-tested (17/17 tools OK in test suite).",
+    status: "done" },
+  { ver: "✅", title: "Three autonomous loops — Clinical Monitor, Career Amplifier, LoRA Flywheel",
+    desc: "All three loops operational. Career Amplifier produces real LinkedIn drafts and portfolio commits.",
+    status: "done" },
+  { ver: "✅", title: "ChromaDB RAG — two collections, cross-encoder reranking",
+    desc: "811 chunks indexed. Cross-encoder reranking on retrieved candidates. Two collections: personal knowledge + clinical literature.",
+    status: "done" },
+  { ver: "✅", title: "Sandbox environment — sandbox_env.py for Cowork/CI",
+    desc: "IO_SUPERVISOR_AUTO_APPROVE=false in sandbox. All external actions queued, not auto-executed.",
+    status: "done" },
+  { ver: "🔄", title: "Dual-mode orchestration — expand (temp=0.4) / collapse (temp=0.2)",
+    desc: "connector_mode uses collapse. Full dual-mode routing based on query classification pending.",
+    status: "active" },
+  { ver: "🔄", title: "Memory delta auto-ingest — post-run indexing",
+    desc: "Manual reindex currently required after session. Auto-ingest pipeline in progress.",
+    status: "active" },
+  { ver: "📅", title: "LoRA fine-tuning on ALMA pairs — target: 200 golden",
+    desc: "Logging pairs now. Fine-tuning pipeline staged. ALMA reasoning moves from graph node to model property.",
     status: "next" },
-  { ver: "v4", title: "Kubios HRV + non-linear metrics",
-    desc: "Add DFA α1, SD1/SD2, LF/HF from Kubios Pro export to the predictor pipeline. These non-linear metrics are more sensitive biomarkers than Polar RMSSD for chronic fatigue patterns. Expected to increase AUC and reduce prediction window variance.",
+  { ver: "📅", title: "Polar real-time watcher — file watcher on GDPR export folder",
+    desc: "Auto-ingest new Polar exports as they arrive. Eliminates manual data pipeline step.",
+    status: "next" },
+  { ver: "📅", title: "Async tool execution — parallel tool calls in one dispatch cycle",
+    desc: "Sequential tool execution currently. Parallel dispatch would reduce latency for multi-tool queries.",
     status: "future" },
-  { ver: "v5", title: "Multi-case replication · n=5–10",
-    desc: "Same 87-day protocol applied to patients with post-infectious fatigue, fibromyalgia, or autonomic dysfunction. Converts N=1 study to pilot multi-case. Publishable in clinical AI venues. Each case generates ~34 pairs for the predictor and ~30 ALMA training examples.",
-    status: "future" },
-  { ver: "v6", title: "ALMA LoRA distillation",
-    desc: "300+ validated pairs in alma_training.jsonl → LoRA fine-tune on qwen3:14b or equivalent → ALMA moves from active LLM call (~10 tokens per response) to passive embedded reasoning (0 tokens). ALMA becomes a property of the model, not of the graph.",
+  { ver: "📅", title: "A2A delegation — multi-agent task splitting",
+    desc: "Single-agent currently. A2A delegation would allow IO to spawn sub-agents for parallel research tasks.",
     status: "future" },
 ];
 
@@ -1125,7 +1153,6 @@ function renderRoadmap() {
   const pillLabel = { done:'done', active:'active', next:'next', future:'planned' };
   document.getElementById('roadmap').innerHTML = roadmap.map(item => `
     <div class="roadmap-row">
-      <div class="roadmap-ver">${item.ver}</div>
       <div class="roadmap-body">
         <div class="roadmap-title">${item.title}</div>
         <div class="roadmap-desc">${item.desc}</div>

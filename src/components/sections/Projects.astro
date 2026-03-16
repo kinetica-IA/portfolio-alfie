@@ -61,9 +61,9 @@
         <span class="badge-dot"></span>In progress · Architecture public
       </div>
       <h3>IO · Local-First Clinical AI Agent</h3>
-      <p class="project-sub">Autonomous Orchestration · RAG · ALMA Framework</p>
-      <p>Autonomous AI agent running locally on Mac Mini M4. Hybrid routing engine: deterministic keyword dispatch for simple queries, LLM planner for complex multi-tool tasks. Retrieval loop with self-assessment — evaluates context sufficiency before synthesis, retries with reformulated queries when needed. ALMA performs per-principle ethical reasoning (Care, Clarity, Limit, Awareness, Pragmatism, Silence) with evidence citation — not tone filtering. Includes a clinical research pipeline: Tavily literature search + personal Polar data + statistical comparison + interactive HTML dashboard.</p>
-      <p class="stack"><em>LangGraph · Ollama · qwen3:14b · ChromaDB · Tavily · scipy · plotly · Python</em></p>
+      <p class="project-sub">Context Engine · LangGraph · ALMA Framework</p>
+      <p>IO began as a monolithic agent (io_agent.py, 2400 lines) with keyword routing and Ollama for local inference. It now runs as a deterministic 7-node LangGraph graph on branch phase1/react-graph (commit 835b892). The core architectural shift: Ollama eliminated, Anthropic Claude as sole LLM provider, and a dedicated Context Engine (L0) that enriches every prompt with personal RAG + clinical rules before any LLM call. The model is interchangeable. IO is not.<br><br>Key metrics: 20-tool registry · 3 autonomous loops · ALMA ethical gate with LoRA pair logging · Connector pipeline verified end-to-end (GitHub API + portfolio git push + LinkedIn draft, 2026-03-16).</p>
+      <p class="stack"><em>LangGraph · Anthropic Claude · ChromaDB · Python 3.13 · FastAPI · sentence-transformers · uv</em></p>
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor"
          target="_blank" class="project-btn">
         See clinical use case →
