@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>ANS as Lyme Biomarker · Kinetica AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── DESIGN TOKENS — exact match kineticaai.com ── */
+  :root {
+    --bg:           #f0f9f9;
+    --surface:      #ffffff;
+    --surface2:     #e8f4f4;
+    --accent:       #90a7a5;
+    --accent-dark:  #6b8a88;
+    --accent-warm:  #c4855a;
+    --accent-green: #6b9e7a;
+    --accent-green2:#3d7a5c;
+    --text:         #1a2a28;
+    --text-muted:   #4a6a66;
+    --text-dim:     #90a7a5;
+    --border:       rgba(144,167,165,0.18);
+    --border-med:   rgba(144,167,165,0.32);
+    --shadow:       0 4px 24px rgba(144,167,165,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HRV CANVAS BG ── */
+  #hrv-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── GEO BACKGROUND ── */
+  .background-geo {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+  }
+
+  /* ── BACK LINK ── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s, gap 0.2s;
+    font-family: 'DM Mono', monospace;
+  }
+  .back-link:hover { opacity: 1; gap: 0.75rem; }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pulse-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px rgba(107,158,122,0.7);
+    animation: pulse-glow 2.5s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 4px rgba(107,158,122,0.5); }
+    50%      { box-shadow: 0 0 14px rgba(107,158,122,0.9); }
+  }
+
+  .page-title {
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title em { font-style: italic; color: var(--accent); }
+  .page-title strong { font-weight: 700; }
+
+  .author-line {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+
+  .dataset-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    border: 1px solid var(--border-med);
+    background: var(--surface);
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* ── SECTION EYEBROW ── */
+  .section-eyebrow {
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    opacity: 0.65;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .stat-item {
+    flex: 1;
+    background: var(--surface);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    min-width: 100px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .stat-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--text-dim);
+    opacity: 0.7;
+    line-height: 1.4;
+  }
+
+  /* ── DIVIDER LINE ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* ── ARTICLE SECTION ── */
+  .article-section {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .article-section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .article-section p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.85;
+    margin-bottom: 1rem;
+  }
+  .article-section p:last-child { margin-bottom: 0; }
+  .article-section strong { color: var(--text); font-weight: 500; }
+
+  /* ── PULLQUOTE ── */
+  .pullquote {
+    border-left: 3px solid var(--accent);
+    padding: 1.25rem 1.75rem;
+    margin: 2.5rem 0;
+    background: var(--surface);
+    border-radius: 0 8px 8px 0;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .pullquote p {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── REFERENCES ── */
+  .references {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .references .section-eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .ref-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .ref-list li {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .ref-list .ref-num {
+    color: var(--accent-warm);
+    font-weight: 500;
+    min-width: 28px;
+    display: inline-block;
+  }
+
+  .ref-list .ref-star {
+    color: var(--accent-green);
+    font-weight: 500;
+    min-width: 28px;
+    display: inline-block;
+  }
+
+  /* ── FOOTER BUTTONS ── */
+  .article-footer {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, gap 0.2s;
+  }
+
+  .btn-secondary {
+    color: var(--accent);
+    border: 1px solid var(--border-med);
+    background: var(--surface);
+  }
+  .btn-secondary:hover {
+    background: rgba(144,167,165,0.08);
+    border-color: var(--accent);
+    gap: 0.75rem;
+  }
+
+  .btn-primary {
+    color: var(--accent-green2);
+    border: 1px solid rgba(107,158,122,0.35);
+    background: rgba(107,158,122,0.06);
+  }
+  .btn-primary:hover {
+    background: rgba(107,158,122,0.12);
+    border-color: var(--accent-green);
+    gap: 0.75rem;
+  }
+
+  /* ── PAGE FOOTER ── */
+  .page-footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    font-size: 0.62rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer-link {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s, letter-spacing 0.2s;
+  }
+  .footer-link:hover { opacity: 0.65; letter-spacing: 0.12em; }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent-dark);
+    background: var(--surface2);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .page-wrap { padding: 2rem 1.25rem 4rem; }
+    .stats-row { flex-direction: column; gap: 0; }
+    .stat-item { min-width: auto; }
+    .article-footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HRV CANVAS — same as landing page -->
+<canvas id="hrv-bg" aria-hidden="true"></canvas>
+
+<!-- GEO SHAPES — same as landing page -->
+<svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="200" y="80" width="320" height="320" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.06"/>
+  <rect x="700" y="60" width="280" height="280" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="1080" y="130" width="200" height="200" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="50" y="400" width="160" height="160" rx="30" fill="none" stroke="#c4855a" stroke-width="1" opacity="0.04"/>
+</svg>
+
+<div class="page-wrap">
+
+  <!-- BACK LINK -->
+  <a href="https://www.kineticaai.com" class="back-link">← kineticaai.com</a>
+
+  <!-- HERO -->
+  <div class="page-hero reveal">
+    <div class="eyebrow">
+      <span class="pulse-dot"></span>
+      Kinetica AI · Clinical Field Observation
+    </div>
+    <h1 class="page-title">
+      Lyme disease hides.<br>
+      <em>Your immune system lies.</em><br>
+      But your nervous system doesn't.
+    </h1>
+    <p class="author-line">
+      Alfonso Navarro — Osteopath · Biomechanics specialist · Clinical AI · kineticaai.com
+    </p>
+    <div class="dataset-badge">
+      Original dataset: 87-day Polar Grit X2 · Kinetica AI, 2024
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <span class="stat-val">49%</span>
+      <span class="stat-label">Days with ANS suppression</span>
+      <span class="stat-source">Navarro, Kinetica AI dataset · n=87 days</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">24–48h</span>
+      <span class="stat-label">Predictive window before PEM flare</span>
+      <span class="stat-source">Navarro 2024 · Tensen et al. 2025</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">ρ = .431</span>
+      <span class="stat-label">ANS → PEM correlation</span>
+      <span class="stat-source">Spearman p=.016 · AUC=0.656 · sensitivity 81%</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="article-section reveal">
+    <h2>The diagnostic problem</h2>
+    <p>
+      One of the most frustrating realities in Lyme disease management is this: serology —
+      the standard diagnostic tool — can oscillate dramatically in the same patient. Positive
+      one month. Negative the next. Borderline the month after.
+    </p>
+    <p>
+      This isn't lab error. It's biology. <em>Borrelia burgdorferi</em> deploys multiple
+      simultaneous immune evasion strategies: antigenic variation at the VlsE locus, surface
+      protein downregulation during chronic phases, complement inhibition via CRASPs, and
+      intracellular persistence in non-phagocytic cells without triggering cytopathic
+      effects. <sup>[1,2]</sup> The CDC acknowledges that serologic assays can remain falsely
+      negative for 4–6 weeks post-infection, and that antibody titers cannot confirm
+      cure. <sup>[3]</sup>
+    </p>
+  </div>
+
+  <!-- PULLQUOTE 1 -->
+  <div class="pullquote reveal">
+    <p>"What if the answer isn't in the blood — but in the heartbeat?"</p>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="article-section reveal">
+    <h2>The ANS as continuous biomarker</h2>
+    <p>
+      The autonomic nervous system doesn't negotiate with pathogens. It responds to them —
+      continuously, measurably, and before symptoms peak.
+    </p>
+    <p>
+      From my own 87-day longitudinal dataset (Polar Grit X2 + Kubios HRV, Kinetica AI, 2024):
+      ANS suppression was present on approximately <strong>49% of recorded days</strong>, with
+      nocturnal RMSSD values clustering in ranges consistent with post-infectious autonomic
+      dysregulation described in ME/CFS and PAIS literature. <sup>[4,5]</sup> ANS status
+      predicted Post-Exertional Malaise 48 hours ahead (<strong>Spearman ρ=+0.431, p=.016,
+      AUC=0.656, sensitivity 81%</strong>).
+    </p>
+    <p>
+      These findings align with a 2025 medRxiv preprint (Tensen et al., n=127 Long COVID
+      patients) demonstrating that wearable HRV monitoring identifies autonomic dysfunction
+      and remains abnormal for 24 hours post-exertion — corroborating the biological
+      plausibility of continuous ANS tracking as an early-warning system in post-acute
+      infectious conditions. <sup>[6]</sup> A systematic meta-analysis confirms significantly
+      reduced RMSSD in ME/CFS versus controls (SMD −0.37, p=.02). <sup>[5]</sup>
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 3 -->
+  <div class="article-section reveal">
+    <h2>The clinical implication</h2>
+    <p>
+      When serology oscillates, continuous HRV monitoring provides the temporal correlation
+      that clarifies the picture. A drop in nocturnal RMSSD aligned with a symptomatic
+      flare — replicated across weeks — is biological signal, not noise.
+    </p>
+    <p>
+      This doesn't replace diagnosis. It informs it.
+    </p>
+    <p>
+      For a disease that hides this well, we need tools that watch continuously. Not tools
+      that take a single photograph and hope the patient was standing still.
+    </p>
+  </div>
+
+  <!-- PULLQUOTE FINAL -->
+  <div class="pullquote reveal">
+    <p>"The nervous system has been tracking Lyme all along. We just weren't listening."</p>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="references reveal">
+    <div class="section-eyebrow">References</div>
+    <ul class="ref-list">
+      <li>
+        <span class="ref-num">[1]</span>
+        Embers et al. / Rudenko et al. — <em>Frontiers in Microbiology</em>, 2021.
+        Immune evasion mechanisms of <em>B. burgdorferi</em>.
+      </li>
+      <li>
+        <span class="ref-num">[2]</span>
+        Zhang et al. — <em>J Exp Med</em>, 2002.
+        OspC downregulation as mechanism for spirochetal persistence.
+      </li>
+      <li>
+        <span class="ref-num">[3]</span>
+        CDC — Laboratory Diagnosis of Lyme Disease, 2024.
+      </li>
+      <li>
+        <span class="ref-num">[4]</span>
+        Escorihuela et al. — <em>J Translational Medicine</em>, 2020.
+        HRV as biomarker for fatigue severity in CFS/ME.
+      </li>
+      <li>
+        <span class="ref-num">[5]</span>
+        Joustra et al. — <em>Medicine</em>, 2019.
+        Meta-analysis: reduced RMSSD in ME/CFS (SMD −0.37, p=.02).
+      </li>
+      <li>
+        <span class="ref-num">[6]</span>
+        Tensen et al. — <em>medRxiv preprint</em>, March 2025.
+        Continuous wearable HRV in Long COVID (n=127).
+      </li>
+      <li>
+        <span class="ref-star">[★]</span>
+        Navarro, A. — Kinetica AI longitudinal dataset, 2024.
+        87-day Polar Grit X2 + DIARY_v2. ANS predicts PEM 48h ahead:
+        ρ=+0.431, p=.016, AUC=0.656, sensitivity 81%.
+        github.com/kinetica-IA/polar-lyme-predictor
+      </li>
+    </ul>
+  </div>
+
+  <!-- FOOTER BUTTONS -->
+  <div class="article-footer reveal">
+    <a href="https://www.kineticaai.com" class="btn btn-secondary">← Back to kineticaai.com</a>
+    <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="btn btn-primary">View dataset on GitHub →</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer reveal">
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
+    <div class="footer-links">
+      <a href="/io-architecture.html" class="footer-link">IO Architecture →</a>
+      <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" class="footer-link">LinkedIn →</a>
+      <a href="https://www.kineticaai.com" class="footer-link">kineticaai.com →</a>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+/* ── HRV CANVAS — exact replica of landing page script ── */
+const c = document.getElementById('hrv-bg');
+if (c) {
+  const ctx = c.getContext('2d');
+  let t = 0;
+  const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+  const draw = () => {
+    ctx.clearRect(0, 0, c.width, c.height);
+    [[0.05, 0.38], [0.03, 0.52], [0.018, 0.65]].forEach(([alpha, yFrac]) => {
+      const y = c.height * yFrac;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(144,167,165,${alpha})`;
+      ctx.lineWidth = 1.2;
+      for (let x = 0; x <= c.width; x += 3) {
+        const spike = Math.exp(-Math.pow(x % 140 - 70, 2) / 100) * 35;
+        const wave  = Math.sin(x * 0.012 + t) * 12;
+        const py    = y - spike - wave;
+        x === 0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py);
+      }
+      ctx.stroke();
+    });
+    // scan line
+    const sx = (t * 55) % (c.width + 160) - 80;
+    const grad = ctx.createLinearGradient(sx - 60, 0, sx + 20, 0);
+    grad.addColorStop(0,   'rgba(144,167,165,0)');
+    grad.addColorStop(0.7, 'rgba(144,167,165,0.07)');
+    grad.addColorStop(1,   'rgba(144,167,165,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(sx - 60, 0, 80, c.height);
+    t += 0.007;
+    requestAnimationFrame(draw);
+  };
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+}
+
+/* ── SCROLL REVEAL ── */
+function setupReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        const delay = Number(el.target.dataset.delay) || 0;
+        setTimeout(() => el.target.classList.add('visible'), delay);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    if (!el.dataset.delay) el.dataset.delay = String(i * 60);
+    obs.observe(el);
+  });
+}
+
+setupReveal();
+</script>
+</body>
+</html>
