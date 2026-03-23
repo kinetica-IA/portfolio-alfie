@@ -2559,84 +2559,159 @@
     }
   ],
   "finding": {
-    "spearman_rho": 0.431,
-    "p_value": 0.011,
-    "auc": 0.6562,
-    "sensitivity_pct": 81.2,
+    "spearman_rho": 0.553,
+    "p_value": 0.0007,
+    "auc": 0.7684,
+    "sensitivity_pct": 84.2,
     "n_pairs": 34,
     "n_diary": 39,
-    "description": "Nocturnal ANS predicts PEM 48h ahead"
+    "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
   },
   "predictor": {
+    "model_version": "v2",
     "n_diary": 39,
     "n_training": 34,
-    "n_positive": 16,
-    "n_negative": 18,
-    "ans_lag2_rho": 0.431,
-    "ans_lag2_p": 0.011,
+    "n_positive": 19,
+    "n_negative": 15,
+    "threshold": 6,
+    "ans_lag2_rho": 0.553,
+    "ans_lag2_p": 0.0007,
     "ans_lag2_n": 34,
-    "hrv_lag2_rho": 0.232,
-    "hrv_lag2_p": 0.1858,
-    "auc": 0.6562,
-    "sensitivity": 0.8125,
-    "specificity": 0.6667,
-    "accuracy": 0.7353,
-    "tp": 13,
-    "fp": 6,
-    "tn": 12,
+    "hrv_lag2_rho": 0.397,
+    "hrv_lag2_p": 0.0202,
+    "auc": 0.7684,
+    "sensitivity": 0.8421,
+    "specificity": 0.7333,
+    "accuracy": 0.7941,
+    "tp": 16,
+    "fp": 4,
+    "tn": 11,
     "fn": 3,
+    "features": [
+      "ans_t2",
+      "hrv_t2",
+      "rec_sublevel_t1",
+      "wake_t0",
+      "zlp"
+    ],
     "coefficients": {
-      "ans_t2": 0.598,
-      "hrv_t2": -0.1089,
-      "rec_t1": 0.5394,
-      "zlp": 0.2675
+      "ans_t2": 0.7542,
+      "hrv_t2": 0.2478,
+      "rec_sublevel_t1": -0.0131,
+      "wake_t0": 0.5313,
+      "zlp": 0.5267
     },
+    "imputed_rec_med": 44.0,
+    "imputed_wake_med": 30.0,
     "lag_analysis": {
       "ans_status": {
         "0": {
-          "rho": -0.2,
-          "p": 0.2639,
+          "rho": -0.142,
+          "p": 0.4303,
           "n": 33
         },
         "1": {
-          "rho": 0.006,
-          "p": 0.9723,
+          "rho": 0.031,
+          "p": 0.864,
           "n": 34
         },
         "2": {
-          "rho": 0.431,
-          "p": 0.011,
+          "rho": 0.553,
+          "p": 0.0007,
           "n": 34
         },
         "3": {
-          "rho": 0.077,
-          "p": 0.666,
+          "rho": -0.084,
+          "p": 0.6358,
           "n": 34
         }
       },
       "hrv_rmssd_night": {
         "0": {
-          "rho": -0.3,
-          "p": 0.0844,
+          "rho": -0.348,
+          "p": 0.0439,
           "n": 34
         },
         "1": {
-          "rho": -0.073,
-          "p": 0.6805,
+          "rho": -0.012,
+          "p": 0.9454,
           "n": 34
         },
         "2": {
-          "rho": 0.232,
-          "p": 0.1858,
+          "rho": 0.397,
+          "p": 0.0202,
           "n": 34
         },
         "3": {
-          "rho": 0.042,
-          "p": 0.8152,
+          "rho": -0.075,
+          "p": 0.6721,
+          "n": 34
+        }
+      },
+      "recovery_sublevel": {
+        "0": {
+          "rho": 0.142,
+          "p": 0.4314,
+          "n": 33
+        },
+        "1": {
+          "rho": -0.088,
+          "p": 0.6192,
+          "n": 34
+        },
+        "2": {
+          "rho": -0.308,
+          "p": 0.0762,
+          "n": 34
+        },
+        "3": {
+          "rho": 0.057,
+          "p": 0.7485,
+          "n": 34
+        }
+      },
+      "sleep_wake_min": {
+        "0": {
+          "rho": 0.311,
+          "p": 0.0732,
+          "n": 34
+        },
+        "1": {
+          "rho": -0.104,
+          "p": 0.5597,
+          "n": 34
+        },
+        "2": {
+          "rho": -0.278,
+          "p": 0.1115,
+          "n": 34
+        }
+      },
+      "sleep_interruptions": {
+        "0": {
+          "rho": 0.218,
+          "p": 0.2008,
+          "n": 36
+        },
+        "1": {
+          "rho": -0.03,
+          "p": 0.8626,
+          "n": 36
+        },
+        "2": {
+          "rho": -0.267,
+          "p": 0.1156,
+          "n": 36
+        }
+      },
+      "hrv_rri_mean_ms": {
+        "2": {
+          "rho": 0.38,
+          "p": 0.0265,
           "n": 34
         }
       }
     },
-    "generated": "2026-03-23 15:10"
+    "generated": "2026-03-23 16:47"
   }
 }
