@@ -51,18 +51,23 @@ def api_get(client: httpx.Client, path: str, params: dict | None = None):
 def fetch_nightly_recharge(client: httpx.Client, day: str) -> dict:
     """
     GET /v3/users/nightly-recharge/{date}
-    Returns ans_charge (1-100), hrv_avg_ms, beat_to_beat_avg_ms, heart_rate_avg.
+    Returns hrv_avg_ms, beat_to_beat_avg_ms, ans_charge (1-100), score.
+
+    Note: ans_charge from the API corresponds to recovery_sublevel in the
+    Polar CSV export. Both are stored as recovery_sublevel for consistency.
+    ans_status (Kubios-derived continuous deviation score) is NOT available
+    from the API; it must come from periodic Polar CSV / Kubios exports.
     """
     nr = api_get(client, f"/users/nightly-recharge/{day}")
     if not nr:
         return {}
     return {
-        "hrv_rmssd_night":    nr.get("hrv_avg_ms"),
-        "hrv_rri_mean_ms":    nr.get("beat_to_beat_avg_ms"),
-        "ans_charge":         nr.get("ans_charge"),      # 1-100 scale
-        "ans_score":          nr.get("score"),
+        "hrv_rmssd_night":     nr.get("hrv_avg_ms"),
+        "hrv_rri_mean_ms":     nr.get("beat_to_beat_avg_ms"),
+        "recovery_sublevel":   nr.get("ans_charge"),   # 1-100, matches CSV column name
+        "recovery_indicator":  nr.get("score"),        # 1-5 recovery score
         "recovery_heart_rate": nr.get("heart_rate_avg"),
-        "breathing_rate":     nr.get("breathing_rate"),
+        "breathing_rate":      nr.get("breathing_rate"),
     }
 
 

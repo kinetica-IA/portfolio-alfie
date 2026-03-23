@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 """
-retrain_predictor.py — Reentrenar predictor y actualizar polar_live.json
-========================================================================
-Lee:
-  - data/diary_live.csv          (síntomas, en el repo del portfolio)
-  - public/data/polar_live.json  (serie Polar, actualizada nocturnamente)
+retrain_predictor.py — Retrain predictor and update polar_live.json
+====================================================================
+Reads:
+  - data/diary_live.csv          (symptom diary, lives in portfolio repo)
+  - public/data/polar_live.json  (biometric series, updated nightly)
 
-Escribe:
-  - public/data/polar_live.json  (añade / actualiza bloque "predictor")
+Writes:
+  - public/data/polar_live.json  (updates "predictor" and "finding" blocks)
 
-Ejecutado por el GitHub Action polar-retrain.yml cada vez que
-se hace push de data/diary_live.csv.
+Triggered by GitHub Action polar-retrain.yml on every push to diary_live.csv.
+
+Model v2 features (LOO-CV Logistic Regression, threshold sev ≥ 6):
+  ans_t2          — ANS status 2 days before symptoms (primary predictor)
+  hrv_t2          — Nocturnal RMSSD 2 days before
+  rec_sublevel_t1 — Recovery sublevel (ANS charge 1–93) 1 day before
+  wake_t0         — Sleep fragmentation (min awake) same night
+  zlp             — Zolpidem (confound control)
 """
 
 import csv
@@ -31,11 +37,11 @@ try:
     HAS_ML = True
 except ImportError:
     HAS_ML = False
-    print("WARN: numpy/sklearn/scipy not found — using cached metrics only.", file=sys.stderr)
+    print("WARN: numpy/sklearn/scipy not found.", file=sys.stderr)
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-DIARY_CSV  = Path("data/diary_live.csv")
-LIVE_JSON  = Path("public/data/polar_live.json")
+DIARY_CSV = Path("data/diary_live.csv")
+LIVE_JSON = Path("public/data/polar_live.json")
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -47,7 +53,6 @@ def _f(v):
 
 
 def load_diary() -> list[dict]:
-    """Load diary_live.csv as list of dicts."""
     if not DIARY_CSV.exists():
         print(f"ERROR: {DIARY_CSV} not found", file=sys.stderr)
         return []
@@ -57,201 +62,212 @@ def load_diary() -> list[dict]:
             sev = _f(r.get("severidad_global"))
             if sev is not None:
                 rows.append({
-                    "date":      r["date"],
-                    "severidad": sev,
-                    "fatiga":    _f(r.get("fatiga")),
-                    "pem":       _f(r.get("pem")),
-                    "niebla":    _f(r.get("niebla_mental")),
-                    "autonomica":_f(r.get("disfuncion_autonomica")),
-                    "dolor":     _f(r.get("dolor")),
-                    "zolpidem":  _f(r.get("zolpidem")) or 0.0,
+                    "date":    r["date"],
+                    "sev":     sev,
+                    "pem":     _f(r.get("pem")),
+                    "fatiga":  _f(r.get("fatiga")),
+                    "zolpidem": _f(r.get("zolpidem")) or 0.0,
                 })
     return sorted(rows, key=lambda r: r["date"])
 
 
-def load_polar_series() -> dict:
-    """Load polar series as {date: row} from polar_live.json."""
+def load_polar() -> dict:
     if not LIVE_JSON.exists():
         return {}
     try:
-        data = json.loads(LIVE_JSON.read_text())
-        return {r["date"]: r for r in data.get("series", [])}
+        return {r["date"]: r for r in json.loads(LIVE_JSON.read_text()).get("series", [])}
     except Exception as e:
         print(f"WARN: could not load polar_live.json: {e}", file=sys.stderr)
         return {}
 
 
-def get_polar_at(polar: dict, date_str: str, lag: int) -> dict:
-    dt  = datetime.strptime(date_str, "%Y-%m-%d") - timedelta(days=lag)
+def polar_at(polar: dict, date_str: str, lag: int) -> dict:
+    dt = datetime.strptime(date_str, "%Y-%m-%d") - timedelta(days=lag)
     return polar.get(dt.strftime("%Y-%m-%d"), {})
 
 
 # ── Core analysis ─────────────────────────────────────────────────────────────
 
-def run_analysis(diary_rows: list, polar: dict) -> dict:
-    """
-    Full Spearman + lag + LOO-CV logistic regression.
-    Returns a results dict suitable for embedding in polar_live.json.
-    """
-    n_diary = len(diary_rows)
+def run_analysis(diary: list, polar: dict) -> dict:
+    n_diary = len(diary)
     print(f"  Diary: {n_diary} entries  |  Polar series: {len(polar)} days")
 
-    # ── Spearman lag-2 for key feature ───────────────────────────────────────
+    # ── Spearman lag analysis — all candidate features ────────────────────────
+    CANDIDATE_FEATURES = [
+        ("ans_status",        [0, 1, 2, 3]),
+        ("hrv_rmssd_night",   [0, 1, 2, 3]),
+        ("recovery_sublevel", [0, 1, 2, 3]),
+        ("sleep_wake_min",    [0, 1, 2]),
+        ("sleep_interruptions", [0, 1, 2]),
+        ("hrv_rri_mean_ms",   [2]),
+    ]
+
     lag_results = {}
-    for pf in ["ans_status", "hrv_rmssd_night"]:
-        lag_results[pf] = {}
-        for lag in range(4):
+    for feat, lags in CANDIDATE_FEATURES:
+        lag_results[feat] = {}
+        for lag in lags:
             pairs = []
-            for row in diary_rows:
-                p  = get_polar_at(polar, row["date"], lag)
-                pv = p.get(pf)
-                sv = row.get("severidad")
+            for row in diary:
+                p   = polar_at(polar, row["date"], lag)
+                pv  = _f(p.get(feat))
+                sv  = row.get("sev")
                 if pv is not None and sv is not None:
-                    pairs.append((float(pv), float(sv)))
-            if len(pairs) >= 5:
-                xs = [p[0] for p in pairs]
-                ys = [p[1] for p in pairs]
-                rho, pval = spearmanr(xs, ys)
-                lag_results[pf][lag] = {
+                    pairs.append((pv, 1 if sv >= 6 else 0))
+            if len(pairs) >= 10:
+                rho, pval = spearmanr([x[0] for x in pairs], [x[1] for x in pairs])
+                lag_results[feat][lag] = {
                     "rho": round(float(rho), 3),
                     "p":   round(float(pval), 4),
                     "n":   len(pairs),
                 }
             else:
-                lag_results[pf][lag] = {"rho": None, "p": None, "n": len(pairs)}
+                lag_results[feat][lag] = {"rho": None, "p": None, "n": len(pairs)}
 
-    # ── Key finding: ANS lag-2 ────────────────────────────────────────────────
+    # Key finding values
     ans_lag2 = lag_results.get("ans_status", {}).get(2, {})
     hrv_lag2 = lag_results.get("hrv_rmssd_night", {}).get(2, {})
 
-    # ── Build training dataset (lag-2 features) ───────────────────────────────
+    # ── Build training dataset ────────────────────────────────────────────────
     records = []
-    rec_vals = []
+    rec_vals, wake_vals = [], []
 
-    for row in diary_rows:
-        p2 = get_polar_at(polar, row["date"], 2)
-        p1 = get_polar_at(polar, row["date"], 1)
+    for row in diary:
+        p2 = polar_at(polar, row["date"], 2)
+        p1 = polar_at(polar, row["date"], 1)
+        p0 = polar_at(polar, row["date"], 0)
 
-        ans2 = p2.get("ans_status")
-        hrv2 = p2.get("hrv_rmssd_night")
-        rec1 = p1.get("recovery_indicator") or p1.get("ans_score")
-        zlp  = row.get("zolpidem", 0.0)
-        sv   = row.get("severidad")
+        ans2  = _f(p2.get("ans_status"))
+        hrv2  = _f(p2.get("hrv_rmssd_night"))
+        rec1  = _f(p1.get("recovery_sublevel"))   # ANS charge 1–93
+        wake0 = _f(p0.get("sleep_wake_min"))       # fragmentation (min awake)
+        zlp   = row.get("zolpidem", 0.0)
+        sev   = row.get("sev")
 
-        if ans2 is None or hrv2 is None or sv is None:
+        if ans2 is None or hrv2 is None or sev is None:
             continue
 
         if rec1 is not None:
-            rec_vals.append(float(rec1))
+            rec_vals.append(rec1)
+        if wake0 is not None:
+            wake_vals.append(wake0)
 
         records.append({
-            "date":    row["date"],
-            "ans_t2":  float(ans2),
-            "hrv_t2":  float(hrv2),
-            "rec_t1":  float(rec1) if rec1 is not None else None,
-            "zlp":     float(zlp),
-            "severidad": float(sv),
-            "target":  1 if float(sv) >= 7 else 0,
+            "date":   row["date"],
+            "ans_t2": ans2,
+            "hrv_t2": hrv2,
+            "rec_t1": rec1,
+            "wake_t0": wake0,
+            "zlp":    float(zlp),
+            "target": 1 if sev >= 6 else 0,
         })
 
     n_rec = len(records)
-    print(f"  Training records (ans+hrv available): {n_rec}")
+    pos   = sum(r["target"] for r in records)
+    neg   = n_rec - pos
+    print(f"  Training records: {n_rec}  (pos={pos} neg={neg})")
 
-    if n_rec < 8:
-        print("  WARN: n insufficient for stable model — returning correlation only.")
-        return {
-            "n_diary": n_diary,
-            "n_training": n_rec,
-            "ans_lag2_rho": ans_lag2.get("rho"),
-            "ans_lag2_p":   ans_lag2.get("p"),
-            "ans_lag2_n":   ans_lag2.get("n"),
-            "hrv_lag2_rho": hrv_lag2.get("rho"),
-            "hrv_lag2_p":   hrv_lag2.get("p"),
-            "auc":          None,
-            "sensitivity":  None,
-            "specificity":  None,
-            "n_positive":   sum(r["target"] for r in records),
-            "n_negative":   n_rec - sum(r["target"] for r in records),
-            "lag_analysis": lag_results,
-            "generated":    datetime.now().strftime("%Y-%m-%d %H:%M"),
-        }
+    if n_rec < 10:
+        print("  WARN: insufficient data for model — returning correlations only.")
+        return _minimal_result(n_diary, n_rec, ans_lag2, hrv_lag2, lag_results)
 
-    # ── LOO-CV Logistic Regression ────────────────────────────────────────────
-    rec_med = sorted(rec_vals)[len(rec_vals) // 2] if rec_vals else 3.0
-    pos = sum(r["target"] for r in records)
-    neg = n_rec - pos
+    # Impute missing rec_t1 / wake_t0 with median
+    rec_med  = sorted(rec_vals)[len(rec_vals) // 2]  if rec_vals  else 48.0
+    wake_med = sorted(wake_vals)[len(wake_vals) // 2] if wake_vals else 25.0
 
+    # ── LOO-CV ───────────────────────────────────────────────────────────────
     X_raw = np.array([
         [r["ans_t2"],
          r["hrv_t2"],
-         r["rec_t1"] if r["rec_t1"] is not None else rec_med,
+         r["rec_t1"]  if r["rec_t1"]  is not None else rec_med,
+         r["wake_t0"] if r["wake_t0"] is not None else wake_med,
          r["zlp"]]
         for r in records
     ], dtype=float)
     y = np.array([r["target"] for r in records])
 
-    loo     = LeaveOneOut()
-    y_true  = []
-    y_prob  = []
-
-    for tr_idx, te_idx in loo.split(X_raw):
-        sc    = StandardScaler().fit(X_raw[tr_idx])
-        clf   = LogisticRegression(C=0.5, max_iter=1000, class_weight="balanced",
-                                   random_state=42)
+    loo    = LeaveOneOut()
+    y_true, y_prob = [], []
+    for tr, te in loo.split(X_raw):
+        sc  = StandardScaler().fit(X_raw[tr])
+        clf = LogisticRegression(C=0.5, max_iter=1000,
+                                 class_weight="balanced", random_state=42)
         try:
-            clf.fit(sc.transform(X_raw[tr_idx]), y[tr_idx])
-            prob = clf.predict_proba(sc.transform(X_raw[te_idx]))[0, 1]
+            clf.fit(sc.transform(X_raw[tr]), y[tr])
+            prob = clf.predict_proba(sc.transform(X_raw[te]))[0, 1]
         except Exception:
-            prob = float(y[tr_idx].mean())
-        y_true.append(int(y[te_idx][0]))
+            prob = float(y[tr].mean())
+        y_true.append(int(y[te][0]))
         y_prob.append(float(prob))
 
-    y_true = np.array(y_true)
-    y_prob = np.array(y_prob)
-    y_pred = (y_prob >= 0.5).astype(int)
+    yt    = np.array(y_true)
+    yp    = np.array(y_prob)
+    ypred = (yp >= 0.5).astype(int)
 
     try:
-        auc = float(roc_auc_score(y_true, y_prob))
+        auc = float(roc_auc_score(yt, yp))
     except Exception:
         auc = float("nan")
 
-    if pos > 0 and neg > 0:
-        tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
-    else:
-        tn = fp = fn = tp = 0
-
+    tn, fp, fn, tp = confusion_matrix(yt, ypred, labels=[0, 1]).ravel()
     sens = tp / (tp + fn) if (tp + fn) > 0 else float("nan")
     spec = tn / (tn + fp) if (tn + fp) > 0 else float("nan")
     acc  = (tp + tn) / n_rec
 
     # Full-model coefficients
+    FEAT_NAMES = ["ans_t2", "hrv_t2", "rec_sublevel_t1", "wake_t0", "zlp"]
     sc_full = StandardScaler().fit(X_raw)
-    m_full  = LogisticRegression(C=0.5, max_iter=1000, class_weight="balanced",
-                                 random_state=42).fit(sc_full.transform(X_raw), y)
-    feat_names = ["ans_t2", "hrv_t2", "rec_t1", "zlp"]
-    coefs = {k: round(float(v), 4) for k, v in zip(feat_names, m_full.coef_[0])}
+    m_full  = LogisticRegression(C=0.5, max_iter=1000,
+                                 class_weight="balanced", random_state=42
+                                 ).fit(sc_full.transform(X_raw), y)
+    coefs = {k: round(float(v), 4) for k, v in zip(FEAT_NAMES, m_full.coef_[0])}
 
-    print(f"  AUC={auc:.3f}  Sens={sens:.3f}  Spec={spec:.3f}  TP={tp} FP={fp} TN={tn} FN={fn}")
+    print(f"  AUC={auc:.4f}  Sens={sens:.3f}  Spec={spec:.3f}  "
+          f"TP={tp} FP={fp} TN={tn} FN={fn}")
+    print(f"  Coefs: {coefs}")
+    print(f"  ANS lag-2: ρ={ans_lag2.get('rho')}  p={ans_lag2.get('p')}")
 
     return {
-        "n_diary":      n_diary,
-        "n_training":   n_rec,
-        "n_positive":   int(pos),
-        "n_negative":   int(neg),
-        "ans_lag2_rho": ans_lag2.get("rho"),
-        "ans_lag2_p":   ans_lag2.get("p"),
-        "ans_lag2_n":   ans_lag2.get("n"),
-        "hrv_lag2_rho": hrv_lag2.get("rho"),
-        "hrv_lag2_p":   hrv_lag2.get("p"),
-        "auc":          round(auc, 4) if not math.isnan(auc) else None,
-        "sensitivity":  round(sens, 4) if not math.isnan(sens) else None,
-        "specificity":  round(spec, 4) if not math.isnan(spec) else None,
-        "accuracy":     round(acc, 4),
+        "model_version":    "v2",
+        "n_diary":          n_diary,
+        "n_training":       n_rec,
+        "n_positive":       int(pos),
+        "n_negative":       int(neg),
+        "threshold":        6,
+        "ans_lag2_rho":     ans_lag2.get("rho"),
+        "ans_lag2_p":       ans_lag2.get("p"),
+        "ans_lag2_n":       ans_lag2.get("n"),
+        "hrv_lag2_rho":     hrv_lag2.get("rho"),
+        "hrv_lag2_p":       hrv_lag2.get("p"),
+        "auc":              round(auc, 4) if not math.isnan(auc) else None,
+        "sensitivity":      round(sens, 4) if not math.isnan(sens) else None,
+        "specificity":      round(spec, 4) if not math.isnan(spec) else None,
+        "accuracy":         round(acc, 4),
         "tp": int(tp), "fp": int(fp), "tn": int(tn), "fn": int(fn),
-        "coefficients": coefs,
+        "features":         FEAT_NAMES,
+        "coefficients":     coefs,
+        "imputed_rec_med":  rec_med,
+        "imputed_wake_med": wake_med,
         "lag_analysis": {
-            pf: {str(l): v for l, v in lags.items()}
-            for pf, lags in lag_results.items()
+            feat: {str(l): v for l, v in lags.items()}
+            for feat, lags in lag_results.items()
+        },
+        "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+
+
+def _minimal_result(n_diary, n_rec, ans_lag2, hrv_lag2, lag_results):
+    return {
+        "model_version": "v2",
+        "n_diary":       n_diary,
+        "n_training":    n_rec,
+        "ans_lag2_rho":  ans_lag2.get("rho"),
+        "ans_lag2_p":    ans_lag2.get("p"),
+        "hrv_lag2_rho":  hrv_lag2.get("rho"),
+        "auc":           None,
+        "sensitivity":   None,
+        "lag_analysis":  {
+            feat: {str(l): v for l, v in lags.items()}
+            for feat, lags in lag_results.items()
         },
         "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
     }
@@ -260,48 +276,48 @@ def run_analysis(diary_rows: list, polar: dict) -> dict:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    print("retrain_predictor.py")
+    print("retrain_predictor.py  [model v2]")
     print("=" * 50)
 
     if not HAS_ML:
-        print("ERROR: Missing ML dependencies. Run: pip install numpy scikit-learn scipy")
+        print("ERROR: pip install numpy scikit-learn scipy")
         sys.exit(1)
 
-    # Load data
-    diary  = load_diary()
-    polar  = load_polar_series()
+    diary = load_diary()
+    polar = load_polar()
 
     if not diary:
-        print("ERROR: No diary entries found.")
+        print("ERROR: No diary entries.")
         sys.exit(1)
 
     print(f"Running analysis on {len(diary)} diary entries…")
     results = run_analysis(diary, polar)
 
-    # Update polar_live.json
     if not LIVE_JSON.exists():
-        print(f"ERROR: {LIVE_JSON} not found — run polar_seed.py first.")
+        print(f"ERROR: {LIVE_JSON} not found.")
         sys.exit(1)
 
     live = json.loads(LIVE_JSON.read_text())
     live["predictor"] = results
 
-    # Also update the top-level "finding" block with live values
+    # Update top-level finding block
     if results.get("auc") is not None:
         live["finding"] = {
-            "spearman_rho":    results.get("ans_lag2_rho") or live["finding"].get("spearman_rho"),
-            "p_value":         results.get("ans_lag2_p")   or live["finding"].get("p_value"),
+            "spearman_rho":    results.get("ans_lag2_rho"),
+            "p_value":         results.get("ans_lag2_p"),
             "auc":             results["auc"],
-            "sensitivity_pct": round(results["sensitivity"] * 100, 1) if results.get("sensitivity") else None,
+            "sensitivity_pct": round(results["sensitivity"] * 100, 1)
+                               if results.get("sensitivity") else None,
             "n_pairs":         results["n_training"],
             "n_diary":         results["n_diary"],
-            "description":     "Nocturnal ANS predicts PEM 48h ahead",
+            "description":     "Nocturnal ANS predicts PEM 48h ahead · model v2",
         }
 
     LIVE_JSON.write_text(json.dumps(live, indent=2, ensure_ascii=False))
-    print(f"✓ Updated {LIVE_JSON}")
-    print(f"  AUC={results.get('auc')}  Sens={results.get('sensitivity')}  n={results.get('n_training')}")
-    print(f"  ANS lag-2: ρ={results.get('ans_lag2_rho')}  p={results.get('ans_lag2_p')}")
+    print(f"\n✓ Updated {LIVE_JSON}")
+    print(f"  AUC={results.get('auc')}  "
+          f"Sens={results.get('sensitivity')}  "
+          f"n={results.get('n_training')}")
 
 
 if __name__ == "__main__":
