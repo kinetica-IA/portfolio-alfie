@@ -313,6 +313,55 @@
     }
     .btn-secondary:hover { background: rgba(144,167,165,0.08); }
 
+    /* ── Biometric context panel ── */
+    .bio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.75rem;
+    }
+    .bio-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      text-align: center;
+    }
+    .bio-chip-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .bio-chip-lbl {
+      font-size: 0.67rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.15rem;
+    }
+    .bio-ans-neg { color: var(--bad); }
+    .bio-ans-mid { color: var(--warn); }
+    .bio-ans-pos { color: var(--ok); }
+
+    /* ── Gap date chips ── */
+    .gap-chip {
+      padding: 0.3rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .gap-chip:hover {
+      background: rgba(144,167,165,0.12);
+      border-color: var(--accent);
+    }
+    .gap-chip.ans-low  { border-left: 3px solid var(--bad); }
+    .gap-chip.ans-mid  { border-left: 3px solid var(--warn); }
+    .gap-chip.ans-high { border-left: 3px solid var(--ok); }
+
     footer {
       text-align: center;
       margin-top: 3rem;
@@ -351,6 +400,23 @@
     <input type="date" id="entry-date" />
     <button class="btn-secondary" id="btn-today">Today</button>
   </div>
+</div>
+
+<!-- ── Biometric context for selected date ── -->
+<div class="card" id="bio-card" style="display:none">
+  <h2>Polar data for this day <span id="bio-date-label" style="font-weight:600;color:var(--accent-dark)"></span></h2>
+  <div id="bio-body" class="bio-grid"></div>
+  <p id="bio-note" style="font-size:0.75rem;color:var(--muted);margin-top:0.8rem"></p>
+</div>
+
+<!-- ── Unfilled dates quick-nav ── -->
+<div class="card" id="gaps-card" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+    <h2 style="margin:0">Days with Polar data · no diary yet</h2>
+    <span id="gaps-count" style="font-size:0.75rem;color:var(--muted)"></span>
+  </div>
+  <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem">Tap a date to load it into the form.</p>
+  <div id="gaps-list" style="display:flex;flex-wrap:wrap;gap:0.4rem"></div>
 </div>
 
 <!-- ── Symptom sliders ── -->
@@ -484,6 +550,104 @@
   document.getElementById('btn-today').addEventListener('click', () => {
     dateInput.value = new Date().toISOString().slice(0, 10);
   });
+
+  // ── Polar biometric data (loaded once, used for context) ─────────────────────
+  let polarSeries = {};   // { "YYYY-MM-DD": rowObj }
+  let diaryDates  = new Set();
+
+  async function loadPolarSeries() {
+    try {
+      const resp = await fetch('/data/polar_live.json');
+      if (!resp.ok) return;
+      const data = await resp.json();
+      for (const r of (data.series || [])) polarSeries[r.date] = r;
+    } catch (e) {
+      console.warn('Could not load polar_live.json:', e);
+    }
+  }
+
+  function showBioContext(dateStr) {
+    const row = polarSeries[dateStr];
+    const card = document.getElementById('bio-card');
+    if (!row) { card.style.display = 'none'; return; }
+
+    document.getElementById('bio-date-label').textContent = dateStr;
+
+    const fmt = (v, digits=1) => v != null ? Number(v).toFixed(digits) : '—';
+    const ansVal = row.ans_status;
+    const ansCls = ansVal == null ? '' : ansVal <= -5 ? 'bio-ans-neg' : ansVal >= 5 ? 'bio-ans-pos' : 'bio-ans-mid';
+
+    const chips = [
+      { val: fmt(row.ans_status), lbl: 'ANS Status', cls: ansCls },
+      { val: fmt(row.hrv_rmssd_night, 0) + ' ms', lbl: 'HRV Night' },
+      { val: fmt(row.sleep_wake_min, 0) + ' min', lbl: 'Wake/Night' },
+      { val: fmt(row.sleep_interruptions, 0), lbl: 'Interruptions' },
+      { val: fmt(row.sleep_duration_h) + ' h', lbl: 'Sleep' },
+      { val: fmt(row.recovery_sublevel, 0), lbl: 'ANS Charge' },
+    ].filter(c => !c.val.startsWith('—'));
+
+    document.getElementById('bio-body').innerHTML = chips.map(c =>
+      `<div class="bio-chip">
+        <div class="bio-chip-val ${c.cls||''}">${c.val}</div>
+        <div class="bio-chip-lbl">${c.lbl}</div>
+      </div>`
+    ).join('');
+
+    const alreadyFilled = diaryDates.has(dateStr);
+    document.getElementById('bio-note').textContent = alreadyFilled
+      ? '⚠ A diary entry already exists for this date — saving will overwrite it.'
+      : '✓ No diary entry yet for this date.';
+
+    card.style.display = 'block';
+  }
+
+  // Build gap navigator (polar data without diary entry)
+  function buildGapNav(existingDiaryDates) {
+    diaryDates = new Set(existingDiaryDates);
+    const gaps = Object.entries(polarSeries)
+      .filter(([d, r]) => r.ans_status != null && !diaryDates.has(d))
+      .sort(([a], [b]) => b.localeCompare(a));   // newest first
+
+    const card = document.getElementById('gaps-card');
+    document.getElementById('gaps-count').textContent = `${gaps.length} pending`;
+
+    const list = document.getElementById('gaps-list');
+    list.innerHTML = gaps.map(([d, r]) => {
+      const ans = r.ans_status;
+      const cls = ans <= -5 ? 'ans-low' : ans >= 5 ? 'ans-high' : 'ans-mid';
+      return `<button class="gap-chip ${cls}" onclick="jumpToDate('${d}')">${d}</button>`;
+    }).join('');
+
+    card.style.display = 'block';
+  }
+
+  window.jumpToDate = function(d) {
+    dateInput.value = d;
+    showBioContext(d);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Init: load polar data, then load diary to know which dates are filled
+  loadPolarSeries().then(() => {
+    // Try to load diary dates from GitHub
+    const token = (localStorage.getItem('gh_diary_token') || '').trim();
+    if (token) {
+      ghGet(token).then(ghFile => {
+        const txt = decodeURIComponent(escape(atob(ghFile.content.replace(/\n/g,''))));
+        const rows = parseCSV(txt);
+        buildGapNav(rows.map(r => r.date));
+      }).catch(() => {
+        // No token or fetch failed — show gaps based on polar data only
+        buildGapNav([]);
+      });
+    } else {
+      buildGapNav([]);
+    }
+    showBioContext(dateInput.value);
+  });
+
+  // Update context whenever date changes
+  dateInput.addEventListener('change', () => showBioContext(dateInput.value));
 
   // ── Sliders ──────────────────────────────────────────────────────────────────
   const sliders = {
@@ -678,8 +842,9 @@
         'ok'
       );
 
-      // Store token if it worked
+      // Store token, refresh gaps list
       localStorage.setItem('gh_diary_token', token);
+      buildGapNav([...diaryDates, date]);
 
     } catch (e) {
       setStatus(`✗ Error: ${e.message}`, 'err');
