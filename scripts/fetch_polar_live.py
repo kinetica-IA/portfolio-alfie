@@ -69,16 +69,22 @@ def fetch_nightly_recharge(client: httpx.Client, day: str) -> dict:
 def fetch_sleep(client: httpx.Client, day: str) -> dict:
     """
     GET /v3/users/sleep/{date}
-    Returns sleep_score, total_sleep_time (s), hrv_avg_ms.
+    Returns sleep_score, total_sleep_time (s), hrv_avg_ms,
+    total_interruption_duration (s → min) as sleep_wake_min,
+    and sleep_interruptions count.
     """
     sl = api_get(client, f"/users/sleep/{day}")
     if not sl:
         return {}
-    total_s = sl.get("total_sleep_time")
+    total_s   = sl.get("total_sleep_time")
+    wake_s    = sl.get("total_interruption_duration")   # seconds awake during night
+    interr    = sl.get("sleep_interruptions")            # number of wake bouts
     return {
-        "sleep_score":      sl.get("sleep_score"),
-        "sleep_duration_h": round(total_s / 3600, 2) if total_s else None,
-        "sleep_hrv_avg_ms": sl.get("hrv_avg_ms"),
+        "sleep_score":         sl.get("sleep_score"),
+        "sleep_duration_h":    round(total_s / 3600, 2) if total_s else None,
+        "sleep_hrv_avg_ms":    sl.get("hrv_avg_ms"),
+        "sleep_wake_min":      round(wake_s / 60, 1) if wake_s is not None else None,
+        "sleep_interruptions": interr,
     }
 
 

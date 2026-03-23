@@ -1,7 +1,7 @@
 ---
-// Biometrics.astro — Módulo 1: Live Biometrics
-// Fetches /data/polar_live.json at runtime (client-side).
-// Data is updated nightly by GitHub Action (polar-biometrics.yml).
+// Biometrics.astro — Module 1: Live Biometrics
+// Client-side fetch of /data/polar_live.json
+// Updated nightly by GitHub Action (polar-biometrics.yml)
 ---
 
 <section id="biometrics" class="bio-section">
@@ -10,73 +10,73 @@
     <h2>Biometrics Live</h2>
     <div class="live-pill">
       <span class="live-dot"></span>
-      <span>Polar Grit X2 · sync nocturna</span>
+      <span>Polar Grit X2 · nightly sync</span>
     </div>
   </div>
 
-  <!-- Loading state -->
-  <div id="bio-loading" class="bio-loading" aria-live="polite">
+  <div id="bio-loading" class="bio-loading">
     <span class="spinner"></span>
   </div>
 
-  <!-- Data content -->
-  <div id="bio-content" class="bio-content" style="display:none" aria-live="polite">
+  <div id="bio-content" class="bio-content" style="display:none">
 
-    <!-- Three metric cards -->
     <div class="metric-row">
 
       <div class="metric-card">
-        <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg class="metric-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
         </svg>
         <div class="metric-lbl">HRV · RMSSD</div>
         <div class="metric-val" id="m-hrv">—</div>
-        <div class="metric-unit">ms · anoche</div>
+        <div class="metric-unit">ms · last night</div>
         <div class="metric-sub" id="m-date"></div>
       </div>
 
       <div class="metric-card">
-        <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M12 2a5 5 0 0 1 5 5v6a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/>
-          <path d="M8 21h8M12 17v4"/>
-        </svg>
-        <div class="metric-lbl">Sleep Score</div>
-        <div class="metric-val" id="m-sleep">—</div>
-        <div class="metric-unit">/ 100</div>
-        <div class="metric-sub" id="m-sleep-h"></div>
-      </div>
-
-      <div class="metric-card">
-        <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg class="metric-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
         <div class="metric-lbl">ANS Charge</div>
         <div class="metric-val" id="m-ans">—</div>
-        <div class="metric-unit">/ 100 · SNA nocturno</div>
+        <div class="metric-unit">/ 100 · autonomic load</div>
         <div class="metric-sub" id="m-steps"></div>
       </div>
 
-    </div><!-- /metric-row -->
+      <div class="metric-card" id="card-frag">
+        <svg class="metric-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/>
+          <path d="M12 6v6l3 3"/>
+          <path d="M2 12h2M20 12h2M12 2v2M12 20v2" stroke-width="1.2" opacity="0.5"/>
+        </svg>
+        <div class="metric-lbl">Sleep Fragmentation</div>
+        <div class="metric-val" id="m-frag">—</div>
+        <div class="metric-unit">min awake · hypervigilance</div>
+        <div class="metric-sub" id="m-interruptions"></div>
+      </div>
 
-    <!-- 201-day HRV sparkline -->
+    </div>
+
+    <!-- HRV sparkline -->
     <div class="spark-card">
       <div class="spark-head">
-        <span class="spark-title">HRV RMSSD nocturno — <span id="sp-n">201</span> días</span>
-        <span class="spark-badge">ρ=+0.431 · p=.016</span>
+        <span class="spark-title">Nocturnal HRV RMSSD — <span id="sp-n">198</span> days</span>
+        <span class="spark-badge">ρ = +0.431 · p = .016</span>
       </div>
       <svg id="sparkline" class="spark-svg" viewBox="0 0 600 72"
            preserveAspectRatio="none" role="img" aria-label="HRV trend">
-        <!-- baseline drawn by JS -->
       </svg>
       <div class="spark-foot">
-        <span class="leg"><span class="leg-line"></span>HRV RMSSD noche</span>
-        <span class="leg mono">ANS predice PEM 48h · AUC=0.656 · Sens=81%</span>
+        <span class="leg"><span class="leg-line"></span>HRV RMSSD nightly</span>
+        <span class="leg mono">ANS predicts PEM 48h ahead · AUC = 0.656 · Sensitivity 81%</span>
       </div>
     </div>
 
-    <!-- Finding contextualizer -->
+    <!-- Finding -->
     <div class="finding-card">
-      <div class="finding-tag">Hallazgo publicado</div>
+      <div class="finding-tag">Published finding</div>
       <div class="finding-stats">
         <span class="stat-rho">ρ = +0.431</span>
         <span class="sep">·</span>
@@ -84,40 +84,39 @@
         <span class="sep">·</span>
         <span class="stat">AUC = 0.656</span>
         <span class="sep">·</span>
-        <span class="stat">Sensibilidad 81%</span>
+        <span class="stat">Sensitivity 81%</span>
       </div>
       <p class="finding-body">
-        El estado del sistema nervioso autónomo durante el sueño predice la
-        exacerbación sintomática (PEM) con 48 horas de antelación.
-        La señal predictiva vive en el SNA — no en la serología ni en las métricas de sueño.
+        Nocturnal autonomic nervous system status predicts post-exertional malaise (PEM)
+        48 hours in advance. The predictive signal lives in the ANS — not in serology,
+        not in sleep scores.
         <span class="finding-meta">
-          N=39 pares DSQ-PEM validados · <span id="f-n">201</span> días de seguimiento longitudinal.
+          N = <span id="f-n">39</span> DSQ-PEM validated pairs
+          · <span id="f-days">198</span> days longitudinal follow-up
+          · updated <span id="f-date"></span>
         </span>
       </p>
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor"
          target="_blank" rel="noopener" class="finding-btn">
-        Ver predictor en GitHub →
+        View predictor on GitHub →
       </a>
     </div>
 
-  </div><!-- /bio-content -->
+  </div>
 
-  <!-- Error / offline fallback -->
   <div id="bio-error" class="bio-error" style="display:none">
-    <p>Datos en actualización. Próxima sync nocturna vía GitHub Action.</p>
+    <p>Data syncing. Next nightly update via GitHub Action.</p>
   </div>
 
 </section>
 
 
 <style>
-/* ── Layout ─────────────────────────────────────────────────────────────── */
 .bio-section {
   padding: 4rem 2rem 3rem;
   max-width: 860px;
   margin: 0 auto;
 }
-
 .bio-header {
   display: flex;
   align-items: center;
@@ -126,12 +125,8 @@
   gap: 0.75rem;
   margin-bottom: 2.25rem;
 }
-.bio-header h2 {
-  font-size: 1.75rem;
-  margin: 0;
-}
+.bio-header h2 { font-size: 1.75rem; margin: 0; }
 
-/* Live pill */
 .live-pill {
   display: inline-flex;
   align-items: center;
@@ -158,14 +153,9 @@
   50%      { box-shadow: 0 0 10px rgba(77,184,150,0.9); }
 }
 
-/* Loading spinner */
-.bio-loading {
-  display: flex;
-  justify-content: center;
-  padding: 3rem;
-}
+.bio-loading { display:flex; justify-content:center; padding:3rem; }
 .spinner {
-  width: 28px; height: 28px;
+  width:28px; height:28px;
   border: 2px solid rgba(144,167,165,0.18);
   border-top-color: #90a7a5;
   border-radius: 50%;
@@ -173,7 +163,7 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Metric cards ─────────────────────────────────────────────────────── */
+/* ── Metric cards ── */
 .metric-row {
   display: flex;
   gap: 1.1rem;
@@ -182,7 +172,7 @@
 }
 .metric-card {
   flex: 1;
-  min-width: 140px;
+  min-width: 145px;
   background: #fff;
   border: 1px solid rgba(144,167,165,0.18);
   border-radius: 10px;
@@ -193,187 +183,181 @@
   gap: 0.1rem;
 }
 .metric-icon {
-  width: 18px; height: 18px;
-  color: #90a7a5;
-  margin-bottom: 0.45rem;
-  opacity: 0.7;
+  width:18px; height:18px;
+  color:#90a7a5;
+  margin-bottom:0.45rem;
+  opacity:0.7;
 }
 .metric-lbl {
-  font-size: 0.62rem;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--muted-text, #667);
-  opacity: 0.7;
+  font-size:0.62rem;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.7;
 }
 .metric-val {
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--text-color, #1a2a2a);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:2rem;
+  font-weight:400;
+  color:var(--text-color,#1a2a2a);
+  letter-spacing:-0.02em;
+  line-height:1.15;
 }
 .metric-unit {
-  font-size: 0.67rem;
-  color: var(--muted-text, #667);
-  opacity: 0.5;
-  letter-spacing: 0.04em;
+  font-size:0.67rem;
+  color:var(--muted-text,#667);
+  opacity:0.5;
+  letter-spacing:0.04em;
 }
 .metric-sub {
-  font-size: 0.67rem;
-  color: var(--muted-text, #667);
-  opacity: 0.5;
-  margin-top: 0.25rem;
+  font-size:0.67rem;
+  color:var(--muted-text,#667);
+  opacity:0.5;
+  margin-top:0.25rem;
 }
 
-/* ── Sparkline ────────────────────────────────────────────────────────── */
+/* ── Sparkline ── */
 .spark-card {
-  background: #fff;
-  border: 1px solid rgba(144,167,165,0.18);
-  border-radius: 10px;
-  padding: 1.15rem 1.4rem;
-  margin-bottom: 1.2rem;
-  box-shadow: 0 2px 10px rgba(144,167,165,0.07);
+  background:#fff;
+  border:1px solid rgba(144,167,165,0.18);
+  border-radius:10px;
+  padding:1.15rem 1.4rem;
+  margin-bottom:1.2rem;
+  box-shadow:0 2px 10px rgba(144,167,165,0.07);
 }
 .spark-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.65rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin-bottom:0.65rem;
 }
 .spark-title {
-  font-size: 0.68rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--muted-text, #667);
-  opacity: 0.7;
+  font-size:0.68rem;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.7;
 }
 .spark-badge {
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 0.62rem;
-  color: #4a8a78;
-  background: rgba(144,167,165,0.09);
-  border: 1px solid rgba(144,167,165,0.25);
-  padding: 0.18rem 0.55rem;
-  border-radius: 1rem;
-  letter-spacing: 0.05em;
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.62rem;
+  color:#4a8a78;
+  background:rgba(144,167,165,0.09);
+  border:1px solid rgba(144,167,165,0.25);
+  padding:0.18rem 0.55rem;
+  border-radius:1rem;
+  letter-spacing:0.05em;
 }
 .spark-svg {
-  width: 100%;
-  height: 72px;
-  display: block;
-  overflow: visible;
+  width:100%; height:72px;
+  display:block; overflow:visible;
 }
 .spark-foot {
-  display: flex;
-  align-items: center;
-  gap: 1.4rem;
-  flex-wrap: wrap;
-  margin-top: 0.55rem;
+  display:flex;
+  align-items:center;
+  gap:1.4rem;
+  flex-wrap:wrap;
+  margin-top:0.55rem;
 }
 .leg {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.63rem;
-  color: var(--muted-text, #667);
-  opacity: 0.6;
-  letter-spacing: 0.04em;
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem;
+  font-size:0.63rem;
+  color:var(--muted-text,#667);
+  opacity:0.6;
+  letter-spacing:0.04em;
 }
 .leg-line {
-  display: inline-block;
-  width: 12px; height: 2px;
-  border-radius: 1px;
-  background: #90a7a5;
+  display:inline-block;
+  width:12px; height:2px;
+  border-radius:1px;
+  background:#90a7a5;
 }
-.mono { font-family: 'DM Mono', 'Courier New', monospace; opacity: 0.45; }
+.mono { font-family:'DM Mono','Courier New',monospace; opacity:0.45; }
 
-/* ── Finding card ─────────────────────────────────────────────────────── */
+/* ── Finding card ── */
 .finding-card {
-  background: rgba(144,167,165,0.04);
-  border: 1px solid rgba(144,167,165,0.18);
-  border-left: 3px solid #90a7a5;
-  border-radius: 10px;
-  padding: 1.4rem 1.5rem;
+  background:rgba(144,167,165,0.04);
+  border:1px solid rgba(144,167,165,0.18);
+  border-left:3px solid #90a7a5;
+  border-radius:10px;
+  padding:1.4rem 1.5rem;
 }
 .finding-tag {
-  font-size: 0.58rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent-color, #90a7a5);
-  opacity: 0.75;
-  margin-bottom: 0.45rem;
+  font-size:0.58rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--accent-color,#90a7a5);
+  opacity:0.75;
+  margin-bottom:0.45rem;
 }
 .finding-stats {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 0.75rem;
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:0.4rem;
+  margin-bottom:0.75rem;
 }
 .stat-rho {
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 1.1rem;
-  color: #4a8a78;
-  font-weight: 500;
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:1.1rem;
+  color:#4a8a78;
+  font-weight:500;
 }
 .stat {
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 0.95rem;
-  color: var(--text-color, #1a2a2a);
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.95rem;
+  color:var(--text-color,#1a2a2a);
 }
-.sep { color: var(--muted-text, #667); opacity: 0.35; font-size: 0.9rem; }
+.sep { color:var(--muted-text,#667); opacity:0.35; font-size:0.9rem; }
 
 .finding-body {
-  font-size: 0.88rem;
-  line-height: 1.62;
-  color: #445;
-  margin-bottom: 1rem;
+  font-size:0.88rem;
+  line-height:1.62;
+  color:#445;
+  margin-bottom:1rem;
 }
 .finding-meta {
-  display: block;
-  margin-top: 0.4rem;
-  font-size: 0.78rem;
-  opacity: 0.58;
+  display:block;
+  margin-top:0.4rem;
+  font-size:0.78rem;
+  opacity:0.55;
 }
-
 .finding-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--accent-color, #90a7a5);
-  border: 1px solid rgba(144,167,165,0.35);
-  border-radius: 6px;
-  padding: 0.4rem 1rem;
-  text-decoration: none;
-  transition: background 0.2s, border-color 0.2s;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  font-size:0.72rem;
+  font-weight:500;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  color:var(--accent-color,#90a7a5);
+  border:1px solid rgba(144,167,165,0.35);
+  border-radius:6px;
+  padding:0.4rem 1rem;
+  text-decoration:none;
+  transition:background 0.2s, border-color 0.2s;
 }
 .finding-btn:hover {
-  background: rgba(144,167,165,0.08);
-  border-color: var(--accent-color, #90a7a5);
+  background:rgba(144,167,165,0.08);
+  border-color:var(--accent-color,#90a7a5);
 }
 
-/* Error state */
 .bio-error {
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.85rem;
-  color: var(--muted-text, #667);
-  opacity: 0.55;
+  text-align:center;
+  padding:2rem;
+  font-size:0.85rem;
+  color:var(--muted-text,#667);
+  opacity:0.55;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────── */
-@media (max-width: 580px) {
-  .bio-header       { flex-direction: column; align-items: flex-start; }
-  .metric-val       { font-size: 1.65rem; }
-  .spark-head       { flex-direction: column; align-items: flex-start; }
-  .finding-stats    { gap: 0.3rem; }
+@media (max-width:580px) {
+  .bio-header { flex-direction:column; align-items:flex-start; }
+  .metric-val { font-size:1.65rem; }
+  .spark-head { flex-direction:column; align-items:flex-start; }
 }
 </style>
 
@@ -384,9 +368,6 @@
   const content = document.getElementById('bio-content');
   const errBox  = document.getElementById('bio-error');
 
-  const show = (el) => { el.style.display = ''; };
-  const hide = (el) => { el.style.display = 'none'; };
-
   try {
     const res = await fetch('/data/polar_live.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -395,121 +376,116 @@
     const latest  = data.latest  || {};
     const series  = data.series  || [];
     const finding = data.finding || {};
+    const pred    = data.predictor || {};
 
-    // ── Metric cards ────────────────────────────────────────────────────
-    const hrv    = latest.hrv_rmssd_night ?? latest.sleep_hrv_avg_ms;
-    const slp    = latest.sleep_score;
-    const ans    = latest.ans_charge ?? latest.ans_status;
-    const steps  = latest.steps;
-    const slpH   = latest.sleep_duration_h;
-    const dayStr = latest.date || '';
+    // ── Metrics ──────────────────────────────────────────────────────────
+    const hrv   = latest.hrv_rmssd_night ?? latest.sleep_hrv_avg_ms;
+    const ans   = latest.ans_charge ?? latest.ans_status;
+    const frag  = latest.sleep_wake_min;
+    const intr  = latest.sleep_interruptions;
+    const steps = latest.steps;
+    const day   = latest.date || '';
 
-    const fmt    = (v, dec = 0) => v != null ? (+v).toFixed(dec) : '—';
+    const fmt = (v, d=0) => v != null ? (+v).toFixed(d) : '—';
 
-    document.getElementById('m-hrv').textContent   = fmt(hrv);
-    document.getElementById('m-sleep').textContent = fmt(slp);
-    document.getElementById('m-ans').textContent   = fmt(ans);
-    document.getElementById('m-date').textContent  = dayStr;
-    document.getElementById('m-sleep-h').textContent =
-      slpH != null ? `${(+slpH).toFixed(1)} h` : '';
+    document.getElementById('m-hrv').textContent  = fmt(hrv);
+    document.getElementById('m-ans').textContent  = fmt(ans);
+    document.getElementById('m-frag').textContent = frag != null ? fmt(frag) : '—';
+    document.getElementById('m-date').textContent = day;
     document.getElementById('m-steps').textContent =
-      steps != null ? `${(+steps).toLocaleString('es-ES')} pasos` : '';
+      steps != null ? `${(+steps).toLocaleString('en-GB')} steps` : '';
+    document.getElementById('m-interruptions').textContent =
+      intr != null ? `${intr} interruptions` : '';
 
-    // ── Finding metadata ─────────────────────────────────────────────────
-    const nDays = series.length || finding.n_days || 201;
+    // Finding metadata
+    const nDays  = series.length || finding.n_days || 198;
+    const nPairs = pred.n_diary || finding.n_pairs || finding.n_diary || 39;
     document.getElementById('sp-n').textContent = nDays;
-    document.getElementById('f-n').textContent  = nDays;
+    document.getElementById('f-n').textContent  = nPairs;
+    document.getElementById('f-days').textContent = nDays;
+    document.getElementById('f-date').textContent = data.updated_at
+      ? data.updated_at.slice(0,10) : '';
 
-    // ── Sparkline ────────────────────────────────────────────────────────
+    // ── Sparkline ─────────────────────────────────────────────────────────
     const svg = document.getElementById('sparkline');
     const W = 600, H = 72, pad = 5;
-    const ns = 'http://www.w3.org/2000/svg';
+    const ns  = 'http://www.w3.org/2000/svg';
 
-    // Baseline
-    const base = document.createElementNS(ns, 'line');
-    base.setAttribute('x1', '0'); base.setAttribute('y1', String(H / 2));
-    base.setAttribute('x2', String(W)); base.setAttribute('y2', String(H / 2));
-    base.setAttribute('stroke', '#90a7a5');
-    base.setAttribute('stroke-width', '0.4');
-    base.setAttribute('opacity', '0.25');
+    const base = document.createElementNS(ns,'line');
+    ['x1','y1','x2','y2'].forEach((a,i)=>base.setAttribute(a,[0,H/2,W,H/2][i]));
+    base.setAttribute('stroke','#90a7a5');
+    base.setAttribute('stroke-width','0.4');
+    base.setAttribute('opacity','0.25');
     svg.appendChild(base);
 
     const pts = series
-      .map(r => ({ date: r.date, v: r.hrv_rmssd_night ?? r.sleep_hrv_avg_ms }))
+      .map(r => ({ v: r.hrv_rmssd_night ?? r.sleep_hrv_avg_ms }))
       .filter(r => r.v != null);
 
     if (pts.length >= 3) {
       const vals  = pts.map(r => r.v);
-      const min   = Math.min(...vals);
-      const max   = Math.max(...vals);
+      const min   = Math.min(...vals), max = Math.max(...vals);
       const range = max - min || 1;
+      const toXY  = (r,i) => [
+        (i / (pts.length-1)) * W,
+        pad + (1-(r.v-min)/range) * (H - pad*2)
+      ];
+      const xy = pts.map(toXY);
+      const polyStr = xy.map(([x,y])=>`${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
 
-      const toXY = (r, i) => {
-        const x = (i / (pts.length - 1)) * W;
-        const y = pad + (1 - (r.v - min) / range) * (H - pad * 2);
-        return [x, y];
-      };
-
-      const xyPts = pts.map(toXY);
-      const polyStr = xyPts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
-
-      // Gradient fill
-      const defs  = document.createElementNS(ns, 'defs');
-      const grad  = document.createElementNS(ns, 'linearGradient');
-      grad.setAttribute('id', 'hrv-fill');
-      grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
-      grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
-      [['0%', '0.15'], ['100%', '0']].forEach(([off, op]) => {
-        const s = document.createElementNS(ns, 'stop');
-        s.setAttribute('offset', off);
-        s.setAttribute('stop-color', '#90a7a5');
-        s.setAttribute('stop-opacity', op);
+      // gradient fill
+      const defs = document.createElementNS(ns,'defs');
+      const grad = document.createElementNS(ns,'linearGradient');
+      grad.setAttribute('id','hrv-fill');
+      grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
+      grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
+      [['0%','0.15'],['100%','0']].forEach(([off,op])=>{
+        const s = document.createElementNS(ns,'stop');
+        s.setAttribute('offset',off);
+        s.setAttribute('stop-color','#90a7a5');
+        s.setAttribute('stop-opacity',op);
         grad.appendChild(s);
       });
       defs.appendChild(grad);
       svg.insertBefore(defs, svg.firstChild);
 
-      // Fill polygon
-      const [fx, ] = xyPts[0];
-      const [lx, ] = xyPts[xyPts.length - 1];
-      const fillStr = `${fx.toFixed(1)},${H} ${polyStr} ${lx.toFixed(1)},${H}`;
-      const poly = document.createElementNS(ns, 'polygon');
-      poly.setAttribute('points', fillStr);
-      poly.setAttribute('fill', 'url(#hrv-fill)');
-      svg.appendChild(poly);
+      const [fx] = xy[0], [lx] = xy[xy.length-1];
+      const fill = document.createElementNS(ns,'polygon');
+      fill.setAttribute('points', `${fx.toFixed(1)},${H} ${polyStr} ${lx.toFixed(1)},${H}`);
+      fill.setAttribute('fill','url(#hrv-fill)');
+      svg.appendChild(fill);
 
-      // Line
-      const line = document.createElementNS(ns, 'polyline');
+      const line = document.createElementNS(ns,'polyline');
       line.setAttribute('points', polyStr);
-      line.setAttribute('fill', 'none');
-      line.setAttribute('stroke', '#90a7a5');
-      line.setAttribute('stroke-width', '1.4');
-      line.setAttribute('stroke-linejoin', 'round');
+      line.setAttribute('fill','none');
+      line.setAttribute('stroke','#90a7a5');
+      line.setAttribute('stroke-width','1.4');
+      line.setAttribute('stroke-linejoin','round');
       svg.appendChild(line);
 
-      // Latest dot
-      const [dx, dy] = xyPts[xyPts.length - 1];
-      const dot = document.createElementNS(ns, 'circle');
-      dot.setAttribute('cx', dx.toFixed(1));
-      dot.setAttribute('cy', dy.toFixed(1));
-      dot.setAttribute('r', '3.5');
-      dot.setAttribute('fill', '#90a7a5');
+      // latest dot
+      const [dx,dy] = xy[xy.length-1];
+      const dot = document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',dx.toFixed(1));
+      dot.setAttribute('cy',dy.toFixed(1));
+      dot.setAttribute('r','3.5');
+      dot.setAttribute('fill','#90a7a5');
       svg.appendChild(dot);
 
-      // Animate: draw from left
-      line.style.strokeDasharray  = String(W * 2);
-      line.style.strokeDashoffset = String(W * 2);
+      // draw animation
+      line.style.strokeDasharray  = String(W*2);
+      line.style.strokeDashoffset = String(W*2);
       line.style.transition = 'stroke-dashoffset 1.8s ease-out';
-      requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
+      requestAnimationFrame(()=>{ line.style.strokeDashoffset = '0'; });
     }
 
-    hide(loading);
-    show(content);
+    loading.style.display = 'none';
+    content.style.display = '';
 
-  } catch (e) {
-    console.warn('[Biometrics] load failed:', e);
-    hide(loading);
-    show(errBox);
+  } catch(e) {
+    console.warn('[Biometrics]', e);
+    loading.style.display = 'none';
+    errBox.style.display  = '';
   }
 })();
 </script>

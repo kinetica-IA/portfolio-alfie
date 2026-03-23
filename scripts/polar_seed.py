@@ -75,8 +75,10 @@ def main():
                 "hrv_rri_mean_ms":    _f(r.get("hrv_rri_mean_ms")),
                 "hrv_rmssd_daily":    _f(r.get("hrv_rmssd_daily")),
                 # Sleep
-                "sleep_score":        _f(r.get("sleep_score")),
-                "sleep_duration_h":   _f(r.get("sleep_duration_h")),
+                "sleep_score":         _f(r.get("sleep_score")),
+                "sleep_duration_h":    _f(r.get("sleep_duration_h")),
+                "sleep_wake_min":      _f(r.get("sleep_wake_min")),
+                "sleep_interruptions": _i(r.get("sleep_interruptions")),
                 # Recovery / ANS
                 "recovery_indicator": _s(r.get("recovery_indicator")),
                 "recovery_sublevel":  _s(r.get("recovery_sublevel")),
@@ -107,9 +109,10 @@ def main():
 
     print(f"✓ Seeded {len(rows)} days → {LIVE_JSON}")
     print(f"  Date range: {rows[0]['date']} → {rows[-1]['date']}")
-    print(f"  Latest HRV (night):  {latest.get('hrv_rmssd_night')}")
-    print(f"  Latest sleep score:  {latest.get('sleep_score')}")
-    print(f"  Latest steps:        {latest.get('steps')}")
+    print(f"  Latest HRV (night):      {latest.get('hrv_rmssd_night')}")
+    print(f"  Latest sleep wake min:   {latest.get('sleep_wake_min')}")
+    print(f"  Latest sleep interrupts: {latest.get('sleep_interruptions')}")
+    print(f"  Latest steps:            {latest.get('steps')}")
     print()
     print("Next steps:")
     print("  git add public/data/polar_live.json")

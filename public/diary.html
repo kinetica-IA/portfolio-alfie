@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSQ Diary · Kinetica AI</title>
+  <style>
+    :root {
+      --bg: #f7f6f3;
+      --card: #ffffff;
+      --accent: #90a7a5;
+      --accent-dark: #4a8a78;
+      --warn: #c4855a;
+      --bad: #c0392b;
+      --ok: #27ae60;
+      --text: #2c3e50;
+      --muted: #7f8c8d;
+      --border: rgba(144,167,165,0.25);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent-dark);
+    }
+    header p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      max-width: 480px;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 2px 12px rgba(144,167,165,0.08);
+    }
+    .card h2 {
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Token setup ── */
+    #token-section label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    #token-section input {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: monospace;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    #token-section input:focus { outline: 2px solid var(--accent); }
+    .hint { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+    .hint a { color: var(--accent-dark); }
+
+    /* ── Date bar ── */
+    .date-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .date-bar label { font-size: 0.85rem; color: var(--muted); flex-shrink: 0; }
+    .date-bar input[type="date"] {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .date-bar input[type="date"]:focus { outline: 2px solid var(--accent); }
+
+    /* ── Symptom sliders ── */
+    .symptom-grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .sym-row { display: flex; flex-direction: column; gap: 0.35rem; }
+    .sym-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .sym-label {
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .sym-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-width: 2rem;
+      text-align: right;
+      transition: color 0.2s;
+    }
+    .sym-desc {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-bottom: 0.1rem;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--accent) 0%, var(--accent) 0%, #e0e0e0 0%);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
+    .scale-marks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Zolpidem toggle ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .toggle-label {
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .toggle-sub { font-size: 0.73rem; color: var(--muted); }
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 26px;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px; height: 20px;
+      left: 3px; top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.25s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--accent-dark); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(22px); }
+
+    /* ── Notes ── */
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+      min-height: 70px;
+    }
+    textarea:focus { outline: 2px solid var(--accent); }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      background: rgba(144,167,165,0.08);
+      border: 1px solid var(--border);
+    }
+    .sev-label { font-size: 0.82rem; color: var(--muted); }
+    .sev-score {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      transition: color 0.3s;
+    }
+    .sev-band {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Submit ── */
+    .btn-submit {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      display: block;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: var(--accent-dark);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-submit:hover { background: #3a7a68; }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── Status ── */
+    #status {
+      max-width: 480px;
+      margin: 1rem auto 0;
+      padding: 0.9rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+      line-height: 1.5;
+    }
+    #status.ok  { background: rgba(39,174,96,0.12); border: 1px solid rgba(39,174,96,0.3); color: #1a6b3a; display: block; }
+    #status.err { background: rgba(192,57,43,0.1);  border: 1px solid rgba(192,57,43,0.25); color: var(--bad); display: block; }
+    #status.inf { background: rgba(144,167,165,0.1); border: 1px solid var(--border); color: var(--muted); display: block; }
+
+    /* ── History ── */
+    #history-section { display: none; }
+    .hist-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .hist-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.3rem 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hist-table td {
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid rgba(144,167,165,0.1);
+    }
+    .sev-pill {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    .pill-low  { background: rgba(39,174,96,0.12);  color: #1a6b3a; }
+    .pill-mid  { background: rgba(196,133,90,0.15); color: #8a4a20; }
+    .pill-high { background: rgba(192,57,43,0.12);  color: var(--bad); }
+
+    .btn-secondary {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: transparent;
+      color: var(--accent-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(144,167,165,0.08); }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent-dark); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>DSQ Diary · Kinetica AI</h1>
+  <p>Daily symptom log · auto-retrains predictor on save</p>
+</header>
+
+<!-- ── GitHub token setup ── -->
+<div class="card" id="token-section">
+  <h2>GitHub Access</h2>
+  <label for="gh-token">Personal Access Token (stored locally, never sent to a server)</label>
+  <input type="password" id="gh-token" placeholder="ghp_…" autocomplete="off" />
+  <p class="hint">
+    Needs <code>repo</code> scope (read + write <code>data/diary_live.csv</code>).<br>
+    <a href="https://github.com/settings/tokens/new?scopes=repo&description=DSQ-Diary" target="_blank">
+      Create token →
+    </a>
+    · Saved in your browser only.
+  </p>
+</div>
+
+<!-- ── Date selector ── -->
+<div class="card">
+  <h2>Entry date</h2>
+  <div class="date-bar">
+    <label for="entry-date">Date</label>
+    <input type="date" id="entry-date" />
+    <button class="btn-secondary" id="btn-today">Today</button>
+  </div>
+</div>
+
+<!-- ── Symptom sliders ── -->
+<div class="card">
+  <h2>Symptoms · 0 = none · 10 = incapacitating</h2>
+  <div class="symptom-grid">
+
+    <div class="sym-row" data-key="fatiga">
+      <div class="sym-header">
+        <span class="sym-label">Fatigue / Extreme exhaustion</span>
+        <span class="sym-val" id="val-fatiga">5</span>
+      </div>
+      <p class="sym-desc">Feeling of total energy depletion not relieved by rest</p>
+      <input type="range" min="0" max="10" step="0.5" value="5" id="sl-fatiga" />
+      <div class="scale-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+    </div>
+
+    <div class="sym-row" data-key="pem">
+      <div class="sym-header">
+        <span class="sym-label">Post-Exertional Malaise (PEM)</span>
+        <span class="sym-val" id="val-pem">5</span>
+      </div>
+      <p class="sym-desc">Worsening of symptoms after minimal physical or cognitive effort</p>
+      <input type="range" min="0" max="10" step="0.5" value="5" id="sl-pem" />
+      <div class="scale-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+    </div>
+
+    <div class="sym-row" data-key="niebla">
+      <div class="sym-header">
+        <span class="sym-label">Brain Fog / Cognitive dysfunction</span>
+        <span class="sym-val" id="val-niebla">5</span>
+      </div>
+      <p class="sym-desc">Difficulty concentrating, memory issues, word-finding problems</p>
+      <input type="range" min="0" max="10" step="0.5" value="5" id="sl-niebla" />
+      <div class="scale-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+    </div>
+
+    <div class="sym-row" data-key="autonomica">
+      <div class="sym-header">
+        <span class="sym-label">Autonomic dysfunction <span style="font-weight:400;font-size:0.8rem;color:var(--muted)">(optional)</span></span>
+        <span class="sym-val" id="val-autonomica">—</span>
+      </div>
+      <p class="sym-desc">Tachycardia, dizziness, orthostatic intolerance, sweating</p>
+      <input type="range" min="0" max="10" step="0.5" value="0" id="sl-autonomica" data-optional="true" />
+      <div class="scale-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+    </div>
+
+    <div class="sym-row" data-key="dolor">
+      <div class="sym-header">
+        <span class="sym-label">Pain <span style="font-weight:400;font-size:0.8rem;color:var(--muted)">(optional)</span></span>
+        <span class="sym-val" id="val-dolor">—</span>
+      </div>
+      <p class="sym-desc">Muscular, joint, or headache pain</p>
+      <input type="range" min="0" max="10" step="0.5" value="0" id="sl-dolor" data-optional="true" />
+      <div class="scale-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Zolpidem ── -->
+<div class="card">
+  <h2>Medication</h2>
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Zolpidem last night</div>
+      <div class="toggle-sub">Sleeping medication taken the previous night</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="chk-zolpidem" />
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+</div>
+
+<!-- ── Notes ── -->
+<div class="card">
+  <h2>Note (optional)</h2>
+  <textarea id="txt-nota" placeholder="Brief note about how you feel today…" rows="2"></textarea>
+</div>
+
+<!-- ── Severity summary ── -->
+<div class="card">
+  <div class="summary-bar">
+    <div>
+      <div class="sev-label">Global severity (auto-calculated)</div>
+      <div class="sev-band" id="sev-band">Moderate</div>
+    </div>
+    <div class="sev-score" id="sev-score">5.0</div>
+  </div>
+</div>
+
+<!-- ── Submit ── -->
+<button class="btn-submit" id="btn-save">Save and push to GitHub</button>
+<div id="status"></div>
+
+<!-- ── History ── -->
+<div class="card" id="history-section" style="margin-top:2rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h2 style="margin:0">Recent entries</h2>
+    <button class="btn-secondary" id="btn-load-hist">Load history</button>
+  </div>
+  <div id="hist-body"><p style="font-size:0.82rem;color:var(--muted)">Press "Load history" to fetch recent diary entries.</p></div>
+</div>
+
+<footer>
+  <a href="/">← kineticaai.com</a> ·
+  <a href="https://github.com/kinetica-IA/portfolio-alfie" target="_blank">GitHub repo</a>
+</footer>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const OWNER  = 'kinetica-IA';
+  const REPO   = 'portfolio-alfie';
+  const BRANCH = 'main';
+  const FILE   = 'data/diary_live.csv';
+  const COLS   = ['date','schema_version','severidad_global','fatiga','pem',
+                  'niebla_mental','disfuncion_autonomica','dolor','zolpidem','nota'];
+
+  // ── Token persistence ────────────────────────────────────────────────────────
+  const tokenInput = document.getElementById('gh-token');
+  const storedTok  = localStorage.getItem('gh_diary_token') || '';
+  if (storedTok) tokenInput.value = storedTok;
+  tokenInput.addEventListener('change', () => {
+    localStorage.setItem('gh_diary_token', tokenInput.value.trim());
+  });
+
+  // ── Date ─────────────────────────────────────────────────────────────────────
+  const dateInput = document.getElementById('entry-date');
+  dateInput.value = new Date().toISOString().slice(0, 10);
+  document.getElementById('btn-today').addEventListener('click', () => {
+    dateInput.value = new Date().toISOString().slice(0, 10);
+  });
+
+  // ── Sliders ──────────────────────────────────────────────────────────────────
+  const sliders = {
+    fatiga:    { el: document.getElementById('sl-fatiga'),    val: document.getElementById('val-fatiga'),    opt: false },
+    pem:       { el: document.getElementById('sl-pem'),       val: document.getElementById('val-pem'),       opt: false },
+    niebla:    { el: document.getElementById('sl-niebla'),    val: document.getElementById('val-niebla'),    opt: false },
+    autonomica:{ el: document.getElementById('sl-autonomica'), val: document.getElementById('val-autonomica'), opt: true },
+    dolor:     { el: document.getElementById('sl-dolor'),     val: document.getElementById('val-dolor'),     opt: true },
+  };
+
+  // Optional fields start in "not-set" state — first touch activates them
+  const optActive = { autonomica: false, dolor: false };
+
+  function setSliderTrack(el) {
+    const pct = (el.value / el.max) * 100;
+    el.style.background = `linear-gradient(to right, var(--accent) ${pct}%, #e0e0e0 ${pct}%)`;
+  }
+
+  function valColor(v) {
+    if (v >= 7) return 'var(--bad)';
+    if (v >= 4) return 'var(--warn)';
+    return 'var(--ok)';
+  }
+
+  function updateSeverity() {
+    const active = [
+      parseFloat(sliders.fatiga.el.value),
+      parseFloat(sliders.pem.el.value),
+      parseFloat(sliders.niebla.el.value),
+      ...(optActive.autonomica ? [parseFloat(sliders.autonomica.el.value)] : []),
+      ...(optActive.dolor      ? [parseFloat(sliders.dolor.el.value)]      : []),
+    ];
+    const mean = active.reduce((a, b) => a + b, 0) / active.length;
+    const sev  = Math.round(mean * 10) / 10;
+    const scoreEl = document.getElementById('sev-score');
+    const bandEl  = document.getElementById('sev-band');
+    scoreEl.textContent = sev.toFixed(1);
+    scoreEl.style.color = valColor(sev);
+    bandEl.textContent = sev >= 7 ? 'Severe' : sev >= 4 ? 'Moderate' : 'Mild';
+    bandEl.style.color = valColor(sev);
+  }
+
+  Object.entries(sliders).forEach(([key, s]) => {
+    setSliderTrack(s.el);
+    // Initial display
+    if (!s.opt) {
+      s.val.textContent = s.el.value;
+      s.val.style.color = valColor(parseFloat(s.el.value));
+    }
+
+    s.el.addEventListener('input', () => {
+      if (s.opt && !optActive[key]) {
+        optActive[key] = true;
+      }
+      setSliderTrack(s.el);
+      const v = parseFloat(s.el.value);
+      s.val.textContent = v.toFixed(1);
+      s.val.style.color = valColor(v);
+      updateSeverity();
+    });
+  });
+
+  updateSeverity();
+
+  // ── GitHub Contents API helpers ───────────────────────────────────────────────
+  async function ghGet(token) {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}?ref=${BRANCH}`;
+    const r = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+    });
+    if (!r.ok) throw new Error(`GitHub GET ${r.status}: ${await r.text()}`);
+    return r.json(); // { content (base64), sha, ... }
+  }
+
+  async function ghPut(token, sha, content, message) {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`;
+    const body = JSON.stringify({
+      message,
+      content: btoa(unescape(encodeURIComponent(content))), // UTF-8 → base64
+      sha,
+      branch: BRANCH,
+    });
+    const r = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+    if (!r.ok) throw new Error(`GitHub PUT ${r.status}: ${await r.text()}`);
+    return r.json();
+  }
+
+  // ── CSV helpers ───────────────────────────────────────────────────────────────
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 1) return [];
+    const header = lines[0].split(',').map(h => h.trim());
+    return lines.slice(1).map(line => {
+      const vals = line.split(',');
+      const obj = {};
+      header.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
+      return obj;
+    });
+  }
+
+  function serializeCSV(rows) {
+    const lines = [COLS.join(',')];
+    const sorted = [...rows].sort((a, b) => a.date.localeCompare(b.date));
+    for (const r of sorted) {
+      lines.push(COLS.map(c => {
+        const v = r[c] ?? '';
+        // Wrap in quotes if contains comma
+        return String(v).includes(',') ? `"${v}"` : String(v);
+      }).join(','));
+    }
+    return lines.join('\n') + '\n';
+  }
+
+  // ── Status helper ─────────────────────────────────────────────────────────────
+  function setStatus(msg, type = 'inf') {
+    const el = document.getElementById('status');
+    el.className = type;
+    el.innerHTML = msg;
+  }
+
+  // ── Save ─────────────────────────────────────────────────────────────────────
+  document.getElementById('btn-save').addEventListener('click', async () => {
+    const token = (tokenInput.value || localStorage.getItem('gh_diary_token') || '').trim();
+    if (!token) { setStatus('⚠ Please enter your GitHub token first.', 'err'); return; }
+
+    const date = dateInput.value;
+    if (!date) { setStatus('⚠ Select a date.', 'err'); return; }
+
+    const btn = document.getElementById('btn-save');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    setStatus('Fetching current diary from GitHub…', 'inf');
+
+    try {
+      // 1. Fetch current CSV
+      const ghFile = await ghGet(token);
+      const csvText = decodeURIComponent(escape(atob(ghFile.content.replace(/\n/g, ''))));
+      const rows = parseCSV(csvText);
+
+      // 2. Build new row
+      const fVal = v => parseFloat(v).toFixed(1);
+      const fatiga   = fVal(sliders.fatiga.el.value);
+      const pem      = fVal(sliders.pem.el.value);
+      const niebla   = fVal(sliders.niebla.el.value);
+      const auto_v   = optActive.autonomica ? fVal(sliders.autonomica.el.value) : '';
+      const dolor_v  = optActive.dolor      ? fVal(sliders.dolor.el.value)      : '';
+      const zolpidem = document.getElementById('chk-zolpidem').checked ? '1.0' : '0.0';
+      const nota     = document.getElementById('txt-nota').value.replace(/,/g, ';').replace(/\n/g, ' ').trim();
+
+      const active = [parseFloat(fatiga), parseFloat(pem), parseFloat(niebla),
+                      ...(auto_v ? [parseFloat(auto_v)] : []),
+                      ...(dolor_v ? [parseFloat(dolor_v)] : [])];
+      const sev = (active.reduce((a, b) => a + b, 0) / active.length).toFixed(1);
+
+      const newRow = {
+        date,
+        schema_version:          'DIARY_v3',
+        severidad_global:        sev,
+        fatiga,
+        pem,
+        niebla_mental:           niebla,
+        disfuncion_autonomica:   auto_v,
+        dolor:                   dolor_v,
+        zolpidem,
+        nota,
+      };
+
+      // 3. Upsert (remove existing row for same date, add new)
+      const filtered = rows.filter(r => r.date !== date);
+      const isUpdate = rows.some(r => r.date === date);
+      filtered.push(newRow);
+
+      // 4. Write back
+      setStatus('Writing to GitHub…', 'inf');
+      const newCSV = serializeCSV(filtered);
+      const commitMsg = isUpdate
+        ? `diary: update symptoms ${date}`
+        : `diary: symptoms ${date}`;
+      await ghPut(token, ghFile.sha, newCSV, commitMsg);
+
+      setStatus(
+        `✓ Saved entry for <strong>${date}</strong> (severity ${sev}/10).<br>
+         GitHub Action will retrain the predictor in ~1 minute.`,
+        'ok'
+      );
+
+      // Store token if it worked
+      localStorage.setItem('gh_diary_token', token);
+
+    } catch (e) {
+      setStatus(`✗ Error: ${e.message}`, 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save and push to GitHub';
+    }
+  });
+
+  // ── History ───────────────────────────────────────────────────────────────────
+  document.getElementById('history-section').style.display = 'block';
+
+  document.getElementById('btn-load-hist').addEventListener('click', async () => {
+    const token = (tokenInput.value || localStorage.getItem('gh_diary_token') || '').trim();
+    if (!token) { document.getElementById('hist-body').innerHTML = '<p style="color:var(--bad);font-size:0.82rem">Enter GitHub token first.</p>'; return; }
+
+    document.getElementById('hist-body').innerHTML = '<p style="font-size:0.82rem;color:var(--muted)">Loading…</p>';
+
+    try {
+      const ghFile = await ghGet(token);
+      const csvText = decodeURIComponent(escape(atob(ghFile.content.replace(/\n/g, ''))));
+      const rows = parseCSV(csvText);
+      const recent = rows.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 20);
+
+      const pillClass = sev => {
+        const v = parseFloat(sev);
+        if (v >= 7) return 'pill-high';
+        if (v >= 4) return 'pill-mid';
+        return 'pill-low';
+      };
+
+      let html = `<table class="hist-table">
+        <thead><tr>
+          <th>Date</th><th>Sev</th><th>Fati</th><th>PEM</th><th>Fog</th><th>Auto</th><th>Pain</th><th>Zlp</th>
+        </tr></thead><tbody>`;
+      for (const r of recent) {
+        const sev = r.severidad_global || '—';
+        html += `<tr>
+          <td>${r.date}</td>
+          <td><span class="sev-pill ${pillClass(sev)}">${sev}</span></td>
+          <td>${r.fatiga||'—'}</td>
+          <td>${r.pem||'—'}</td>
+          <td>${r.niebla_mental||'—'}</td>
+          <td>${r.disfuncion_autonomica||'—'}</td>
+          <td>${r.dolor||'—'}</td>
+          <td>${r.zolpidem||'—'}</td>
+        </tr>`;
+      }
+      html += '</tbody></table>';
+      document.getElementById('hist-body').innerHTML = html;
+    } catch (e) {
+      document.getElementById('hist-body').innerHTML = `<p style="color:var(--bad);font-size:0.82rem">Error: ${e.message}</p>`;
+    }
+  });
+</script>
+</body>
+</html>
