@@ -2561,8 +2561,8 @@
   "finding": {
     "spearman_rho": 0.553,
     "p_value": 0.0007,
-    "auc": 0.7684,
-    "sensitivity_pct": 84.2,
+    "auc": 0.7719,
+    "sensitivity_pct": 73.7,
     "n_pairs": 34,
     "n_diary": 39,
     "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
@@ -2579,27 +2579,25 @@
     "ans_lag2_n": 34,
     "hrv_lag2_rho": 0.397,
     "hrv_lag2_p": 0.0202,
-    "auc": 0.7684,
-    "sensitivity": 0.8421,
-    "specificity": 0.7333,
+    "auc": 0.7719,
+    "sensitivity": 0.7368,
+    "specificity": 0.8667,
     "accuracy": 0.7941,
-    "tp": 16,
-    "fp": 4,
-    "tn": 11,
-    "fn": 3,
+    "tp": 14,
+    "fp": 2,
+    "tn": 13,
+    "fn": 5,
     "features": [
       "ans_t2",
       "hrv_t2",
       "rec_sublevel_t1",
-      "wake_t0",
-      "zlp"
+      "wake_t0"
     ],
     "coefficients": {
-      "ans_t2": 0.7542,
-      "hrv_t2": 0.2478,
-      "rec_sublevel_t1": -0.0131,
-      "wake_t0": 0.5313,
-      "zlp": 0.5267
+      "ans_t2": 0.5751,
+      "hrv_t2": 0.2708,
+      "rec_sublevel_t1": -0.0148,
+      "wake_t0": 0.5714
     },
     "imputed_rec_med": 44.0,
     "imputed_wake_med": 30.0,
@@ -2712,6 +2710,6 @@
         }
       }
     },
-    "generated": "2026-03-23 16:47"
+    "generated": "2026-03-23 17:21"
   }
 }
