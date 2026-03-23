@@ -1,0 +1,2140 @@
+{
+  "updated_at": "2026-03-23T00:00:00Z",
+  "latest": {
+    "date": "2026-03-17",
+    "hrv_rmssd_night": 39.0,
+    "hrv_rri_mean_ms": 904.0,
+    "hrv_rmssd_daily": 62.6,
+    "sleep_score": 79.7,
+    "sleep_duration_h": 10.2,
+    "steps": 2686
+  },
+  "series": [
+    {
+      "date": "2025-09-01",
+      "hrv_rmssd_daily": 99.4,
+      "steps": 4092
+    },
+    {
+      "date": "2025-09-02",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 878.0,
+      "hrv_rmssd_daily": 63.9,
+      "sleep_score": 66.7,
+      "sleep_duration_h": 8.03,
+      "steps": 4536
+    },
+    {
+      "date": "2025-09-03",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 919.0,
+      "hrv_rmssd_daily": 59.7,
+      "sleep_score": 59.6,
+      "sleep_duration_h": 8.02,
+      "steps": 32045
+    },
+    {
+      "date": "2025-09-04",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 901.0,
+      "hrv_rmssd_daily": 69.2,
+      "sleep_score": 54.8,
+      "sleep_duration_h": 5.84,
+      "recovery_indicator": "3",
+      "ans_status": 0.3685,
+      "steps": 18755
+    },
+    {
+      "date": "2025-09-05",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 875.0,
+      "hrv_rmssd_daily": 57.4,
+      "sleep_score": 64.2,
+      "sleep_duration_h": 6.16,
+      "recovery_indicator": "4",
+      "ans_status": -2.2363,
+      "steps": 11380
+    },
+    {
+      "date": "2025-09-06",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 844.0,
+      "hrv_rmssd_daily": 61.8,
+      "sleep_score": 57.5,
+      "sleep_duration_h": 6.89,
+      "recovery_indicator": "3",
+      "ans_status": -5.4618,
+      "steps": 22355
+    },
+    {
+      "date": "2025-09-07",
+      "hrv_rmssd_night": 28.0,
+      "hrv_rri_mean_ms": 755.0,
+      "hrv_rmssd_daily": 53.1,
+      "sleep_score": 77.1,
+      "sleep_duration_h": 6.88,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 35723
+    },
+    {
+      "date": "2025-09-08",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 769.0,
+      "hrv_rmssd_daily": 57.6,
+      "sleep_score": 73.4,
+      "sleep_duration_h": 7.39,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 18311
+    },
+    {
+      "date": "2025-09-09",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 777.0,
+      "hrv_rmssd_daily": 67.6,
+      "sleep_score": 60.5,
+      "sleep_duration_h": 7.77,
+      "recovery_indicator": "1",
+      "ans_status": -9.0793,
+      "steps": 19685
+    },
+    {
+      "date": "2025-09-10",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 788.0,
+      "hrv_rmssd_daily": 59.4,
+      "sleep_score": 54.2,
+      "sleep_duration_h": 6.66,
+      "recovery_indicator": "1",
+      "ans_status": -5.6084,
+      "steps": 19554
+    },
+    {
+      "date": "2025-09-11",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 828.0,
+      "hrv_rmssd_daily": 65.2,
+      "sleep_score": 69.5,
+      "sleep_duration_h": 5.81,
+      "recovery_indicator": "5",
+      "ans_status": 2.927,
+      "steps": 27471
+    },
+    {
+      "date": "2025-09-12",
+      "hrv_rmssd_night": 31.0,
+      "hrv_rri_mean_ms": 767.0,
+      "hrv_rmssd_daily": 65.4,
+      "sleep_score": 79.2,
+      "sleep_duration_h": 7.46,
+      "recovery_indicator": "4",
+      "ans_status": -5.902,
+      "steps": 29080
+    },
+    {
+      "date": "2025-09-13",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 885.0,
+      "hrv_rmssd_daily": 64.0,
+      "sleep_score": 49.1,
+      "sleep_duration_h": 5.66,
+      "recovery_indicator": "3",
+      "ans_status": 2.855,
+      "steps": 20075
+    },
+    {
+      "date": "2025-09-14",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 849.0,
+      "hrv_rmssd_daily": 66.3,
+      "sleep_score": 68.8,
+      "sleep_duration_h": 7.97,
+      "recovery_indicator": "5",
+      "ans_status": 0.3092,
+      "steps": 15394
+    },
+    {
+      "date": "2025-09-15",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 868.0,
+      "hrv_rmssd_daily": 54.6,
+      "sleep_score": 60.8,
+      "sleep_duration_h": 7.55,
+      "recovery_indicator": "4",
+      "ans_status": 4.9369,
+      "steps": 5188
+    },
+    {
+      "date": "2025-09-16",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 908.0,
+      "hrv_rmssd_daily": 69.0,
+      "sleep_score": 60.1,
+      "sleep_duration_h": 7.42,
+      "recovery_indicator": "4",
+      "ans_status": 5.9926,
+      "steps": 32617
+    },
+    {
+      "date": "2025-09-17",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 806.0,
+      "hrv_rmssd_daily": 73.7,
+      "sleep_score": 58.4,
+      "sleep_duration_h": 7.04,
+      "recovery_indicator": "3",
+      "ans_status": -2.8343,
+      "steps": 22851
+    },
+    {
+      "date": "2025-09-18",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 877.0,
+      "hrv_rmssd_daily": 61.0,
+      "sleep_score": 74.6,
+      "sleep_duration_h": 7.74,
+      "recovery_indicator": "6",
+      "ans_status": 2.3617,
+      "steps": 17599
+    },
+    {
+      "date": "2025-09-19",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 892.0,
+      "hrv_rmssd_daily": 61.0,
+      "sleep_score": 62.5,
+      "sleep_duration_h": 6.6,
+      "recovery_indicator": "4",
+      "ans_status": 1.7427,
+      "steps": 28942
+    },
+    {
+      "date": "2025-09-20",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 877.0,
+      "hrv_rmssd_daily": 68.1,
+      "sleep_score": 72.4,
+      "sleep_duration_h": 7.96,
+      "recovery_indicator": "5",
+      "ans_status": 2.3599,
+      "steps": 3498
+    },
+    {
+      "date": "2025-09-21",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 918.0,
+      "hrv_rmssd_daily": 72.0,
+      "sleep_score": 71.0,
+      "sleep_duration_h": 7.93,
+      "recovery_indicator": "5",
+      "ans_status": 5.5536,
+      "steps": 14348
+    },
+    {
+      "date": "2025-09-22",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 918.0,
+      "hrv_rmssd_daily": 70.7,
+      "sleep_score": 57.2,
+      "sleep_duration_h": 7.0,
+      "recovery_indicator": "4",
+      "ans_status": 6.1248,
+      "steps": 25218
+    },
+    {
+      "date": "2025-09-23",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 961.0,
+      "hrv_rmssd_daily": 63.6,
+      "sleep_score": 53.7,
+      "sleep_duration_h": 6.09,
+      "recovery_indicator": "3",
+      "ans_status": 7.4155,
+      "steps": 19287
+    },
+    {
+      "date": "2025-09-24",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 940.0,
+      "hrv_rmssd_daily": 77.9,
+      "sleep_score": 60.0,
+      "sleep_duration_h": 6.66,
+      "recovery_indicator": "4",
+      "ans_status": 6.8818,
+      "steps": 20346
+    },
+    {
+      "date": "2025-09-25",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 846.0,
+      "hrv_rmssd_daily": 64.8,
+      "sleep_score": 66.8,
+      "sleep_duration_h": 8.77,
+      "recovery_indicator": "3",
+      "ans_status": -2.6545,
+      "steps": 17071
+    },
+    {
+      "date": "2025-09-26",
+      "hrv_rmssd_night": 45.0,
+      "hrv_rri_mean_ms": 914.0,
+      "hrv_rmssd_daily": 71.4,
+      "sleep_score": 63.4,
+      "sleep_duration_h": 8.33,
+      "recovery_indicator": "5",
+      "ans_status": 3.1711,
+      "steps": 16559
+    },
+    {
+      "date": "2025-09-27",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 873.0,
+      "hrv_rmssd_daily": 63.6,
+      "sleep_score": 61.1,
+      "sleep_duration_h": 6.58,
+      "recovery_indicator": "4",
+      "ans_status": -0.1898,
+      "steps": 19975
+    },
+    {
+      "date": "2025-09-28",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 931.0,
+      "hrv_rmssd_daily": 64.9,
+      "sleep_score": 67.1,
+      "sleep_duration_h": 9.39,
+      "recovery_indicator": "5",
+      "ans_status": 8.1288,
+      "steps": 15114
+    },
+    {
+      "date": "2025-09-29",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 909.0,
+      "hrv_rmssd_daily": 64.4,
+      "sleep_score": 75.9,
+      "sleep_duration_h": 9.59,
+      "recovery_indicator": "5",
+      "ans_status": -0.9024,
+      "steps": 21261
+    },
+    {
+      "date": "2025-09-30",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 890.0,
+      "hrv_rmssd_daily": 66.4,
+      "sleep_score": 55.7,
+      "sleep_duration_h": 6.21,
+      "recovery_indicator": "3",
+      "ans_status": 0.8282,
+      "steps": 22203
+    },
+    {
+      "date": "2025-10-01",
+      "hrv_rmssd_daily": 67.4,
+      "sleep_duration_h": 4.99,
+      "steps": 18518
+    },
+    {
+      "date": "2025-10-02",
+      "hrv_rmssd_night": 47.0,
+      "hrv_rri_mean_ms": 946.0,
+      "hrv_rmssd_daily": 71.8,
+      "sleep_score": 60.0,
+      "sleep_duration_h": 6.7,
+      "recovery_indicator": "4",
+      "ans_status": 8.241,
+      "steps": 22466
+    },
+    {
+      "date": "2025-10-03",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 851.0,
+      "hrv_rmssd_daily": 65.6,
+      "sleep_score": 70.0,
+      "sleep_duration_h": 9.35,
+      "recovery_indicator": "5",
+      "ans_status": -0.6472,
+      "steps": 20107
+    },
+    {
+      "date": "2025-10-04",
+      "hrv_rmssd_night": 35.0,
+      "hrv_rri_mean_ms": 856.0,
+      "hrv_rmssd_daily": 81.8,
+      "sleep_score": 76.8,
+      "sleep_duration_h": 8.92,
+      "recovery_indicator": "5",
+      "ans_status": -1.6353,
+      "steps": 13427
+    },
+    {
+      "date": "2025-10-05",
+      "hrv_rmssd_night": 58.0,
+      "hrv_rri_mean_ms": 1095.0,
+      "hrv_rmssd_daily": 86.0,
+      "sleep_score": 72.7,
+      "sleep_duration_h": 8.22,
+      "recovery_indicator": "6",
+      "ans_status": 10.0,
+      "steps": 764
+    },
+    {
+      "date": "2025-10-06",
+      "hrv_rmssd_daily": 79.0,
+      "steps": 24316
+    },
+    {
+      "date": "2025-10-07",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 1035.0,
+      "hrv_rmssd_daily": 79.0,
+      "sleep_score": 54.8,
+      "sleep_duration_h": 6.26,
+      "recovery_indicator": "4",
+      "ans_status": 10.0,
+      "steps": 10207
+    },
+    {
+      "date": "2025-10-08",
+      "hrv_rmssd_night": 58.0,
+      "hrv_rri_mean_ms": 1055.0,
+      "hrv_rmssd_daily": 77.4,
+      "sleep_score": 58.5,
+      "sleep_duration_h": 5.14,
+      "recovery_indicator": "4",
+      "ans_status": 10.0,
+      "steps": 16829
+    },
+    {
+      "date": "2025-10-09",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 949.0,
+      "hrv_rmssd_daily": 76.3,
+      "sleep_score": 82.3,
+      "sleep_duration_h": 8.26,
+      "recovery_indicator": "6",
+      "ans_status": 4.797,
+      "steps": 19792
+    },
+    {
+      "date": "2025-10-10",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 1011.0,
+      "hrv_rmssd_daily": 70.0,
+      "sleep_score": 64.7,
+      "sleep_duration_h": 5.08,
+      "recovery_indicator": "5",
+      "ans_status": 10.0,
+      "steps": 3758
+    },
+    {
+      "date": "2025-10-11",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 997.0,
+      "hrv_rmssd_daily": 68.3,
+      "sleep_score": 76.1,
+      "sleep_duration_h": 8.8,
+      "recovery_indicator": "6",
+      "ans_status": 8.0604,
+      "steps": 19743
+    },
+    {
+      "date": "2025-10-12",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 954.0,
+      "hrv_rmssd_daily": 72.3,
+      "sleep_score": 76.4,
+      "sleep_duration_h": 9.2,
+      "recovery_indicator": "6",
+      "ans_status": 4.9925,
+      "steps": 10893
+    },
+    {
+      "date": "2025-10-13",
+      "hrv_rmssd_night": 51.0,
+      "hrv_rri_mean_ms": 1019.0,
+      "hrv_rmssd_daily": 64.5,
+      "sleep_score": 67.5,
+      "sleep_duration_h": 7.21,
+      "recovery_indicator": "5",
+      "ans_status": 9.3744,
+      "steps": 10127
+    },
+    {
+      "date": "2025-10-14",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 894.0,
+      "hrv_rmssd_daily": 72.3,
+      "sleep_score": 65.3,
+      "sleep_duration_h": 12.47,
+      "recovery_indicator": "3",
+      "ans_status": -3.0642,
+      "steps": 13646
+    },
+    {
+      "date": "2025-10-15",
+      "hrv_rmssd_night": 50.0,
+      "hrv_rri_mean_ms": 955.0,
+      "hrv_rmssd_daily": 66.9,
+      "sleep_score": 67.2,
+      "sleep_duration_h": 6.62,
+      "recovery_indicator": "5",
+      "ans_status": 7.3648,
+      "steps": 13622
+    },
+    {
+      "date": "2025-10-16",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 936.0,
+      "hrv_rmssd_daily": 69.7,
+      "sleep_score": 61.6,
+      "sleep_duration_h": 6.97,
+      "recovery_indicator": "3",
+      "ans_status": 1.8922,
+      "steps": 11997
+    },
+    {
+      "date": "2025-10-17",
+      "hrv_rmssd_night": 59.0,
+      "hrv_rri_mean_ms": 1030.0,
+      "hrv_rmssd_daily": 83.5,
+      "sleep_score": 59.9,
+      "sleep_duration_h": 5.9,
+      "recovery_indicator": "4",
+      "ans_status": 10.0,
+      "steps": 12221
+    },
+    {
+      "date": "2025-10-18",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 923.0,
+      "hrv_rmssd_daily": 65.3,
+      "sleep_score": 81.7,
+      "sleep_duration_h": 10.23,
+      "recovery_indicator": "5",
+      "ans_status": 1.6316,
+      "steps": 15988
+    },
+    {
+      "date": "2025-10-19",
+      "hrv_rmssd_night": 51.0,
+      "hrv_rri_mean_ms": 958.0,
+      "hrv_rmssd_daily": 77.5,
+      "sleep_score": 65.4,
+      "sleep_duration_h": 6.81,
+      "recovery_indicator": "5",
+      "ans_status": 4.4941,
+      "steps": 13369
+    },
+    {
+      "date": "2025-10-20",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 940.0,
+      "hrv_rmssd_daily": 76.6,
+      "sleep_score": 64.4,
+      "sleep_duration_h": 6.94,
+      "recovery_indicator": "5",
+      "ans_status": 3.021,
+      "steps": 20671
+    },
+    {
+      "date": "2025-10-21",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 930.0,
+      "hrv_rmssd_daily": 73.3,
+      "sleep_score": 59.6,
+      "sleep_duration_h": 6.58,
+      "recovery_indicator": "3",
+      "ans_status": -1.5539,
+      "steps": 11836
+    },
+    {
+      "date": "2025-10-22",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 922.0,
+      "hrv_rmssd_daily": 69.8,
+      "sleep_score": 65.0,
+      "sleep_duration_h": 8.0,
+      "recovery_indicator": "3",
+      "ans_status": -3.0884,
+      "steps": 26885
+    },
+    {
+      "date": "2025-10-23",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 911.0,
+      "hrv_rmssd_daily": 69.0,
+      "sleep_score": 65.4,
+      "sleep_duration_h": 7.85,
+      "recovery_indicator": "3",
+      "ans_status": -2.2558,
+      "steps": 18199
+    },
+    {
+      "date": "2025-10-24",
+      "hrv_rmssd_night": 33.0,
+      "hrv_rri_mean_ms": 883.0,
+      "hrv_rmssd_daily": 76.1,
+      "sleep_score": 58.9,
+      "sleep_duration_h": 4.57,
+      "recovery_indicator": "1",
+      "ans_status": -7.6713,
+      "steps": 17862
+    },
+    {
+      "date": "2025-10-25",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 858.0,
+      "hrv_rmssd_daily": 64.9,
+      "sleep_score": 68.8,
+      "sleep_duration_h": 9.47,
+      "recovery_indicator": "3",
+      "ans_status": -4.5216,
+      "steps": 19837
+    },
+    {
+      "date": "2025-10-26",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 807.0,
+      "hrv_rmssd_daily": 68.6,
+      "sleep_score": 67.8,
+      "sleep_duration_h": 7.9,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 13351
+    },
+    {
+      "date": "2025-10-27",
+      "hrv_rmssd_night": 53.0,
+      "hrv_rri_mean_ms": 998.0,
+      "hrv_rmssd_daily": 73.5,
+      "sleep_score": 54.1,
+      "sleep_duration_h": 7.05,
+      "recovery_indicator": "3",
+      "ans_status": 7.1773,
+      "steps": 23011
+    },
+    {
+      "date": "2025-10-28",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 942.0,
+      "hrv_rmssd_daily": 63.3,
+      "sleep_score": 59.5,
+      "sleep_duration_h": 6.14,
+      "recovery_indicator": "3",
+      "ans_status": -0.7774,
+      "steps": 25065
+    },
+    {
+      "date": "2025-10-29",
+      "hrv_rmssd_night": 28.0,
+      "hrv_rri_mean_ms": 836.0,
+      "hrv_rmssd_daily": 65.9,
+      "sleep_score": 78.1,
+      "sleep_duration_h": 8.28,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 14622
+    },
+    {
+      "date": "2025-10-30",
+      "hrv_rmssd_night": 35.0,
+      "hrv_rri_mean_ms": 841.0,
+      "hrv_rmssd_daily": 58.0,
+      "sleep_score": 66.3,
+      "sleep_duration_h": 8.47,
+      "recovery_indicator": "2",
+      "ans_status": -8.0371,
+      "steps": 39829
+    },
+    {
+      "date": "2025-10-31",
+      "hrv_rmssd_daily": 58.8,
+      "steps": 23123
+    },
+    {
+      "date": "2025-11-01",
+      "hrv_rmssd_night": 26.0,
+      "hrv_rri_mean_ms": 776.0,
+      "hrv_rmssd_daily": 63.4,
+      "sleep_score": 67.9,
+      "sleep_duration_h": 9.28,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 19271
+    },
+    {
+      "date": "2025-11-02",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 780.0,
+      "hrv_rmssd_daily": 64.1,
+      "sleep_score": 70.7,
+      "sleep_duration_h": 8.68,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 13094
+    },
+    {
+      "date": "2025-11-03",
+      "hrv_rmssd_night": 35.0,
+      "hrv_rri_mean_ms": 933.0,
+      "hrv_rmssd_daily": 69.4,
+      "sleep_score": 65.0,
+      "sleep_duration_h": 6.49,
+      "recovery_indicator": "4",
+      "ans_status": -1.1932,
+      "steps": 23704
+    },
+    {
+      "date": "2025-11-04",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 925.0,
+      "hrv_rmssd_daily": 73.4,
+      "sleep_score": 66.8,
+      "sleep_duration_h": 6.57,
+      "recovery_indicator": "4",
+      "ans_status": -1.7176,
+      "steps": 17837
+    },
+    {
+      "date": "2025-11-05",
+      "hrv_rmssd_night": 47.0,
+      "hrv_rri_mean_ms": 1003.0,
+      "hrv_rmssd_daily": 77.8,
+      "sleep_score": 68.9,
+      "sleep_duration_h": 5.9,
+      "recovery_indicator": "5",
+      "ans_status": 6.7486,
+      "steps": 18997
+    },
+    {
+      "date": "2025-11-06",
+      "hrv_rmssd_daily": 75.3,
+      "steps": 11316
+    },
+    {
+      "date": "2025-11-07",
+      "hrv_rmssd_night": 35.0,
+      "hrv_rri_mean_ms": 943.0,
+      "hrv_rmssd_daily": 76.1,
+      "sleep_score": 72.5,
+      "sleep_duration_h": 5.48,
+      "recovery_indicator": "4",
+      "ans_status": -3.256,
+      "steps": 24205
+    },
+    {
+      "date": "2025-11-08",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 941.0,
+      "hrv_rmssd_daily": 66.9,
+      "sleep_score": 76.6,
+      "sleep_duration_h": 7.69,
+      "recovery_indicator": "5",
+      "ans_status": -0.6311,
+      "steps": 22276
+    },
+    {
+      "date": "2025-11-09",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 915.0,
+      "hrv_rmssd_daily": 79.3,
+      "sleep_score": 78.5,
+      "sleep_duration_h": 7.95,
+      "recovery_indicator": "5",
+      "ans_status": -0.0543,
+      "steps": 24590
+    },
+    {
+      "date": "2025-11-10",
+      "hrv_rmssd_night": 52.0,
+      "hrv_rri_mean_ms": 954.0,
+      "hrv_rmssd_daily": 86.9,
+      "sleep_score": 54.8,
+      "sleep_duration_h": 7.04,
+      "recovery_indicator": "3",
+      "ans_status": 5.9492,
+      "steps": 940
+    },
+    {
+      "date": "2025-11-11",
+      "hrv_rmssd_daily": 71.0,
+      "steps": 10483
+    },
+    {
+      "date": "2025-11-12",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 853.0,
+      "hrv_rmssd_daily": 81.4,
+      "sleep_score": 55.1,
+      "sleep_duration_h": 6.95,
+      "recovery_indicator": "1",
+      "ans_status": -5.4168,
+      "steps": 14787
+    },
+    {
+      "date": "2025-11-13",
+      "hrv_rmssd_night": 47.0,
+      "hrv_rri_mean_ms": 921.0,
+      "hrv_rmssd_daily": 76.1,
+      "sleep_score": 65.6,
+      "sleep_duration_h": 7.69,
+      "recovery_indicator": "4",
+      "ans_status": 0.5617,
+      "steps": 28986
+    },
+    {
+      "date": "2025-11-14",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 868.0,
+      "hrv_rmssd_daily": 70.7,
+      "sleep_score": 70.7,
+      "sleep_duration_h": 7.32,
+      "recovery_indicator": "4",
+      "ans_status": -4.4282,
+      "steps": 24745
+    },
+    {
+      "date": "2025-11-15",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 985.0,
+      "hrv_rmssd_daily": 71.6,
+      "sleep_score": 71.5,
+      "sleep_duration_h": 7.19,
+      "recovery_indicator": "5",
+      "ans_status": 5.2541,
+      "steps": 16975
+    },
+    {
+      "date": "2025-11-16",
+      "hrv_rmssd_night": 33.0,
+      "hrv_rri_mean_ms": 769.0,
+      "hrv_rmssd_daily": 73.4,
+      "sleep_score": 71.6,
+      "sleep_duration_h": 8.38,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 11406
+    },
+    {
+      "date": "2025-11-17",
+      "hrv_rmssd_daily": 64.8,
+      "steps": 23618
+    },
+    {
+      "date": "2025-11-18",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 902.0,
+      "hrv_rmssd_daily": 68.0,
+      "sleep_score": 67.4,
+      "sleep_duration_h": 8.19,
+      "recovery_indicator": "4",
+      "ans_status": -0.0556,
+      "steps": 21238
+    },
+    {
+      "date": "2025-11-19",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 902.0,
+      "hrv_rmssd_daily": 67.1,
+      "sleep_score": 76.5,
+      "sleep_duration_h": 6.82,
+      "recovery_indicator": "5",
+      "ans_status": 0.0198,
+      "steps": 23875
+    },
+    {
+      "date": "2025-11-20",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 854.0,
+      "hrv_rmssd_daily": 71.9,
+      "sleep_score": 66.8,
+      "sleep_duration_h": 7.45,
+      "recovery_indicator": "3",
+      "ans_status": -2.2283,
+      "steps": 21566
+    },
+    {
+      "date": "2025-11-21",
+      "hrv_rmssd_night": 56.0,
+      "hrv_rri_mean_ms": 1064.0,
+      "hrv_rmssd_daily": 74.2,
+      "sleep_score": 76.8,
+      "sleep_duration_h": 6.98,
+      "recovery_indicator": "5",
+      "ans_status": 10.0,
+      "steps": 24615
+    },
+    {
+      "date": "2025-11-22",
+      "hrv_rmssd_night": 55.0,
+      "hrv_rri_mean_ms": 1004.0,
+      "hrv_rmssd_daily": 71.5,
+      "sleep_score": 79.7,
+      "sleep_duration_h": 8.33,
+      "recovery_indicator": "6",
+      "ans_status": 10.0,
+      "steps": 25055
+    },
+    {
+      "date": "2025-11-23",
+      "hrv_rmssd_night": 31.0,
+      "hrv_rri_mean_ms": 837.0,
+      "hrv_rmssd_daily": 71.9,
+      "sleep_score": 78.5,
+      "sleep_duration_h": 6.54,
+      "recovery_indicator": "4",
+      "ans_status": -5.6032,
+      "steps": 20603
+    },
+    {
+      "date": "2025-11-24",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 911.0,
+      "hrv_rmssd_daily": 73.5,
+      "sleep_score": 83.6,
+      "sleep_duration_h": 8.4,
+      "recovery_indicator": "6",
+      "ans_status": 3.0843,
+      "steps": 22946
+    },
+    {
+      "date": "2025-11-25",
+      "hrv_rmssd_night": 59.0,
+      "hrv_rri_mean_ms": 1064.0,
+      "hrv_rmssd_daily": 70.5,
+      "sleep_score": 68.9,
+      "sleep_duration_h": 5.86,
+      "recovery_indicator": "5",
+      "ans_status": 10.0,
+      "steps": 15022
+    },
+    {
+      "date": "2025-11-26",
+      "hrv_rmssd_night": 47.0,
+      "hrv_rri_mean_ms": 927.0,
+      "hrv_rmssd_daily": 78.4,
+      "sleep_score": 81.3,
+      "sleep_duration_h": 12.47,
+      "recovery_indicator": "6",
+      "ans_status": 2.7853,
+      "steps": 10533
+    },
+    {
+      "date": "2025-11-27",
+      "hrv_rmssd_night": 56.0,
+      "hrv_rri_mean_ms": 972.0,
+      "hrv_rmssd_daily": 83.8,
+      "sleep_score": 76.2,
+      "sleep_duration_h": 7.39,
+      "recovery_indicator": "6",
+      "ans_status": 7.9459,
+      "steps": 21752
+    },
+    {
+      "date": "2025-11-28",
+      "hrv_rmssd_night": 34.0,
+      "hrv_rri_mean_ms": 908.0,
+      "hrv_rmssd_daily": 83.5,
+      "sleep_score": 83.5,
+      "sleep_duration_h": 9.05,
+      "recovery_indicator": "4",
+      "ans_status": -2.5805,
+      "steps": 23887
+    },
+    {
+      "date": "2025-11-29",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 938.0,
+      "hrv_rmssd_daily": 61.9,
+      "sleep_score": 80.7,
+      "sleep_duration_h": 7.8,
+      "recovery_indicator": "5",
+      "ans_status": -0.3105,
+      "steps": 14626
+    },
+    {
+      "date": "2025-11-30",
+      "hrv_rmssd_night": 53.0,
+      "hrv_rri_mean_ms": 971.0,
+      "hrv_rmssd_daily": 79.7,
+      "sleep_score": 75.4,
+      "sleep_duration_h": 6.79,
+      "recovery_indicator": "5",
+      "ans_status": 5.7319,
+      "steps": 25145
+    },
+    {
+      "date": "2025-12-01",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 858.0,
+      "hrv_rmssd_daily": 64.5,
+      "sleep_score": 73.2,
+      "sleep_duration_h": 7.8,
+      "recovery_indicator": "2",
+      "ans_status": -9.0593,
+      "steps": 17673
+    },
+    {
+      "date": "2025-12-02",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 924.0,
+      "hrv_rmssd_daily": 70.3,
+      "sleep_score": 57.0,
+      "sleep_duration_h": 5.77,
+      "recovery_indicator": "3",
+      "ans_status": 0.7267,
+      "steps": 17367
+    },
+    {
+      "date": "2025-12-03",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 852.0,
+      "hrv_rmssd_daily": 58.4,
+      "sleep_score": 59.7,
+      "sleep_duration_h": 5.92,
+      "recovery_indicator": "1",
+      "ans_status": -4.5417,
+      "steps": 31602
+    },
+    {
+      "date": "2025-12-04",
+      "hrv_rmssd_night": 52.0,
+      "hrv_rri_mean_ms": 997.0,
+      "hrv_rmssd_daily": 66.6,
+      "sleep_score": 78.1,
+      "sleep_duration_h": 7.51,
+      "recovery_indicator": "6",
+      "ans_status": 8.6281,
+      "steps": 36120
+    },
+    {
+      "date": "2025-12-05",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 800.0,
+      "hrv_rmssd_daily": 58.0,
+      "sleep_score": 72.7,
+      "sleep_duration_h": 7.99,
+      "recovery_indicator": "2",
+      "ans_status": -9.4936,
+      "steps": 25622
+    },
+    {
+      "date": "2025-12-06",
+      "hrv_rmssd_night": 33.0,
+      "hrv_rri_mean_ms": 853.0,
+      "hrv_rmssd_daily": 44.5,
+      "sleep_score": 71.4,
+      "sleep_duration_h": 10.03,
+      "recovery_indicator": "2",
+      "ans_status": -6.0552,
+      "steps": 9102
+    },
+    {
+      "date": "2025-12-07",
+      "hrv_rmssd_night": 20.0,
+      "hrv_rri_mean_ms": 731.0,
+      "hrv_rmssd_daily": 45.0,
+      "sleep_score": 73.7,
+      "sleep_duration_h": 8.79,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 26896
+    },
+    {
+      "date": "2025-12-08",
+      "hrv_rmssd_night": 41.0,
+      "hrv_rri_mean_ms": 867.0,
+      "hrv_rmssd_daily": 60.7,
+      "sleep_score": 71.4,
+      "sleep_duration_h": 6.63,
+      "recovery_indicator": "3",
+      "ans_status": -2.1004,
+      "steps": 22861
+    },
+    {
+      "date": "2025-12-09",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 849.0,
+      "hrv_rmssd_daily": 70.9,
+      "sleep_score": 62.5,
+      "sleep_duration_h": 7.23,
+      "recovery_indicator": "1",
+      "ans_status": -2.7371,
+      "steps": 9812
+    },
+    {
+      "date": "2025-12-10",
+      "hrv_rmssd_daily": 92.2,
+      "steps": 432
+    },
+    {
+      "date": "2025-12-11",
+      "hrv_rmssd_night": 34.0,
+      "hrv_rri_mean_ms": 796.0,
+      "hrv_rmssd_daily": 78.7,
+      "sleep_score": 70.8,
+      "sleep_duration_h": 8.18,
+      "recovery_indicator": "2",
+      "ans_status": -7.6264,
+      "steps": 25319
+    },
+    {
+      "date": "2025-12-12",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 870.0,
+      "hrv_rmssd_daily": 66.8,
+      "sleep_score": 72.1,
+      "sleep_duration_h": 8.38,
+      "recovery_indicator": "4",
+      "ans_status": -0.6554,
+      "steps": 24718
+    },
+    {
+      "date": "2025-12-13",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 891.0,
+      "hrv_rmssd_daily": 65.1,
+      "sleep_score": 62.4,
+      "sleep_duration_h": 6.2,
+      "recovery_indicator": "3",
+      "ans_status": -1.2589,
+      "steps": 27372
+    },
+    {
+      "date": "2025-12-14",
+      "hrv_rmssd_night": 25.0,
+      "hrv_rri_mean_ms": 785.0,
+      "hrv_rmssd_daily": 36.7,
+      "sleep_score": 74.8,
+      "sleep_duration_h": 7.9,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 33042
+    },
+    {
+      "date": "2025-12-15",
+      "hrv_rmssd_night": 29.0,
+      "hrv_rri_mean_ms": 790.0,
+      "hrv_rmssd_daily": 48.2,
+      "sleep_score": 77.2,
+      "sleep_duration_h": 7.72,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 10544
+    },
+    {
+      "date": "2025-12-16",
+      "hrv_rmssd_night": 57.0,
+      "hrv_rri_mean_ms": 959.0,
+      "hrv_rmssd_daily": 68.9,
+      "sleep_score": 76.6,
+      "sleep_duration_h": 8.11,
+      "recovery_indicator": "6",
+      "ans_status": 8.0366,
+      "steps": 11200
+    },
+    {
+      "date": "2025-12-17",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 925.0,
+      "hrv_rmssd_daily": 59.5,
+      "sleep_score": 76.6,
+      "sleep_duration_h": 7.54,
+      "recovery_indicator": "5",
+      "ans_status": 2.3026,
+      "steps": 18619
+    },
+    {
+      "date": "2025-12-18",
+      "hrv_rmssd_night": 32.0,
+      "hrv_rri_mean_ms": 823.0,
+      "hrv_rmssd_daily": 54.4,
+      "sleep_score": 80.9,
+      "sleep_duration_h": 9.33,
+      "recovery_indicator": "4",
+      "ans_status": -4.1508,
+      "steps": 25049
+    },
+    {
+      "date": "2025-12-19",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 834.0,
+      "hrv_rmssd_daily": 67.6,
+      "sleep_score": 76.9,
+      "sleep_duration_h": 8.26,
+      "recovery_indicator": "3",
+      "ans_status": -5.6691,
+      "steps": 23181
+    },
+    {
+      "date": "2025-12-20",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 929.0,
+      "hrv_rmssd_daily": 50.6,
+      "sleep_score": 53.3,
+      "sleep_duration_h": 5.95,
+      "recovery_indicator": "3",
+      "ans_status": 4.1938,
+      "steps": 25038
+    },
+    {
+      "date": "2025-12-21",
+      "hrv_rmssd_night": 50.0,
+      "hrv_rri_mean_ms": 902.0,
+      "hrv_rmssd_daily": 62.1,
+      "sleep_score": 60.7,
+      "sleep_duration_h": 6.94,
+      "recovery_indicator": "3",
+      "ans_status": 1.5179,
+      "steps": 23217
+    },
+    {
+      "date": "2025-12-22",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 941.0,
+      "hrv_rmssd_daily": 69.9,
+      "sleep_score": 71.4,
+      "sleep_duration_h": 6.72,
+      "recovery_indicator": "5",
+      "ans_status": 5.565,
+      "steps": 33860
+    },
+    {
+      "date": "2025-12-23",
+      "hrv_rmssd_night": 29.0,
+      "hrv_rri_mean_ms": 810.0,
+      "hrv_rmssd_daily": 46.1,
+      "sleep_score": 83.1,
+      "sleep_duration_h": 7.5,
+      "recovery_indicator": "2",
+      "ans_status": -7.9849,
+      "steps": 12869
+    },
+    {
+      "date": "2025-12-24",
+      "hrv_rmssd_night": 31.0,
+      "hrv_rri_mean_ms": 865.0,
+      "hrv_rmssd_daily": 46.5,
+      "sleep_score": 79.0,
+      "sleep_duration_h": 10.77,
+      "recovery_indicator": "4",
+      "ans_status": -2.801,
+      "steps": 10267
+    },
+    {
+      "date": "2025-12-25",
+      "hrv_rmssd_daily": 28.2,
+      "steps": 358
+    },
+    {
+      "date": "2025-12-26",
+      "hrv_rmssd_night": 18.0,
+      "hrv_rri_mean_ms": 753.0,
+      "hrv_rmssd_daily": 38.1,
+      "sleep_score": 71.7,
+      "sleep_duration_h": 9.47,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 25625
+    },
+    {
+      "date": "2025-12-27",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 918.0,
+      "hrv_rmssd_daily": 55.7,
+      "sleep_score": 89.2,
+      "sleep_duration_h": 9.11,
+      "recovery_indicator": "6",
+      "ans_status": 3.4885,
+      "steps": 15469
+    },
+    {
+      "date": "2025-12-28",
+      "hrv_rmssd_daily": 63.6,
+      "steps": 15308
+    },
+    {
+      "date": "2025-12-29",
+      "hrv_rmssd_night": 52.0,
+      "hrv_rri_mean_ms": 867.0,
+      "hrv_rmssd_daily": 65.5,
+      "sleep_score": 49.8,
+      "sleep_duration_h": 6.53,
+      "recovery_indicator": "3",
+      "ans_status": 2.9745,
+      "steps": 18562
+    },
+    {
+      "date": "2025-12-30",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 799.0,
+      "hrv_rmssd_daily": 58.3,
+      "sleep_score": 76.3,
+      "sleep_duration_h": 7.99,
+      "recovery_indicator": "2",
+      "ans_status": -7.5629,
+      "steps": 21789
+    },
+    {
+      "date": "2025-12-31",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 932.0,
+      "hrv_rmssd_daily": 77.6,
+      "sleep_score": 82.4,
+      "sleep_duration_h": 9.06,
+      "recovery_indicator": "6",
+      "ans_status": 4.2368,
+      "steps": 12329
+    },
+    {
+      "date": "2026-01-01",
+      "hrv_rmssd_daily": 80.1,
+      "sleep_duration_h": 6.36,
+      "steps": 9544
+    },
+    {
+      "date": "2026-01-02",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 914.0,
+      "hrv_rmssd_daily": 67.9,
+      "sleep_score": 83.4,
+      "sleep_duration_h": 7.68,
+      "recovery_indicator": "6",
+      "ans_status": 5.6373,
+      "steps": 20462
+    },
+    {
+      "date": "2026-01-03",
+      "hrv_rmssd_daily": 81.6,
+      "sleep_duration_h": 17.71,
+      "steps": 4
+    },
+    {
+      "date": "2026-01-04",
+      "hrv_rmssd_daily": 93.2,
+      "steps": 7685
+    },
+    {
+      "date": "2026-01-05",
+      "hrv_rmssd_night": 58.0,
+      "hrv_rri_mean_ms": 1016.0,
+      "hrv_rmssd_daily": 81.3,
+      "sleep_score": 79.7,
+      "sleep_duration_h": 7.22,
+      "recovery_indicator": "5",
+      "ans_status": 10.0,
+      "steps": 12137
+    },
+    {
+      "date": "2026-01-06",
+      "hrv_rmssd_night": 59.0,
+      "hrv_rri_mean_ms": 1045.0,
+      "hrv_rmssd_daily": 87.0,
+      "sleep_score": 72.1,
+      "sleep_duration_h": 6.88,
+      "recovery_indicator": "5",
+      "ans_status": 10.0,
+      "steps": 14773
+    },
+    {
+      "date": "2026-01-07",
+      "hrv_rmssd_night": 53.0,
+      "hrv_rri_mean_ms": 959.0,
+      "hrv_rmssd_daily": 76.5,
+      "sleep_score": 73.0,
+      "sleep_duration_h": 11.22,
+      "recovery_indicator": "5",
+      "ans_status": 7.2989,
+      "steps": 10320
+    },
+    {
+      "date": "2026-01-08",
+      "hrv_rmssd_night": 31.0,
+      "hrv_rri_mean_ms": 793.0,
+      "hrv_rmssd_daily": 57.9,
+      "sleep_score": 80.0,
+      "sleep_duration_h": 9.68,
+      "recovery_indicator": "2",
+      "ans_status": -6.5228,
+      "steps": 14382
+    },
+    {
+      "date": "2026-01-09",
+      "hrv_rmssd_night": 34.0,
+      "hrv_rri_mean_ms": 933.0,
+      "hrv_rmssd_daily": 65.8,
+      "sleep_score": 70.3,
+      "sleep_duration_h": 7.07,
+      "recovery_indicator": "3",
+      "ans_status": 0.26,
+      "steps": 13238
+    },
+    {
+      "date": "2026-01-10",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 942.0,
+      "hrv_rmssd_daily": 79.8,
+      "sleep_score": 65.2,
+      "sleep_duration_h": 5.45,
+      "recovery_indicator": "4",
+      "ans_status": 5.9321,
+      "steps": 15024
+    },
+    {
+      "date": "2026-01-11",
+      "hrv_rmssd_night": 31.0,
+      "hrv_rri_mean_ms": 840.0,
+      "hrv_rmssd_daily": 69.7,
+      "sleep_score": 88.1,
+      "sleep_duration_h": 8.77,
+      "recovery_indicator": "4",
+      "ans_status": -3.9176,
+      "steps": 15124
+    },
+    {
+      "date": "2026-01-12",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 846.0,
+      "hrv_rmssd_daily": 66.6,
+      "sleep_score": 79.7,
+      "sleep_duration_h": 10.26,
+      "recovery_indicator": "4",
+      "ans_status": -2.4819,
+      "steps": 16940
+    },
+    {
+      "date": "2026-01-13",
+      "hrv_rmssd_night": 58.0,
+      "hrv_rri_mean_ms": 1036.0,
+      "hrv_rmssd_daily": 75.6,
+      "sleep_score": 86.3,
+      "sleep_duration_h": 9.2,
+      "recovery_indicator": "6",
+      "ans_status": 10.0,
+      "steps": 13509
+    },
+    {
+      "date": "2026-01-14",
+      "hrv_rmssd_night": 33.0,
+      "hrv_rri_mean_ms": 808.0,
+      "hrv_rmssd_daily": 71.3,
+      "sleep_score": 80.4,
+      "sleep_duration_h": 9.23,
+      "recovery_indicator": "2",
+      "ans_status": -6.04,
+      "steps": 15872
+    },
+    {
+      "date": "2026-01-15",
+      "hrv_rmssd_night": 66.0,
+      "hrv_rri_mean_ms": 1049.0,
+      "hrv_rmssd_daily": 96.4,
+      "sleep_score": 68.0,
+      "sleep_duration_h": 6.18,
+      "recovery_indicator": "4",
+      "ans_status": 10.0,
+      "steps": 13413
+    },
+    {
+      "date": "2026-01-16",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 810.0,
+      "hrv_rmssd_daily": 47.4,
+      "sleep_score": 71.7,
+      "sleep_duration_h": 10.97,
+      "recovery_indicator": "3",
+      "ans_status": -5.4079,
+      "steps": 18002
+    },
+    {
+      "date": "2026-01-17",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 859.0,
+      "hrv_rmssd_daily": 65.6,
+      "sleep_score": 69.7,
+      "sleep_duration_h": 10.9,
+      "recovery_indicator": "3",
+      "ans_status": -1.9971,
+      "steps": 1642
+    },
+    {
+      "date": "2026-01-18",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 1020.0,
+      "hrv_rmssd_daily": 78.0,
+      "sleep_score": 69.9,
+      "sleep_duration_h": 10.41,
+      "recovery_indicator": "4",
+      "ans_status": 8.9756,
+      "steps": 3586
+    },
+    {
+      "date": "2026-01-19",
+      "hrv_rmssd_night": 60.0,
+      "hrv_rri_mean_ms": 1066.0,
+      "hrv_rmssd_daily": 78.3,
+      "sleep_score": 70.1,
+      "sleep_duration_h": 6.58,
+      "recovery_indicator": "4",
+      "ans_status": 10.0,
+      "steps": 17712
+    },
+    {
+      "date": "2026-01-20",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 953.0,
+      "hrv_rmssd_daily": 66.9,
+      "sleep_score": 70.8,
+      "sleep_duration_h": 7.41,
+      "recovery_indicator": "4",
+      "ans_status": 2.0012,
+      "steps": 17469
+    },
+    {
+      "date": "2026-01-21",
+      "hrv_rmssd_night": 45.0,
+      "hrv_rri_mean_ms": 1017.0,
+      "hrv_rmssd_daily": 58.5,
+      "sleep_score": 59.3,
+      "sleep_duration_h": 4.53,
+      "recovery_indicator": "3",
+      "ans_status": 5.7846,
+      "steps": 18987
+    },
+    {
+      "date": "2026-01-22",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 892.0,
+      "hrv_rmssd_daily": 63.6,
+      "sleep_score": 73.7,
+      "sleep_duration_h": 9.81,
+      "recovery_indicator": "4",
+      "ans_status": -0.6928,
+      "steps": 16651
+    },
+    {
+      "date": "2026-01-23",
+      "hrv_rmssd_night": 21.0,
+      "hrv_rri_mean_ms": 752.0,
+      "hrv_rmssd_daily": 53.2,
+      "sleep_score": 77.3,
+      "sleep_duration_h": 8.96,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 12502
+    },
+    {
+      "date": "2026-01-24",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 977.0,
+      "hrv_rmssd_daily": 57.5,
+      "sleep_score": 73.9,
+      "sleep_duration_h": 7.12,
+      "recovery_indicator": "5",
+      "ans_status": 3.2477,
+      "steps": 7777
+    },
+    {
+      "date": "2026-01-25",
+      "hrv_rmssd_night": 50.0,
+      "hrv_rri_mean_ms": 962.0,
+      "hrv_rmssd_daily": 84.2,
+      "sleep_score": 74.9,
+      "sleep_duration_h": 9.12,
+      "recovery_indicator": "5",
+      "ans_status": 3.7159,
+      "steps": 9028
+    },
+    {
+      "date": "2026-01-26",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 1010.0,
+      "hrv_rmssd_daily": 64.0,
+      "sleep_score": 67.8,
+      "sleep_duration_h": 7.3,
+      "recovery_indicator": "4",
+      "ans_status": 3.1873,
+      "steps": 5700
+    },
+    {
+      "date": "2026-01-27",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 973.0,
+      "hrv_rmssd_daily": 69.4,
+      "sleep_score": 88.5,
+      "sleep_duration_h": 7.81,
+      "recovery_indicator": "6",
+      "ans_status": 2.9491,
+      "steps": 12685
+    },
+    {
+      "date": "2026-01-28",
+      "hrv_rmssd_night": 50.0,
+      "hrv_rri_mean_ms": 962.0,
+      "hrv_rmssd_daily": 67.7,
+      "sleep_score": 55.9,
+      "sleep_duration_h": 6.08,
+      "recovery_indicator": "3",
+      "ans_status": 2.8782,
+      "steps": 13803
+    },
+    {
+      "date": "2026-01-29",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 991.0,
+      "hrv_rmssd_daily": 55.1,
+      "sleep_score": 70.6,
+      "sleep_duration_h": 7.19,
+      "recovery_indicator": "4",
+      "ans_status": 2.207,
+      "steps": 16193
+    },
+    {
+      "date": "2026-01-30",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 925.0,
+      "hrv_rmssd_daily": 53.1,
+      "sleep_score": 82.1,
+      "sleep_duration_h": 7.89,
+      "recovery_indicator": "4",
+      "ans_status": -2.0939,
+      "steps": 11613
+    },
+    {
+      "date": "2026-01-31",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 959.0,
+      "hrv_rmssd_daily": 60.6,
+      "sleep_score": 70.9,
+      "sleep_duration_h": 7.28,
+      "recovery_indicator": "4",
+      "ans_status": 0.1047,
+      "steps": 14625
+    },
+    {
+      "date": "2026-02-01",
+      "hrv_rmssd_daily": 72.6,
+      "sleep_duration_h": 7.73,
+      "steps": 13277
+    },
+    {
+      "date": "2026-02-02",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 980.0,
+      "hrv_rmssd_daily": 69.6,
+      "sleep_score": 67.5,
+      "sleep_duration_h": 6.42,
+      "recovery_indicator": "4",
+      "ans_status": 2.8193,
+      "steps": 13895
+    },
+    {
+      "date": "2026-02-03",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 915.0,
+      "hrv_rmssd_daily": 71.8,
+      "sleep_score": 74.1,
+      "sleep_duration_h": 8.25,
+      "recovery_indicator": "4",
+      "ans_status": -0.7312,
+      "steps": 17729
+    },
+    {
+      "date": "2026-02-04",
+      "hrv_rmssd_night": 21.0,
+      "hrv_rri_mean_ms": 727.0,
+      "hrv_rmssd_daily": 51.9,
+      "sleep_score": 70.3,
+      "sleep_duration_h": 9.92,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 9785
+    },
+    {
+      "date": "2026-02-05",
+      "hrv_rmssd_night": 56.0,
+      "hrv_rri_mean_ms": 970.0,
+      "hrv_rmssd_daily": 78.6,
+      "sleep_score": 81.2,
+      "sleep_duration_h": 7.56,
+      "recovery_indicator": "5",
+      "ans_status": 4.7419,
+      "steps": 8811
+    },
+    {
+      "date": "2026-02-06",
+      "hrv_rmssd_night": 23.0,
+      "hrv_rri_mean_ms": 800.0,
+      "hrv_rmssd_daily": 58.3,
+      "sleep_score": 74.4,
+      "sleep_duration_h": 8.52,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 10594
+    },
+    {
+      "date": "2026-02-07",
+      "hrv_rmssd_daily": 66.2,
+      "steps": 1724
+    },
+    {
+      "date": "2026-02-08",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 966.0,
+      "hrv_rmssd_daily": 64.0,
+      "sleep_score": 73.0,
+      "sleep_duration_h": 6.47,
+      "recovery_indicator": "4",
+      "ans_status": -1.6348,
+      "steps": 7440
+    },
+    {
+      "date": "2026-02-09",
+      "hrv_rmssd_daily": 67.5,
+      "steps": 16287
+    },
+    {
+      "date": "2026-02-10",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 764.0,
+      "hrv_rmssd_daily": 70.3,
+      "sleep_score": 77.3,
+      "sleep_duration_h": 11.91,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 11247
+    },
+    {
+      "date": "2026-02-11",
+      "hrv_rmssd_daily": 79.0,
+      "sleep_duration_h": 7.3,
+      "steps": 14182
+    },
+    {
+      "date": "2026-02-12",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 1005.0,
+      "hrv_rmssd_daily": 69.9,
+      "sleep_score": 65.8,
+      "sleep_duration_h": 5.74,
+      "recovery_indicator": "4",
+      "ans_status": 2.5854,
+      "steps": 11382
+    },
+    {
+      "date": "2026-02-13",
+      "hrv_rmssd_night": 37.0,
+      "hrv_rri_mean_ms": 942.0,
+      "hrv_rmssd_daily": 71.1,
+      "sleep_score": 85.3,
+      "sleep_duration_h": 10.93,
+      "recovery_indicator": "4",
+      "ans_status": -2.2172,
+      "steps": 3960
+    },
+    {
+      "date": "2026-02-14",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 846.0,
+      "hrv_rmssd_daily": 63.0,
+      "sleep_score": 64.9,
+      "sleep_duration_h": 10.53,
+      "recovery_indicator": "1",
+      "ans_status": -10.0,
+      "steps": 8602
+    },
+    {
+      "date": "2026-02-15",
+      "hrv_rmssd_night": 26.0,
+      "hrv_rri_mean_ms": 792.0,
+      "hrv_rmssd_daily": 60.3,
+      "sleep_score": 72.6,
+      "sleep_duration_h": 7.52,
+      "recovery_indicator": "2",
+      "ans_status": -10.0,
+      "steps": 8926
+    },
+    {
+      "date": "2026-02-16",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 961.0,
+      "hrv_rmssd_daily": 73.2,
+      "sleep_score": 71.5,
+      "sleep_duration_h": 8.48,
+      "recovery_indicator": "4",
+      "ans_status": 1.1373,
+      "steps": 4886
+    },
+    {
+      "date": "2026-02-17",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 959.0,
+      "hrv_rmssd_daily": 78.6,
+      "sleep_score": 81.3,
+      "sleep_duration_h": 7.96,
+      "recovery_indicator": "5",
+      "ans_status": 2.7217,
+      "steps": 22813
+    },
+    {
+      "date": "2026-02-18",
+      "hrv_rmssd_night": 38.0,
+      "hrv_rri_mean_ms": 888.0,
+      "hrv_rmssd_daily": 66.8,
+      "sleep_score": 64.1,
+      "sleep_duration_h": 5.92,
+      "recovery_indicator": "3",
+      "ans_status": -2.8496,
+      "steps": 13817
+    },
+    {
+      "date": "2026-02-19",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 826.0,
+      "hrv_rmssd_daily": 67.5,
+      "sleep_score": 73.3,
+      "sleep_duration_h": 7.83,
+      "recovery_indicator": "2",
+      "ans_status": -6.1302,
+      "steps": 19866
+    },
+    {
+      "date": "2026-02-20",
+      "hrv_rmssd_night": 25.0,
+      "hrv_rri_mean_ms": 830.0,
+      "hrv_rmssd_daily": 61.0,
+      "sleep_score": 69.4,
+      "sleep_duration_h": 7.37,
+      "recovery_indicator": "1",
+      "ans_status": -9.4026,
+      "steps": 15647
+    },
+    {
+      "date": "2026-02-21",
+      "hrv_rmssd_night": 49.0,
+      "hrv_rri_mean_ms": 881.0,
+      "hrv_rmssd_daily": 65.0,
+      "sleep_score": 72.4,
+      "sleep_duration_h": 7.09,
+      "recovery_indicator": "4",
+      "ans_status": -0.6814,
+      "steps": 3178
+    },
+    {
+      "date": "2026-02-22",
+      "hrv_rmssd_night": 48.0,
+      "hrv_rri_mean_ms": 999.0,
+      "hrv_rmssd_daily": 81.0,
+      "sleep_score": 85.1,
+      "sleep_duration_h": 8.22,
+      "recovery_indicator": "6",
+      "ans_status": 4.4239,
+      "steps": 15694
+    },
+    {
+      "date": "2026-02-23",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 946.0,
+      "hrv_rmssd_daily": 67.6,
+      "sleep_score": 79.6,
+      "sleep_duration_h": 6.88,
+      "recovery_indicator": "5",
+      "ans_status": 0.902,
+      "steps": 15012
+    },
+    {
+      "date": "2026-02-24",
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 941.0,
+      "hrv_rmssd_daily": 64.5,
+      "sleep_score": 73.5,
+      "sleep_duration_h": 9.48,
+      "recovery_indicator": "4",
+      "ans_status": 0.5196,
+      "steps": 14050
+    },
+    {
+      "date": "2026-02-25",
+      "hrv_rmssd_night": 42.0,
+      "hrv_rri_mean_ms": 965.0,
+      "hrv_rmssd_daily": 73.9,
+      "sleep_score": 58.9,
+      "sleep_duration_h": 4.67,
+      "recovery_indicator": "3",
+      "ans_status": 1.7466,
+      "steps": 15566
+    },
+    {
+      "date": "2026-02-26",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 940.0,
+      "hrv_rmssd_daily": 72.2,
+      "sleep_score": 58.5,
+      "sleep_duration_h": 5.95,
+      "recovery_indicator": "3",
+      "ans_status": 0.0307,
+      "steps": 23219
+    },
+    {
+      "date": "2026-02-27",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 930.0,
+      "hrv_rmssd_daily": 56.2,
+      "sleep_score": 70.9,
+      "sleep_duration_h": 6.84,
+      "recovery_indicator": "4",
+      "ans_status": -0.6959,
+      "steps": 2910
+    },
+    {
+      "date": "2026-02-28",
+      "hrv_rmssd_night": 43.0,
+      "hrv_rri_mean_ms": 873.0,
+      "hrv_rmssd_daily": 69.9,
+      "sleep_score": 58.1,
+      "sleep_duration_h": 6.78,
+      "recovery_indicator": "1",
+      "ans_status": -2.5817,
+      "steps": 29296
+    },
+    {
+      "date": "2026-03-01",
+      "hrv_rmssd_night": 33.0,
+      "hrv_rri_mean_ms": 834.0,
+      "hrv_rmssd_daily": 69.0,
+      "sleep_score": 78.4,
+      "sleep_duration_h": 9.2,
+      "recovery_indicator": "2",
+      "ans_status": -7.3284,
+      "steps": 4579
+    },
+    {
+      "date": "2026-03-02",
+      "hrv_rmssd_night": 56.0,
+      "hrv_rri_mean_ms": 988.0,
+      "hrv_rmssd_daily": 77.2,
+      "sleep_score": 70.2,
+      "sleep_duration_h": 8.53,
+      "steps": 10780
+    },
+    {
+      "date": "2026-03-03",
+      "hrv_rmssd_night": 44.0,
+      "hrv_rri_mean_ms": 956.0,
+      "hrv_rmssd_daily": 68.2,
+      "sleep_score": 62.7,
+      "sleep_duration_h": 5.78,
+      "steps": 28553
+    },
+    {
+      "date": "2026-03-04",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 900.0,
+      "hrv_rmssd_daily": 70.8,
+      "sleep_score": 80.6,
+      "sleep_duration_h": 10.57,
+      "steps": 5687
+    },
+    {
+      "date": "2026-03-05",
+      "hrv_rmssd_night": 36.0,
+      "hrv_rri_mean_ms": 892.0,
+      "hrv_rmssd_daily": 65.2,
+      "sleep_score": 82.6,
+      "sleep_duration_h": 9.64,
+      "steps": 4490
+    },
+    {
+      "date": "2026-03-06",
+      "hrv_rmssd_night": 26.0,
+      "hrv_rri_mean_ms": 837.0,
+      "hrv_rmssd_daily": 64.9,
+      "sleep_score": 67.2,
+      "sleep_duration_h": 12.84,
+      "steps": 18646
+    },
+    {
+      "date": "2026-03-07",
+      "hrv_rmssd_night": 28.0,
+      "hrv_rri_mean_ms": 843.0,
+      "hrv_rmssd_daily": 54.7,
+      "sleep_score": 78.9,
+      "sleep_duration_h": 10.73,
+      "steps": 4892
+    },
+    {
+      "date": "2026-03-08",
+      "hrv_rmssd_night": 27.0,
+      "hrv_rri_mean_ms": 828.0,
+      "hrv_rmssd_daily": 54.5,
+      "sleep_score": 78.0,
+      "sleep_duration_h": 10.44,
+      "steps": 3252
+    },
+    {
+      "date": "2026-03-09",
+      "hrv_rmssd_night": 30.0,
+      "hrv_rri_mean_ms": 880.0,
+      "hrv_rmssd_daily": 82.3,
+      "sleep_score": 76.7,
+      "sleep_duration_h": 9.32,
+      "steps": 8442
+    },
+    {
+      "date": "2026-03-10",
+      "hrv_rmssd_night": 29.0,
+      "hrv_rri_mean_ms": 809.0,
+      "hrv_rmssd_daily": 66.9,
+      "sleep_score": 82.0,
+      "sleep_duration_h": 11.31,
+      "steps": 7306
+    },
+    {
+      "date": "2026-03-11",
+      "hrv_rmssd_night": 27.0,
+      "hrv_rri_mean_ms": 853.0,
+      "hrv_rmssd_daily": 55.0,
+      "sleep_score": 76.7,
+      "sleep_duration_h": 8.27,
+      "steps": 16944
+    },
+    {
+      "date": "2026-03-12",
+      "hrv_rmssd_night": 25.0,
+      "hrv_rri_mean_ms": 819.0,
+      "hrv_rmssd_daily": 60.2,
+      "sleep_score": 84.3,
+      "sleep_duration_h": 7.47,
+      "steps": 20449
+    },
+    {
+      "date": "2026-03-13",
+      "hrv_rmssd_night": 46.0,
+      "hrv_rri_mean_ms": 950.0,
+      "hrv_rmssd_daily": 69.9,
+      "sleep_score": 78.8,
+      "sleep_duration_h": 8.38,
+      "steps": 24678
+    },
+    {
+      "date": "2026-03-14",
+      "hrv_rmssd_night": 22.0,
+      "hrv_rri_mean_ms": 784.0,
+      "hrv_rmssd_daily": 66.1,
+      "sleep_score": 75.7,
+      "sleep_duration_h": 10.5,
+      "steps": 2878
+    },
+    {
+      "date": "2026-03-15",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 869.0,
+      "hrv_rmssd_daily": 98.3,
+      "sleep_score": 66.7,
+      "sleep_duration_h": 8.58,
+      "steps": 2544
+    },
+    {
+      "date": "2026-03-16",
+      "hrv_rmssd_night": 25.0,
+      "hrv_rri_mean_ms": 879.0,
+      "hrv_rmssd_daily": 55.5,
+      "sleep_score": 68.1,
+      "sleep_duration_h": 10.29,
+      "steps": 16594
+    },
+    {
+      "date": "2026-03-17",
+      "hrv_rmssd_night": 39.0,
+      "hrv_rri_mean_ms": 904.0,
+      "hrv_rmssd_daily": 62.6,
+      "sleep_score": 79.7,
+      "sleep_duration_h": 10.2,
+      "steps": 2686
+    }
+  ],
+  "finding": {
+    "spearman_rho": 0.431,
+    "p_value": 0.011,
+    "auc": 0.6562,
+    "sensitivity_pct": 81.2,
+    "n_pairs": 34,
+    "n_diary": 39,
+    "description": "Nocturnal ANS predicts PEM 48h ahead"
+  },
+  "predictor": {
+    "n_diary": 39,
+    "n_training": 34,
+    "n_positive": 16,
+    "n_negative": 18,
+    "ans_lag2_rho": 0.431,
+    "ans_lag2_p": 0.011,
+    "ans_lag2_n": 34,
+    "hrv_lag2_rho": 0.232,
+    "hrv_lag2_p": 0.1858,
+    "auc": 0.6562,
+    "sensitivity": 0.8125,
+    "specificity": 0.6667,
+    "accuracy": 0.7353,
+    "tp": 13,
+    "fp": 6,
+    "tn": 12,
+    "fn": 3,
+    "coefficients": {
+      "ans_t2": 0.598,
+      "hrv_t2": -0.1089,
+      "rec_t1": 0.5394,
+      "zlp": 0.2675
+    },
+    "lag_analysis": {
+      "ans_status": {
+        "0": {
+          "rho": -0.2,
+          "p": 0.2639,
+          "n": 33
+        },
+        "1": {
+          "rho": 0.006,
+          "p": 0.9723,
+          "n": 34
+        },
+        "2": {
+          "rho": 0.431,
+          "p": 0.011,
+          "n": 34
+        },
+        "3": {
+          "rho": 0.077,
+          "p": 0.666,
+          "n": 34
+        }
+      },
+      "hrv_rmssd_night": {
+        "0": {
+          "rho": -0.3,
+          "p": 0.0844,
+          "n": 34
+        },
+        "1": {
+          "rho": -0.073,
+          "p": 0.6805,
+          "n": 34
+        },
+        "2": {
+          "rho": 0.232,
+          "p": 0.1858,
+          "n": 34
+        },
+        "3": {
+          "rho": 0.042,
+          "p": 0.8152,
+          "n": 34
+        }
+      }
+    },
+    "generated": "2026-03-23 15:10"
+  }
+}

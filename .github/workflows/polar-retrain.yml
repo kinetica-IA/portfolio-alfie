@@ -1,0 +1,42 @@
+name: Predictor Retrain
+
+on:
+  push:
+    paths:
+      - 'data/diary_live.csv'   # triggered when Alfonso logs symptoms
+  workflow_dispatch:             # manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install numpy scikit-learn scipy
+
+      - name: Retrain predictor
+        run: python scripts/retrain_predictor.py
+
+      - name: Commit updated metrics
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/polar_live.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "chore: predictor retrain $(date -u '+%Y-%m-%d') [n=$(python -c \"import csv; print(sum(1 for _ in open('data/diary_live.csv')))-1\") entradas]"
+            git push
+          fi
