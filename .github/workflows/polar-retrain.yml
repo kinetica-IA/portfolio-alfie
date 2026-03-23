@@ -37,6 +37,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git commit -m "chore: predictor retrain $(date -u '+%Y-%m-%d') [n=$(python -c \"import csv; print(sum(1 for _ in open('data/diary_live.csv')))-1\") entradas]"
+            TODAY=$(date -u '+%Y-%m-%d')
+            git commit -m "chore: predictor retrain ${TODAY}"
             git push
           fi
