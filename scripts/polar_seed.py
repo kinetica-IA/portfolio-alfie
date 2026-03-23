@@ -22,6 +22,9 @@ from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 CSV_PATH  = Path("/Users/alfonsonavarro/IO/clinical/data/polar_daily_6m.csv")
+# Fallback for VM environment
+if not CSV_PATH.exists():
+    CSV_PATH = Path("/sessions/busy-eager-brown/mnt/IO/clinical/data/polar_daily_6m.csv")
 LIVE_JSON = Path("public/data/polar_live.json")
 
 FINDING = {
@@ -74,17 +77,29 @@ def main():
                 "hrv_rmssd_night":    _f(r.get("hrv_rmssd_night")),
                 "hrv_rri_mean_ms":    _f(r.get("hrv_rri_mean_ms")),
                 "hrv_rmssd_daily":    _f(r.get("hrv_rmssd_daily")),
-                # Sleep
-                "sleep_score":         _f(r.get("sleep_score")),
-                "sleep_duration_h":    _f(r.get("sleep_duration_h")),
-                "sleep_wake_min":      _f(r.get("sleep_wake_min")),
-                "sleep_interruptions": _i(r.get("sleep_interruptions")),
+                # Sleep — fragmentation
+                "sleep_score":              _f(r.get("sleep_score")),
+                "sleep_duration_h":         _f(r.get("sleep_duration_h")),
+                "sleep_wake_min":           _f(r.get("sleep_wake_min")),
+                "sleep_interruptions":      _i(r.get("sleep_interruptions")),
+                "sleep_long_interruptions": _i(r.get("sleep_long_interruptions")),
+                "sleep_long_wake_min":      _f(r.get("sleep_long_wake_min")),
+                # Sleep — phases
+                "sleep_rem_min":            _f(r.get("sleep_rem_min")),
+                "sleep_deep_min":           _f(r.get("sleep_deep_min")),
+                "sleep_rem_pct":            _f(r.get("sleep_rem_pct")),
+                "sleep_deep_pct":           _f(r.get("sleep_deep_pct")),
+                # Sleep — scores / energy recharge
+                "sleep_refresh_score":      _f(r.get("sleep_refresh_score")),
+                "sleep_continuity_score":   _f(r.get("sleep_continuity_score")),
+                "sleep_efficiency_pct":     _f(r.get("sleep_efficiency_pct")),
+                "sleep_score_rate":         _i(r.get("sleep_score_rate")),
                 # Recovery / ANS
-                "recovery_indicator": _s(r.get("recovery_indicator")),
-                "recovery_sublevel":  _s(r.get("recovery_sublevel")),
-                "ans_status":         _f(r.get("ans_status")),
+                "recovery_indicator":       _s(r.get("recovery_indicator")),
+                "recovery_sublevel":        _s(r.get("recovery_sublevel")),
+                "ans_status":               _f(r.get("ans_status")),
                 # Activity
-                "steps":              _i(r.get("steps")),
+                "steps":                    _i(r.get("steps")),
             }
             # Drop all-None entries (days with only training data)
             non_null = {k: v for k, v in entry.items() if k != "date" and v is not None}
