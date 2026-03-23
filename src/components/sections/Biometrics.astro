@@ -78,13 +78,13 @@
     <div class="finding-card">
       <div class="finding-tag">Published finding</div>
       <div class="finding-stats">
-        <span class="stat-rho">ρ = +0.431</span>
+        <span class="stat-rho" id="f-rho">ρ = +0.553</span>
         <span class="sep">·</span>
-        <span class="stat">p = .016</span>
+        <span class="stat" id="f-p">p = .001</span>
         <span class="sep">·</span>
-        <span class="stat">AUC = 0.656</span>
+        <span class="stat" id="f-auc">AUC = 0.768</span>
         <span class="sep">·</span>
-        <span class="stat">Sensitivity 81%</span>
+        <span class="stat" id="f-sens">Sensitivity 84%</span>
       </div>
       <p class="finding-body">
         Nocturnal autonomic nervous system status predicts post-exertional malaise (PEM)
@@ -378,33 +378,76 @@
     const finding = data.finding || {};
     const pred    = data.predictor || {};
 
-    // ── Metrics ──────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────
+    const fmt = (v, d=0) => v != null ? (+v).toFixed(d) : '—';
+
+    /** Scan series backwards for the last entry that has `field`. */
+    function lastKnown(field) {
+      for (let i = series.length - 1; i >= 0; i--) {
+        if (series[i][field] != null) return series[i];
+      }
+      return null;
+    }
+
+    /** Short "DD Mon" label for a YYYY-MM-DD string. */
+    function shortDate(iso) {
+      if (!iso) return '';
+      const [,m,d] = iso.split('-');
+      return `${+d} ${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m]}`;
+    }
+
+    // ── Metrics — fall back to last known in series if latest is missing ──
     const hrv   = latest.hrv_rmssd_night ?? latest.sleep_hrv_avg_ms;
-    const ans   = latest.ans_charge ?? latest.ans_status;
-    const frag  = latest.sleep_wake_min;
-    const intr  = latest.sleep_interruptions;
     const steps = latest.steps;
     const day   = latest.date || '';
 
-    const fmt = (v, d=0) => v != null ? (+v).toFixed(d) : '—';
+    // ANS charge: try latest first, then series
+    const ansRow  = (latest.recovery_sublevel ?? latest.ans_charge) != null
+                    ? latest : (lastKnown('recovery_sublevel') ?? lastKnown('ans_charge') ?? {});
+    const ans     = ansRow.recovery_sublevel ?? ansRow.ans_charge;
+    const ansDate = ansRow.date !== day ? shortDate(ansRow.date) : '';
+
+    // Sleep fragmentation: try latest first, then series
+    const fragRow  = latest.sleep_wake_min != null
+                     ? latest : (lastKnown('sleep_wake_min') ?? {});
+    const frag     = fragRow.sleep_wake_min;
+    const intr     = fragRow.sleep_interruptions;
+    const fragDate = fragRow.date !== day ? shortDate(fragRow.date) : '';
 
     document.getElementById('m-hrv').textContent  = fmt(hrv);
     document.getElementById('m-ans').textContent  = fmt(ans);
     document.getElementById('m-frag').textContent = frag != null ? fmt(frag) : '—';
     document.getElementById('m-date').textContent = day;
     document.getElementById('m-steps').textContent =
-      steps != null ? `${(+steps).toLocaleString('en-GB')} steps` : '';
+      steps != null ? `${(+steps).toLocaleString('en-GB')} steps`
+                    : ansDate ? `last known ${ansDate}` : '';
     document.getElementById('m-interruptions').textContent =
-      intr != null ? `${intr} interruptions` : '';
+      intr != null
+        ? `${intr} interruptions${fragDate ? ' · ' + fragDate : ''}`
+        : fragDate ? `as of ${fragDate}` : '';
 
-    // Finding metadata
+    // Finding metadata — pull live from JSON
     const nDays  = series.length || finding.n_days || 198;
-    const nPairs = pred.n_diary || finding.n_pairs || finding.n_diary || 39;
-    document.getElementById('sp-n').textContent = nDays;
-    document.getElementById('f-n').textContent  = nPairs;
+    const nPairs = pred.n_training || finding.n_pairs || finding.n_diary || 39;
+    document.getElementById('sp-n').textContent   = nDays;
+    document.getElementById('f-n').textContent    = nPairs;
     document.getElementById('f-days').textContent = nDays;
     document.getElementById('f-date').textContent = data.updated_at
       ? data.updated_at.slice(0,10) : '';
+
+    // Live finding stats
+    if (finding.spearman_rho != null)
+      document.getElementById('f-rho').textContent =
+        `ρ = ${finding.spearman_rho >= 0 ? '+' : ''}${finding.spearman_rho.toFixed(3)}`;
+    if (finding.p_value != null)
+      document.getElementById('f-p').textContent =
+        `p = .${String(Math.round(finding.p_value * 1000)).padStart(3,'0')}`;
+    if (finding.auc != null)
+      document.getElementById('f-auc').textContent =
+        `AUC = ${finding.auc.toFixed(3)}`;
+    if (finding.sensitivity_pct != null)
+      document.getElementById('f-sens').textContent =
+        `Sensitivity ${Math.round(finding.sensitivity_pct)}%`;
 
     // ── Sparkline ─────────────────────────────────────────────────────────
     const svg = document.getElementById('sparkline');

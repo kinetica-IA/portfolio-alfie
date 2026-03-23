@@ -63,10 +63,9 @@ def load_diary() -> list[dict]:
             if sev is not None:
                 rows.append({
                     "date":    r["date"],
-                    "sev":     sev,
-                    "pem":     _f(r.get("pem")),
-                    "fatiga":  _f(r.get("fatiga")),
-                    "zolpidem": _f(r.get("zolpidem")) or 0.0,
+                    "sev":    sev,
+                    "pem":    _f(r.get("pem")),
+                    "fatiga": _f(r.get("fatiga")),
                 })
     return sorted(rows, key=lambda r: r["date"])
 
@@ -140,7 +139,6 @@ def run_analysis(diary: list, polar: dict) -> dict:
         hrv2  = _f(p2.get("hrv_rmssd_night"))
         rec1  = _f(p1.get("recovery_sublevel"))   # ANS charge 1–93
         wake0 = _f(p0.get("sleep_wake_min"))       # fragmentation (min awake)
-        zlp   = row.get("zolpidem", 0.0)
         sev   = row.get("sev")
 
         if ans2 is None or hrv2 is None or sev is None:
@@ -152,13 +150,12 @@ def run_analysis(diary: list, polar: dict) -> dict:
             wake_vals.append(wake0)
 
         records.append({
-            "date":   row["date"],
-            "ans_t2": ans2,
-            "hrv_t2": hrv2,
-            "rec_t1": rec1,
+            "date":    row["date"],
+            "ans_t2":  ans2,
+            "hrv_t2":  hrv2,
+            "rec_t1":  rec1,
             "wake_t0": wake0,
-            "zlp":    float(zlp),
-            "target": 1 if sev >= 6 else 0,
+            "target":  1 if sev >= 6 else 0,
         })
 
     n_rec = len(records)
@@ -179,8 +176,7 @@ def run_analysis(diary: list, polar: dict) -> dict:
         [r["ans_t2"],
          r["hrv_t2"],
          r["rec_t1"]  if r["rec_t1"]  is not None else rec_med,
-         r["wake_t0"] if r["wake_t0"] is not None else wake_med,
-         r["zlp"]]
+         r["wake_t0"] if r["wake_t0"] is not None else wake_med]
         for r in records
     ], dtype=float)
     y = np.array([r["target"] for r in records])
@@ -214,7 +210,7 @@ def run_analysis(diary: list, polar: dict) -> dict:
     acc  = (tp + tn) / n_rec
 
     # Full-model coefficients
-    FEAT_NAMES = ["ans_t2", "hrv_t2", "rec_sublevel_t1", "wake_t0", "zlp"]
+    FEAT_NAMES = ["ans_t2", "hrv_t2", "rec_sublevel_t1", "wake_t0"]
     sc_full = StandardScaler().fit(X_raw)
     m_full  = LogisticRegression(C=0.5, max_iter=1000,
                                  class_weight="balanced", random_state=42
