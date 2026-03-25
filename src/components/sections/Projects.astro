@@ -21,7 +21,28 @@
       </div>
       <h3>ANS-Based Symptom Prediction in Post-Lyme Fatigue</h3>
       <p class="project-sub">N=1 Longitudinal Study · Consumer Wearable + AI Pipeline</p>
-      <p>48-hour prediction of symptomatic exacerbations using nocturnal autonomic wearable data. The signal lives in the ANS — sleep score carries zero predictive weight. Model retrains automatically on every diary entry. Live metrics above. Pipeline, dataset and methodology fully public.</p>
+      <p>48-hour prediction of post-exertional malaise using nocturnal ANS wearable data. The dominant signal is autonomic charge lag-2 (ρ=+0.55, p&lt;0.001) combined with sleep fragmentation. Model v2 retrains automatically on every diary entry. Pipeline, dataset and methodology fully public.</p>
+
+      <!-- Live model metrics — loaded from /data/polar_live.json -->
+      <div class="proj-metrics" id="proj-metrics">
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="pm-auc">—</span>
+          <span class="proj-metric-lbl">AUC</span>
+        </div>
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="pm-sens">—</span>
+          <span class="proj-metric-lbl">Sensitivity</span>
+        </div>
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="pm-spec">—</span>
+          <span class="proj-metric-lbl">Specificity</span>
+        </div>
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="pm-n">—</span>
+          <span class="proj-metric-lbl">N pairs</span>
+        </div>
+      </div>
+
       <p class="stack"><em>Python · scikit-learn · LangGraph · Polar Grit X2 · ChromaDB</em></p>
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="project-btn">View on GitHub →</a>
     </article>
@@ -231,4 +252,64 @@
     gap: 0.75rem;
     text-decoration: none;
   }
+
+  /* Live model metrics block */
+  .proj-metrics {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(144,167,165,0.06);
+    border: 1px solid rgba(144,167,165,0.18);
+    border-radius: 8px;
+  }
+  .proj-metric {
+    flex: 1;
+    min-width: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+  .proj-metric-val {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #3a7a6a;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .proj-metric-lbl {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #889;
+  }
 </style>
+
+<script>
+  (async () => {
+    try {
+      const r = await fetch('/data/polar_live.json');
+      if (!r.ok) return;
+      const d = await r.json();
+      const p = d.predictor ?? {};
+
+      const fmt = (v, dec) => v != null ? (+v).toFixed(dec) : '—';
+
+      const auc  = document.getElementById('pm-auc');
+      const sens = document.getElementById('pm-sens');
+      const spec = document.getElementById('pm-spec');
+      const n    = document.getElementById('pm-n');
+
+      if (auc)  auc.textContent  = fmt(p.auc, 3);
+      if (sens) sens.textContent = p.sensitivity != null
+        ? (p.sensitivity * 100).toFixed(1) + '%' : '—';
+      if (spec) spec.textContent = p.specificity != null
+        ? (p.specificity * 100).toFixed(1) + '%' : '—';
+      if (n)    n.textContent    = p.n_training ?? '—';
+    } catch (e) {
+      // silently fail — fallback shows "—"
+    }
+  })();
+</script>
