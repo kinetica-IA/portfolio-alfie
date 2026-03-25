@@ -47,6 +47,41 @@
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="project-btn">View on GitHub →</a>
     </article>
 
+    <article class="project-card reveal" data-delay="120">
+      <!-- scatter / residual icon -->
+      <svg class="residual-plot" viewBox="0 0 110 36"
+           width="110" height="36" aria-hidden="true">
+        <!-- axes -->
+        <line x1="12" y1="28" x2="100" y2="28" stroke="#90a7a5" stroke-width="0.8" opacity="0.4"/>
+        <line x1="12" y1="4"  x2="12"  y2="28" stroke="#90a7a5" stroke-width="0.8" opacity="0.4"/>
+        <!-- trend line -->
+        <line x1="16" y1="26" x2="96" y2="8" stroke="#c4855a" stroke-width="1"
+              stroke-dasharray="3,2" opacity="0.6"/>
+        <!-- scatter dots -->
+        <circle cx="22" cy="24" r="2" fill="#90a7a5" opacity="0.7"/>
+        <circle cx="34" cy="20" r="2" fill="#90a7a5" opacity="0.7"/>
+        <circle cx="44" cy="18" r="2.5" fill="#c4855a" opacity="0.85"/>
+        <circle cx="54" cy="15" r="2" fill="#90a7a5" opacity="0.7"/>
+        <circle cx="64" cy="13" r="2" fill="#90a7a5" opacity="0.7"/>
+        <circle cx="74" cy="10" r="2.5" fill="#c4855a" opacity="0.85"/>
+        <circle cx="84" cy="9"  r="2" fill="#90a7a5" opacity="0.7"/>
+        <circle cx="92" cy="7"  r="2" fill="#90a7a5" opacity="0.7"/>
+      </svg>
+      <div class="badge badge-research">
+        <span class="badge-dot"></span>research / cognitive phenotyping
+      </div>
+      <h3>Residual Patterns as Clinical Signal</h3>
+      <p class="project-sub">N=1 Longitudinal · Residual Analysis · Cognitive Phenotyping</p>
+      <p>Most models treat prediction error as noise. This project inverts that assumption: in neurological Lyme disease, the residuals of an ANS-based severity predictor correlate strongly with brain fog (ρ=+0.663, p&lt;0.0001) and autonomic dysfunction (ρ=+0.393, p=0.043) — symptoms the patient often cannot articulate. The model's failure is the finding. Built on 34 days of longitudinal Polar Grit X2 data and a 7-domain clinical diary.</p>
+      <div class="tag-row">
+        <span class="tag">methodology</span>
+        <span class="tag">Lyme</span>
+        <span class="tag">cognitive phenotyping</span>
+        <span class="tag">residual analysis</span>
+      </div>
+      <p class="stack"><em>Python · scipy · scikit-learn · Polar Grit X2</em></p>
+    </article>
+
     <article class="project-card reveal" data-delay="240">
       <svg class="node-graph" viewBox="0 0 120 36"
            width="110" height="30" aria-hidden="true">
@@ -186,11 +221,35 @@
   }
   .badge-progress .badge-dot { background: var(--organic-warm); }
   .badge-research {
-    background: rgba(144,167,165,0.06);
-    color: #888;
-    border: 1px solid rgba(144,167,165,0.15);
+    background: rgba(196,133,90,0.07);
+    color: #a06040;
+    border: 1px solid rgba(196,133,90,0.2);
   }
-  .badge-research .badge-dot { background: #aaa; }
+  .badge-research .badge-dot { background: #c4855a; }
+
+  .residual-plot {
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.85;
+  }
+
+  /* Tag pills */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.75rem 0 0.5rem;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: #90a7a5;
+    background: rgba(144,167,165,0.08);
+    border: 1px solid rgba(144,167,165,0.22);
+    border-radius: 3px;
+    padding: 0.2rem 0.55rem;
+  }
 
   @keyframes pulse-green {
     0%, 100% { box-shadow: 0 0 4px rgba(77,184,150,0.6); }
