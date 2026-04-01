@@ -4581,13 +4581,13 @@
         "n": 42
       },
       "autonomic_dysfunction": {
-        "rho": 0.475,
-        "p": 0.0039,
+        "rho": 0.486,
+        "p": 0.0031,
         "n": 35
       },
-      "generated": "2026-04-01 21:13"
+      "generated": "2026-04-01 21:15"
     },
-    "generated": "2026-04-01 21:13",
+    "generated": "2026-04-01 21:15",
     "models": {
       "logistic_regression": {
         "auc": 0.7718,
