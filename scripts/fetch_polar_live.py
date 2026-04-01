@@ -102,7 +102,11 @@ def fetch_activity(client: httpx.Client, day: str) -> dict:
                    params={"from": day, "to": day, "steps": "true"})
     if not acts:
         return {}
-    items = acts.get("activities") or acts.get("activity") or []
+    # API may return a list directly or a dict with "activities"/"activity" key
+    if isinstance(acts, list):
+        items = acts
+    else:
+        items = acts.get("activities") or acts.get("activity") or []
     if not items:
         return {}
     a = items[0]
