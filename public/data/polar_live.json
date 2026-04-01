@@ -4423,31 +4423,31 @@
     }
   ],
   "finding": {
-    "spearman_rho": 0.348,
-    "p_value": 0.0207,
-    "auc": 0.7255,
-    "sensitivity_pct": 70.4,
-    "n_pairs": 44,
-    "n_diary": 55,
+    "spearman_rho": 0.311,
+    "p_value": 0.0375,
+    "auc": 0.7311,
+    "sensitivity_pct": 71.4,
+    "n_pairs": 45,
+    "n_diary": 56,
     "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
   },
   "predictor": {
     "model_version": "v2",
-    "n_diary": 55,
-    "n_training": 44,
-    "n_positive": 27,
+    "n_diary": 56,
+    "n_training": 45,
+    "n_positive": 28,
     "n_negative": 17,
     "threshold": 6,
-    "ans_lag2_rho": 0.348,
-    "ans_lag2_p": 0.0207,
-    "ans_lag2_n": 44,
-    "hrv_lag2_rho": 0.318,
-    "hrv_lag2_p": 0.0312,
-    "auc": 0.7255,
-    "sensitivity": 0.7037,
+    "ans_lag2_rho": 0.311,
+    "ans_lag2_p": 0.0375,
+    "ans_lag2_n": 45,
+    "hrv_lag2_rho": 0.285,
+    "hrv_lag2_p": 0.0522,
+    "auc": 0.7311,
+    "sensitivity": 0.7143,
     "specificity": 0.7647,
-    "accuracy": 0.7273,
-    "tp": 19,
+    "accuracy": 0.7333,
+    "tp": 20,
     "fp": 4,
     "tn": 13,
     "fn": 8,
@@ -4458,166 +4458,166 @@
       "wake_t0"
     ],
     "coefficients": {
-      "ans_t2": 0.225,
-      "hrv_t2": 0.3177,
-      "rec_sublevel_t1": 0.0768,
-      "wake_t0": 0.7262
+      "ans_t2": 0.2032,
+      "hrv_t2": 0.3127,
+      "rec_sublevel_t1": 0.0877,
+      "wake_t0": 0.8053
     },
     "imputed_rec_med": 44.0,
     "imputed_wake_med": 34.0,
     "lag_analysis": {
       "ans_status": {
         "0": {
-          "rho": -0.363,
-          "p": 0.0121,
-          "n": 47
+          "rho": -0.374,
+          "p": 0.0087,
+          "n": 48
         },
         "1": {
-          "rho": -0.037,
-          "p": 0.8101,
-          "n": 44
+          "rho": -0.059,
+          "p": 0.6996,
+          "n": 45
         },
         "2": {
-          "rho": 0.348,
-          "p": 0.0207,
-          "n": 44
+          "rho": 0.311,
+          "p": 0.0375,
+          "n": 45
         },
         "3": {
-          "rho": -0.067,
-          "p": 0.661,
-          "n": 45
+          "rho": -0.08,
+          "p": 0.5978,
+          "n": 46
         }
       },
       "hrv_rmssd_night": {
         "0": {
-          "rho": -0.525,
+          "rho": -0.531,
           "p": 0.0001,
-          "n": 48
+          "n": 49
         },
         "1": {
-          "rho": -0.058,
-          "p": 0.7035,
-          "n": 45
-        },
-        "2": {
-          "rho": 0.318,
-          "p": 0.0312,
+          "rho": -0.071,
+          "p": 0.6375,
           "n": 46
         },
-        "3": {
-          "rho": -0.002,
-          "p": 0.9915,
+        "2": {
+          "rho": 0.285,
+          "p": 0.0522,
           "n": 47
+        },
+        "3": {
+          "rho": 0.0,
+          "p": 1.0,
+          "n": 48
         }
       },
       "recovery_sublevel": {
         "0": {
-          "rho": 0.286,
-          "p": 0.0516,
-          "n": 47
+          "rho": 0.3,
+          "p": 0.0384,
+          "n": 48
         },
         "1": {
-          "rho": -0.017,
-          "p": 0.9141,
-          "n": 44
+          "rho": 0.005,
+          "p": 0.9721,
+          "n": 45
         },
         "2": {
-          "rho": -0.324,
-          "p": 0.0321,
-          "n": 44
+          "rho": -0.284,
+          "p": 0.0584,
+          "n": 45
         },
         "3": {
-          "rho": 0.108,
-          "p": 0.4814,
-          "n": 45
+          "rho": 0.095,
+          "p": 0.5299,
+          "n": 46
         }
       },
       "sleep_wake_min": {
         "0": {
-          "rho": 0.388,
-          "p": 0.0054,
-          "n": 50
+          "rho": 0.401,
+          "p": 0.0035,
+          "n": 51
         },
         "1": {
-          "rho": 0.063,
-          "p": 0.6743,
-          "n": 47
+          "rho": 0.065,
+          "p": 0.6595,
+          "n": 48
         },
         "2": {
-          "rho": -0.281,
-          "p": 0.0533,
-          "n": 48
+          "rho": -0.297,
+          "p": 0.0385,
+          "n": 49
         }
       },
       "sleep_interruptions": {
         "0": {
-          "rho": 0.394,
-          "p": 0.0047,
-          "n": 50
+          "rho": 0.406,
+          "p": 0.0031,
+          "n": 51
         },
         "1": {
-          "rho": 0.171,
-          "p": 0.2494,
-          "n": 47
+          "rho": 0.187,
+          "p": 0.2038,
+          "n": 48
         },
         "2": {
-          "rho": -0.241,
-          "p": 0.0984,
-          "n": 48
+          "rho": -0.256,
+          "p": 0.076,
+          "n": 49
         }
       },
       "hrv_rri_mean_ms": {
         "2": {
-          "rho": 0.231,
-          "p": 0.1222,
-          "n": 46
+          "rho": 0.192,
+          "p": 0.1966,
+          "n": 47
         }
       }
     },
     "residuals": {
       "brain_fog": {
-        "rho": 0.661,
+        "rho": 0.636,
         "p": 0.0,
-        "n": 44
+        "n": 45
       },
       "autonomic_dysfunction": {
-        "rho": 0.494,
-        "p": 0.0016,
-        "n": 38
+        "rho": 0.492,
+        "p": 0.0015,
+        "n": 39
       },
-      "generated": "2026-04-01 21:23"
+      "generated": "2026-04-01 21:24"
     },
-    "generated": "2026-04-01 21:23",
+    "generated": "2026-04-01 21:24",
     "models": {
       "logistic_regression": {
-        "auc": 0.7255,
-        "sensitivity": 0.7037,
+        "auc": 0.7311,
+        "sensitivity": 0.7143,
         "specificity": 0.7647,
-        "accuracy": 0.7273,
-        "tp": 19,
+        "accuracy": 0.7333,
+        "tp": 20,
         "fp": 4,
         "tn": 13,
         "fn": 8
       },
       "random_forest": {
-        "auc": 0.6754,
-        "sensitivity": 0.7037,
+        "auc": 0.6954,
+        "sensitivity": 0.7857,
         "specificity": 0.6471,
-        "accuracy": 0.6818,
-        "tp": 19,
+        "accuracy": 0.7333,
+        "tp": 22,
         "fp": 6,
         "tn": 11,
-        "fn": 8
+        "fn": 6
       },
       "gradient_boosting": {
-        "auc": 0.5251,
-        "sensitivity": 0.7407,
-        "specificity": 0.4118,
-        "accuracy": 0.6136,
-        "tp": 20,
-        "fp": 10,
-        "tn": 7,
-        "fn": 7
+        "auc": 0.5525,
+        "sensitivity": 0.7857,
+        "specificity": 0.3529,
+        "accuracy": 0.6222,
+        "tp": 22,
+        "fp": 11,
+        "tn": 6,
+        "fn": 6
       }
     }
   }
