@@ -4574,7 +4574,20 @@
         }
       }
     },
-    "generated": "2026-04-01 16:18",
+    "residuals": {
+      "brain_fog": {
+        "rho": 0.618,
+        "p": 0.0,
+        "n": 40
+      },
+      "autonomic_dysfunction": {
+        "rho": 0.457,
+        "p": 0.0076,
+        "n": 33
+      },
+      "generated": "2026-04-01 20:23"
+    },
+    "generated": "2026-04-01 20:23",
     "models": {
       "logistic_regression": {
         "auc": 0.8151,
