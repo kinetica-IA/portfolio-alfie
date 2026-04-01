@@ -1,7 +1,25 @@
 {
-  "updated_at": "2026-03-31T06:00:00Z",
+  "updated_at": "2026-03-23T00:00:00Z",
   "latest": {
-    "date": "2026-03-30"
+    "date": "2026-03-17",
+    "hrv_rmssd_night": 39.0,
+    "hrv_rri_mean_ms": 904.0,
+    "hrv_rmssd_daily": 62.6,
+    "sleep_score": 79.7,
+    "sleep_duration_h": 10.2,
+    "sleep_wake_min": 30.0,
+    "sleep_interruptions": 30,
+    "sleep_long_interruptions": 4,
+    "sleep_long_wake_min": 10.5,
+    "sleep_rem_min": 111.5,
+    "sleep_deep_min": 86.5,
+    "sleep_rem_pct": 24.7,
+    "sleep_deep_pct": 19.2,
+    "sleep_refresh_score": 95.18,
+    "sleep_continuity_score": 64.0,
+    "sleep_efficiency_pct": 93.3,
+    "sleep_score_rate": 4,
+    "steps": 2686
   },
   "series": [
     {
@@ -4402,15 +4420,6 @@
       "sleep_efficiency_pct": 93.3,
       "sleep_score_rate": 4,
       "steps": 2686
-    },
-    {
-      "date": "2026-03-26"
-    },
-    {
-      "date": "2026-03-28"
-    },
-    {
-      "date": "2026-03-30"
     }
   ],
   "finding": {
@@ -4565,6 +4574,38 @@
         }
       }
     },
-    "generated": "2026-04-01 15:58"
+    "generated": "2026-04-01 18:03",
+    "models": {
+      "logistic_regression": {
+        "auc": 0.8151,
+        "sensitivity": 0.7917,
+        "specificity": 0.8125,
+        "accuracy": 0.8,
+        "tp": 19,
+        "fp": 3,
+        "tn": 13,
+        "fn": 5
+      },
+      "random_forest": {
+        "auc": 0.7578,
+        "sensitivity": 0.75,
+        "specificity": 0.625,
+        "accuracy": 0.7,
+        "tp": 18,
+        "fp": 6,
+        "tn": 10,
+        "fn": 6
+      },
+      "gradient_boosting": {
+        "auc": 0.7083,
+        "sensitivity": 0.75,
+        "specificity": 0.625,
+        "accuracy": 0.7,
+        "tp": 18,
+        "fp": 6,
+        "tn": 10,
+        "fn": 6
+      }
+    }
   }
 }
