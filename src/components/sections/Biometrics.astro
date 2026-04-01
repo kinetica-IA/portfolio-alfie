@@ -63,14 +63,14 @@
     <div class="spark-card">
       <div class="spark-head">
         <span class="spark-title">Nocturnal HRV RMSSD — <span id="sp-n">198</span> days</span>
-        <span class="spark-badge">ρ = +0.431 · p = .016</span>
+        <span class="spark-badge" id="sp-badge">ρ = +0.431 · p = .016</span>
       </div>
       <svg id="sparkline" class="spark-svg" viewBox="0 0 600 72"
            preserveAspectRatio="none" role="img" aria-label="HRV trend">
       </svg>
       <div class="spark-foot">
         <span class="leg"><span class="leg-line"></span>HRV RMSSD nightly</span>
-        <span class="leg mono">ANS predicts PEM 48h ahead · AUC = 0.656 · Sensitivity 81%</span>
+        <span class="leg mono" id="sp-foot">ANS predicts PEM 48h ahead · AUC = 0.656 · Sensitivity 81%</span>
       </div>
     </div>
 
@@ -100,6 +100,44 @@
          target="_blank" rel="noopener" class="finding-btn">
         View predictor on GitHub →
       </a>
+    </div>
+
+    <!-- Model comparison -->
+    <div class="models-card">
+      <div class="models-header">
+        <span class="models-title">Predictor comparison · LOO-CV · same data · same threshold</span>
+        <span class="models-n">N = <span id="m-n-pairs">—</span> pairs</span>
+      </div>
+      <div class="models-grid">
+        <div class="model-row model-header">
+          <span>Model</span>
+          <span>AUC</span>
+          <span>Sensitivity</span>
+          <span>Specificity</span>
+        </div>
+        <div class="model-row model-lr" id="row-lr">
+          <span class="model-name">Logistic Regression</span>
+          <span class="model-auc"  id="lr-auc">—</span>
+          <span class="model-sens" id="lr-sens">—</span>
+          <span class="model-spec" id="lr-spec">—</span>
+        </div>
+        <div class="model-row" id="row-rf">
+          <span class="model-name">Random Forest</span>
+          <span class="model-auc"  id="rf-auc">—</span>
+          <span class="model-sens" id="rf-sens">—</span>
+          <span class="model-spec" id="rf-spec">—</span>
+        </div>
+        <div class="model-row" id="row-gb">
+          <span class="model-name">Gradient Boosting</span>
+          <span class="model-auc"  id="gb-auc">—</span>
+          <span class="model-sens" id="gb-sens">—</span>
+          <span class="model-spec" id="gb-spec">—</span>
+        </div>
+      </div>
+      <p class="models-note">
+        min_samples_leaf=5 · scales automatically with N ·
+        RF and GB will outperform LR as dataset grows beyond ~100 pairs
+      </p>
     </div>
 
   </div>
@@ -359,6 +397,83 @@
   .metric-val { font-size:1.65rem; }
   .spark-head { flex-direction:column; align-items:flex-start; }
 }
+
+/* ── Model comparison ── */
+.models-card {
+  background:#fff;
+  border:1px solid rgba(144,167,165,0.18);
+  border-radius:10px;
+  padding:1.15rem 1.4rem;
+  margin-top:1.2rem;
+  box-shadow:0 2px 10px rgba(144,167,165,0.07);
+}
+.models-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin-bottom:0.9rem;
+}
+.models-title {
+  font-size:0.62rem;
+  letter-spacing:0.11em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.7;
+}
+.models-n {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.62rem;
+  color:#4a8a78;
+  background:rgba(144,167,165,0.09);
+  border:1px solid rgba(144,167,165,0.25);
+  padding:0.18rem 0.55rem;
+  border-radius:1rem;
+}
+.models-grid {
+  display:grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  gap:0.3rem 0;
+}
+.model-row {
+  display:contents;
+}
+.model-row > span {
+  padding:0.45rem 0.5rem;
+  font-size:0.78rem;
+  border-bottom:1px solid rgba(144,167,165,0.1);
+}
+.model-header > span {
+  font-size:0.6rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.5;
+  padding-bottom:0.35rem;
+}
+.model-name { color:var(--text-color,#1a2a2a); }
+.model-auc  {
+  font-family:'DM Mono','Courier New',monospace;
+  font-weight:500;
+  color:var(--text-color,#1a2a2a);
+}
+.model-sens, .model-spec {
+  font-family:'DM Mono','Courier New',monospace;
+  color:var(--muted-text,#667);
+}
+.model-best > span {
+  background:rgba(144,167,165,0.07);
+}
+.model-best .model-auc { color:#4a8a78; }
+.models-note {
+  font-size:0.67rem;
+  color:var(--muted-text,#667);
+  opacity:0.45;
+  margin-top:0.75rem;
+  margin-bottom:0;
+  letter-spacing:0.02em;
+}
 </style>
 
 
@@ -448,6 +563,53 @@
     if (finding.sensitivity_pct != null)
       document.getElementById('f-sens').textContent =
         `Sensitivity ${Math.round(finding.sensitivity_pct)}%`;
+
+    // ── Spark badge y foot — eliminar hardcodes ───────────────────────────
+    const spBadge = document.getElementById('sp-badge');
+    const spFoot  = document.getElementById('sp-foot');
+    if (spBadge && finding.spearman_rho != null && finding.p_value != null) {
+      const rhoStr  = `ρ = ${finding.spearman_rho >= 0 ? '+' : ''}${finding.spearman_rho.toFixed(3)}`;
+      const pStr    = `p = .${String(Math.round(finding.p_value * 1000)).padStart(3,'0')}`;
+      spBadge.textContent = `${rhoStr} · ${pStr}`;
+    }
+    if (spFoot && finding.auc != null && finding.sensitivity_pct != null) {
+      spFoot.textContent =
+        `ANS predicts PEM 48h ahead · AUC = ${finding.auc.toFixed(3)} · Sensitivity ${Math.round(finding.sensitivity_pct)}%`;
+    }
+
+    // ── Model comparison table ────────────────────────────────────────────
+    const models = pred.models || {};
+    const fmtPct = v => v != null ? `${Math.round(v * 100)}%` : '—';
+    const fmtAuc = v => v != null ? v.toFixed(3) : '—';
+
+    const mNPairs = document.getElementById('m-n-pairs');
+    if (mNPairs) mNPairs.textContent = pred.n_training || '—';
+
+    const modelMap = {
+      lr: models.logistic_regression || {},
+      rf: models.random_forest       || {},
+      gb: models.gradient_boosting   || {},
+    };
+    for (const [key, m] of Object.entries(modelMap)) {
+      const auc  = document.getElementById(`${key}-auc`);
+      const sens = document.getElementById(`${key}-sens`);
+      const spec = document.getElementById(`${key}-spec`);
+      if (auc)  auc.textContent  = fmtAuc(m.auc);
+      if (sens) sens.textContent = fmtPct(m.sensitivity);
+      if (spec) spec.textContent = fmtPct(m.specificity);
+    }
+
+    // Highlight best AUC row
+    const aucs = [
+      { id: 'row-lr', v: modelMap.lr.auc },
+      { id: 'row-rf', v: modelMap.rf.auc },
+      { id: 'row-gb', v: modelMap.gb.auc },
+    ].filter(r => r.v != null);
+    if (aucs.length) {
+      const best = aucs.reduce((a,b) => a.v > b.v ? a : b);
+      const bestRow = document.getElementById(best.id);
+      if (bestRow) bestRow.classList.add('model-best');
+    }
 
     // ── Sparkline ─────────────────────────────────────────────────────────
     const svg = document.getElementById('sparkline');
