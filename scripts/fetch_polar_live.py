@@ -168,7 +168,12 @@ def main():
     data["updated_at"] = f"{date.today().isoformat()}T06:00:00Z"
     data["latest"]     = row
     data["series"]     = upsert_series(data.get("series", []), row)
-    data["finding"]    = FINDING
+    # Preserve finding from retrain_predictor.py if it has a real AUC.
+    # Only fall back to the hardcoded FINDING if no AUC exists yet
+    # or if the stored AUC is the old seed value (0.656).
+    existing_auc = data.get("finding", {}).get("auc")
+    if not existing_auc or existing_auc == 0.656:
+        data["finding"] = FINDING
 
     LIVE_JSON.parent.mkdir(parents=True, exist_ok=True)
     LIVE_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False))
