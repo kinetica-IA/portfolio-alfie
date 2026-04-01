@@ -1,6 +1,6 @@
 date,schema_version,severidad_global,fatiga,pem,niebla_mental,disfuncion_autonomica,dolor,nota
 2025-09-02,DIARY_v1,5.0,6.0,5.0,7.0,5.0,5.0,
-2025-09-04,DIARY_v3,4.0,2.5,3.5,5.0,3.0,6.0,
+2025-09-04,DIARY_v3,4.4,5.0,4.5,5.0,4.5,3.0,
 2025-09-05,DIARY_v3,3.7,4.0,3.5,4.0,3.0,4.0,
 2025-09-07,DIARY_v1,1.0,3.0,3.0,3.0,,,
 2025-09-13,DIARY_v1,8.0,7.0,8.0,8.0,,,
