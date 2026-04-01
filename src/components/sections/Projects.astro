@@ -72,7 +72,21 @@
       </div>
       <h3>Residual Patterns as Clinical Signal</h3>
       <p class="project-sub">N=1 Longitudinal · Residual Analysis · Cognitive Phenotyping</p>
-      <p>Most models treat prediction error as noise. This project inverts that assumption: in neurological Lyme disease, the residuals of an ANS-based severity predictor correlate strongly with brain fog (ρ=+0.663, p&lt;0.0001) and autonomic dysfunction (ρ=+0.393, p=0.043) — symptoms the patient often cannot articulate. The model's failure is the finding. Built on 34 days of longitudinal Polar Grit X2 data and a 7-domain clinical diary.</p>
+      <p>Most models treat prediction error as noise. This project inverts that assumption: in neurological Lyme disease, the residuals of an ANS-based severity predictor correlate strongly with brain fog (<span id="res-bf-stat">ρ=+0.663, p&lt;0.0001</span>) and autonomic dysfunction (<span id="res-au-stat">ρ=+0.393, p=0.043</span>) — symptoms the patient often cannot articulate. The model's failure is the finding. Built on <span id="res-n">34</span> days of longitudinal Polar Grit X2 data and a 7-domain clinical diary.</p>
+      <div class="proj-metrics" id="res-metrics">
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="res-bf-rho">+0.663</span>
+          <span class="proj-metric-lbl">Brain fog ρ</span>
+        </div>
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="res-au-rho">+0.393</span>
+          <span class="proj-metric-lbl">Autonomic ρ</span>
+        </div>
+        <div class="proj-metric">
+          <span class="proj-metric-val" id="res-pairs">34</span>
+          <span class="proj-metric-lbl">N pairs</span>
+        </div>
+      </div>
       <div class="tag-row">
         <span class="tag">methodology</span>
         <span class="tag">Lyme</span>
@@ -369,6 +383,41 @@
       if (n)    n.textContent    = p.n_training ?? '—';
     } catch (e) {
       // silently fail — fallback shows "—"
+    }
+
+    // ── Residual Patterns card — live from predictor.residuals ──
+    try {
+      const r2 = await fetch('/data/polar_live.json');
+      if (!r2.ok) throw new Error();
+      const d2  = await r2.json();
+      const res = d2?.predictor?.residuals ?? {};
+      const bf  = res.brain_fog             ?? {};
+      const au  = res.autonomic_dysfunction  ?? {};
+
+      const fmtRho = v => v != null
+        ? `${v >= 0 ? '+' : ''}${v.toFixed(3)}`
+        : null;
+      const fmtP = v => v != null
+        ? `p = .${String(Math.round(v * 1000)).padStart(3,'0')}`
+        : null;
+
+      const bfRho  = document.getElementById('res-bf-rho');
+      const auRho  = document.getElementById('res-au-rho');
+      const resBfS = document.getElementById('res-bf-stat');
+      const resAuS = document.getElementById('res-au-stat');
+      const resN   = document.getElementById('res-n');
+      const resPairs = document.getElementById('res-pairs');
+
+      if (bfRho  && bf.rho != null) bfRho.textContent  = fmtRho(bf.rho);
+      if (auRho  && au.rho != null) auRho.textContent  = fmtRho(au.rho);
+      if (resBfS && bf.rho != null && bf.p != null)
+        resBfS.textContent = `ρ=${fmtRho(bf.rho)}, ${fmtP(bf.p)}`;
+      if (resAuS && au.rho != null && au.p != null)
+        resAuS.textContent = `ρ=${fmtRho(au.rho)}, ${fmtP(au.p)}`;
+      if (resN    && bf.n  != null) resN.textContent    = bf.n;
+      if (resPairs && bf.n != null) resPairs.textContent = bf.n;
+    } catch (e) {
+      // fallback values already in HTML
     }
   })();
 </script>
