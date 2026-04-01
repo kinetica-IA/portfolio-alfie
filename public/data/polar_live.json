@@ -4414,33 +4414,34 @@
     }
   ],
   "finding": {
-    "spearman_rho": 0.431,
-    "p_value": 0.016,
-    "auc": 0.656,
-    "sensitivity_pct": 81,
-    "n_pairs": 39,
-    "description": "Nocturnal ANS predicts PEM 48h ahead"
+    "spearman_rho": 0.544,
+    "p_value": 0.0007,
+    "auc": 0.7967,
+    "sensitivity_pct": 75.0,
+    "n_pairs": 35,
+    "n_diary": 40,
+    "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
   },
   "predictor": {
     "model_version": "v2",
-    "n_diary": 39,
-    "n_training": 34,
-    "n_positive": 19,
+    "n_diary": 40,
+    "n_training": 35,
+    "n_positive": 20,
     "n_negative": 15,
     "threshold": 6,
-    "ans_lag2_rho": 0.553,
+    "ans_lag2_rho": 0.544,
     "ans_lag2_p": 0.0007,
-    "ans_lag2_n": 34,
-    "hrv_lag2_rho": 0.397,
-    "hrv_lag2_p": 0.0202,
-    "auc": 0.786,
-    "sensitivity": 0.6842,
+    "ans_lag2_n": 35,
+    "hrv_lag2_rho": 0.378,
+    "hrv_lag2_p": 0.025,
+    "auc": 0.7967,
+    "sensitivity": 0.75,
     "specificity": 0.8,
-    "accuracy": 0.7353,
-    "tp": 13,
+    "accuracy": 0.7714,
+    "tp": 15,
     "fp": 3,
     "tn": 12,
-    "fn": 6,
+    "fn": 5,
     "features": [
       "ans_t2",
       "hrv_t2",
@@ -4448,122 +4449,122 @@
       "wake_t0"
     ],
     "coefficients": {
-      "ans_t2": 0.5635,
-      "hrv_t2": 0.2637,
-      "rec_sublevel_t1": -0.0609,
-      "wake_t0": 0.6529
+      "ans_t2": 0.5724,
+      "hrv_t2": 0.2562,
+      "rec_sublevel_t1": -0.0048,
+      "wake_t0": 0.6836
     },
     "imputed_rec_med": 44.0,
     "imputed_wake_med": 30.5,
     "lag_analysis": {
       "ans_status": {
         "0": {
-          "rho": -0.142,
-          "p": 0.4303,
-          "n": 33
+          "rho": -0.159,
+          "p": 0.3697,
+          "n": 34
         },
         "1": {
-          "rho": 0.031,
-          "p": 0.864,
-          "n": 34
+          "rho": 0.017,
+          "p": 0.9212,
+          "n": 35
         },
         "2": {
-          "rho": 0.553,
+          "rho": 0.544,
           "p": 0.0007,
-          "n": 34
+          "n": 35
         },
         "3": {
-          "rho": -0.084,
-          "p": 0.6358,
-          "n": 34
+          "rho": -0.085,
+          "p": 0.6261,
+          "n": 35
         }
       },
       "hrv_rmssd_night": {
         "0": {
-          "rho": -0.348,
-          "p": 0.0439,
-          "n": 34
+          "rho": -0.358,
+          "p": 0.0348,
+          "n": 35
         },
         "1": {
-          "rho": -0.012,
-          "p": 0.9454,
-          "n": 34
+          "rho": 0.003,
+          "p": 0.9868,
+          "n": 35
         },
         "2": {
-          "rho": 0.397,
-          "p": 0.0202,
-          "n": 34
+          "rho": 0.378,
+          "p": 0.025,
+          "n": 35
         },
         "3": {
-          "rho": -0.075,
-          "p": 0.6721,
-          "n": 34
+          "rho": -0.046,
+          "p": 0.795,
+          "n": 35
         }
       },
       "recovery_sublevel": {
         "0": {
-          "rho": 0.142,
-          "p": 0.4314,
-          "n": 33
+          "rho": 0.165,
+          "p": 0.3524,
+          "n": 34
         },
         "1": {
-          "rho": -0.088,
-          "p": 0.6192,
-          "n": 34
+          "rho": -0.049,
+          "p": 0.7794,
+          "n": 35
         },
         "2": {
-          "rho": -0.308,
-          "p": 0.0762,
-          "n": 34
+          "rho": -0.335,
+          "p": 0.0494,
+          "n": 35
         },
         "3": {
-          "rho": 0.057,
-          "p": 0.7485,
-          "n": 34
+          "rho": 0.011,
+          "p": 0.9484,
+          "n": 35
         }
       },
       "sleep_wake_min": {
         "0": {
-          "rho": 0.353,
-          "p": 0.0349,
-          "n": 36
+          "rho": 0.355,
+          "p": 0.031,
+          "n": 37
         },
         "1": {
-          "rho": -0.038,
-          "p": 0.8259,
-          "n": 36
+          "rho": -0.008,
+          "p": 0.9638,
+          "n": 37
         },
         "2": {
-          "rho": -0.199,
-          "p": 0.2442,
-          "n": 36
+          "rho": -0.225,
+          "p": 0.1808,
+          "n": 37
         }
       },
       "sleep_interruptions": {
         "0": {
-          "rho": 0.218,
-          "p": 0.2008,
-          "n": 36
+          "rho": 0.248,
+          "p": 0.1385,
+          "n": 37
         },
         "1": {
-          "rho": -0.03,
-          "p": 0.8626,
-          "n": 36
+          "rho": -0.013,
+          "p": 0.9395,
+          "n": 37
         },
         "2": {
-          "rho": -0.267,
-          "p": 0.1156,
-          "n": 36
+          "rho": -0.271,
+          "p": 0.1042,
+          "n": 37
         }
       },
       "hrv_rri_mean_ms": {
         "2": {
-          "rho": 0.38,
-          "p": 0.0265,
-          "n": 34
+          "rho": 0.386,
+          "p": 0.022,
+          "n": 35
         }
       }
     },
-    "generated": "2026-03-23 17:31"
+    "generated": "2026-04-01 15:06"
   }
 }
