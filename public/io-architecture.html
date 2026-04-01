@@ -887,100 +887,104 @@ if (c) {
 /* ── DATA ── */
 const modules = [
   {
-    id: "context_engine", name: "context_engine/", icon: "⬡", color: "#90a7a5", badge: "CORE",
-    short: "L0 deterministic pipeline",
-    summary: "The Context Engine is the first node in every execution. Deterministic — no LLM call. Runs ~200–400ms. Before the router sees the input, the Context Engine has already loaded the user profile, retrieved relevant RAG chunks from ChromaDB, assembled enriched_context as a structured markdown block, and injected clinical rules from rules/clinical_rules.yaml. Every downstream node receives a fully enriched state.",
+    id: "classify", name: "classify.py", icon: "⌬", color: "#6b8a88", badge: "L0",
+    short: "Regex puro · 0 tokens · determinístico",
+    summary: "Primera decisión del grafo. Clasifica la query usando regex puro — sin LLM, sin tokens. Determinístico y auditable. Asigna task_type que el registry usa para seleccionar modelo. Si no hay match, task_type='general' y Haiku resuelve.",
     sections: [
-      { name: "Profile loader", lines: "context_engine/profile.py",
-        desc: "Loads the personal profile (professional background, clinical context, project state) as a structured block. Injected into enriched_context at position 0. Always present — not retrieved, always loaded." },
-      { name: "RAG retrieval", lines: "context_engine/rag_retriever.py",
-        desc: "Query → embedding → cosine similarity → top-K chunks from ChromaDB (811 entries). Cross-encoder reranking on retrieved candidates. Appended to enriched_context as ranked evidence blocks with source metadata." },
-      { name: "Clinical rules injector", lines: "context_engine/rules_injector.py",
-        desc: "Loads rules/clinical_rules.yaml and injects applicable rules into enriched_context. Rule selection is keyword-based and deterministic — no LLM involved. Ensures clinical constraints are present in every prompt before generation." },
+      { name: "classify.py", lines: "nodes/classify.py",
+        desc: "Regex patterns sobre la query raw. Devuelve task_type como string. 0 llamadas LLM. Latencia <1ms. Decisión completamente auditable — no hay incertidumbre estocástica en el routing." },
+      { name: "registry.py", lines: "shared/providers/registry.py",
+        desc: "Mapea task_type → modelo. Haiku para loop reasoning y tasks medias. Sonnet para síntesis final y casos de alta complejidad clínica. Objetivo FASE 0.2: ≤20 líneas, 0 keywords." },
     ],
-    vsLLM: "A plain LLM receives whatever the user typed. The Context Engine receives the same input and produces an enriched_context block before any LLM sees it. The LLM's quality ceiling is determined by what it receives, not just what it knows."
+    vsLLM: "Un plain LLM clasifica intent con probabilidad — puede equivocarse y nunca sabes por qué. classify.py es determinístico: si falla, el bug es reproducible y fixeable. En un sistema clínico, eso no es una preferencia estética — es un requisito."
   },
   {
-    id: "router", name: "router.py", icon: "⌬", color: "#6b9e7a", badge: "ROUTING",
-    short: "5-priority classifier",
-    summary: "5-priority intent classifier that replaced the old needs_planner() gate. Priority order: external_action → autonomous_loop → tool_dispatch → rag_query → direct_response. The classifier runs after enriched_context is available — routing decisions can use the full context.",
+    id: "context_engine", name: "context_engine.py", icon: "⬡", color: "#90a7a5", badge: "CORE",
+    short: "Profile + rules + RAG + ALMA L1",
+    summary: "Segundo nodo. Construye enriched_context antes de cualquier call LLM. Carga el perfil del usuario, recupera chunks relevantes de ChromaDB (1880 chunks, intfloat/multilingual-e5-large, cosine), inyecta reglas clínicas de config/clinical_rules.yaml, y activa ALMA L1 — los 5 axiomas como contexto pre-generación, zero tokens adicionales.",
     sections: [
-      { name: "Priority 1 — external_action", lines: "router.py",
-        desc: "Detects queries that require external system interaction: GitHub API calls, portfolio git push, LinkedIn draft generation. Routes to connector.py. This was the primary unrouted category in v1 — needs_planner() gated most external action queries before they reached execution." },
-      { name: "Priority 2–4 — autonomous, tool, RAG", lines: "router.py",
-        desc: "autonomous_loop: routes to autonomous/runner.py for scheduled loop execution. tool_dispatch: routes to tool execution (20-tool registry). rag_query: routes to ChromaDB retrieval path. In v1, these three competed under a single needs_planner() gate — now they have independent priority lanes." },
-      { name: "Priority 5 — direct_response", lines: "router.py",
-        desc: "Fallback for queries that need only LLM synthesis with enriched_context. No tool call. The LLM receives the fully enriched prompt and generates directly. This path was the v1 default — now it's the fallback of last resort." },
+      { name: "profile_loader", lines: "shared/context/profile_loader.py",
+        desc: "Carga perfil profesional, contexto clínico y estado del proyecto como bloque estructurado. Siempre presente — no recuperado por similitud, siempre cargado." },
+      { name: "rag_retriever", lines: "shared/context/rag_retriever.py",
+        desc: "Query → embedding → cosine similarity → top-K chunks de ChromaDB. 1880 chunks indexados (347 base + 1533 deltas). intfloat/multilingual-e5-large, 1024 dims." },
+      { name: "ALMA L1", lines: "shared/context/assembler.py",
+        desc: "5 axiomas (Conciencia, Claridad, Límite, Pragmatismo, Cuidado) inyectados como contexto antes de cualquier generación. Zero latencia adicional. Zero tokens de runtime. Implementación real: inyección de prompt." },
     ],
-    vsLLM: "A plain LLM routes nothing — every input is processed identically. IO's 5-priority classifier ensures external actions are never buried under planner complexity, and direct responses are never confused with tool requirements."
+    vsLLM: "Un plain LLM recibe lo que el usuario escribió. El Context Engine recibe lo mismo y produce enriched_context — perfil + RAG + reglas clínicas + axiomas ALMA — antes de que ningún LLM lo vea. El techo de calidad del LLM lo determina lo que recibe."
   },
   {
-    id: "orchestrator", name: "orchestrator.py", icon: "◆", color: "#9b8ab5", badge: "AGENT",
-    short: "ReAct loop + connector_mode",
-    summary: "The orchestrator runs the ReAct (Reason + Act) loop. Receives enriched_context from the Context Engine and routing decision from the router. In connector_mode (commit 444abed), generates structured output for external actions instead of free-text responses — enabling the connector pipeline to parse and execute without LLM post-processing.",
+    id: "reason", name: "reason.py", icon: "◆", color: "#9b8ab5", badge: "HAIKU",
+    short: "Haiku · JSON hypothesis+plan",
+    summary: "Primer nodo LLM del loop. Haiku genera una hipótesis y un plan de acción en JSON estructurado. Recibe enriched_context completo. Produce hypothesis (qué cree que necesita el usuario) y plan (qué herramientas o pasos ejecutar). La hipótesis persiste en el estado del grafo para el siguiente ciclo.",
     sections: [
-      { name: "ReAct loop", lines: "orchestrator.py",
-        desc: "Reason: LLM call with enriched_context + routing decision + session history. Act: tool dispatch if tool call detected in response. Observe: tool result injected back into context. Repeat until answer or max_steps. ALMA evaluation happens after final answer is generated." },
-      { name: "connector_mode", lines: "orchestrator.py (commit 444abed)",
-        desc: "When router detects external_action, orchestrator switches to connector_mode. LLM generates structured JSON output (action_type, target, payload) instead of free text. connector.py parses this output directly — no regex extraction, no ambiguity." },
+      { name: "reason.py", lines: "nodes/reason.py",
+        desc: "Call a claude-haiku-4-5 con enriched_context + historial de sesión. Output: JSON con campos hypothesis y plan. Structured output — no texto libre. La hipótesis se usa como query semántica en act/dispatcher.py." },
+      { name: "Loop cycling", lines: "agents/loop/graph.py",
+        desc: "Si respond devuelve answer=None y step < max_steps, el grafo vuelve a reason. Queries web+RAG típicamente corren 2 ciclos: ciclo 1 fetcha contexto externo, ciclo 2 cruza con ChromaDB y produce respuesta final." },
     ],
-    vsLLM: "A plain LLM generates text. The orchestrator generates text only as an intermediate step — the actual output is a verified action (external connector call, tool execution, or ethical-gated response). connector_mode makes external actions first-class outputs, not text parsed by downstream code."
+    vsLLM: "Un plain LLM genera texto. reason.py genera una hipótesis estructurada que act/dispatcher.py usa como query semántica. La diferencia es trazabilidad: puedes auditar por qué el sistema hizo lo que hizo en cada ciclo."
   },
   {
-    id: "tools", name: "tools.py", icon: "⌘", color: "#7a9bb5", badge: "TOOLS",
-    short: "20-tool registry",
-    summary: "IO's tool registry. 20 tools covering: Polar wearable data access, ANS predictor, LinkedIn content, arXiv paper search, PubMed clinical literature, Obsidian note access, git operations, web search, chart generation, and system utilities. Tools are called by the orchestrator ReAct loop — never directly invoked by the LLM.",
+    id: "act", name: "act/dispatcher.py", icon: "⌘", color: "#7a9bb5", badge: "TOOLS",
+    short: "RAG · hypothesis como query",
+    summary: "Ejecuta el plan generado por reason.py. Usa la hypothesis como query semántica para recuperar contexto adicional de ChromaDB o para despachar herramientas. El dispatcher decide qué ejecutar basándose en el plan estructurado — no en texto libre.",
     sections: [
-      { name: "Clinical tools", lines: "tools.py",
-        desc: "polar_data: reads Polar Grit X2 exports (HRV, RMSSD, sleep, activity). predictor: runs the ANS-based symptom prediction model on current wearable data. research_analysis: Tavily literature search + personal Polar data + statistical comparison + interactive HTML dashboard." },
-      { name: "Knowledge tools", lines: "tools.py",
-        desc: "arxiv_search: arXiv paper search with abstract retrieval. pubmed_search: PubMed clinical literature search. obsidian_read: reads Obsidian vault notes by title or tag. web_search: Tavily real-time web search with date filtering." },
-      { name: "Action tools", lines: "tools.py",
-        desc: "git_commit, git_push: git operations with supervisor gate confirmation. chart_generate: Plotly interactive HTML chart generation. linkedin_draft: formats content for LinkedIn post draft. All action tools require supervisor approval before execution." },
+      { name: "dispatcher.py", lines: "nodes/act/dispatcher.py",
+        desc: "Lee el plan de reason.py. Selecciona herramienta o path RAG. Ejecuta. Devuelve resultado al estado del grafo para que respond.py lo use. Sin ambigüedad — el plan es JSON, no texto interpretable." },
+      { name: "Tool registry", lines: "shared/providers/registry.py",
+        desc: "Herramientas disponibles para dispatch: web search, RAG query, diary query, polar query, research analysis. Cada herramienta devuelve resultado tipado que el grafo puede validar." },
     ],
-    vsLLM: "A plain LLM knows about arXiv and PubMed from training data. IO queries them in real time, retrieves current papers, and cross-references findings with personal clinical data. The research node produced the ANS-PEM lag analysis dashboard from the polar-lyme-predictor study."
+    vsLLM: "Un plain LLM ejecuta herramientas porque el texto de su respuesta contiene el nombre de la herramienta — parsing frágil. act/dispatcher.py ejecuta herramientas porque reason.py produjo un plan JSON con el campo tool explícito. Sin parsing, sin ambigüedad."
   },
   {
-    id: "alma", name: "alma_gate.py", icon: "◍", color: "#c4855a", badge: "ETHICS",
-    short: "Per-principle evaluation + LoRA pair logging",
-    summary: "ALMA (six principles) is not a list of rules imposed on a chatbot. It is the grammar of a different kind of intelligence — defining conditions for IO's own coherence when operating in clinical contexts where ambiguity causes harm. Every evaluation logs structured reasoning pairs to training/active/alma_training.jsonl for future LoRA distillation.",
+    id: "respond", name: "respond.py", icon: "◉", color: "#6b9e7a", badge: "HAIKU",
+    short: "Haiku · MSU por task_type",
+    summary: "Genera la respuesta del loop. Haiku recibe enriched_context + resultado de act + historial. El system prompt (MSU) varía por task_type — las respuestas clínicas tienen instrucciones distintas a las respuestas de búsqueda web. Si la respuesta es insuficiente, devuelve answer=None y el grafo vuelve a reason.",
     sections: [
-      { name: "The 6 principles", lines: "rules/clinical_rules.yaml",
-        desc: "Care — acknowledge suffering before informing. Clarity — no ambiguity in clinical context. Limit — separate physiological data from vital life decisions. Awareness — know the boundaries of your knowledge. Pragmatism — useful over correct. Silence — knowing when not to respond is a structural property of clinical intelligence, not a human virtue." },
-      { name: "alma_check_node", lines: "alma_gate.py",
-        desc: "Evaluates the generated response against each of the six principles individually. Returns structured JSON with per-principle verdict, evidence citation, reasoning, and severity (high/medium/low/none). Only medium and high severity trigger rewrite." },
-      { name: "LoRA pair logging", lines: "training/active/alma_training.jsonl",
-        desc: "Every ALMA evaluation logs a structured reasoning pair: original response, rewritten response, per-principle evaluation with evidence, severity, primary principle violated, quality tag. Target: 200 golden pairs → LoRA distillation → ALMA reasoning embedded in the model, not in the graph." },
+      { name: "respond.py", lines: "nodes/respond.py",
+        desc: "Call a claude-haiku-4-5 con MSU específico por task_type. Evalúa si la respuesta es suficiente. Devuelve answer o None. None desencadena otro ciclo — razón por la que el loop puede iterar." },
+      { name: "MSUs", lines: "shared/msus/",
+        desc: "System prompts clínicos diferenciados por task_type. Cada MSU define tono, estructura y límites de la respuesta para ese contexto. Separación entre instrucción y generación — el LLM no decide cómo responder, el MSU lo define." },
     ],
-    vsLLM: "Standard LLM safety filters are trained-in constraints applied before generation. ALMA operates post-generation: the LLM produces its best answer, then ALMA evaluates it against clinical-ethical principles it was never trained on. ALMA can rewrite for reasons the original LLM would never flag."
+    vsLLM: "Un plain LLM usa el mismo system prompt para todo. respond.py selecciona el MSU por task_type — una consulta sobre HRV nocturno recibe instrucciones distintas a una búsqueda de literatura. El LLM es el mismo. El contexto que recibe no."
   },
   {
-    id: "connector", name: "connector.py", icon: "◎", color: "#90a7a5", badge: "CONNECTORS",
-    short: "Supervisor gate + GitHub + portfolio + LinkedIn",
-    summary: "The connector pipeline handles all external system interactions. Every action passes through a supervisor gate before execution — IO cannot push to GitHub or post to LinkedIn without explicit confirmation. Verified end-to-end on 2026-03-16: GitHub API + portfolio git push + LinkedIn draft.",
+    id: "alma_gate", name: "alma_gate.py", icon: "◍", color: "#c4855a", badge: "ALMA L2",
+    short: "Post-gen · en rediseño v3 · nunca corta",
+    summary: "Evalúa la respuesta generada contra los 5 axiomas ALMA post-generación. Diseño actual: nunca corta el flujo — siempre llega al gap para que el clínico decida. ALMA L2 está en rediseño estructural (v3): 3 bugs auditados y confirmados. El clínico tiene siempre la última palabra.",
     sections: [
-      { name: "Supervisor gate", lines: "connector.py",
-        desc: "All connector actions require supervisor approval. In sandbox_env.py (Cowork/CI), IO_SUPERVISOR_AUTO_APPROVE=false — actions are logged and queued. In interactive mode, the user confirms each action before execution. No external action bypasses this gate." },
-      { name: "GitHub connector", lines: "connector.py",
-        desc: "Full GitHub REST API: create issues, update files, commit, push. Used by the Career Amplifier autonomous loop to publish portfolio updates. Verified: portfolio git push via GitHub API (commit 537a697)." },
-      { name: "LinkedIn connector", lines: "connector.py",
-        desc: "LinkedIn draft generation and post scheduling. Formats orchestrator structured output into LinkedIn-compliant post format. Verified end-to-end: LinkedIn draft created from IO connector pipeline (2026-03-16)." },
+      { name: "Bugs auditados (2026-03-31)", lines: "shared/safety/alma/alma2.py",
+        desc: "Bug 1: string de decisión LLM sobreescribe el score ponderado calculado. Bug 2: 85+100 pares de training con schema v1 incompatible con v2 de 5 axiomas. Bug 3: axioma CUIDADO evalúa si el output discute daño, no si la situación presenta riesgo real — resultado: APPROVE en consulta de clenbuterol." },
+      { name: "Causa raíz", lines: "shared/safety/alma/alma2.py",
+        desc: "Haiku juzgando sus propios outputs. El RLHF de Anthropic domina sobre los axiom prompts. LLM-as-judge en el mismo modelo que genera es una limitación arquitectónica." },
+      { name: "Dirección v3", lines: "IO3context/roadmap/FASE_1.yaml",
+        desc: "Determinística donde sea posible. Árbol: regex exacto → cosine similarity → Haiku (effort:low) → Sonnet (effort:high + extended thinking). LLM solo para incertidumbre real." },
     ],
-    vsLLM: "A plain LLM can suggest a GitHub commit message. IO can open the PR. The connector pipeline is the boundary between language generation and world-state change — and every action at that boundary requires explicit authorization."
+    vsLLM: "Los filtros de seguridad de un plain LLM son constraints entrenados — operan antes de la generación y no son auditables. ALMA L2 opera post-generación con axiomas explícitos y trazables. Cuando falla, el bug es documentable y fixeable. Eso es lo que separa un sistema clínico de un chatbot con guardrails."
   },
   {
-    id: "loops", name: "autonomous/runner.py", icon: "◉", color: "#b58a9b", badge: "LOOPS",
-    short: "Clinical Monitor · Career Amplifier · LoRA Flywheel",
-    summary: "Three autonomous loops that run on schedule without user prompt. Each loop uses the full IO pipeline — Context Engine, router, orchestrator, tools, ALMA — and produces real external actions. Not demos. Working loops.",
+    id: "human_interrupt", name: "human_interrupt.py", icon: "⊙", color: "#d4a843", badge: "GAP",
+    short: "Human-on-loop · 3 opciones · clínico decide",
+    summary: "El gap es el contrato central de IO3. Después de cada ciclo de loop, el clínico decide: otra vuelta (más contexto), síntesis Sonnet (respuesta final de alta calidad), o end (cerrar). ALMA nunca corta — siempre llega aquí. El clínico tiene la última palabra en cada iteración.",
     sections: [
-      { name: "Clinical Monitor", lines: "autonomous/clinical_monitor.py",
-        desc: "Scheduled loop. Reads Polar wearable data, runs the ANS predictor, evaluates against clinical rules, generates a symptom forecast. If risk threshold exceeded, queues a clinical alert. All evaluations pass through ALMA before output." },
-      { name: "Career Amplifier", lines: "autonomous/career_amplifier.py",
-        desc: "Scheduled loop. Monitors arXiv and PubMed for relevant publications, cross-references with personal research context from ChromaDB, drafts LinkedIn content, pushes portfolio updates via GitHub connector. Runs without user prompt — produces real posts and commits." },
-      { name: "LoRA Flywheel", lines: "autonomous/lora_flywheel.py",
-        desc: "Monitors training/active/alma_training.jsonl for new reasoning pairs. When target count is reached (200 golden pairs), triggers LoRA fine-tuning pipeline. Closes the loop: IO generates training data, trains on its own corrections, improves without retraining from scratch." },
+      { name: "Gap contract", lines: "nodes/human_interrupt.py",
+        desc: "3 opciones verificadas: 'otra_vuelta' → reason (+ LOOP), 'sonnet' → sonnet_synthesis → END, 'end' → END. Strings alineados frontend↔backend. update_state bypass — el gap no es un nodo LLM, es una pausa de control humano." },
+      { name: "Gap panel UI", lines: "ui/frontend/src/components/GapPanel.jsx",
+        desc: "Tres botones: [+ LOOP] [+ Sonnet] [· END ·] + textarea de redirección opcional. Colores gap en paleta Kinetica AI: warm #c4855a. El clínico ve el estado del reasoning antes de decidir." },
     ],
-    vsLLM: "A plain LLM waits to be asked. IO's autonomous loops monitor, evaluate, and act on schedule. The distinction is not capability — it's architecture. Loops are the difference between a tool you use and a system that works."
+    vsLLM: "Un plain LLM decide cuándo ha terminado. IO3 no decide nunca — el clínico decide. El gap es la implementación arquitectónica del principio de que en contextos clínicos, la IA informa y el humano decide. No es una feature — es el diseño."
+  },
+  {
+    id: "sonnet_synthesis", name: "sonnet_synthesis.py", icon: "✦", color: "#d4a843", badge: "SONNET",
+    short: "claude-sonnet-4-6 · solo cuando el clínico decide",
+    summary: "Síntesis final de alta calidad. Solo se activa cuando el clínico elige 'sonnet' en el gap — después de que el loop ha acumulado contexto suficiente. Sonnet recibe el historial completo de iteraciones y produce una síntesis clínica estructurada. Elimina el coste cloud durante la exploración.",
+    sections: [
+      { name: "sonnet_synthesis.py", lines: "nodes/sonnet_synthesis.py",
+        desc: "Call a claude-sonnet-4-6 con historial completo de iteraciones como contexto. Produce síntesis clínica con mayor capacidad de razonamiento que Haiku. Solo corre una vez por sesión — cuando el clínico decide que el contexto acumulado lo justifica." },
+      { name: "Coste strategy", lines: "nodes/sonnet_synthesis.py",
+        desc: "Haiku maneja todo el loop (~28s, coste bajo). Sonnet solo para síntesis final (coste alto, calidad máxima). El clínico controla cuándo se incurre en el coste de Sonnet. Sin síntesis automática — sin tokens de Sonnet desperdiciados en exploración." },
+    ],
+    vsLLM: "Un plain LLM usa el mismo modelo para todo. IO3 usa Haiku para exploración (rápido, barato) y Sonnet para síntesis (lento, caro, alta calidad) — solo cuando el clínico decide que vale la pena. La selección de modelo es una decisión clínica, no una configuración técnica."
   },
 ];
 
@@ -998,75 +1002,57 @@ const flowNodes = [
 
 const issues = [
   {
-    id: "I-1", title: "ChromaDB → LanceDB migration pending",
-    desc: "ChromaDB works but LanceDB offers better performance for the query patterns IO uses (dense vector + metadata filter). Migration is a data-layer swap — the Context Engine interface is already abstracted, so no orchestration changes required.",
-    fix: "Planned. ChromaDB remains production until LanceDB migration is validated on the full 811-chunk index."
+    id: "B-1", title: "ALMA L2: string LLM sobreescribe score ponderado",
+    desc: "El resultado de ALMA L2 es lo que el LLM dice, no lo que la lógica de score ponderado calcula. La string de decisión ('APPROVE'/'REWRITE'/'SILENCE') se produce antes de que el score se evalúe — override silencioso que invalida el cálculo.",
+    fix: "FASE 1.0 — ALMA v3 determinístico. Árbol: regex exacto → cosine similarity → Haiku effort:low → Sonnet effort:high. La decisión emerge del árbol, no del LLM directamente."
   },
   {
-    id: "I-2", title: "mxbai-embed-large → sentence-transformers migration pending",
-    desc: "Embedding model is being migrated from mxbai-embed-large to sentence-transformers (all-MiniLM or similar). The change affects RAG retrieval quality and speed. Current production index was built with mxbai — migration requires full reindex.",
-    fix: "In progress. New model selected, reindex on staging. Requires benchmark comparison before production cutover."
+    id: "B-2", title: "Training data contaminado — schema v1 incompatible con v2",
+    desc: "85 pares activos + 100 golden entrenados con schema v1 (6 principios, incluyendo 'silencio' como axioma). Incompatibles con la estructura v2 de 5 axiomas. Los pares no son utilizables sin fine-tuning directo — que Anthropic API no ofrece actualmente.",
+    fix: "Pares documentados como metodología de referencia, no como training data activo. Nueva generación de pares requerida con schema v2. Fine-tuning esperando disponibilidad en Anthropic API."
   },
   {
-    id: "I-3", title: "rule_engine.py stub — clinical rules loaded but not applied to routing",
-    desc: "Clinical rules from rules/clinical_rules.yaml are loaded and injected into enriched_context by the Context Engine. However, rule_engine.py (which should evaluate rules against routing decisions) is currently a stub — rules inform the LLM prompt but do not gate routing.",
-    fix: "Planned. rule_engine.py needs to implement conditional routing based on active clinical rules before v2 is considered feature-complete."
+    id: "B-3", title: "CUIDADO: evaluación invertida — discusión de daño vs riesgo real",
+    desc: "El axioma CUIDADO evalúa si el output discute daño, no si la situación presenta riesgo real. Resultado documentado: APPROVE en consulta de clenbuterol (riesgo real presente), SILENCE en respuesta clínica sólida (discute daño correctamente). La lógica está invertida.",
+    fix: "FASE 1.0 — Redefinición del axioma CUIDADO en v3: evaluar contexto de la situación, no contenido del output. Requiere test set de 30 casos etiquetados (FASE 0.3) antes de reimplementar."
   },
   {
-    id: "I-4", title: "Dual-mode orchestration in progress",
-    desc: "Orchestrator expand/collapse temperature modes (expand: temp=0.4 for exploratory, collapse: temp=0.2 for structured output) are designed and partially implemented. connector_mode uses collapse by default. Full dual-mode routing based on query classification is not yet wired end-to-end.",
-    fix: "Active development. connector_mode (collapse) verified. Expand mode pending integration with router classification output."
+    id: "B-4", title: "Causa raíz: Haiku juzgando sus propios outputs",
+    desc: "ALMA L2 usa el mismo modelo que genera (Haiku) para evaluar su propio output. El RLHF de Anthropic domina sobre los axiom prompts — el modelo produce lo que fue entrenado a producir, no lo que los axiomas definen. LLM-as-judge en el mismo modelo que genera es una limitación arquitectónica.",
+    fix: "FASE 1 — Arsenal Anthropic: prompt caching (-90% input tokens en ALMA), effort control, extended thinking para casos ambiguos. Separación evaluador/generador cuando la API lo permita."
   },
 ];
 
 const roadmap = [
-  { ver: "✅", title: "7-node LangGraph — context_engine → router → orchestrator → respond → alma_gate → connector",
-    desc: "Full graph operational. All nodes wired with conditional edges. State flows correctly through the pipeline.",
+  { ver: "✅", title: "IO3 stack Anthropic-only — Ollama eliminado (2026-03-30)",
+    desc: "Migración completa de Ollama/qwen3:8b a Anthropic API. Haiku para loop reasoning, Sonnet para síntesis. Latencia 80s → 28s documentada con metodología real.",
     status: "done" },
-  { ver: "✅", title: "Context Engine L0 — profile + RAG + clinical rules before every LLM call",
-    desc: "Deterministic. No LLM call. ~200–400ms. enriched_context assembled and injected into state before router sees the input.",
+  { ver: "✅", title: "Grafo LangGraph — 9 nodos · 1 gap · SqliteSaver WAL",
+    desc: "classify → context_engine → reason → act → respond → alma_gate → human_interrupt (gap) → sonnet_synthesis. 0 bifurcaciones dentro del loop. Gap contract verificado: strings 'otra_vuelta' / 'sonnet' / 'end' alineados frontend↔backend.",
     status: "done" },
-  { ver: "✅", title: "ALMA gate — ethical filter + LoRA pair logging",
-    desc: "Per-principle evaluation, severity gate, evidence-aware rewrite, training pairs logged to training/active/alma_training.jsonl.",
+  { ver: "✅", title: "Context Engine — profile + RAG + clinical rules + ALMA L1",
+    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axiomas inyectados como contexto pre-generación, zero latencia, zero tokens.",
     status: "done" },
-  { ver: "✅", title: "5-priority router — external_action first",
-    desc: "Replaces needs_planner() gate. Priority order: external_action → autonomous_loop → tool_dispatch → rag_query → direct_response.",
+  { ver: "✅", title: "UI React 18 — Kinetica AI · SSE streaming · 0 eventos perdidos",
+    desc: "FastAPI + SSE. GraphPanel SVG animado. Role-differentiated messages (green=iteraciones, gold=síntesis). GAP panel con 3 opciones. Cross-validation 119.3s wall time, 0 eventos SSE perdidos.",
     status: "done" },
-  { ver: "✅", title: "Connector pipeline — supervisor gate + GitHub API + portfolio git push + LinkedIn draft",
-    desc: "Verified end-to-end 2026-03-16. All three connectors operational with supervisor gate.",
+  { ver: "✅", title: "ALMA L2 auditado — 3 bugs estructurales documentados públicamente",
+    desc: "Bug override, contaminación training data, evaluación CUIDADO invertida. Causa raíz: Haiku juzgando sus propios outputs. Documentación pública — el pensamiento crítico sobre las limitaciones del sistema es parte del proyecto.",
     status: "done" },
-  { ver: "✅", title: "Orchestrator connector_mode — structured output for external actions",
-    desc: "commit 444abed. LLM generates structured JSON for external actions — no regex extraction downstream.",
-    status: "done" },
-  { ver: "✅", title: "20-tool registry — Polar, predictor, LinkedIn, arXiv, PubMed, Obsidian, git, web, charts",
-    desc: "All 20 tools registered and smoke-tested (17/17 tools OK in test suite).",
-    status: "done" },
-  { ver: "✅", title: "Three autonomous loops — Clinical Monitor, Career Amplifier, LoRA Flywheel",
-    desc: "All three loops operational. Career Amplifier produces real LinkedIn drafts and portfolio commits.",
-    status: "done" },
-  { ver: "✅", title: "ChromaDB RAG — two collections, cross-encoder reranking",
-    desc: "811 chunks indexed. Cross-encoder reranking on retrieved candidates. Two collections: personal knowledge + clinical literature.",
-    status: "done" },
-  { ver: "✅", title: "Sandbox environment — sandbox_env.py for Cowork/CI",
-    desc: "IO_SUPERVISOR_AUTO_APPROVE=false in sandbox. All external actions queued, not auto-executed.",
-    status: "done" },
-  { ver: "🔄", title: "Dual-mode orchestration — expand (temp=0.4) / collapse (temp=0.2)",
-    desc: "connector_mode uses collapse. Full dual-mode routing based on query classification pending.",
+  { ver: "🔄", title: "FASE 0 — Fundamentos honestos ← ACTIVA",
+    desc: "0.0 Mapeo real del codebase · 0.1 Auditoría ChromaDB → chroma_audit_report.json · 0.2 Poda registry.py (≤20 líneas) · 0.3 ALMA test set 30 casos · 0.4 ALMA L2 determinístico · 0.5 Structured output · 0.6 Divergencia Haiku.",
     status: "active" },
-  { ver: "🔄", title: "Memory delta auto-ingest — post-run indexing",
-    desc: "Manual reindex currently required after session. Auto-ingest pipeline in progress.",
-    status: "active" },
-  { ver: "📅", title: "LoRA fine-tuning on ALMA pairs — target: 200 golden",
-    desc: "Logging pairs now. Fine-tuning pipeline staged. ALMA reasoning moves from graph node to model property.",
+  { ver: "📅", title: "FASE 1 — ALMA L2 con Arsenal Anthropic",
+    desc: "Prompt caching (-90% input tokens en ALMA) · Effort control · Extended thinking para casos ambiguos · Target F1 ≥ 0.85. Bloqueada hasta FASE 0 completa.",
     status: "next" },
-  { ver: "📅", title: "Polar real-time watcher — file watcher on GDPR export folder",
-    desc: "Auto-ingest new Polar exports as they arrive. Eliminates manual data pipeline step.",
+  { ver: "📅", title: "FASE 2 — Persistencia real y conocimiento",
+    desc: "Dedup ChromaDB · Re-chunking clínico · RAG accuracy ≥ 0.75 · Session persistence real. Bloqueada hasta FASE 1.",
     status: "next" },
-  { ver: "📅", title: "Async tool execution — parallel tool calls in one dispatch cycle",
-    desc: "Sequential tool execution currently. Parallel dispatch would reduce latency for multi-tool queries.",
+  { ver: "📅", title: "FASE 3 — Human-on-Loop completo y frontend",
+    desc: "Severity badges ALMA · Timestamps · Export session · Loop feedback end-to-end. Bloqueada hasta FASE 2.",
     status: "future" },
-  { ver: "📅", title: "A2A delegation — multi-agent task splitting",
-    desc: "Single-agent currently. A2A delegation would allow IO to spawn sub-agents for parallel research tasks.",
+  { ver: "📅", title: "FASE 4 — Validación con clínicos · Nordic positioning",
+    desc: "3–5 clínicos externos · Protocolo · Metodología abierta. Señal de parada: ALMA F1 ≥ 0.90 + RAG accuracy ≥ 0.75 + human-on-loop verificado en 5 casos. Bloqueada hasta FASE 3.",
     status: "future" },
 ];
 
