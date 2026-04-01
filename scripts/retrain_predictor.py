@@ -30,6 +30,7 @@ from pathlib import Path
 try:
     import numpy as np
     from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
     from sklearn.model_selection import LeaveOneOut
     from sklearn.preprocessing import StandardScaler
     from sklearn.metrics import roc_auc_score, confusion_matrix
@@ -217,6 +218,66 @@ def run_analysis(diary: list, polar: dict) -> dict:
                                  ).fit(sc_full.transform(X_raw), y)
     coefs = {k: round(float(v), 4) for k, v in zip(FEAT_NAMES, m_full.coef_[0])}
 
+    # ── LOO-CV Random Forest ──────────────────────────────────────────────────
+    rf_true, rf_prob = [], []
+    for tr, te in loo.split(X_raw):
+        sc_rf  = StandardScaler().fit(X_raw[tr])
+        clf_rf = RandomForestClassifier(
+            n_estimators=200,
+            min_samples_leaf=5,
+            class_weight="balanced",
+            random_state=42,
+        )
+        try:
+            clf_rf.fit(sc_rf.transform(X_raw[tr]), y[tr])
+            prob_rf = clf_rf.predict_proba(sc_rf.transform(X_raw[te]))[0, 1]
+        except Exception:
+            prob_rf = float(y[tr].mean())
+        rf_true.append(int(y[te][0]))
+        rf_prob.append(float(prob_rf))
+
+    rf_yt   = np.array(rf_true)
+    rf_yp   = np.array(rf_prob)
+    rf_pred = (rf_yp >= 0.5).astype(int)
+    try:
+        rf_auc = float(roc_auc_score(rf_yt, rf_yp))
+    except Exception:
+        rf_auc = float("nan")
+    rf_tn, rf_fp, rf_fn, rf_tp = confusion_matrix(rf_yt, rf_pred, labels=[0, 1]).ravel()
+    rf_sens = rf_tp / (rf_tp + rf_fn) if (rf_tp + rf_fn) > 0 else float("nan")
+    rf_spec = rf_tn / (rf_tn + rf_fp) if (rf_tn + rf_fp) > 0 else float("nan")
+    rf_acc  = (rf_tp + rf_tn) / n_rec
+
+    # ── LOO-CV Gradient Boosting ──────────────────────────────────────────────
+    gb_true, gb_prob = [], []
+    for tr, te in loo.split(X_raw):
+        sc_gb  = StandardScaler().fit(X_raw[tr])
+        clf_gb = GradientBoostingClassifier(
+            n_estimators=100,
+            learning_rate=0.05,
+            min_samples_leaf=5,
+            random_state=42,
+        )
+        try:
+            clf_gb.fit(sc_gb.transform(X_raw[tr]), y[tr])
+            prob_gb = clf_gb.predict_proba(sc_gb.transform(X_raw[te]))[0, 1]
+        except Exception:
+            prob_gb = float(y[tr].mean())
+        gb_true.append(int(y[te][0]))
+        gb_prob.append(float(prob_gb))
+
+    gb_yt   = np.array(gb_true)
+    gb_yp   = np.array(gb_prob)
+    gb_pred = (gb_yp >= 0.5).astype(int)
+    try:
+        gb_auc = float(roc_auc_score(gb_yt, gb_yp))
+    except Exception:
+        gb_auc = float("nan")
+    gb_tn, gb_fp, gb_fn, gb_tp = confusion_matrix(gb_yt, gb_pred, labels=[0, 1]).ravel()
+    gb_sens = gb_tp / (gb_tp + gb_fn) if (gb_tp + gb_fn) > 0 else float("nan")
+    gb_spec = gb_tn / (gb_tn + gb_fp) if (gb_tn + gb_fp) > 0 else float("nan")
+    gb_acc  = (gb_tp + gb_tn) / n_rec
+
     print(f"  AUC={auc:.4f}  Sens={sens:.3f}  Spec={spec:.3f}  "
           f"TP={tp} FP={fp} TN={tn} FN={fn}")
     print(f"  Coefs: {coefs}")
@@ -248,6 +309,29 @@ def run_analysis(diary: list, polar: dict) -> dict:
             for feat, lags in lag_results.items()
         },
         "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "models": {
+            "logistic_regression": {
+                "auc":         round(auc,     4) if not math.isnan(auc)     else None,
+                "sensitivity": round(sens,    4) if not math.isnan(sens)    else None,
+                "specificity": round(spec,    4) if not math.isnan(spec)    else None,
+                "accuracy":    round(acc,     4),
+                "tp": int(tp),    "fp": int(fp),    "tn": int(tn),    "fn": int(fn),
+            },
+            "random_forest": {
+                "auc":         round(rf_auc,  4) if not math.isnan(rf_auc)  else None,
+                "sensitivity": round(rf_sens, 4) if not math.isnan(rf_sens) else None,
+                "specificity": round(rf_spec, 4) if not math.isnan(rf_spec) else None,
+                "accuracy":    round(rf_acc,  4),
+                "tp": int(rf_tp), "fp": int(rf_fp), "tn": int(rf_tn), "fn": int(rf_fn),
+            },
+            "gradient_boosting": {
+                "auc":         round(gb_auc,  4) if not math.isnan(gb_auc)  else None,
+                "sensitivity": round(gb_sens, 4) if not math.isnan(gb_sens) else None,
+                "specificity": round(gb_spec, 4) if not math.isnan(gb_spec) else None,
+                "accuracy":    round(gb_acc,  4),
+                "tp": int(gb_tp), "fp": int(gb_fp), "tn": int(gb_tn), "fn": int(gb_fn),
+            },
+        },
     }
 
 
