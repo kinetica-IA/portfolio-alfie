@@ -4419,12 +4419,12 @@
     "auc": 0.8036,
     "sensitivity_pct": 81.0,
     "n_pairs": 37,
-    "n_diary": 45,
+    "n_diary": 46,
     "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
   },
   "predictor": {
     "model_version": "v2",
-    "n_diary": 45,
+    "n_diary": 46,
     "n_training": 37,
     "n_positive": 21,
     "n_negative": 16,
@@ -4565,6 +4565,6 @@
         }
       }
     },
-    "generated": "2026-04-01 15:50"
+    "generated": "2026-04-01 15:52"
   }
 }
