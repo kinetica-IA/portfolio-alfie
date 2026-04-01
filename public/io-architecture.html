@@ -695,40 +695,40 @@
       </p>
     </div>
     <div class="hero-meta">
-      <div>phase1/react-graph · commit 835b892</div>
+      <div>IO3 · FASE 0 · active development</div>
       <div>Mac Mini M4 · Local-first · Private</div>
-      <div>LLM: Anthropic Claude (Ollama eliminated — architectural decision)</div>
-      <div>Embeddings: sentence-transformers (mxbai-embed-large → migrating)</div>
-      <div>RAG: ChromaDB (→ LanceDB pending)</div>
-      <div class="meta-green">✓ 32/32 benchmarks passing</div>
+      <div>Loop: claude-haiku-4-5 · Synthesis: claude-sonnet-4-6</div>
+      <div>Embeddings: intfloat/multilingual-e5-large · 1024 dims</div>
+      <div>RAG: ChromaDB · 1880 chunks · cosine similarity</div>
+      <div class="meta-green">✓ 5/5 benchmark queries passing · ~28s loop</div>
     </div>
   </div>
 
   <!-- STATS -->
   <div class="stats-row reveal">
     <div class="stat-item">
-      <span class="stat-val">7</span>
+      <span class="stat-val">9</span>
       <span class="stat-label">Graph nodes</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">20</span>
-      <span class="stat-label">Tools</span>
+      <span class="stat-val">5</span>
+      <span class="stat-label">ALMA axioms</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">3</span>
-      <span class="stat-label">Autonomous loops</span>
+      <span class="stat-val">28s</span>
+      <span class="stat-label">Loop latency</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">6</span>
-      <span class="stat-label">ALMA principles</span>
+      <span class="stat-val">1880</span>
+      <span class="stat-label">RAG chunks</span>
     </div>
     <div class="stat-item">
       <span class="stat-val">0</span>
       <span class="stat-label">Cloud deps</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">811</span>
-      <span class="stat-label">RAG chunks</span>
+      <span class="stat-val">2</span>
+      <span class="stat-label">ALMA layers</span>
     </div>
   </div>
 
@@ -739,22 +739,25 @@
       Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get
       text back. IO is architecturally different. Before any LLM sees your input, the
       Context Engine has already loaded your profile, retrieved relevant RAG chunks from
-      811 knowledge base entries, assembled <code>enriched_context</code> as a structured
-      markdown block, and injected clinical rules from <code>rules/clinical_rules.yaml</code>.
+      1880 knowledge base entries, assembled <code>enriched_context</code> as a structured
+      markdown block, and injected clinical rules from <code>config/clinical_rules.yaml</code>.
       The LLM receives a fully enriched prompt every time, without being asked.
     </p>
     <p>
-      After the LLM responds, <strong>ALMA</strong> evaluates the output against six principles —
-      Care, Clarity, Limit, Awareness, Pragmatism, Silence. These are not safety filters. They are
-      the grammar of a different kind of intelligence: conditions for IO's own coherence when
-      operating in clinical contexts where ambiguity causes harm. Every correction logs to
-      <strong>training/active/alma_training.jsonl</strong> — structured reasoning pairs for
-      future LoRA distillation.
+      After the LLM responds, <strong>ALMA</strong> evaluates the output against five axioms —
+      Conciencia, Claridad, Límite, Pragmatismo, Cuidado. Two independent layers:
+      L1 injects axioms as pre-generation context (zero latency, zero tokens).
+      L2 evaluates post-generation against axiom inverses — currently in structural
+      redesign (v3) toward a deterministic pipeline. Every correction logs to
+      <strong>shared/training/active/alma_training.jsonl</strong> — structured reasoning
+      pairs for future fine-tuning when the Anthropic API supports it.
     </p>
     <p>
-      The LLM — whether Anthropic Claude (production) or any future provider — is a
-      <strong>replaceable component</strong>. IO is the layer that persists across models,
-      sessions, and interactions. That is the architectural bet behind this project.
+      Haiku handles loop reasoning (~28s total). Sonnet handles final synthesis —
+      only when the user decides the accumulated context justifies it.
+      The LLM is a <strong>replaceable component</strong>. IO is the layer that persists
+      across models, sessions, and interactions. That is the architectural bet
+      behind this project.
     </p>
   </div>
 
