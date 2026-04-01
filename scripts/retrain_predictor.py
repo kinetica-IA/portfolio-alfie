@@ -64,9 +64,11 @@ def load_diary() -> list[dict]:
             if sev is not None:
                 rows.append({
                     "date":    r["date"],
-                    "sev":    sev,
-                    "pem":    _f(r.get("pem")),
-                    "fatiga": _f(r.get("fatiga")),
+                    "sev":     sev,
+                    "pem":     _f(r.get("pem")),
+                    "fatiga":  _f(r.get("fatiga")),
+                    "niebla":  _f(r.get("niebla_mental")),
+                    "auton":   _f(r.get("disfuncion_autonomica")),
                 })
     return sorted(rows, key=lambda r: r["date"])
 
@@ -157,6 +159,8 @@ def run_analysis(diary: list, polar: dict) -> dict:
             "rec_t1":  rec1,
             "wake_t0": wake0,
             "target":  1 if sev >= 6 else 0,
+            "niebla":  row.get("niebla"),
+            "auton":   row.get("auton"),
         })
 
     n_rec = len(records)
@@ -278,6 +282,28 @@ def run_analysis(diary: list, polar: dict) -> dict:
     gb_spec = gb_tn / (gb_tn + gb_fp) if (gb_tn + gb_fp) > 0 else float("nan")
     gb_acc  = (gb_tp + gb_tn) / n_rec
 
+    # ── Residual analysis ─────────────────────────────────────────────────
+    residuals = yt - yp
+
+    def _residual_corr(symptom_key: str) -> dict:
+        pairs = [
+            (residuals[i], records[i][symptom_key])
+            for i in range(len(records))
+            if records[i].get(symptom_key) is not None
+        ]
+        if len(pairs) < 10:
+            return {"rho": None, "p": None, "n": len(pairs)}
+        rho, pval = spearmanr([p[0] for p in pairs], [p[1] for p in pairs])
+        return {"rho": round(float(rho), 3), "p": round(float(pval), 4), "n": len(pairs)}
+
+    residual_results = {
+        "brain_fog":             _residual_corr("niebla"),
+        "autonomic_dysfunction": _residual_corr("auton"),
+        "generated":             datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+    print(f"  Residuals: brain_fog ρ={residual_results['brain_fog'].get('rho')} "
+          f"auton ρ={residual_results['autonomic_dysfunction'].get('rho')}")
+
     print(f"  AUC={auc:.4f}  Sens={sens:.3f}  Spec={spec:.3f}  "
           f"TP={tp} FP={fp} TN={tn} FN={fn}")
     print(f"  Coefs: {coefs}")
@@ -308,6 +334,7 @@ def run_analysis(diary: list, polar: dict) -> dict:
             feat: {str(l): v for l, v in lags.items()}
             for feat, lags in lag_results.items()
         },
+        "residuals": residual_results,
         "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "models": {
             "logistic_regression": {
