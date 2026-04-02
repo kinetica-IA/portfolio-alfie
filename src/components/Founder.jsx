@@ -67,7 +67,7 @@ export default function Founder() {
       <style>{`
         .founder-card {
           position: relative;
-          background: rgba(240,249,249,0.65);
+          background: rgba(14, 20, 20, 0.55);
           backdrop-filter: blur(6px);
           -webkit-backdrop-filter: blur(6px);
           border: 1px solid var(--border);
@@ -124,7 +124,7 @@ export default function Founder() {
           height: 8px;
           border-radius: 50%;
           background: var(--green);
-          border: 2px solid var(--bg);
+          border: 2px solid var(--surface);
         }
         .ft-label {
           font-family: var(--mono);

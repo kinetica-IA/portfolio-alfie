@@ -1,35 +1,39 @@
 /* ═══════════════════════════════════════════════════════════
-   KINETICA AI — Design Tokens
-   Based on IO3 design system
+   KINETICA AI — Design Tokens (Dark)
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* Core palette */
-  --bg: #f0f9f9;
-  --surface: #ffffff;
+  /* Core palette — dark */
+  --bg: #0a0f0f;
+  --bg-subtle: #0e1414;
+  --surface: #131a1a;
+  --surface-hover: #1a2322;
   --accent: #90a7a5;
-  --warm: #c4855a;
-  --green: #6b9e7a;
-  --text: #1a2a28;
-  --text-sec: #4a5e5c;
-  --text-dim: #7a8e8c;
-  --border: rgba(144, 167, 165, 0.18);
-  --shadow: rgba(26, 42, 40, 0.06);
+  --accent-bright: #a8c4c2;
+  --warm: #d4955a;
+  --green: #7cb88a;
+  --green-dim: #5a8a66;
+  --text: #e2ece8;
+  --text-sec: #a0b5b0;
+  --text-dim: #607875;
+  --border: rgba(144, 167, 165, 0.12);
+  --border-bright: rgba(144, 167, 165, 0.22);
+  --shadow: rgba(0, 0, 0, 0.3);
 
   /* Extended palette */
-  --slate: #6a8690;
-  --sea: #5e9ea3;
-  --moss: #5a7a64;
-  --ice: #d0e6e8;
-  --clay: #b8946e;
-  --sand: #e8ddd0;
-  --gold: #d4a843;
+  --slate: #7a9ca5;
+  --sea: #6eb4ba;
+  --moss: #6a9474;
+  --ice: #2a4446;
+  --clay: #c8a47e;
+  --sand: #3a3028;
+  --gold: #e0b850;
 
   /* Category colors (pipeline) */
-  --cat-pre: #6a8690;
-  --cat-loop: #6b9e7a;
-  --cat-gap: #c4855a;
-  --cat-synth: #d4a843;
+  --cat-pre: #7a9ca5;
+  --cat-loop: #7cb88a;
+  --cat-gap: #d4955a;
+  --cat-synth: #e0b850;
 
   /* Typography */
   --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -63,7 +67,7 @@ body {
 }
 
 a {
-  color: var(--accent);
+  color: var(--accent-bright);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -77,19 +81,10 @@ img {
 }
 
 /* ── Scrollbar ─────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 /* ── Utility ───────────────────────────────────────────── */
 .eyebrow {
@@ -101,15 +96,8 @@ img {
   color: var(--text-dim);
 }
 
-.section {
-  padding: 80px 0;
-}
-
-@media (max-width: 768px) {
-  .section {
-    padding: 48px 0;
-  }
-}
+.section { padding: 80px 0; }
+@media (max-width: 768px) { .section { padding: 48px 0; } }
 
 /* ── Scroll reveal ─────────────────────────────────────── */
 .reveal-base {

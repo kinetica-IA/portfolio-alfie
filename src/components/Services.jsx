@@ -44,7 +44,7 @@ export default function Services() {
           .services-grid { grid-template-columns: 1fr; }
         }
         .service-card {
-          background: rgba(240, 249, 249, 0.65);
+          background: rgba(14, 20, 20, 0.55);
           backdrop-filter: blur(6px);
           -webkit-backdrop-filter: blur(6px);
           border: 1px solid var(--border);
