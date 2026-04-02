@@ -66,7 +66,7 @@ export default function Founder() {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
-          color: var(--text);
+          color: var(--text-heading);
           line-height: 1.2;
           margin-bottom: 8px;
         }
@@ -94,9 +94,12 @@ export default function Founder() {
           font-family: var(--mono);
           font-size: 11px;
           color: var(--text-dim);
+          background: var(--fill-teal);
           border: 1px solid var(--border);
           padding: 4px 12px;
+          transition: border-color var(--duration-hover) ease;
         }
+        .founder-badge:hover { border-color: var(--border-active); }
         .founder-links {
           display: flex;
           gap: 20px;
@@ -105,8 +108,10 @@ export default function Founder() {
         .founder-links a {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--teal);
+          color: var(--sea);
+          transition: color var(--duration-hover) ease;
         }
+        .founder-links a:hover { color: var(--green); }
 
         /* Vertical typographic timeline */
         .timeline {
