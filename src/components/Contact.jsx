@@ -26,21 +26,21 @@ export default function Contact() {
         }
         .contact .eyebrow {
           display: block;
-          margin-bottom: var(--space-tight);
+          margin-bottom: 16px;
         }
         .contact-headline {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
           color: var(--text);
-          line-height: 1.3;
-          margin-bottom: var(--space-element);
+          line-height: 1.35;
+          margin-bottom: 16px;
         }
         .contact-services {
           font-family: var(--mono);
           font-size: var(--text-caption);
           color: var(--text-dim);
-          margin-bottom: 32px;
+          margin-bottom: 40px;
         }
         .contact-cta {
           display: inline-block;
@@ -51,7 +51,7 @@ export default function Contact() {
           padding: 14px 36px;
           text-decoration: none;
           transition: all 0.25s ease;
-          margin-bottom: var(--space-element);
+          margin-bottom: 32px;
         }
         .contact-cta:hover {
           background: var(--green);

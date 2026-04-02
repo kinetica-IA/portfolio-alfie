@@ -60,7 +60,7 @@ export default function Founder() {
 
         .founder .eyebrow {
           display: block;
-          margin-bottom: var(--space-tight);
+          margin-bottom: 16px;
         }
         .founder-name {
           font-family: var(--sans);
@@ -68,27 +68,27 @@ export default function Founder() {
           font-weight: 400;
           color: var(--text);
           line-height: 1.2;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
         }
         .founder-role {
           font-family: var(--mono);
           font-size: var(--text-caption);
           color: var(--text-dim);
-          margin-bottom: var(--space-element);
+          margin-bottom: 28px;
         }
         .founder-bio {
           font-size: var(--text-body);
           font-weight: 300;
           color: var(--text-sec);
-          line-height: 1.7;
+          line-height: 1.75;
           max-width: 520px;
-          margin-bottom: var(--space-element);
+          margin-bottom: 28px;
         }
         .founder-badges {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin-bottom: var(--space-element);
+          margin-bottom: 28px;
         }
         .founder-badge {
           font-family: var(--mono);

@@ -18,25 +18,25 @@ export default function ClinicalSignal() {
         }
         .clinical-signal .eyebrow {
           display: block;
-          margin-bottom: var(--space-tight);
+          margin-bottom: 16px;
         }
         .cs-headline {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
           color: var(--text);
-          line-height: 1.3;
-          margin-bottom: var(--space-element);
+          line-height: 1.35;
+          margin-bottom: 28px;
         }
         .cs-body {
           font-family: var(--sans);
-          font-size: var(--text-body-lg);
+          font-size: var(--text-body);
           font-weight: 300;
           color: var(--text-sec);
-          line-height: 1.7;
-          border-left: 3px solid var(--green);
-          padding-left: var(--space-element);
-          max-width: 600px;
+          line-height: 1.75;
+          border-left: 2px solid var(--green);
+          padding-left: 20px;
+          max-width: 560px;
         }
       `}</style>
     </section>
