@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useReveal } from '../hooks/useReveal'
+import { useCountUp } from '../hooks/useCountUp'
 
 function aucColor(v) {
   if (v >= 0.80) return 'var(--green)'
@@ -14,8 +16,19 @@ const TARGET_LABELS = {
   niebla_mental: 'Brain Fog',
 }
 
+function Metric({ value, decimals, label, delay = 0, active }) {
+  const display = useCountUp(value, decimals, active, 1100)
+  return (
+    <div className="fp-metric" style={{ transitionDelay: `${delay}s` }}>
+      <span className="fp-metric-value">{display}</span>
+      <span className="fp-metric-label">{label}</span>
+    </div>
+  )
+}
+
 export default function FlagshipProof({ data, loading }) {
   const [expanded, setExpanded] = useState(false)
+  const { ref: metricsRef, revealed: metricsVisible } = useReveal(0.2)
 
   const targets = data?.predictor?.targets
   const severity = targets?.severity
@@ -37,24 +50,11 @@ export default function FlagshipProof({ data, loading }) {
         <p className="fp-loading">Loading...</p>
       ) : (
         <>
-          {/* Hero metrics */}
-          <div className="fp-metrics">
-            <div className="fp-metric">
-              <span className="fp-metric-value">{severity?.best_auc?.toFixed(2) || '0.84'}</span>
-              <span className="fp-metric-label">Severity AUC</span>
-            </div>
-            <div className="fp-metric">
-              <span className="fp-metric-value">{autonomic?.best_auc?.toFixed(2) || '0.86'}</span>
-              <span className="fp-metric-label">Autonomic AUC</span>
-            </div>
-            <div className="fp-metric">
-              <span className="fp-metric-value">{nDays}</span>
-              <span className="fp-metric-label">Days monitored</span>
-            </div>
-            <div className="fp-metric">
-              <span className="fp-metric-value">{nTargets}</span>
-              <span className="fp-metric-label">Symptom targets</span>
-            </div>
+          <div className="fp-metrics" ref={metricsRef}>
+            <Metric value={severity?.best_auc || 0.84} decimals={2} label="Severity AUC" delay={0} active={metricsVisible} />
+            <Metric value={autonomic?.best_auc || 0.86} decimals={2} label="Autonomic AUC" delay={0.1} active={metricsVisible} />
+            <Metric value={nDays} decimals={0} label="Days monitored" delay={0.2} active={metricsVisible} />
+            <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.3} active={metricsVisible} />
           </div>
 
           {/* Key finding */}

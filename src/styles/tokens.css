@@ -115,20 +115,20 @@ img { max-width: 100%; display: block; }
   transform: translateY(0);
 }
 
-/* ── Link hover underline ──────────────────────────────── */
-a.link-underline {
-  position: relative;
+/* ── Divider ───────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
 }
-a.link-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--green);
-  transition: width var(--duration-hover) var(--ease-out);
+
+/* ── Section separator — subtle teal accent ────────────── */
+.section + .section {
+  border-top: 1px solid var(--border);
 }
-a.link-underline:hover::after {
-  width: 100%;
+
+/* ── Focus visible ─────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
 }

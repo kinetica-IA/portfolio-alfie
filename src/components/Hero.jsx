@@ -52,6 +52,7 @@ export default function Hero() {
           color: var(--text-heading);
           margin-bottom: 0;
           white-space: pre;
+          text-shadow: 0 1px 2px rgba(36, 64, 60, 0.04);
         }
         .hero-rule {
           width: 40px;
