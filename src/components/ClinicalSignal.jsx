@@ -1,5 +1,6 @@
 import { useReveal } from '../hooks/useReveal'
 import { useWordStagger } from '../hooks/useWordStagger'
+import { PulseSymbol } from './OrganicSymbols'
 
 const STAT_MARKERS = [
   { value: 'HRV', label: 'primary biomarker', color: 'var(--sea)', rgb: '93,138,130' },
@@ -16,7 +17,10 @@ export default function ClinicalSignal() {
 
   return (
     <section className="section clinical-signal">
-      <span className="eyebrow" style={{ color: 'var(--sea)' }}>THE CLINICAL QUESTION</span>
+      <span className="eyebrow" style={{ color: 'var(--sea)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <PulseSymbol color="var(--sea)" size={22} />
+        THE CLINICAL QUESTION
+      </span>
       <h2 className="cs-headline" ref={headRef}>
         {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>

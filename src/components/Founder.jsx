@@ -1,5 +1,6 @@
 import { useReveal } from '../hooks/useReveal'
 import { useTextDecode } from '../hooks/useTextDecode'
+import { CellSymbol } from './OrganicSymbols'
 
 const TIMELINE = [
   { year: '2006', label: 'Physics, Universidad de Granada', color: 'var(--ice)', rgb: '133,168,184' },
@@ -26,9 +27,21 @@ export default function Founder() {
   return (
     <section className="section founder" id="founder" ref={ref}>
       <div className="founder-main">
-        <span className="eyebrow" style={{ color: 'var(--teal)' }}>FOUNDER</span>
+        <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          <CellSymbol color="var(--teal)" size={22} />
+          FOUNDER
+        </span>
         <h2 className="founder-name">{nameDisplay}</h2>
-        <p className="founder-role">Physicist · Osteopath · Clinical AI Builder</p>
+        <p className="founder-role">
+          <img src="/icons/neuro.svg" alt="" className="founder-role-icon" />
+          Physicist
+          <span className="founder-role-sep">·</span>
+          <img src="/icons/biomech.svg" alt="" className="founder-role-icon" />
+          Osteopath
+          <span className="founder-role-sep">·</span>
+          <img src="/icons/consult.svg" alt="" className="founder-role-icon" />
+          Clinical AI Builder
+        </p>
         <p className="founder-bio">
           10+ years of clinical practice including two years of intensive acute care
           during COVID-19. Post-Lyme patient turned researcher — building predictive
@@ -108,6 +121,22 @@ export default function Founder() {
           font-size: var(--text-caption);
           color: var(--text-dim);
           margin-bottom: 28px;
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 4px;
+        }
+        .founder-role-icon {
+          width: 16px;
+          height: 16px;
+          opacity: 0.5;
+          vertical-align: middle;
+          transition: opacity var(--duration-hover) ease;
+        }
+        .founder-role-icon:hover { opacity: 0.8; }
+        .founder-role-sep {
+          margin: 0 4px;
+          opacity: 0.4;
         }
         .founder-bio {
           font-size: var(--text-body);

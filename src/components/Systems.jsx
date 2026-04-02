@@ -1,5 +1,6 @@
 import { useReveal } from '../hooks/useReveal'
 import { useTextDecode } from '../hooks/useTextDecode'
+import { NetworkSymbol } from './OrganicSymbols'
 
 const ITEMS = [
   {
@@ -114,7 +115,10 @@ export default function Systems({ data }) {
 
   return (
     <section className="section" id="systems" ref={sectionRef}>
-      <span className="eyebrow" style={{ color: 'var(--warm)' }}>SYSTEMS</span>
+      <span className="eyebrow" style={{ color: 'var(--warm)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <NetworkSymbol color="var(--warm)" size={22} />
+        SYSTEMS
+      </span>
       <h2 className="sys-title">From heartbeat to prediction</h2>
 
       {ITEMS.map((item, i) => (
