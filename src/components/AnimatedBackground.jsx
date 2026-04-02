@@ -45,7 +45,7 @@ export default function AnimatedBackground() {
       const grid = new Uint8Array(COLS * ROWS)
       const colors = new Uint8Array(COLS * ROWS)
       for (let i = 0; i < grid.length; i++) {
-        if (Math.random() < 0.03) {
+        if (Math.random() < 0.012) {
           grid[i] = 1
           colors[i] = Math.floor(Math.random() * PALETTE.length)
         }
@@ -84,8 +84,8 @@ export default function AnimatedBackground() {
       // Reseed if sparse
       let alive = 0
       for (let i = 0; i < next.length; i++) if (next[i]) alive++
-      if (alive < COLS * ROWS * 0.015) {
-        for (let i = 0; i < 60; i++) {
+      if (alive < COLS * ROWS * 0.005) {
+        for (let i = 0; i < 30; i++) {
           const idx = Math.floor(Math.random() * COLS * ROWS)
           state.current.grid[idx] = 1
           state.current.colors[idx] = Math.floor(Math.random() * PALETTE.length)
@@ -127,7 +127,7 @@ export default function AnimatedBackground() {
     let frame = 0
     function draw() {
       frame++
-      if (frame % 5 === 0) step()
+      if (frame % 25 === 0) step()
       if (!state.current) { raf.current = requestAnimationFrame(draw); return }
 
       // Clear to bg
