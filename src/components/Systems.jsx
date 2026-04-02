@@ -67,6 +67,8 @@ export default function Systems({ data }) {
           grid-template-columns: 48px 1fr;
           gap: 20px;
           align-items: start;
+          padding: 4px 0;
+          transition: padding-left var(--duration-hover) var(--ease-out);
         }
         @media (max-width: 640px) {
           .sys-item { grid-template-columns: 1fr; }
@@ -124,10 +126,11 @@ export default function Systems({ data }) {
           transition: color var(--duration-hover) ease;
         }
         .sys-link:hover { color: var(--green); }
+        .sys-item:hover { padding-left: 4px; }
         .sys-divider {
           border: none;
           border-top: 1px solid var(--border);
-          margin: 40px 0;
+          margin: 44px 0;
         }
       `}</style>
     </section>

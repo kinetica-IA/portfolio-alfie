@@ -50,7 +50,7 @@ export default function Contact() {
           border: 1.5px solid var(--green);
           padding: 14px 36px;
           text-decoration: none;
-          transition: all 0.25s ease;
+          transition: all var(--duration-hover) var(--ease-out);
           margin-bottom: 32px;
         }
         .contact-cta:hover {

@@ -126,6 +126,7 @@ export default function Founder() {
           border-bottom: 1px solid var(--border);
         }
         .tl-item:last-child { border-bottom: none; }
+        .tl-item:last-child .tl-year { color: var(--green); }
         .tl-year {
           display: block;
           font-family: var(--mono);
