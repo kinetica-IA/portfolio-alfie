@@ -32,7 +32,7 @@ export default function Contact() {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
-          color: var(--text);
+          color: var(--text-heading);
           line-height: 1.35;
           margin-bottom: 16px;
         }
@@ -56,6 +56,7 @@ export default function Contact() {
         .contact-cta:hover {
           background: var(--green);
           color: white;
+          box-shadow: 0 2px 12px rgba(107,158,122,0.15);
         }
         .contact-links {
           display: flex;
@@ -66,8 +67,10 @@ export default function Contact() {
         .contact-links a {
           font-family: var(--mono);
           font-size: 14px;
-          color: var(--teal);
+          color: var(--sea);
+          transition: color var(--duration-hover) ease;
         }
+        .contact-links a:hover { color: var(--green); }
       `}</style>
     </section>
   )

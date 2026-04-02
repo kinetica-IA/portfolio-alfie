@@ -24,7 +24,7 @@ export default function ClinicalSignal() {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
-          color: var(--text);
+          color: var(--text-heading);
           line-height: 1.35;
           margin-bottom: 28px;
         }
