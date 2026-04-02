@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════
+   KINETICA AI — Design Tokens
+   Based on IO3 design system
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Core palette */
+  --bg: #f0f9f9;
+  --surface: #ffffff;
+  --accent: #90a7a5;
+  --warm: #c4855a;
+  --green: #6b9e7a;
+  --text: #1a2a28;
+  --text-sec: #4a5e5c;
+  --text-dim: #7a8e8c;
+  --border: rgba(144, 167, 165, 0.18);
+  --shadow: rgba(26, 42, 40, 0.06);
+
+  /* Extended palette */
+  --slate: #6a8690;
+  --sea: #5e9ea3;
+  --moss: #5a7a64;
+  --ice: #d0e6e8;
+  --clay: #b8946e;
+  --sand: #e8ddd0;
+  --gold: #d4a843;
+
+  /* Category colors (pipeline) */
+  --cat-pre: #6a8690;
+  --cat-loop: #6b9e7a;
+  --cat-gap: #c4855a;
+  --cat-synth: #d4a843;
+
+  /* Typography */
+  --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Spacing & shape */
+  --radius: 0;
+  --radius-sm: 0;
+}
+
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: var(--text);
+  min-height: 100dvh;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--green);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ── Utility ───────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.section {
+  padding: 80px 0;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 48px 0;
+  }
+}
+
+/* ── Scroll reveal ─────────────────────────────────────── */
+.reveal-base {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-base.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
