@@ -1,6 +1,5 @@
 import { usePolarData } from './hooks/usePolarData'
-import TopologicalMesh from './components/TopologicalMesh'
-import CrossGrid from './components/CrossGrid'
+import AnimatedBackground from './components/AnimatedBackground'
 import Landing from './components/Landing'
 import ArticleCards from './components/ArticleCards'
 import Statement from './components/Statement'
@@ -16,43 +15,41 @@ export default function App() {
 
   return (
     <>
-      <CrossGrid />
-      <TopologicalMesh />
+      <AnimatedBackground />
       <div className="content-layer">
         <Landing data={data} />
-        <div className="content-sections">
-          <Reveal>
-            <ArticleCards data={data} loading={loading} />
-          </Reveal>
 
-          <Reveal>
-            <Statement text="193 nights. 8 HRV metrics. 5 predictions. Zero hospital visits." />
-          </Reveal>
+        <Reveal>
+          <ArticleCards data={data} loading={loading} />
+        </Reveal>
 
-          <Reveal delay={0.1}>
-            <PipelineDiagram />
-          </Reveal>
+        <Reveal>
+          <Statement text="193 nights. 8 HRV metrics. 5 predictions. Zero hospital visits." />
+        </Reveal>
 
-          <Reveal delay={0.1}>
-            <ProjectCards data={data} />
-          </Reveal>
+        <Reveal delay={0.1}>
+          <PipelineDiagram />
+        </Reveal>
 
-          <Reveal>
-            <Statement text="The signal lives in the autonomic nervous system. Not in sleep. Not in serology." />
-          </Reveal>
+        <Reveal delay={0.1}>
+          <ProjectCards data={data} />
+        </Reveal>
 
-          <Reveal delay={0.15}>
-            <Founder />
-          </Reveal>
+        <Reveal>
+          <Statement text="The signal lives in the autonomic nervous system. Not in sleep. Not in serology." />
+        </Reveal>
 
-          <Reveal delay={0.1}>
-            <Services />
-          </Reveal>
+        <Reveal delay={0.15}>
+          <Founder />
+        </Reveal>
 
-          <Reveal delay={0.05}>
-            <Contact />
-          </Reveal>
-        </div>
+        <Reveal delay={0.1}>
+          <Services />
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <Contact />
+        </Reveal>
       </div>
 
       <style>{`
@@ -63,17 +60,8 @@ export default function App() {
           margin: 0 auto;
           padding: 0 40px;
         }
-        .content-sections {
-          background: rgba(240, 249, 249, 0.88);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          border-radius: 0;
-          padding: 0 40px;
-          border: 1px solid var(--border);
-        }
         @media (max-width: 768px) {
           .content-layer { padding: 0 20px; }
-          .content-sections { padding: 0 20px; }
         }
       `}</style>
     </>

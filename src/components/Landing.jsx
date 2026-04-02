@@ -63,7 +63,7 @@ export default function Landing({ data }) {
           text-align: center;
           max-width: 620px;
           padding: 48px 40px;
-          background: rgba(240, 249, 249, 0.72);
+          background: rgba(240, 249, 249, 0.55);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
           border: 1px solid var(--border);
