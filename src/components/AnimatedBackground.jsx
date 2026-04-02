@@ -1,36 +1,34 @@
 import { useRef, useEffect } from 'react'
 
 /*
- * AnimatedBackground — Game of Life + particles + cursor seeding
- * Full palette, high density, integrated with content
+ * AnimatedBackground — Subtle Game of Life on light #f0f9f9
+ * 4px cells, ~3% density, low opacity, cursor seeds life
  */
 
 const PALETTE = [
   [144, 167, 165],  // accent
-  [124, 184, 138],  // green
-  [212, 149, 90],   // warm
-  [122, 156, 165],  // slate
-  [110, 180, 186],  // sea
-  [224, 184, 80],   // gold
-  [106, 148, 116],  // moss
-  [168, 196, 194],  // accent-bright
-  [200, 164, 126],  // clay
+  [107, 158, 122],  // green
+  [196, 133, 90],   // warm
+  [106, 134, 144],  // slate
+  [94, 158, 163],   // sea
+  [212, 168, 67],   // gold
+  [90, 122, 100],   // moss
 ]
 
 export default function AnimatedBackground() {
   const canvasRef = useRef(null)
-  const mouse = useRef({ x: -1, y: -1, pressed: false })
+  const mouse = useRef({ x: -1, y: -1 })
   const raf = useRef(null)
-  const stateRef = useRef(null)
+  const state = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let W, H, CELL, COLS, ROWS
+    let W, H, CELL = 4, COLS, ROWS
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       W = window.innerWidth
       H = window.innerHeight
       canvas.width = W * dpr
@@ -38,8 +36,6 @@ export default function AnimatedBackground() {
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      CELL = 8
       COLS = Math.ceil(W / CELL) + 2
       ROWS = Math.ceil(H / CELL) + 2
       initGrid()
@@ -48,96 +44,69 @@ export default function AnimatedBackground() {
     function initGrid() {
       const grid = new Uint8Array(COLS * ROWS)
       const colors = new Uint8Array(COLS * ROWS)
-      // Sparse initial: ~8% alive
       for (let i = 0; i < grid.length; i++) {
-        if (Math.random() < 0.08) {
+        if (Math.random() < 0.03) {
           grid[i] = 1
           colors[i] = Math.floor(Math.random() * PALETTE.length)
         }
       }
-      stateRef.current = { grid, colors, next: new Uint8Array(COLS * ROWS), nextColors: new Uint8Array(COLS * ROWS) }
+      state.current = { grid, colors, next: new Uint8Array(COLS * ROWS), nextC: new Uint8Array(COLS * ROWS) }
     }
 
-    function stepLife() {
-      const { grid, colors, next, nextColors } = stateRef.current
-      next.fill(0)
-      nextColors.fill(0)
-
+    function step() {
+      const { grid, colors, next, nextC } = state.current
+      next.fill(0); nextC.fill(0)
       for (let y = 1; y < ROWS - 1; y++) {
         for (let x = 1; x < COLS - 1; x++) {
-          let alive = 0
-          const colorCounts = new Uint8Array(PALETTE.length)
-
+          let n = 0
+          const cc = new Uint8Array(PALETTE.length)
           for (let dy = -1; dy <= 1; dy++) {
             for (let dx = -1; dx <= 1; dx++) {
-              if (dx === 0 && dy === 0) continue
-              const idx = (y + dy) * COLS + (x + dx)
-              if (grid[idx]) {
-                alive++
-                colorCounts[colors[idx]]++
-              }
+              if (!dx && !dy) continue
+              const i = (y + dy) * COLS + (x + dx)
+              if (grid[i]) { n++; cc[colors[i]]++ }
             }
           }
-
-          const idx = y * COLS + x
-          if (grid[idx]) {
-            // Survive with 2-3 neighbors
-            if (alive === 2 || alive === 3) {
-              next[idx] = 1
-              nextColors[idx] = colors[idx]
-            }
-          } else {
-            // Birth with exactly 3 neighbors
-            if (alive === 3) {
-              next[idx] = 1
-              // Inherit dominant neighbor color
-              let maxC = 0, maxV = 0
-              for (let c = 0; c < PALETTE.length; c++) {
-                if (colorCounts[c] > maxV) { maxV = colorCounts[c]; maxC = c }
-              }
-              nextColors[idx] = maxC
-            }
+          const i = y * COLS + x
+          if (grid[i]) {
+            if (n === 2 || n === 3) { next[i] = 1; nextC[i] = colors[i] }
+          } else if (n === 3) {
+            next[i] = 1
+            let mc = 0, mv = 0
+            for (let c = 0; c < PALETTE.length; c++) if (cc[c] > mv) { mv = cc[c]; mc = c }
+            nextC[i] = mc
           }
         }
       }
+      state.current.grid = next.slice()
+      state.current.colors = nextC.slice()
 
-      // Swap
-      stateRef.current.grid = next.slice()
-      stateRef.current.colors = nextColors.slice()
-
-      // Reseed if too sparse (< 3%)
-      let total = 0
-      for (let i = 0; i < next.length; i++) if (next[i]) total++
-      if (total < COLS * ROWS * 0.03) {
-        for (let i = 0; i < 80; i++) {
-          const rx = Math.floor(Math.random() * COLS)
-          const ry = Math.floor(Math.random() * ROWS)
-          const idx = ry * COLS + rx
-          stateRef.current.grid[idx] = 1
-          stateRef.current.colors[idx] = Math.floor(Math.random() * PALETTE.length)
+      // Reseed if sparse
+      let alive = 0
+      for (let i = 0; i < next.length; i++) if (next[i]) alive++
+      if (alive < COLS * ROWS * 0.015) {
+        for (let i = 0; i < 60; i++) {
+          const idx = Math.floor(Math.random() * COLS * ROWS)
+          state.current.grid[idx] = 1
+          state.current.colors[idx] = Math.floor(Math.random() * PALETTE.length)
         }
       }
     }
 
-    // Cursor seeding
-    function seedAt(px, py, radius) {
-      if (!stateRef.current) return
-      const cx = Math.floor(px / CELL)
-      const cy = Math.floor(py / CELL)
-      const r = Math.ceil(radius / CELL)
+    function seedAt(px, py, r) {
+      if (!state.current) return
+      const cx = Math.floor(px / CELL), cy = Math.floor(py / CELL)
+      const cr = Math.ceil(r / CELL)
       const col = Math.floor(Math.random() * PALETTE.length)
-
-      for (let dy = -r; dy <= r; dy++) {
-        for (let dx = -r; dx <= r; dx++) {
-          if (dx * dx + dy * dy > r * r) continue
+      for (let dy = -cr; dy <= cr; dy++) {
+        for (let dx = -cr; dx <= cr; dx++) {
+          if (dx * dx + dy * dy > cr * cr) continue
           const x = cx + dx, y = cy + dy
           if (x < 0 || x >= COLS || y < 0 || y >= ROWS) continue
-          if (Math.random() < 0.5) {
-            const idx = y * COLS + x
-            stateRef.current.grid[idx] = 1
-            stateRef.current.colors[idx] = col + Math.floor(Math.random() * 3) < PALETTE.length
-              ? col + Math.floor(Math.random() * 3)
-              : col
+          if (Math.random() < 0.4) {
+            const i = y * COLS + x
+            state.current.grid[i] = 1
+            state.current.colors[i] = (col + Math.floor(Math.random() * 2)) % PALETTE.length
           }
         }
       }
@@ -146,63 +115,46 @@ export default function AnimatedBackground() {
     resize()
     window.addEventListener('resize', resize)
 
+    let lastSeed = 0
     function onMove(e) {
       mouse.current.x = e.clientX
       mouse.current.y = e.clientY
-      // Continuous seeding on hover
-      seedAt(e.clientX, e.clientY, 20)
+      const now = Date.now()
+      if (now - lastSeed > 60) { seedAt(e.clientX, e.clientY, 14); lastSeed = now }
     }
-    function onDown(e) {
-      mouse.current.pressed = true
-      seedAt(e.clientX, e.clientY, 40)
-    }
-    function onUp() { mouse.current.pressed = false }
-
     window.addEventListener('pointermove', onMove)
-    window.addEventListener('pointerdown', onDown)
-    window.addEventListener('pointerup', onUp)
 
     let frame = 0
     function draw() {
       frame++
-      // Step every 4 frames (~15fps for life, 60fps render)
-      if (frame % 4 === 0) stepLife()
+      if (frame % 5 === 0) step()
+      if (!state.current) { raf.current = requestAnimationFrame(draw); return }
 
-      if (!stateRef.current) { raf.current = requestAnimationFrame(draw); return }
-
-      // Fade trail (gives glow persistence)
-      ctx.fillStyle = 'rgba(10, 15, 15, 0.12)'
+      // Clear to bg
+      ctx.fillStyle = '#f0f9f9'
       ctx.fillRect(0, 0, W, H)
 
-      const { grid, colors } = stateRef.current
+      const { grid, colors } = state.current
 
-      // Draw cells
       for (let y = 0; y < ROWS; y++) {
         for (let x = 0; x < COLS; x++) {
-          const idx = y * COLS + x
-          if (!grid[idx]) continue
-          const col = PALETTE[colors[idx]] || PALETTE[0]
+          if (!grid[y * COLS + x]) continue
+          const col = PALETTE[colors[y * COLS + x]]
           const px = x * CELL, py = y * CELL
-
-          // Glow: larger, lower opacity
-          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.12)`
-          ctx.fillRect(px - 2, py - 2, CELL + 4, CELL + 4)
-
-          // Core cell
-          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.4)`
-          ctx.fillRect(px + 1, py + 1, CELL - 2, CELL - 2)
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.25)`
+          ctx.fillRect(px, py, CELL, CELL)
         }
       }
 
       // Cursor glow
       const mx = mouse.current.x, my = mouse.current.y
       if (mx >= 0) {
-        const grad = ctx.createRadialGradient(mx, my, 0, mx, my, mouse.current.pressed ? 80 : 50)
-        grad.addColorStop(0, 'rgba(124,184,138,0.08)')
-        grad.addColorStop(1, 'rgba(10,15,15,0)')
+        const grad = ctx.createRadialGradient(mx, my, 0, mx, my, 60)
+        grad.addColorStop(0, 'rgba(107,158,122,0.06)')
+        grad.addColorStop(1, 'rgba(240,249,249,0)')
         ctx.fillStyle = grad
         ctx.beginPath()
-        ctx.arc(mx, my, mouse.current.pressed ? 80 : 50, 0, Math.PI * 2)
+        ctx.arc(mx, my, 60, 0, Math.PI * 2)
         ctx.fill()
       }
 
@@ -214,20 +166,13 @@ export default function AnimatedBackground() {
       cancelAnimationFrame(raf.current)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('pointerdown', onDown)
-      window.removeEventListener('pointerup', onUp)
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 0,
-        background: '#0a0f0f',
-      }}
+      style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
     />
   )
 }
