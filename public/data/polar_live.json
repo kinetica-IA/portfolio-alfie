@@ -5969,46 +5969,83 @@
   "finding": {
     "spearman_rho": 0.258,
     "p_value": 0.0705,
-    "auc": 0.7033,
-    "sensitivity_pct": 66.7,
-    "n_pairs": 50,
+    "auc": 0.84,
+    "sensitivity_pct": 85.7,
+    "n_pairs": 60,
     "n_diary": 62,
-    "description": "Nocturnal ANS predicts PEM 48h ahead · model v2"
+    "description": "Nocturnal ANS predicts PEM 48h ahead · model v3",
+    "targets_summary": {
+      "severity": {
+        "auc": 0.84,
+        "ci95": [
+          0.7333,
+          0.9412
+        ],
+        "best_model": "logistic_regression",
+        "n": 60
+      },
+      "pem": {
+        "auc": 0.7895,
+        "ci95": [
+          0.6689,
+          0.895
+        ],
+        "best_model": "logistic_regression",
+        "n": 60
+      },
+      "fatiga": {
+        "auc": 0.7873,
+        "ci95": [
+          0.6554,
+          0.918
+        ],
+        "best_model": "logistic_regression",
+        "n": 60
+      },
+      "niebla_mental": {
+        "auc": 0.9877,
+        "ci95": [
+          0.9519,
+          1.0
+        ],
+        "best_model": "logistic_regression",
+        "n": 60
+      },
+      "disfuncion_autonomica": {
+        "auc": 0.8608,
+        "ci95": [
+          0.7529,
+          0.9505
+        ],
+        "best_model": "logistic_regression",
+        "n": 54
+      }
+    }
   },
   "predictor": {
-    "model_version": "v2",
+    "model_version": "v3",
     "n_diary": 62,
-    "n_training": 50,
-    "n_positive": 30,
-    "n_negative": 20,
+    "n_training": 60,
+    "n_positive": 35,
+    "n_negative": 25,
     "threshold": 6,
     "ans_lag2_rho": 0.258,
     "ans_lag2_p": 0.0705,
     "ans_lag2_n": 50,
     "hrv_lag2_rho": 0.26,
     "hrv_lag2_p": 0.0629,
-    "auc": 0.7033,
-    "sensitivity": 0.6667,
-    "specificity": 0.7,
-    "accuracy": 0.68,
-    "tp": 20,
-    "fp": 6,
-    "tn": 14,
-    "fn": 10,
+    "auc": 0.84,
+    "sensitivity": 0.8571,
+    "specificity": 0.72,
+    "accuracy": 0.8,
+    "tp": 30,
+    "fp": 7,
+    "tn": 18,
+    "fn": 5,
     "features": [
-      "ans_t2",
-      "hrv_t2",
-      "rec_sublevel_t1",
-      "wake_t0"
+      "hrv_rmssd_night_t0",
+      "ans_status_t2"
     ],
-    "coefficients": {
-      "ans_t2": 0.0728,
-      "hrv_t2": 0.3414,
-      "rec_sublevel_t1": -0.0092,
-      "wake_t0": 0.768
-    },
-    "imputed_rec_med": 45.0,
-    "imputed_wake_med": 34.0,
     "lag_analysis": {
       "ans_status": {
         "0": {
@@ -6116,52 +6153,426 @@
           "p": 0.2747,
           "n": 52
         }
+      },
+      "hrv_sdnn": {
+        "0": {
+          "rho": 0.034,
+          "p": 0.7955,
+          "n": 60
+        },
+        "1": {
+          "rho": -0.155,
+          "p": 0.2364,
+          "n": 60
+        },
+        "2": {
+          "rho": -0.17,
+          "p": 0.1975,
+          "n": 59
+        }
+      },
+      "hrv_pnn50": {
+        "0": {
+          "rho": -0.017,
+          "p": 0.8999,
+          "n": 60
+        },
+        "1": {
+          "rho": -0.329,
+          "p": 0.0103,
+          "n": 60
+        },
+        "2": {
+          "rho": 0.016,
+          "p": 0.903,
+          "n": 59
+        }
+      },
+      "hrv_lf_hf_ratio": {
+        "0": {
+          "rho": -0.044,
+          "p": 0.739,
+          "n": 60
+        },
+        "1": {
+          "rho": 0.143,
+          "p": 0.2741,
+          "n": 60
+        },
+        "2": {
+          "rho": -0.148,
+          "p": 0.2636,
+          "n": 59
+        }
+      },
+      "hrv_hf_power": {
+        "0": {
+          "rho": 0.142,
+          "p": 0.2808,
+          "n": 60
+        },
+        "1": {
+          "rho": -0.35,
+          "p": 0.0061,
+          "n": 60
+        },
+        "2": {
+          "rho": 0.134,
+          "p": 0.3126,
+          "n": 59
+        }
+      },
+      "hrv_sd1": {
+        "0": {
+          "rho": 0.003,
+          "p": 0.9823,
+          "n": 60
+        },
+        "1": {
+          "rho": -0.319,
+          "p": 0.0129,
+          "n": 60
+        },
+        "2": {
+          "rho": 0.02,
+          "p": 0.8789,
+          "n": 59
+        }
+      },
+      "hrv_sd2": {
+        "0": {
+          "rho": 0.036,
+          "p": 0.7841,
+          "n": 60
+        },
+        "1": {
+          "rho": -0.126,
+          "p": 0.3378,
+          "n": 60
+        },
+        "2": {
+          "rho": -0.168,
+          "p": 0.203,
+          "n": 59
+        }
+      },
+      "hrv_dfa_alpha1": {
+        "0": {
+          "rho": 0.063,
+          "p": 0.6301,
+          "n": 60
+        },
+        "1": {
+          "rho": 0.359,
+          "p": 0.0048,
+          "n": 60
+        },
+        "2": {
+          "rho": -0.03,
+          "p": 0.8193,
+          "n": 59
+        }
       }
     },
     "residuals": {
+      "generated": "2026-04-02 14:31",
       "brain_fog": {
-        "rho": 0.668,
+        "rho": 0.547,
         "p": 0.0,
-        "n": 50
+        "n": 60
       },
       "autonomic_dysfunction": {
-        "rho": 0.542,
-        "p": 0.0001,
-        "n": 44
-      },
-      "generated": "2026-04-02 10:19"
+        "rho": 0.372,
+        "p": 0.0056,
+        "n": 54
+      }
     },
-    "generated": "2026-04-02 10:19",
+    "generated": "2026-04-02 14:31",
     "models": {
       "logistic_regression": {
-        "auc": 0.7033,
-        "sensitivity": 0.6667,
-        "specificity": 0.7,
-        "accuracy": 0.68,
-        "tp": 20,
-        "fp": 6,
-        "tn": 14,
-        "fn": 10
+        "auc": 0.84,
+        "sensitivity": 0.8571,
+        "specificity": 0.72,
+        "accuracy": 0.8,
+        "tp": 30,
+        "fp": 7,
+        "tn": 18,
+        "fn": 5
       },
       "random_forest": {
-        "auc": 0.6717,
-        "sensitivity": 0.7,
-        "specificity": 0.65,
-        "accuracy": 0.68,
-        "tp": 21,
-        "fp": 7,
-        "tn": 13,
-        "fn": 9
+        "auc": 0.7863,
+        "sensitivity": 0.8,
+        "specificity": 0.76,
+        "accuracy": 0.7833,
+        "tp": 28,
+        "fp": 6,
+        "tn": 19,
+        "fn": 7
       },
       "gradient_boosting": {
-        "auc": 0.5317,
-        "sensitivity": 0.7333,
-        "specificity": 0.4,
-        "accuracy": 0.6,
-        "tp": 22,
-        "fp": 12,
-        "tn": 8,
-        "fn": 8
+        "auc": 0.7589,
+        "sensitivity": 0.8,
+        "specificity": 0.68,
+        "accuracy": 0.75,
+        "tp": 28,
+        "fp": 8,
+        "tn": 17,
+        "fn": 7
+      }
+    },
+    "targets": {
+      "severity": {
+        "best_model": "logistic_regression",
+        "best_auc": 0.84,
+        "best_auc_ci95": [
+          0.7333,
+          0.9412
+        ],
+        "sensitivity": 0.8571,
+        "specificity": 0.72,
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "ans_status_t2"
+        ],
+        "n_training": 60,
+        "n_positive": 35,
+        "n_negative": 25,
+        "threshold": 6,
+        "models": {
+          "logistic_regression": {
+            "auc": 0.84,
+            "sensitivity": 0.8571,
+            "specificity": 0.72,
+            "accuracy": 0.8,
+            "tp": 30,
+            "fp": 7,
+            "tn": 18,
+            "fn": 5
+          },
+          "random_forest": {
+            "auc": 0.7863,
+            "sensitivity": 0.8,
+            "specificity": 0.76,
+            "accuracy": 0.7833,
+            "tp": 28,
+            "fp": 6,
+            "tn": 19,
+            "fn": 7
+          },
+          "gradient_boosting": {
+            "auc": 0.7589,
+            "sensitivity": 0.8,
+            "specificity": 0.68,
+            "accuracy": 0.75,
+            "tp": 28,
+            "fp": 8,
+            "tn": 17,
+            "fn": 7
+          }
+        }
+      },
+      "pem": {
+        "best_model": "logistic_regression",
+        "best_auc": 0.7895,
+        "best_auc_ci95": [
+          0.6689,
+          0.895
+        ],
+        "sensitivity": 0.7073,
+        "specificity": 0.7895,
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "recovery_sublevel_t0"
+        ],
+        "n_training": 60,
+        "n_positive": 41,
+        "n_negative": 19,
+        "threshold": 5,
+        "models": {
+          "logistic_regression": {
+            "auc": 0.7895,
+            "sensitivity": 0.7073,
+            "specificity": 0.7895,
+            "accuracy": 0.7333,
+            "tp": 29,
+            "fp": 4,
+            "tn": 15,
+            "fn": 12
+          },
+          "random_forest": {
+            "auc": 0.7266,
+            "sensitivity": 0.6341,
+            "specificity": 0.6842,
+            "accuracy": 0.65,
+            "tp": 26,
+            "fp": 6,
+            "tn": 13,
+            "fn": 15
+          },
+          "gradient_boosting": {
+            "auc": 0.6444,
+            "sensitivity": 0.7561,
+            "specificity": 0.2105,
+            "accuracy": 0.5833,
+            "tp": 31,
+            "fp": 15,
+            "tn": 4,
+            "fn": 10
+          }
+        }
+      },
+      "fatiga": {
+        "best_model": "logistic_regression",
+        "best_auc": 0.7873,
+        "best_auc_ci95": [
+          0.6554,
+          0.918
+        ],
+        "sensitivity": 0.7027,
+        "specificity": 0.6957,
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "hrv_rmssd_night_t1",
+          "sleep_wake_min_t2"
+        ],
+        "n_training": 60,
+        "n_positive": 37,
+        "n_negative": 23,
+        "threshold": 6,
+        "models": {
+          "logistic_regression": {
+            "auc": 0.7873,
+            "sensitivity": 0.7027,
+            "specificity": 0.6957,
+            "accuracy": 0.7,
+            "tp": 26,
+            "fp": 7,
+            "tn": 16,
+            "fn": 11
+          },
+          "random_forest": {
+            "auc": 0.7074,
+            "sensitivity": 0.8108,
+            "specificity": 0.6087,
+            "accuracy": 0.7333,
+            "tp": 30,
+            "fp": 9,
+            "tn": 14,
+            "fn": 7
+          },
+          "gradient_boosting": {
+            "auc": 0.6005,
+            "sensitivity": 0.7297,
+            "specificity": 0.5217,
+            "accuracy": 0.65,
+            "tp": 27,
+            "fp": 11,
+            "tn": 12,
+            "fn": 10
+          }
+        }
+      },
+      "niebla_mental": {
+        "best_model": "logistic_regression",
+        "best_auc": 0.9877,
+        "best_auc_ci95": [
+          0.9519,
+          1.0
+        ],
+        "sensitivity": 0.8889,
+        "specificity": 1.0,
+        "selected_features": [
+          "ans_status_t0",
+          "hrv_rmssd_night_t1",
+          "recovery_sublevel_t3"
+        ],
+        "n_training": 60,
+        "n_positive": 54,
+        "n_negative": 6,
+        "threshold": 5,
+        "models": {
+          "logistic_regression": {
+            "auc": 0.9877,
+            "sensitivity": 0.8889,
+            "specificity": 1.0,
+            "accuracy": 0.9,
+            "tp": 48,
+            "fp": 0,
+            "tn": 6,
+            "fn": 6
+          },
+          "random_forest": {
+            "auc": 0.9136,
+            "sensitivity": 0.9074,
+            "specificity": 0.6667,
+            "accuracy": 0.8833,
+            "tp": 49,
+            "fp": 2,
+            "tn": 4,
+            "fn": 5
+          },
+          "gradient_boosting": {
+            "auc": 0.9105,
+            "sensitivity": 0.9815,
+            "specificity": 0.6667,
+            "accuracy": 0.95,
+            "tp": 53,
+            "fp": 2,
+            "tn": 4,
+            "fn": 1
+          }
+        }
+      },
+      "disfuncion_autonomica": {
+        "best_model": "logistic_regression",
+        "best_auc": 0.8608,
+        "best_auc_ci95": [
+          0.7529,
+          0.9505
+        ],
+        "sensitivity": 0.7188,
+        "specificity": 0.8182,
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "hrv_lf_hf_ratio_t1",
+          "hrv_sd1_t0"
+        ],
+        "n_training": 54,
+        "n_positive": 32,
+        "n_negative": 22,
+        "threshold": 5,
+        "models": {
+          "logistic_regression": {
+            "auc": 0.8608,
+            "sensitivity": 0.7188,
+            "specificity": 0.8182,
+            "accuracy": 0.7593,
+            "tp": 23,
+            "fp": 4,
+            "tn": 18,
+            "fn": 9
+          },
+          "random_forest": {
+            "auc": 0.8139,
+            "sensitivity": 0.75,
+            "specificity": 0.6818,
+            "accuracy": 0.7222,
+            "tp": 24,
+            "fp": 7,
+            "tn": 15,
+            "fn": 8
+          },
+          "gradient_boosting": {
+            "auc": 0.7912,
+            "sensitivity": 0.8125,
+            "specificity": 0.6364,
+            "accuracy": 0.7407,
+            "tp": 26,
+            "fp": 8,
+            "tn": 14,
+            "fn": 6
+          }
+        }
       }
     }
   }
