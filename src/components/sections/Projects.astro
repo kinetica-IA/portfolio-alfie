@@ -21,7 +21,7 @@
       </div>
       <h3>ANS-Based Symptom Prediction in Post-Lyme Fatigue</h3>
       <p class="project-sub">N=1 Longitudinal Study · Consumer Wearable + AI Pipeline</p>
-      <p>48-hour prediction of post-exertional malaise using nocturnal ANS wearable data. The dominant signal is autonomic charge lag-2 (ρ=+0.55, p&lt;0.001) combined with sleep fragmentation. Model v2 retrains automatically on every diary entry. Pipeline, dataset and methodology fully public.</p>
+      <p>Multi-symptom prediction in post-Lyme fatigue using nocturnal HRV from raw RR intervals. Model v3 independently predicts 5 symptom domains — severity, PEM, fatigue, brain fog, and autonomic dysfunction. Forward feature selection revealed LF/HF ratio and SD1 as unique predictors of autonomic dysfunction. Retrains automatically on every diary entry. Pipeline, dataset and methodology fully public.</p>
 
       <!-- Live model metrics — loaded from /data/polar_live.json -->
       <div class="proj-metrics" id="proj-metrics">
@@ -42,8 +42,9 @@
           <span class="proj-metric-lbl">N pairs</span>
         </div>
       </div>
+      <p class="proj-targets-link">5 symptom domains with bootstrap CIs · <a href="#biometrics">see Biometrics</a></p>
 
-      <p class="stack"><em>Python · scikit-learn · LangGraph · Polar Grit X2 · ChromaDB</em></p>
+      <p class="stack"><em>Python · scikit-learn · scipy · Polar Grit X2 · LOO-CV · Bootstrap CI</em></p>
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="project-btn">View on GitHub →</a>
     </article>
 
@@ -358,6 +359,19 @@
     text-transform: uppercase;
     color: #889;
   }
+  .proj-targets-link {
+    font-size: 0.72rem;
+    color: var(--muted-text, #667);
+    opacity: 0.6;
+    margin: 0.5rem 0 0.8rem;
+    letter-spacing: 0.02em;
+  }
+  .proj-targets-link a {
+    color: var(--accent-color, #90a7a5);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .proj-targets-link a:hover { text-decoration: underline; }
 </style>
 
 <script>

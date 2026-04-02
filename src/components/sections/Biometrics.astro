@@ -90,6 +90,9 @@
         Nocturnal autonomic nervous system status predicts post-exertional malaise (PEM)
         48 hours in advance. The predictive signal lives in the ANS — not in serology,
         not in sleep scores.
+        Model v3: 5 symptom domains predicted independently.
+        Autonomic dysfunction uniquely captured by LF/HF ratio and SD1
+        — advanced HRV features extracted from raw RR intervals.
         <span class="finding-meta">
           N = <span id="f-n">39</span> DSQ-PEM validated pairs
           · <span id="f-days">198</span> days longitudinal follow-up
@@ -138,6 +141,20 @@
         min_samples_leaf=5 · scales automatically with N ·
         RF and GB will outperform LR as dataset grows beyond ~100 pairs
       </p>
+    </div>
+
+    <!-- Multi-target predictions -->
+    <div class="targets-card">
+      <div class="targets-header">
+        <span class="targets-title">Multi-symptom prediction · LOO-CV · Forward Selection · Bootstrap CI</span>
+        <span class="targets-version" id="t-version"></span>
+      </div>
+      <div class="targets-grid" id="targets-grid">
+        <!-- Populated by JS from predictor.targets -->
+      </div>
+      <div class="targets-note">
+        Each target independently selects optimal features via forward selection · CI 95% from 1000× bootstrap
+      </div>
     </div>
 
   </div>
@@ -474,6 +491,124 @@
   margin-bottom:0;
   letter-spacing:0.02em;
 }
+
+/* ── Multi-target card ── */
+.targets-card {
+  background:#fff;
+  border:1px solid rgba(144,167,165,0.18);
+  border-radius:10px;
+  padding:1.15rem 1.4rem;
+  margin-top:1.2rem;
+  box-shadow:0 2px 10px rgba(144,167,165,0.07);
+}
+.targets-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin-bottom:0.9rem;
+}
+.targets-title {
+  font-size:0.62rem;
+  letter-spacing:0.11em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.7;
+}
+.targets-version {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.62rem;
+  color:#4a8a78;
+  background:rgba(144,167,165,0.09);
+  border:1px solid rgba(144,167,165,0.25);
+  padding:0.18rem 0.55rem;
+  border-radius:1rem;
+}
+.targets-grid {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.target-row {
+  display:grid;
+  grid-template-columns: 1.6fr 0.8fr 1.1fr 2fr;
+  gap:0 0.5rem;
+  align-items:center;
+  padding:0.5rem 0.3rem;
+  border-bottom:1px solid rgba(144,167,165,0.1);
+}
+.target-row:last-child { border-bottom:none; }
+.target-row-header {
+  display:grid;
+  grid-template-columns: 1.6fr 0.8fr 1.1fr 2fr;
+  gap:0 0.5rem;
+  padding:0 0.3rem 0.35rem;
+}
+.target-row-header > span {
+  font-size:0.6rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted-text,#667);
+  opacity:0.5;
+}
+.target-name {
+  font-size:0.78rem;
+  color:var(--text-color,#1a2a2a);
+}
+.target-auc {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.82rem;
+  font-weight:500;
+  color:#4a8a78;
+}
+.target-ci {
+  font-family:'DM Mono','Courier New',monospace;
+  font-size:0.7rem;
+  color:var(--muted-text,#667);
+  opacity:0.65;
+}
+.target-feats {
+  font-size:0.65rem;
+  color:var(--muted-text,#667);
+  opacity:0.55;
+  letter-spacing:0.02em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.target-warn {
+  display:inline-block;
+  font-size:0.55rem;
+  color:#c4855a;
+  background:rgba(196,133,90,0.1);
+  border:1px solid rgba(196,133,90,0.25);
+  border-radius:0.8rem;
+  padding:0.1rem 0.4rem;
+  margin-left:0.4rem;
+  letter-spacing:0.04em;
+  vertical-align:middle;
+}
+.target-feat-new {
+  color:#4a8a78;
+  font-weight:500;
+}
+.targets-note {
+  font-size:0.67rem;
+  color:var(--muted-text,#667);
+  opacity:0.45;
+  margin-top:0.75rem;
+  margin-bottom:0;
+  letter-spacing:0.02em;
+}
+@media (max-width:580px) {
+  .target-row, .target-row-header {
+    grid-template-columns: 1fr;
+    gap:0.15rem;
+  }
+  .target-row { padding:0.6rem 0.3rem; }
+  .target-feats { white-space:normal; }
+}
 </style>
 
 
@@ -609,6 +744,56 @@
       const best = aucs.reduce((a,b) => a.v > b.v ? a : b);
       const bestRow = document.getElementById(best.id);
       if (bestRow) bestRow.classList.add('model-best');
+    }
+
+    // ── Multi-target grid ──────────────────────────────────────────────────
+    const targets = pred.targets || {};
+    const tGrid = document.getElementById('targets-grid');
+    const tVer  = document.getElementById('t-version');
+    if (tVer && pred.model_version) tVer.textContent = `model ${pred.model_version}`;
+
+    if (tGrid && Object.keys(targets).length > 0) {
+      const tNames = {
+        severity: 'Severity',
+        pem: 'Post-Exertional Malaise',
+        fatiga: 'Fatigue',
+        niebla_mental: 'Brain Fog',
+        disfuncion_autonomica: 'Autonomic Dysfunction',
+      };
+      // New HRV features (highlight in green)
+      const newHRV = new Set([
+        'hrv_sdnn','hrv_pnn50','hrv_lf_hf_ratio','hrv_hf_power',
+        'hrv_sd1','hrv_sd2','hrv_dfa_alpha1',
+      ]);
+
+      // Header
+      const hdr = document.createElement('div');
+      hdr.className = 'target-row-header';
+      hdr.innerHTML = '<span>Target</span><span>AUC</span><span>CI 95%</span><span>Features</span>';
+      tGrid.appendChild(hdr);
+
+      for (const [key, t] of Object.entries(targets)) {
+        if (!t.best_auc) continue;
+        const ci = t.best_auc_ci95 || [];
+        const ciStr = ci.length === 2
+          ? `[${ci[0].toFixed(2)}, ${ci[1].toFixed(2)}]` : '—';
+        const featsHtml = (t.selected_features || []).map(f => {
+          const base = f.replace(/_t\d+$/, '');
+          return newHRV.has(base)
+            ? `<span class="target-feat-new">${f}</span>` : f;
+        }).join(', ');
+
+        const warn = key === 'niebla_mental' ? '<span class="target-warn">class imbalance</span>' : '';
+        const row = document.createElement('div');
+        row.className = 'target-row';
+        row.innerHTML = `
+          <span class="target-name">${tNames[key] || key}${warn}</span>
+          <span class="target-auc">${t.best_auc.toFixed(2)}</span>
+          <span class="target-ci">${ciStr}</span>
+          <span class="target-feats">${featsHtml}</span>
+        `;
+        tGrid.appendChild(row);
+      }
     }
 
     // ── Sparkline ─────────────────────────────────────────────────────────
