@@ -1,5 +1,4 @@
 import { usePolarData } from './hooks/usePolarData'
-import AnimatedBackground from './components/AnimatedBackground'
 import Landing from './components/Landing'
 import ArticleCards from './components/ArticleCards'
 import Statement from './components/Statement'
@@ -15,7 +14,6 @@ export default function App() {
 
   return (
     <>
-      <AnimatedBackground />
       <div className="content-layer">
         <Landing data={data} />
 
