@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { useReveal } from '../hooks/useReveal'
 import { useCountUp } from '../hooks/useCountUp'
+import { useWordStagger } from '../hooks/useWordStagger'
 
 function aucColor(v) {
   if (v >= 0.80) return 'var(--green)'
@@ -16,19 +16,36 @@ const TARGET_LABELS = {
   niebla_mental: 'Brain Fog',
 }
 
-function Metric({ value, decimals, label, delay = 0, active }) {
+const METRIC_COLORS = [
+  { accent: 'var(--green)', bg: 'rgba(107,158,122,0.06)' },  // severity
+  { accent: 'var(--sea)',   bg: 'rgba(93,138,130,0.06)' },    // autonomic
+  { accent: 'var(--teal)',  bg: 'rgba(144,167,165,0.06)' },   // days
+  { accent: 'var(--warm)',  bg: 'rgba(196,133,90,0.06)' },    // targets
+]
+
+function Metric({ value, decimals, label, delay = 0, active, colorIdx }) {
   const display = useCountUp(value, decimals, active, 1100)
+  const colors = METRIC_COLORS[colorIdx] || METRIC_COLORS[0]
   return (
-    <div className="fp-metric" style={{ transitionDelay: `${delay}s` }}>
-      <span className="fp-metric-value">{display}</span>
+    <div className="fp-metric" style={{
+      transitionDelay: `${delay}s`,
+      background: colors.bg,
+      borderTop: `2px solid ${colors.accent}`,
+      transform: active ? 'scale(1)' : 'scale(0.97)',
+      opacity: active ? 1 : 0,
+      transition: `transform 0.5s var(--ease-out) ${delay}s, opacity 0.5s var(--ease-out) ${delay}s`,
+    }}>
+      <span className="fp-metric-value" style={{ color: colors.accent }}>{display}</span>
       <span className="fp-metric-label">{label}</span>
     </div>
   )
 }
 
 export default function FlagshipProof({ data, loading }) {
-  const [expanded, setExpanded] = useState(false)
   const { ref: metricsRef, revealed: metricsVisible } = useReveal(0.2)
+  const { ref: titleRef, words: titleWords } = useWordStagger(
+    'Five symptoms, one watch, zero hospital visits'
+  )
 
   const targets = data?.predictor?.targets
   const severity = targets?.severity
@@ -40,8 +57,10 @@ export default function FlagshipProof({ data, loading }) {
 
   return (
     <section className="section" id="research">
-      <span className="eyebrow">FLAGSHIP RESEARCH</span>
-      <h2 className="fp-title">Five symptoms, one watch, zero hospital visits</h2>
+      <span className="eyebrow" style={{ color: 'var(--green)' }}>FLAGSHIP RESEARCH</span>
+      <h2 className="fp-title" ref={titleRef}>
+        {titleWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
+      </h2>
       <p className="fp-context">
         N={nPairs} · {nDays} days · LOO-CV · Bootstrap 1000×
       </p>
@@ -51,15 +70,20 @@ export default function FlagshipProof({ data, loading }) {
       ) : (
         <>
           <div className="fp-metrics" ref={metricsRef}>
-            <Metric value={severity?.best_auc || 0.84} decimals={2} label="Severity AUC" delay={0} active={metricsVisible} />
-            <Metric value={autonomic?.best_auc || 0.86} decimals={2} label="Autonomic AUC" delay={0.1} active={metricsVisible} />
-            <Metric value={nDays} decimals={0} label="Days monitored" delay={0.2} active={metricsVisible} />
-            <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.3} active={metricsVisible} />
+            <Metric value={severity?.best_auc || 0.84} decimals={2} label="Severity AUC" delay={0} active={metricsVisible} colorIdx={0} />
+            <Metric value={autonomic?.best_auc || 0.86} decimals={2} label="Autonomic AUC" delay={0.08} active={metricsVisible} colorIdx={1} />
+            <Metric value={nDays} decimals={0} label="Days monitored" delay={0.16} active={metricsVisible} colorIdx={2} />
+            <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.24} active={metricsVisible} colorIdx={3} />
           </div>
 
           {/* Key finding */}
           <div className="fp-finding">
-            <span className="eyebrow" style={{ color: 'var(--warm)' }}>KEY FINDING</span>
+            <span className="eyebrow" style={{ color: 'var(--warm)' }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" style={{ verticalAlign: '-2px', marginRight: '6px' }}>
+                <path d="M2 8 Q5 4, 8 8 Q11 12, 14 8" fill="none" stroke="var(--warm)" strokeWidth="1.5" />
+              </svg>
+              KEY FINDING
+            </span>
             <p className="fp-finding-text">
               Autonomic dysfunction is the only symptom predicted by advanced HRV
               features — LF/HF ratio and SD1 — extracted from raw RR intervals.
@@ -68,42 +92,50 @@ export default function FlagshipProof({ data, loading }) {
             </p>
           </div>
 
-          {/* Expandable targets */}
-          <div className="fp-expand-section">
-            <button
-              className="fp-toggle"
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? '− Collapse' : `+ All ${nTargets} targets with confidence intervals`}
-            </button>
-
-            <div className={`fp-targets ${expanded ? 'fp-targets--open' : ''}`}>
-              {targets && Object.entries(targets).map(([key, t]) => (
-                <div key={key} className="fp-target-row">
-                  <span className="fp-target-name">{TARGET_LABELS[key] || key}</span>
-                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
-                    {t.best_auc.toFixed(2)}
-                  </span>
-                  <div className="fp-target-bar">
-                    <div
-                      className="fp-target-bar-fill"
-                      style={{
-                        width: `${((t.best_auc - 0.5) / 0.5) * 100}%`,
-                        background: aucColor(t.best_auc),
-                      }}
-                    />
-                  </div>
-                  <span className="fp-target-ci">
-                    {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
-                  </span>
+          {/* Targets — visible by default */}
+          <div className="fp-targets">
+            {targets && Object.entries(targets).map(([key, t], i) => (
+              <div
+                key={key}
+                className="fp-target-row"
+                style={{
+                  opacity: metricsVisible ? 1 : 0,
+                  transform: metricsVisible ? 'translateY(0)' : 'translateY(12px)',
+                  transition: `opacity 0.4s var(--ease-out) ${i * 60 + 600}ms, transform 0.4s var(--ease-out) ${i * 60 + 600}ms`,
+                }}
+              >
+                <span className="fp-target-name">{TARGET_LABELS[key] || key}</span>
+                <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
+                  {t.best_auc.toFixed(2)}
+                </span>
+                <div className="fp-target-bar">
+                  <div
+                    className="fp-target-bar-fill"
+                    style={{
+                      width: metricsVisible ? `${((t.best_auc - 0.5) / 0.5) * 100}%` : '0%',
+                      background: aucColor(t.best_auc),
+                      transitionDelay: `${i * 60 + 900}ms`,
+                    }}
+                  />
+                  <span
+                    className="fp-bar-pulse"
+                    style={{
+                      background: aucColor(t.best_auc),
+                      animationDelay: `${i * 600}ms`,
+                      opacity: metricsVisible ? 1 : 0,
+                    }}
+                  />
                 </div>
-              ))}
-              {residuals && (
-                <p className="fp-residuals-note">
-                  Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
-                </p>
-              )}
-            </div>
+                <span className="fp-target-ci">
+                  {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
+                </span>
+              </div>
+            ))}
+            {residuals && (
+              <p className="fp-residuals-note">
+                Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
+              </p>
+            )}
           </div>
 
           <a
@@ -139,10 +171,10 @@ export default function FlagshipProof({ data, loading }) {
           color: var(--text-dim);
         }
 
-        /* Metrics — editorial data presentation */
+        /* Metrics — card-style with accent colors */
         .fp-metrics {
           display: flex;
-          gap: 64px;
+          gap: 24px;
           margin-bottom: 72px;
           flex-wrap: wrap;
           padding-bottom: 40px;
@@ -152,25 +184,33 @@ export default function FlagshipProof({ data, loading }) {
           display: flex;
           flex-direction: column;
           position: relative;
+          padding: 20px 24px;
+          flex: 1;
+          min-width: 120px;
+          cursor: default;
+          transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+        }
+        .fp-metric:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 16px var(--shadow);
         }
         .fp-metric-value {
           font-family: var(--mono);
           font-size: clamp(2.5rem, 4vw, 3.5rem);
           font-weight: 400;
-          color: var(--text-metric);
           line-height: 1;
           letter-spacing: -0.02em;
         }
         .fp-metric-label {
           font-family: var(--mono);
           font-size: 11px;
-          color: var(--sea);
+          color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.08em;
           margin-top: 12px;
         }
         @media (max-width: 640px) {
-          .fp-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+          .fp-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
         }
 
         /* Finding */
@@ -190,30 +230,10 @@ export default function FlagshipProof({ data, loading }) {
           line-height: 1.75;
         }
 
-        /* Expandable */
-        .fp-expand-section {
+        /* Targets — always visible */
+        .fp-targets {
           margin-bottom: 40px;
         }
-        .fp-toggle {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--teal);
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 4px 0;
-          display: block;
-          margin-bottom: 16px;
-          transition: color var(--duration-hover) ease;
-        }
-        .fp-toggle:hover { color: var(--green); }
-        .fp-targets {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.6s var(--ease-out);
-        }
-        .fp-targets--open { max-height: 500px; }
-
         .fp-target-row {
           display: grid;
           grid-template-columns: 180px 48px 1fr 80px;
@@ -224,7 +244,7 @@ export default function FlagshipProof({ data, loading }) {
           transition: background var(--duration-hover) ease;
         }
         .fp-target-row:hover {
-          background: var(--fill-teal);
+          background: rgba(144, 167, 165, 0.12);
         }
         .fp-target-row:last-of-type { border-bottom: none; }
         .fp-target-name {
@@ -242,11 +262,25 @@ export default function FlagshipProof({ data, loading }) {
         .fp-target-bar {
           height: 3px;
           background: var(--fill-teal);
-          overflow: hidden;
+          overflow: visible;
+          position: relative;
         }
         .fp-target-bar-fill {
           height: 100%;
           transition: width 0.8s var(--ease-out);
+        }
+        .fp-bar-pulse {
+          position: absolute;
+          right: -2px;
+          top: -1.5px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          animation: barPulse 3s ease-in-out infinite;
+        }
+        @keyframes barPulse {
+          0%, 100% { opacity: 0.15; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.3); }
         }
         .fp-target-ci {
           font-family: var(--mono);

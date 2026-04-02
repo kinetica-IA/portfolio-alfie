@@ -1,16 +1,59 @@
+import { useReveal } from '../hooks/useReveal'
+import { useWordStagger } from '../hooks/useWordStagger'
+
+const STAT_MARKERS = [
+  { value: 'HRV', label: 'primary biomarker', color: 'var(--sea)', rgb: '93,138,130' },
+  { value: 'ANS', label: 'target system', color: 'var(--teal)', rgb: '144,167,165' },
+  { value: 'N=1', label: 'longitudinal proof', color: 'var(--warm)', rgb: '196,133,90' },
+]
+
 export default function ClinicalSignal() {
+  const { ref: headRef, words: headWords } = useWordStagger(
+    'The signal lives in the autonomic nervous system. Not in sleep. Not in serology.'
+  )
+  const { ref: bodyRef, revealed: bodyRevealed } = useReveal(0.15)
+  const { ref: statsRef, revealed: statsRevealed } = useReveal(0.15)
+
   return (
     <section className="section clinical-signal">
-      <span className="eyebrow" style={{ color: 'var(--teal)' }}>THE CLINICAL QUESTION</span>
-      <h2 className="cs-headline">
-        The signal lives in the autonomic nervous system.
-        <br />Not in sleep. Not in serology.
+      <span className="eyebrow" style={{ color: 'var(--sea)' }}>THE CLINICAL QUESTION</span>
+      <h2 className="cs-headline" ref={headRef}>
+        {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>
-      <p className="cs-body">
-        Conventional monitoring misses post-infectious fatigue because it looks in the wrong place.
-        We extract predictive signal from nocturnal heart rate variability — the autonomic fingerprint
-        the body writes every night.
-      </p>
+      <div className="cs-body-wrap" ref={bodyRef}>
+        <div className="cs-border-line" style={{
+          height: bodyRevealed ? '100%' : '0%',
+          transition: 'height 0.6s var(--ease-out)',
+        }} />
+        <p className="cs-body" style={{
+          opacity: bodyRevealed ? 1 : 0,
+          transform: bodyRevealed ? 'translateY(0)' : 'translateY(12px)',
+          transition: 'opacity 0.5s var(--ease-out) 0.1s, transform 0.5s var(--ease-out) 0.1s',
+        }}>
+          Conventional monitoring misses post-infectious fatigue because it looks in the wrong place.
+          We extract predictive signal from nocturnal heart rate variability — the autonomic fingerprint
+          the body writes every night.
+        </p>
+      </div>
+
+      <div className="cs-stats" ref={statsRef}>
+        {STAT_MARKERS.map((s, i) => (
+          <div
+            key={s.value}
+            className="cs-stat"
+            style={{
+              '--stat-color': s.color,
+              '--stat-rgb': s.rgb,
+              opacity: statsRevealed ? 1 : 0,
+              transform: statsRevealed ? 'scale(1)' : 'scale(0.95)',
+              transition: `opacity 0.35s var(--ease-out) ${i * 120}ms, transform 0.35s var(--ease-out) ${i * 120}ms`,
+            }}
+          >
+            <span className="cs-stat-value">{s.value}</span>
+            <span className="cs-stat-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
 
       <style>{`
         .clinical-signal {
@@ -28,15 +71,64 @@ export default function ClinicalSignal() {
           line-height: 1.35;
           margin-bottom: 28px;
         }
+        .cs-body-wrap {
+          position: relative;
+          padding-left: 22px;
+          margin-bottom: 32px;
+        }
+        .cs-border-line {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 2px;
+          background: var(--green);
+        }
         .cs-body {
           font-family: var(--sans);
           font-size: var(--text-body);
           font-weight: 300;
           color: var(--text-sec);
           line-height: 1.75;
-          border-left: 2px solid var(--green);
-          padding-left: 20px;
           max-width: 560px;
+        }
+        .cs-stats {
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .cs-stat {
+          padding: 14px 20px;
+          border-top: 2px solid var(--stat-color);
+          background: rgba(var(--stat-rgb), 0.08);
+          min-width: 120px;
+          flex: 1;
+          transition: background var(--duration-hover) ease;
+          cursor: default;
+        }
+        .cs-stat:hover {
+          background: rgba(var(--stat-rgb), 0.20);
+        }
+        .cs-stat:hover .cs-stat-label {
+          color: var(--text-sec);
+        }
+        .cs-stat-value {
+          display: block;
+          font-family: var(--mono);
+          font-size: var(--text-body);
+          font-weight: 500;
+          color: var(--stat-color);
+          margin-bottom: 4px;
+        }
+        .cs-stat-label {
+          font-family: var(--mono);
+          font-size: 11px;
+          color: var(--text-dim);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          transition: color var(--duration-hover) ease;
+        }
+        @media (max-width: 640px) {
+          .cs-stats { flex-direction: column; }
         }
       `}</style>
     </section>

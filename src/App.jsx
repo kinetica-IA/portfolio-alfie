@@ -1,10 +1,11 @@
 import { usePolarData } from './hooks/usePolarData'
-import ArchitecturalGrid from './components/ArchitecturalGrid'
+import ClinicalField from './components/ClinicalField'
 import Hero from './components/Hero'
 import ClinicalSignal from './components/ClinicalSignal'
 import FlagshipProof from './components/FlagshipProof'
 import Founder from './components/Founder'
 import Systems from './components/Systems'
+import Published from './components/Published'
 import Contact from './components/Contact'
 import Reveal from './components/Reveal'
 
@@ -13,7 +14,7 @@ export default function App() {
 
   return (
     <>
-      <ArchitecturalGrid />
+      <ClinicalField />
       <div className="content-layer">
         <Hero />
         <Reveal>
@@ -27,6 +28,9 @@ export default function App() {
         </Reveal>
         <Reveal delay={0.1}>
           <Systems data={data} />
+        </Reveal>
+        <Reveal>
+          <Published />
         </Reveal>
         <Reveal delay={0.05}>
           <Contact />
