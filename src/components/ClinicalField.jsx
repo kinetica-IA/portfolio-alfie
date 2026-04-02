@@ -69,15 +69,17 @@ const SECTION_COLORS = [
   [PALETTE.sea, PALETTE.moss],     // 6 Contact
 ]
 
-// ── Constants ─────────────────────────────────────────────────────────
+// ── Constants (boosted for visibility on light bg) ───────────────────
 const LINE_SPACING = 55
-const LINE_ALPHA = 0.06
+const LINE_ALPHA = 0.09             // was 0.06 — more visible
 const NODE_SPACING = 120
-const NODE_IDLE_ALPHA = 0.08
+const NODE_IDLE_ALPHA = 0.12        // was 0.08 — actually visible now
+const NODE_IDLE_RADIUS = 1.8        // was 1 — bigger nodes
 const CURSOR_RADIUS = 180
 const WAVEFRONT_WIDTH_MIN = 80
-const WAVEFRONT_WIDTH_MAX = 120
-const WAVEFRONT_SPEED = 100 // px/s
+const WAVEFRONT_WIDTH_MAX = 140     // was 120 — wider sweeps
+const WAVEFRONT_SPEED = 90          // was 100 — slightly slower for perception
+const WAVEFRONT_ALPHA = 0.22        // was 0.15 — actually visible now
 const MAX_WAVEFRONTS = 3
 
 export default function ClinicalField() {
@@ -146,12 +148,12 @@ export default function ClinicalField() {
         }
         oc.stroke()
       }
-      // Draw idle nodes
+      // Draw idle nodes (bigger, more visible)
       oc.fillStyle = `rgba(144, 167, 165, ${NODE_IDLE_ALPHA})`
       for (const line of lines) {
         for (const n of line.nodes) {
           oc.beginPath()
-          oc.arc(n.x, n.y, 1, 0, Math.PI * 2)
+          oc.arc(n.x, n.y, NODE_IDLE_RADIUS, 0, Math.PI * 2)
           oc.fill()
         }
       }
@@ -257,9 +259,21 @@ export default function ClinicalField() {
           const wfEnd = wf.x + wf.width / 2
           const c = wf.color
 
+          // Draw wavefront glow (soft wide stroke behind)
+          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${WAVEFRONT_ALPHA * 0.3})`
+          ctx.lineWidth = 4
+          ctx.beginPath()
+          let startedGlow = false
+          for (const pt of line.points) {
+            if (pt.x >= wfStart && pt.x <= wfEnd) {
+              if (!startedGlow) { ctx.moveTo(pt.x, pt.y); startedGlow = true }
+              else ctx.lineTo(pt.x, pt.y)
+            }
+          }
+          ctx.stroke()
           // Draw bright wavefront segment
-          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.15)`
-          ctx.lineWidth = 1
+          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${WAVEFRONT_ALPHA})`
+          ctx.lineWidth = 1.2
           ctx.beginPath()
           let started = false
           for (const pt of line.points) {
@@ -301,7 +315,7 @@ export default function ClinicalField() {
           const yDist = Math.abs(line.baseY - my)
           if (yDist < CURSOR_RADIUS + 10) {
             // Brighten line segments near cursor
-            ctx.strokeStyle = `rgba(144, 167, 165, 0.12)`
+            ctx.strokeStyle = `rgba(144, 167, 165, 0.18)`
             ctx.lineWidth = 0.5
             ctx.beginPath()
             let drawing = false
@@ -323,7 +337,7 @@ export default function ClinicalField() {
               const d2 = dx * dx + dy * dy
               if (d2 < r2) {
                 const p = 1 - d2 / r2
-                const cursorAlpha = NODE_IDLE_ALPHA + p * p * (0.20 - NODE_IDLE_ALPHA)
+                const cursorAlpha = NODE_IDLE_ALPHA + p * p * (0.35 - NODE_IDLE_ALPHA)
                 if (cursorAlpha > node.alpha) node.alpha = cursorAlpha
 
                 if (d2 < closestDist) {
@@ -354,14 +368,21 @@ export default function ClinicalField() {
         }
       }
 
-      // Closest node to cursor gets section-colored glow
+      // Closest node to cursor gets section-colored glow — dramatic
       if (closestNode && cursorOn) {
         const c = currentColors[0]
+        // Wide soft glow
+        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.10)`
+        ctx.beginPath()
+        ctx.arc(closestNode.x, closestNode.y, 16, 0, Math.PI * 2)
+        ctx.fill()
+        // Medium glow
         ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.25)`
         ctx.beginPath()
         ctx.arc(closestNode.x, closestNode.y, 8, 0, Math.PI * 2)
         ctx.fill()
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.5)`
+        // Core
+        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.55)`
         ctx.beginPath()
         ctx.arc(closestNode.x, closestNode.y, 2.5, 0, Math.PI * 2)
         ctx.fill()

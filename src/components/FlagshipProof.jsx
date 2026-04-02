@@ -1,6 +1,8 @@
 import { useReveal } from '../hooks/useReveal'
 import { useCountUp } from '../hooks/useCountUp'
 import { useWordStagger } from '../hooks/useWordStagger'
+import { SignalSymbol } from './OrganicSymbols'
+import LivePulse from './LivePulse'
 
 function aucColor(v) {
   if (v >= 0.80) return 'var(--green)'
@@ -44,7 +46,7 @@ function Metric({ value, decimals, label, delay = 0, active, colorIdx }) {
 export default function FlagshipProof({ data, loading }) {
   const { ref: metricsRef, revealed: metricsVisible } = useReveal(0.2)
   const { ref: titleRef, words: titleWords } = useWordStagger(
-    'Five symptoms, one watch, zero hospital visits'
+    '198 nights, one wristwatch, five predictions'
   )
 
   const targets = data?.predictor?.targets
@@ -57,12 +59,19 @@ export default function FlagshipProof({ data, loading }) {
 
   return (
     <section className="section" id="research">
-      <span className="eyebrow" style={{ color: 'var(--green)' }}>FLAGSHIP RESEARCH</span>
+      <span className="eyebrow" style={{ color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <SignalSymbol color="var(--green)" size={22} />
+        FLAGSHIP RESEARCH
+      </span>
       <h2 className="fp-title" ref={titleRef}>
         {titleWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>
+      <p className="fp-human">
+        We trained AI on heart rate data from a consumer wristwatch to predict daily
+        symptom severity — without a single blood test or hospital visit.
+      </p>
       <p className="fp-context">
-        N={nPairs} · {nDays} days · LOO-CV · Bootstrap 1000×
+        N-of-1 longitudinal design · N={nPairs} pairs · {nDays} days · LOO-CV · Bootstrap 1000×
       </p>
 
       {loading ? (
@@ -75,6 +84,9 @@ export default function FlagshipProof({ data, loading }) {
             <Metric value={nDays} decimals={0} label="Days monitored" delay={0.16} active={metricsVisible} colorIdx={2} />
             <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.24} active={metricsVisible} colorIdx={3} />
           </div>
+
+          {/* Live data pulse */}
+          <LivePulse data={data} />
 
           {/* Key finding */}
           <div className="fp-finding">
@@ -94,48 +106,58 @@ export default function FlagshipProof({ data, loading }) {
 
           {/* Targets — visible by default */}
           <div className="fp-targets">
-            {targets && Object.entries(targets).map(([key, t], i) => (
-              <div
-                key={key}
-                className="fp-target-row"
-                style={{
-                  opacity: metricsVisible ? 1 : 0,
-                  transform: metricsVisible ? 'translateY(0)' : 'translateY(12px)',
-                  transition: `opacity 0.4s var(--ease-out) ${i * 60 + 600}ms, transform 0.4s var(--ease-out) ${i * 60 + 600}ms`,
-                }}
-              >
-                <span className="fp-target-name">{TARGET_LABELS[key] || key}</span>
-                <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
-                  {t.best_auc.toFixed(2)}
-                </span>
-                <div className="fp-target-bar">
-                  <div
-                    className="fp-target-bar-fill"
-                    style={{
-                      width: metricsVisible ? `${((t.best_auc - 0.5) / 0.5) * 100}%` : '0%',
-                      background: aucColor(t.best_auc),
-                      transitionDelay: `${i * 60 + 900}ms`,
-                    }}
-                  />
-                  <span
-                    className="fp-bar-pulse"
-                    style={{
-                      background: aucColor(t.best_auc),
-                      animationDelay: `${i * 600}ms`,
-                      opacity: metricsVisible ? 1 : 0,
-                    }}
-                  />
+            {targets && Object.entries(targets).map(([key, t], i) => {
+              const isBrainFog = key === 'niebla_mental'
+              return (
+                <div
+                  key={key}
+                  className={`fp-target-row ${isBrainFog ? 'fp-target-row--flagged' : ''}`}
+                  style={{
+                    opacity: metricsVisible ? 1 : 0,
+                    transform: metricsVisible ? 'translateY(0)' : 'translateY(12px)',
+                    transition: `opacity 0.4s var(--ease-out) ${i * 60 + 600}ms, transform 0.4s var(--ease-out) ${i * 60 + 600}ms`,
+                  }}
+                >
+                  <span className="fp-target-name">
+                    {TARGET_LABELS[key] || key}
+                    {isBrainFog && <span className="fp-flag">*</span>}
+                  </span>
+                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
+                    {t.best_auc.toFixed(2)}
+                  </span>
+                  <div className="fp-target-bar">
+                    <div
+                      className="fp-target-bar-fill"
+                      style={{
+                        width: metricsVisible ? `${((t.best_auc - 0.5) / 0.5) * 100}%` : '0%',
+                        background: aucColor(t.best_auc),
+                        transitionDelay: `${i * 60 + 900}ms`,
+                      }}
+                    />
+                    <span
+                      className="fp-bar-pulse"
+                      style={{
+                        background: aucColor(t.best_auc),
+                        animationDelay: `${i * 600}ms`,
+                        opacity: metricsVisible ? 1 : 0,
+                      }}
+                    />
+                  </div>
+                  <span className="fp-target-ci">
+                    {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
+                  </span>
                 </div>
-                <span className="fp-target-ci">
-                  {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
-                </span>
-              </div>
-            ))}
+              )
+            })}
             {residuals && (
               <p className="fp-residuals-note">
                 Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
               </p>
             )}
+            <p className="fp-brain-fog-note">
+              * Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (54/6 split).
+              Reported for transparency; not used as a headline metric.
+            </p>
           </div>
 
           <a
@@ -157,6 +179,15 @@ export default function FlagshipProof({ data, loading }) {
           color: var(--text-heading);
           line-height: 1.35;
           margin: 16px 0 10px;
+        }
+        .fp-human {
+          font-family: var(--sans);
+          font-size: var(--text-body);
+          font-weight: 300;
+          color: var(--text-sec);
+          line-height: 1.7;
+          max-width: 560px;
+          margin: 12px 0 8px;
         }
         .fp-context {
           font-family: var(--mono);
@@ -295,6 +326,25 @@ export default function FlagshipProof({ data, loading }) {
           margin-top: 16px;
           padding-top: 14px;
           border-top: 1px solid var(--border);
+        }
+        .fp-target-row--flagged {
+          opacity: 0.65;
+        }
+        .fp-flag {
+          color: var(--warm);
+          font-weight: 500;
+          margin-left: 4px;
+        }
+        .fp-brain-fog-note {
+          font-family: var(--mono);
+          font-size: 10px;
+          color: var(--text-dim);
+          font-style: italic;
+          margin-top: 12px;
+          padding-top: 10px;
+          border-top: 1px solid var(--border);
+          max-width: 560px;
+          line-height: 1.6;
         }
         @media (max-width: 640px) {
           .fp-target-row { grid-template-columns: 1fr 48px; }
