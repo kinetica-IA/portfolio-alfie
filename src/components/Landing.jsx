@@ -139,7 +139,7 @@ export default function Landing({ data }) {
         }
         .landing-btn-primary:hover {
           background: var(--green);
-          color: var(--bg);
+          color: white;
         }
         .landing-btn-secondary {
           border: 1px solid var(--border);
