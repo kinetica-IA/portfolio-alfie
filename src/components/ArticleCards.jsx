@@ -136,7 +136,9 @@ export default function ArticleCards({ data, loading }) {
         }
         .ac {
           position: relative;
-          background: rgba(255,255,255,0.06);
+          background: rgba(240,249,249,0.65);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
           border: 1px solid var(--border);
           border-radius: 0;
           padding: 28px;
@@ -146,7 +148,7 @@ export default function ArticleCards({ data, loading }) {
         .ac:hover {
           transform: translateY(-3px);
           box-shadow: 0 8px 24px rgba(26,42,40,0.08);
-          background: rgba(255,255,255,0.12);
+          background: rgba(240,249,249,0.78);
         }
         .ac-num {
           display: block;
