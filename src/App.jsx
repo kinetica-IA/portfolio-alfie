@@ -1,11 +1,10 @@
 import { usePolarData } from './hooks/usePolarData'
-import Landing from './components/Landing'
-import ArticleCards from './components/ArticleCards'
-import Statement from './components/Statement'
-import PipelineDiagram from './components/PipelineDiagram'
-import ProjectCards from './components/ProjectCards'
+import ArchitecturalGrid from './components/ArchitecturalGrid'
+import Hero from './components/Hero'
+import ClinicalSignal from './components/ClinicalSignal'
+import FlagshipProof from './components/FlagshipProof'
 import Founder from './components/Founder'
-import Services from './components/Services'
+import Systems from './components/Systems'
 import Contact from './components/Contact'
 import Reveal from './components/Reveal'
 
@@ -14,37 +13,21 @@ export default function App() {
 
   return (
     <>
+      <ArchitecturalGrid />
       <div className="content-layer">
-        <Landing data={data} />
-
+        <Hero />
         <Reveal>
-          <ArticleCards data={data} loading={loading} />
+          <ClinicalSignal />
         </Reveal>
-
         <Reveal>
-          <Statement text="193 nights. 8 HRV metrics. 5 predictions. Zero hospital visits." />
+          <FlagshipProof data={data} loading={loading} />
         </Reveal>
-
         <Reveal delay={0.1}>
-          <PipelineDiagram />
-        </Reveal>
-
-        <Reveal delay={0.1}>
-          <ProjectCards data={data} />
-        </Reveal>
-
-        <Reveal>
-          <Statement text="The signal lives in the autonomic nervous system. Not in sleep. Not in serology." />
-        </Reveal>
-
-        <Reveal delay={0.15}>
           <Founder />
         </Reveal>
-
         <Reveal delay={0.1}>
-          <Services />
+          <Systems data={data} />
         </Reveal>
-
         <Reveal delay={0.05}>
           <Contact />
         </Reveal>
@@ -54,12 +37,12 @@ export default function App() {
         .content-layer {
           position: relative;
           z-index: 1;
-          max-width: 1100px;
+          max-width: 960px;
           margin: 0 auto;
-          padding: 0 40px;
+          padding: 0 48px;
         }
         @media (max-width: 768px) {
-          .content-layer { padding: 0 20px; }
+          .content-layer { padding: 0 24px; }
         }
       `}</style>
     </>
