@@ -30,11 +30,11 @@ export default function FlagshipProof({ data, loading }) {
       <span className="eyebrow">FLAGSHIP RESEARCH</span>
       <h2 className="fp-title">Five symptoms, one watch, zero hospital visits</h2>
       <p className="fp-context">
-        N={nPairs} prospective pairs · {nDays} days longitudinal · LOO-CV · Bootstrap 1000×
+        N={nPairs} · {nDays} days · LOO-CV · Bootstrap 1000×
       </p>
 
       {loading ? (
-        <p className="fp-loading">Loading data...</p>
+        <p className="fp-loading">Loading...</p>
       ) : (
         <>
           {/* Hero metrics */}
@@ -61,17 +61,11 @@ export default function FlagshipProof({ data, loading }) {
           <div className="fp-finding">
             <span className="eyebrow" style={{ color: 'var(--warm)' }}>KEY FINDING</span>
             <p className="fp-finding-text">
-              Autonomic dysfunction is the only symptom predicted by advanced HRV features
-              — LF/HF ratio and SD1 — extracted from raw RR intervals via neurokit2.
-              A model that predicts autonomic dysfunction using measures of autonomic balance
-              demonstrates physiological coherence.
+              Autonomic dysfunction is the only symptom predicted by advanced HRV
+              features — LF/HF ratio and SD1 — extracted from raw RR intervals.
+              Physiologically coherent: the model uses measures of autonomic balance
+              to predict autonomic dysfunction.
             </p>
-            {residuals && (
-              <p className="fp-finding-residuals">
-                Residual analysis: brain fog ρ = +{residuals.brain_fog?.rho || '0.547'}, p {'<'} 0.001 ·
-                autonomic ρ = +{residuals.autonomic_dysfunction?.rho || '0.372'}, p = 0.006
-              </p>
-            )}
           </div>
 
           {/* Expandable targets */}
@@ -80,13 +74,16 @@ export default function FlagshipProof({ data, loading }) {
               className="fp-toggle"
               onClick={() => setExpanded(!expanded)}
             >
-              {expanded ? 'Collapse targets' : `View all ${nTargets} targets`}
+              {expanded ? '− Collapse' : `+ All ${nTargets} targets with confidence intervals`}
             </button>
 
             <div className={`fp-targets ${expanded ? 'fp-targets--open' : ''}`}>
               {targets && Object.entries(targets).map(([key, t]) => (
                 <div key={key} className="fp-target-row">
                   <span className="fp-target-name">{TARGET_LABELS[key] || key}</span>
+                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
+                    {t.best_auc.toFixed(2)}
+                  </span>
                   <div className="fp-target-bar">
                     <div
                       className="fp-target-bar-fill"
@@ -96,14 +93,16 @@ export default function FlagshipProof({ data, loading }) {
                       }}
                     />
                   </div>
-                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
-                    {t.best_auc.toFixed(2)}
-                  </span>
                   <span className="fp-target-ci">
-                    [{t.best_auc_ci95[0].toFixed(2)}, {t.best_auc_ci95[1].toFixed(2)}]
+                    {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
                   </span>
                 </div>
               ))}
+              {residuals && (
+                <p className="fp-residuals-note">
+                  Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
+                </p>
+              )}
             </div>
           </div>
 
@@ -124,14 +123,14 @@ export default function FlagshipProof({ data, loading }) {
           font-size: var(--text-section);
           font-weight: 400;
           color: var(--text);
-          line-height: 1.3;
-          margin: var(--space-tight) 0 var(--space-tight);
+          line-height: 1.35;
+          margin: 16px 0 8px;
         }
         .fp-context {
           font-family: var(--mono);
-          font-size: var(--text-caption);
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
-          letter-spacing: 0.02em;
+          letter-spacing: 0.04em;
           margin-bottom: var(--space-subsection);
         }
         .fp-loading {
@@ -140,10 +139,10 @@ export default function FlagshipProof({ data, loading }) {
           color: var(--text-dim);
         }
 
-        /* Hero metrics */
+        /* Metrics */
         .fp-metrics {
           display: flex;
-          gap: var(--space-subsection);
+          gap: 56px;
           margin-bottom: 64px;
           flex-wrap: wrap;
         }
@@ -160,47 +159,37 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-metric-label {
           font-family: var(--mono);
-          font-size: var(--text-caption);
+          font-size: 11px;
           color: var(--text-dim);
           text-transform: uppercase;
-          letter-spacing: 0.04em;
-          margin-top: 8px;
+          letter-spacing: 0.06em;
+          margin-top: 10px;
         }
         @media (max-width: 640px) {
-          .fp-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
-          }
+          .fp-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px; }
           .fp-metric-value { font-size: 2.2rem; }
         }
 
-        /* Key finding */
+        /* Finding */
         .fp-finding {
-          border-left: 3px solid var(--warm);
-          padding-left: var(--space-element);
+          border-left: 2px solid var(--warm);
+          padding-left: 20px;
           margin-bottom: var(--space-subsection);
-          max-width: 640px;
+          max-width: 600px;
         }
         .fp-finding .eyebrow {
           display: block;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
         }
         .fp-finding-text {
           font-size: var(--text-body);
           color: var(--text-sec);
-          line-height: 1.7;
-          margin-bottom: var(--space-tight);
-        }
-        .fp-finding-residuals {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text-dim);
+          line-height: 1.75;
         }
 
-        /* Expandable targets */
+        /* Expandable */
         .fp-expand-section {
-          margin-bottom: var(--space-subsection);
+          margin-bottom: 40px;
         }
         .fp-toggle {
           font-family: var(--mono);
@@ -210,7 +199,8 @@ export default function FlagshipProof({ data, loading }) {
           border: none;
           cursor: pointer;
           padding: 0;
-          margin-bottom: var(--space-element);
+          display: block;
+          margin-bottom: 20px;
           transition: color 0.2s;
         }
         .fp-toggle:hover { color: var(--green); }
@@ -219,52 +209,55 @@ export default function FlagshipProof({ data, loading }) {
           overflow: hidden;
           transition: max-height 0.5s ease;
         }
-        .fp-targets--open {
-          max-height: 400px;
-        }
+        .fp-targets--open { max-height: 500px; }
+
         .fp-target-row {
-          display: flex;
+          display: grid;
+          grid-template-columns: 180px 48px 1fr 80px;
           align-items: center;
-          gap: 12px;
-          padding: 10px 0;
+          gap: 16px;
+          padding: 14px 0;
           border-bottom: 1px solid var(--border);
-          transition: padding-left 0.2s;
         }
-        .fp-target-row:hover {
-          padding-left: 4px;
-        }
+        .fp-target-row:last-of-type { border-bottom: none; }
         .fp-target-name {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
+          font-family: var(--sans);
+          font-size: var(--text-body);
+          font-weight: 400;
           color: var(--text);
-          min-width: 160px;
+        }
+        .fp-target-auc {
+          font-family: var(--mono);
+          font-size: 15px;
+          font-weight: 500;
+          text-align: right;
         }
         .fp-target-bar {
-          flex: 1;
-          max-width: 100px;
-          height: 4px;
-          background: rgba(144,167,165,0.08);
+          height: 3px;
+          background: rgba(144,167,165,0.06);
           overflow: hidden;
         }
         .fp-target-bar-fill {
           height: 100%;
           transition: width 0.6s ease;
         }
-        .fp-target-auc {
-          font-family: var(--mono);
-          font-size: 14px;
-          font-weight: 500;
-          min-width: 36px;
-        }
         .fp-target-ci {
+          font-family: var(--mono);
+          font-size: 12px;
+          color: var(--text-dim);
+          text-align: right;
+        }
+        .fp-residuals-note {
           font-family: var(--mono);
           font-size: 11px;
           color: var(--text-dim);
+          margin-top: 16px;
+          padding-top: 12px;
+          border-top: 1px solid var(--border);
         }
         @media (max-width: 640px) {
-          .fp-target-name { min-width: 100px; font-size: 11px; }
-          .fp-target-bar { display: none; }
-          .fp-target-ci { display: none; }
+          .fp-target-row { grid-template-columns: 1fr 48px; }
+          .fp-target-bar, .fp-target-ci { display: none; }
         }
 
         /* CTA */

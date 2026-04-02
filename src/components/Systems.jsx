@@ -60,7 +60,7 @@ export default function Systems({ data }) {
           font-weight: 400;
           color: var(--text);
           line-height: 1.3;
-          margin: var(--space-tight) 0 var(--space-subsection);
+          margin: 16px 0 var(--space-subsection);
         }
         .sys-item {
           display: grid;
