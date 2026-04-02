@@ -28,9 +28,12 @@
   --gold: #d4a843;
 
   /* Semantic fills (badges, surfaces) */
-  --fill-teal: rgba(144, 167, 165, 0.08);
-  --fill-green: rgba(107, 158, 122, 0.08);
-  --fill-warm: rgba(196, 133, 90, 0.08);
+  --fill-teal: rgba(144, 167, 165, 0.10);
+  --fill-green: rgba(107, 158, 122, 0.10);
+  --fill-warm: rgba(196, 133, 90, 0.10);
+  --fill-sea: rgba(93, 138, 130, 0.10);
+  --fill-ice: rgba(133, 168, 184, 0.10);
+  --fill-clay: rgba(168, 121, 110, 0.10);
   --fill-active: rgba(144, 167, 165, 0.15);
 
   /* Structural */
