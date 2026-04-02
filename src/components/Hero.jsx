@@ -24,7 +24,6 @@ export default function Hero() {
         <a href="#founder" className="hero-btn hero-btn--secondary">About the founder</a>
       </div>
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
-        <span className="hero-scroll-text">scroll</span>
         <span className="hero-scroll-line" />
       </div>
 
@@ -45,7 +44,7 @@ export default function Hero() {
           font-weight: 300;
           letter-spacing: 0.25em;
           color: var(--text);
-          margin-bottom: 20px;
+          margin-bottom: 24px;
           white-space: pre;
         }
         .hero-tagline {
@@ -53,13 +52,13 @@ export default function Hero() {
           font-size: var(--text-body-lg);
           font-weight: 300;
           color: var(--text-sec);
-          max-width: 480px;
-          line-height: 1.6;
-          margin-bottom: 40px;
+          max-width: 460px;
+          line-height: 1.65;
+          margin-bottom: 48px;
         }
         .hero-cta {
           display: flex;
-          gap: 16px;
+          gap: 20px;
           flex-wrap: wrap;
           justify-content: center;
         }
@@ -79,8 +78,8 @@ export default function Hero() {
           color: white;
         }
         .hero-btn--secondary {
-          border: 1px solid var(--border);
-          color: var(--text-sec);
+          border: 1px solid var(--border-active);
+          color: var(--text-dim);
         }
         .hero-btn--secondary:hover {
           border-color: var(--teal);
@@ -88,26 +87,18 @@ export default function Hero() {
         }
         .hero-scroll {
           position: absolute;
-          bottom: 32px;
+          bottom: 40px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 8px;
-          opacity: 0.25;
-          transition: opacity 0.8s ease;
+          opacity: 0.15;
+          transition: opacity 1s ease;
         }
         .hero-scroll--hidden { opacity: 0; pointer-events: none; }
-        .hero-scroll-text {
-          font-family: var(--mono);
-          font-size: 10px;
-          letter-spacing: 0.15em;
-          color: var(--text-dim);
-        }
         .hero-scroll-line {
           width: 1px;
-          height: 24px;
-          background: var(--teal);
-          opacity: 0.4;
+          height: 32px;
+          background: linear-gradient(to bottom, var(--teal), transparent);
         }
       `}</style>
     </section>
