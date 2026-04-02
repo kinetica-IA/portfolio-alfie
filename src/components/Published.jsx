@@ -1,5 +1,8 @@
 import { useReveal } from '../hooks/useReveal'
 import { useTextDecode } from '../hooks/useTextDecode'
+import { HelixSymbol, SignalSymbol, CellSymbol, OrbitSymbol } from './OrganicSymbols'
+
+const CARD_SYMBOLS = [SignalSymbol, HelixSymbol, OrbitSymbol, CellSymbol]
 
 const CARDS = [
   {
@@ -12,6 +15,7 @@ const CARDS = [
     statNums: ['5', '198', '0.84'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     external: true,
+    symbolIdx: 0,
   },
   {
     title: 'Biometric Data Archive',
@@ -23,6 +27,7 @@ const CARDS = [
     statNums: ['3'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     external: true,
+    symbolIdx: 1,
   },
   {
     title: 'IO3 Architecture',
@@ -34,6 +39,7 @@ const CARDS = [
     statNums: ['9'],
     link: '/io-architecture.html',
     external: false,
+    symbolIdx: 2,
   },
   {
     title: 'Clinical Diary Viewer',
@@ -45,13 +51,15 @@ const CARDS = [
     statNums: [],
     link: '/diary.html',
     external: false,
+    symbolIdx: 3,
   },
 ]
 
 function PubCard({ card, index, revealed }) {
   const titleDisplay = useTextDecode(card.title, {
-    duration: 500, delay: 0, loop: false, isActive: revealed,
+    duration: 800, delay: 0, loop: false, isActive: revealed,
   })
+  const Symbol = CARD_SYMBOLS[card.symbolIdx] || SignalSymbol
 
   return (
     <a
@@ -66,10 +74,15 @@ function PubCard({ card, index, revealed }) {
         transition: `opacity 0.4s var(--ease-out) ${index * 100}ms, transform 0.4s var(--ease-out) ${index * 100}ms`,
       }}
     >
-      <span className="pub-badge">
-        <span className="pub-badge-dot" />
-        {card.type}
-      </span>
+      <div className="pub-card-header">
+        <span className="pub-badge">
+          <span className="pub-badge-dot" />
+          {card.type}
+        </span>
+        <span className="pub-card-symbol">
+          <Symbol color={card.color} size={28} />
+        </span>
+      </div>
       <h3 className="pub-card-title">{titleDisplay}</h3>
       <p className="pub-card-desc">{card.desc}</p>
       <p className="pub-card-stats">{card.stats}</p>
@@ -82,7 +95,10 @@ export default function Published() {
 
   return (
     <section className="section" id="published">
-      <span className="eyebrow" style={{ color: 'var(--green)' }}>PUBLISHED</span>
+      <span className="eyebrow" style={{ color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <HelixSymbol color="var(--green)" size={22} />
+        PUBLISHED
+      </span>
       <h2 className="pub-title">Open research, verifiable systems</h2>
 
       <div className="pub-grid" ref={ref}>
@@ -120,6 +136,19 @@ export default function Published() {
           transform: translateY(-3px) !important;
           box-shadow: 0 6px 24px var(--shadow);
           border-color: var(--card-color);
+        }
+        .pub-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 4px;
+        }
+        .pub-card-symbol {
+          opacity: 0.6;
+          transition: opacity 0.3s ease;
+        }
+        .pub-card:hover .pub-card-symbol {
+          opacity: 1;
         }
         .pub-badge {
           font-family: var(--mono);

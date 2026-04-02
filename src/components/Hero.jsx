@@ -35,14 +35,14 @@ export default function Hero() {
       subTimer.current = setTimeout(() => {
         setSubIndex(i => (i + 1) % SUB_STRINGS.length)
         cycle()
-      }, 4000)
+      }, 5000)
     }
     cycle()
     return () => clearTimeout(subTimer.current)
   }, [bootStep])
 
   const subText = useTextDecode(SUB_STRINGS[subIndex], {
-    duration: 600, delay: 0, loop: false, isActive: bootStep >= 2,
+    duration: 800, delay: 0, loop: false, isActive: bootStep >= 2,
   })
 
   const [scrolled, setScrolled] = useState(false)

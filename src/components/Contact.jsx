@@ -1,5 +1,6 @@
 import { useReveal } from '../hooks/useReveal'
 import { useWordStagger } from '../hooks/useWordStagger'
+import { OrbitSymbol } from './OrganicSymbols'
 
 export default function Contact() {
   const { ref: headRef, words: headWords } = useWordStagger(
@@ -9,7 +10,10 @@ export default function Contact() {
 
   return (
     <section className="section contact" id="contact">
-      <span className="eyebrow" style={{ color: 'var(--sea)' }}>COLLABORATE</span>
+      <span className="eyebrow" style={{ color: 'var(--sea)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <OrbitSymbol color="var(--sea)" size={22} />
+        COLLABORATE
+      </span>
       <h2 className="contact-headline" ref={headRef}>
         {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>
