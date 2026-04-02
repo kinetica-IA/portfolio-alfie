@@ -1,47 +1,72 @@
-import CornerMarks from './CornerMarks'
-
 export default function Contact() {
   return (
-    <section className="section" id="contact">
-      <div className="contact-card">
-        <CornerMarks size={16} stroke={1.5} color="var(--accent)" opacity={0.3} />
-        <p className="contact-text">Interested in collaborating?</p>
-        <div className="contact-links">
-          <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com →</a>
-          <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn →</a>
-          <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub →</a>
-        </div>
+    <section className="section contact" id="contact">
+      <span className="eyebrow" style={{ color: 'var(--teal)' }}>COLLABORATE</span>
+      <h2 className="contact-headline">
+        Let's build something that works in clinical reality.
+      </h2>
+      <p className="contact-services">
+        Clinical AI consulting · Autonomic assessment · AI model evaluation
+      </p>
+      <a href="mailto:alfon.atman@gmail.com" className="contact-cta">
+        Get in touch
+      </a>
+      <div className="contact-links">
+        <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com</a>
+        <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
 
       <style>{`
-        .contact-card {
-          position: relative;
+        .contact {
           text-align: center;
-          padding: 48px 32px;
+          max-width: 600px;
+          margin: 0 auto;
+          padding-bottom: 80px;
         }
-        .contact-text {
+        .contact .eyebrow {
+          display: block;
+          margin-bottom: var(--space-tight);
+        }
+        .contact-headline {
           font-family: var(--sans);
+          font-size: var(--text-section);
           font-weight: 400;
-          font-size: 1.4rem;
           color: var(--text);
-          margin-bottom: 20px;
+          line-height: 1.3;
+          margin-bottom: var(--space-element);
+        }
+        .contact-services {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text-dim);
+          margin-bottom: 32px;
+        }
+        .contact-cta {
+          display: inline-block;
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--green);
+          border: 1.5px solid var(--green);
+          padding: 14px 36px;
+          text-decoration: none;
+          transition: all 0.25s ease;
+          margin-bottom: var(--space-element);
+        }
+        .contact-cta:hover {
+          background: var(--green);
+          color: white;
         }
         .contact-links {
           display: flex;
-          gap: 28px;
+          gap: 24px;
           justify-content: center;
           flex-wrap: wrap;
         }
         .contact-links a {
           font-family: var(--mono);
-          font-size: 13px;
-          color: var(--accent);
-          text-decoration: none;
-          transition: color 0.2s ease;
-        }
-        .contact-links a:hover {
-          color: var(--green);
-          text-decoration: underline;
+          font-size: 14px;
+          color: var(--teal);
         }
       `}</style>
     </section>

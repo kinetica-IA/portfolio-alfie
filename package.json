@@ -2,7 +2,7 @@
   "name": "portfolio-alfie",
   "private": true,
   "type": "module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,10 +10,7 @@
   },
   "dependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@react-three/fiber": "^9.1.0",
-    "@react-three/drei": "^10.0.0",
-    "three": "^0.175.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.4.0",
