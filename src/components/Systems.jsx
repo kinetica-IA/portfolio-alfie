@@ -58,8 +58,8 @@ export default function Systems({ data }) {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
-          color: var(--text);
-          line-height: 1.3;
+          color: var(--text-heading);
+          line-height: 1.35;
           margin: 16px 0 var(--space-subsection);
         }
         .sys-item {
@@ -88,8 +88,8 @@ export default function Systems({ data }) {
           display: inline-block;
           margin-bottom: 8px;
         }
-        .sys-badge--green { color: var(--green); }
-        .sys-badge--warm { color: var(--warm); }
+        .sys-badge--green { color: var(--green); background: var(--fill-green); padding: 3px 8px; }
+        .sys-badge--warm { color: var(--warm); background: var(--fill-warm); padding: 3px 8px; }
         .sys-item-title {
           font-family: var(--sans);
           font-size: var(--text-subsection);
@@ -120,8 +120,10 @@ export default function Systems({ data }) {
         .sys-link {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--green);
+          color: var(--sea);
+          transition: color var(--duration-hover) ease;
         }
+        .sys-link:hover { color: var(--green); }
         .sys-divider {
           border: none;
           border-top: 1px solid var(--border);

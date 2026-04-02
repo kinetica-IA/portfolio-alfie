@@ -8,14 +8,14 @@ import { useRef, useEffect } from 'react'
  */
 
 const CELL = 60
-const LINE_ALPHA = 0.04
-const NODE_IDLE = 0.025
-const NODE_ACTIVE = 0.10
-const NODE_CURSOR = 0.12
-const CURSOR_RADIUS = 120
-const ACTIVATION_INTERVAL = [3000, 5000] // ms range
-const FADE_IN = 0.002   // per frame
-const FADE_OUT = 0.0008 // per frame
+const LINE_ALPHA = 0.06
+const NODE_IDLE = 0.04
+const NODE_ACTIVE = 0.16
+const NODE_CURSOR = 0.20
+const CURSOR_RADIUS = 140
+const ACTIVATION_INTERVAL = [2500, 4500]
+const FADE_IN = 0.003
+const FADE_OUT = 0.001
 
 export default function ArchitecturalGrid() {
   const canvasRef = useRef(null)
@@ -41,10 +41,11 @@ export default function ArchitecturalGrid() {
 
       cols = Math.floor(W / CELL) + 1
       rows = Math.floor(H / CELL) + 1
-      nodes = new Float32Array(cols * rows) // current opacity
-      const targets = new Float32Array(cols * rows) // target opacity
-      // Store targets alongside nodes
+      nodes = new Float32Array(cols * rows)
+      const targets = new Float32Array(cols * rows)
+      const nodeColors = new Uint8Array(cols * rows) // 0=teal, 1=green, 2=slate, 3=sea
       nodes._targets = targets
+      nodes._colors = nodeColors
 
       // Cache static grid to offscreen canvas
       const off = document.createElement('canvas')
@@ -97,12 +98,20 @@ export default function ArchitecturalGrid() {
       return ACTIVATION_INTERVAL[0] + Math.random() * (ACTIVATION_INTERVAL[1] - ACTIVATION_INTERVAL[0])
     }
 
+    const NODE_PALETTE = [
+      [144, 167, 165], // teal
+      [107, 158, 122], // green
+      [106, 134, 144], // slate
+      [93, 138, 130],  // sea
+    ]
+
     function activateRandom() {
       if (!nodes) return
-      const count = 2 + Math.floor(Math.random() * 3) // 2-4 nodes
+      const count = 2 + Math.floor(Math.random() * 3)
       for (let i = 0; i < count; i++) {
         const idx = Math.floor(Math.random() * cols * rows)
         nodes._targets[idx] = NODE_ACTIVE
+        nodes._colors[idx] = Math.floor(Math.random() * NODE_PALETTE.length)
       }
     }
 
@@ -162,15 +171,16 @@ export default function ArchitecturalGrid() {
           const alpha = nodes[idx]
           const px = x * CELL
           const py = y * CELL
+          const c = NODE_PALETTE[nodes._colors[idx] || 0]
 
           // Glow halo
-          ctx.fillStyle = `rgba(144, 167, 165, ${alpha * 0.5})`
+          ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${alpha * 0.4})`
           ctx.beginPath()
-          ctx.arc(px, py, 4, 0, Math.PI * 2)
+          ctx.arc(px, py, 5, 0, Math.PI * 2)
           ctx.fill()
 
           // Core
-          ctx.fillStyle = `rgba(144, 167, 165, ${alpha})`
+          ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${alpha})`
           ctx.fillRect(px - 1.5, py - 1.5, 3, 3)
         }
       }

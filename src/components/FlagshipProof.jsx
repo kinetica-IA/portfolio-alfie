@@ -122,9 +122,9 @@ export default function FlagshipProof({ data, loading }) {
           font-family: var(--sans);
           font-size: var(--text-section);
           font-weight: 400;
-          color: var(--text);
+          color: var(--text-heading);
           line-height: 1.35;
-          margin: 16px 0 8px;
+          margin: 16px 0 10px;
         }
         .fp-context {
           font-family: var(--mono);
@@ -139,35 +139,38 @@ export default function FlagshipProof({ data, loading }) {
           color: var(--text-dim);
         }
 
-        /* Metrics */
+        /* Metrics — editorial data presentation */
         .fp-metrics {
           display: flex;
-          gap: 56px;
-          margin-bottom: 64px;
+          gap: 64px;
+          margin-bottom: 72px;
           flex-wrap: wrap;
+          padding-bottom: 40px;
+          border-bottom: 1px solid var(--border);
         }
         .fp-metric {
           display: flex;
           flex-direction: column;
+          position: relative;
         }
         .fp-metric-value {
           font-family: var(--mono);
-          font-size: 3rem;
+          font-size: clamp(2.5rem, 4vw, 3.5rem);
           font-weight: 400;
-          color: var(--text);
+          color: var(--text-metric);
           line-height: 1;
+          letter-spacing: -0.02em;
         }
         .fp-metric-label {
           font-family: var(--mono);
           font-size: 11px;
-          color: var(--text-dim);
+          color: var(--sea);
           text-transform: uppercase;
-          letter-spacing: 0.06em;
-          margin-top: 10px;
+          letter-spacing: 0.08em;
+          margin-top: 12px;
         }
         @media (max-width: 640px) {
-          .fp-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px; }
-          .fp-metric-value { font-size: 2.2rem; }
+          .fp-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
         }
 
         /* Finding */
@@ -179,7 +182,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-finding .eyebrow {
           display: block;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
         .fp-finding-text {
           font-size: var(--text-body);
@@ -198,16 +201,16 @@ export default function FlagshipProof({ data, loading }) {
           background: none;
           border: none;
           cursor: pointer;
-          padding: 0;
+          padding: 4px 0;
           display: block;
-          margin-bottom: 20px;
-          transition: color 0.2s;
+          margin-bottom: 16px;
+          transition: color var(--duration-hover) ease;
         }
         .fp-toggle:hover { color: var(--green); }
         .fp-targets {
           max-height: 0;
           overflow: hidden;
-          transition: max-height 0.5s ease;
+          transition: max-height 0.6s var(--ease-out);
         }
         .fp-targets--open { max-height: 500px; }
 
@@ -216,8 +219,12 @@ export default function FlagshipProof({ data, loading }) {
           grid-template-columns: 180px 48px 1fr 80px;
           align-items: center;
           gap: 16px;
-          padding: 14px 0;
+          padding: 16px 0;
           border-bottom: 1px solid var(--border);
+          transition: background var(--duration-hover) ease;
+        }
+        .fp-target-row:hover {
+          background: var(--fill-teal);
         }
         .fp-target-row:last-of-type { border-bottom: none; }
         .fp-target-name {
@@ -234,12 +241,12 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-target-bar {
           height: 3px;
-          background: rgba(144,167,165,0.06);
+          background: var(--fill-teal);
           overflow: hidden;
         }
         .fp-target-bar-fill {
           height: 100%;
-          transition: width 0.6s ease;
+          transition: width 0.8s var(--ease-out);
         }
         .fp-target-ci {
           font-family: var(--mono);
@@ -252,7 +259,7 @@ export default function FlagshipProof({ data, loading }) {
           font-size: 11px;
           color: var(--text-dim);
           margin-top: 16px;
-          padding-top: 12px;
+          padding-top: 14px;
           border-top: 1px solid var(--border);
         }
         @media (max-width: 640px) {
@@ -264,8 +271,10 @@ export default function FlagshipProof({ data, loading }) {
         .fp-cta {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--green);
+          color: var(--sea);
+          transition: color var(--duration-hover) ease;
         }
+        .fp-cta:hover { color: var(--green); }
       `}</style>
     </section>
   )
