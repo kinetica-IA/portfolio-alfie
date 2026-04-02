@@ -27,3 +27,6 @@ pnpm-debug.log*
 *.backup.*.astro
 *_backup.astro
 estructura_portfolio_alfie.txt
+
+# large intermediate data
+data/hrv_rr_nightly.csv
