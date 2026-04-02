@@ -1,0 +1,432 @@
+# ═══════════════════════════════════════════════════════════════════════
+# PORTFOLIO MAP — kineticaai.com (portfolio-alfie)
+# ═══════════════════════════════════════════════════════════════════════
+# Última actualización: 2026-04-02
+# Repo: /Users/alfonsonavarro/portfolio-alfie
+# Deploy: GitHub Pages via .github/workflows/deploy.yml
+# URL: https://www.kineticaai.com
+#
+# USO: Adjuntar este YAML a cualquier sesión de Claude Code que
+# modifique el portfolio. Elimina la necesidad de buscar rutas.
+# ═══════════════════════════════════════════════════════════════════════
+
+# ─── ARQUITECTURA GENERAL ─────────────────────────────────────────────
+
+framework: Astro
+build_deploy: GitHub Pages (push to main → deploy.yml)
+dominio: www.kineticaai.com
+dns: Namecheap → Cloudflare → GitHub Pages (4 A records + CNAME)
+
+pagina_principal: src/pages/index.astro  # 17 líneas — solo importa y monta secciones
+  # Orden de secciones en la página:
+  # 1. Landing
+  # 2. About
+  # 3. Biometrics
+  # 4. Projects
+  # 5. Services
+  # 6. Contact
+
+layout: src/layouts/BaseLayout.astro  # 92 líneas — SEO, schema.org, OG tags, fonts
+estilos: src/styles/global.css  # 73 líneas — variables CSS globales, tipografía base
+
+# ─── DESIGN SYSTEM ────────────────────────────────────────────────────
+
+design_system:
+  fonts:
+    heading: Montserrat
+    mono: DM Mono
+    body: Poppins (light, Landing only)
+  colores:
+    bg: "#f0f9f9"
+    accent: "#90a7a5"
+    warm: "#c4855a"
+    green: "#6b9e7a"
+    text: "#1a2a28"
+  elementos:
+    - HRV canvas animation (Landing)
+    - Geo SVG rects (Landing background)
+    - Scroll reveal (Projects, Services)
+    - DM Mono eyebrows (badges, labels)
+    - Clinical-organic tone
+
+# ═══════════════════════════════════════════════════════════════════════
+# SECCIONES — Componentes Astro
+# ═══════════════════════════════════════════════════════════════════════
+
+secciones:
+
+  # ── 1. LANDING ────────────────────────────────────────────────────
+  landing:
+    archivo: src/components/sections/Landing.astro
+    lineas: 272
+    id_html: "landing-minimal"
+    contenido_estatico:
+      titulo: "ALFONSO NAVARRO"  # línea 16-18, spans individuales por letra
+      subtitulo: "Clinician-built AI for autonomic monitoring and post-infectious fatigue research."  # línea 21
+      tagline: "Physics + 10 years clinical practice + AI systems..."  # línea 22
+      badge_disponibilidad: "· Open to remote collaboration ·"  # línea 26
+      servicios_texto: "Clinical AI consulting · AI model evaluation · Wearable data pipelines"  # línea 28
+      email: "alfon.atman@gmail.com"  # línea 30
+      linkedin: "https://www.linkedin.com/in/navarro-kinetica-ai"  # línea 31
+      footer_context: "Osteopath · Physics · Clinical AI · Remote worldwide"  # línea 39
+    elementos_animados:
+      hrv_canvas: "id='hrv-bg'"  # línea 12 — Conway's Game of Life animation
+      geo_svg: "class='background-geo'"  # línea 6 — fondo SVG rectángulos
+      scroll_cue: "class='scroll-cue'"  # línea 35
+
+  # ── 2. ABOUT ──────────────────────────────────────────────────────
+  about:
+    archivo: src/components/sections/About.astro
+    lineas: 98
+    id_html: "about"
+    contenido_estatico:
+      foto: "/assets/p5.png"  # línea 9
+      bio_parrafos:  # líneas 17-38
+        p1: "Physics graduate (Universidad de Granada) and osteopath with 10+ years..."
+        p2: "I build AI systems at the intersection of clinical reality..."
+        p3: "Currently developing IO, a local-first autonomous AI agent..."
+        p4: "Open to remote collaboration with clinicians, healthtech teams..."
+    notas: >
+      Los párrafos contienen texto descriptivo sobre background profesional.
+      Menciones a IO, COVID-19 (2020-2022), Outlier/Anthropic.
+
+  # ── 3. BIOMETRICS ─────────────────────────────────────────────────
+  biometrics:
+    archivo: src/components/sections/Biometrics.astro
+    lineas: 696
+    id_html: "biometrics"
+    fuente_datos: "fetch('/data/polar_live.json') — client-side JS"
+    
+    bloques:
+      metric_cards:  # líneas 23-59
+        descripcion: "3 tarjetas: HRV RMSSD, ANS Charge, Sleep Fragmentation"
+        ids_dinamicos:
+          m-hrv: "HRV RMSSD valor"
+          m-ans: "ANS Charge valor"
+          m-frag: "Sleep Fragmentation valor"
+          m-date: "Fecha último dato"
+          m-steps: "Pasos"
+          m-interruptions: "Interrupciones sueño"
+      
+      sparkline:  # líneas 62-75
+        descripcion: "Gráfico SVG de HRV RMSSD nocturno (serie temporal)"
+        ids_dinamicos:
+          sparkline: "SVG del gráfico"
+          sp-n: "N días mostrado en header"
+          sp-badge: "Badge con ρ y p-value"
+          sp-foot: "Footer con AUC y sensibilidad"
+        fallback_estatico:
+          sp-badge: "ρ = +0.431 · p = .016"  # línea 66
+          sp-foot: "ANS predicts PEM 48h ahead · AUC = 0.656 · Sensitivity 81%"  # línea 73
+      
+      finding_card:  # líneas 77-103
+        descripcion: "Tarjeta de hallazgo publicado"
+        ids_dinamicos:
+          f-rho: "Spearman rho"
+          f-p: "p-value"
+          f-auc: "AUC"
+          f-sens: "Sensibilidad"
+          f-n: "N pares"
+          f-days: "N días"
+          f-date: "Fecha actualización"
+        fallback_estatico:
+          f-rho: "ρ = +0.553"  # línea 81
+          f-auc: "AUC = 0.768"  # línea 85
+          f-sens: "Sensitivity 84%"  # línea 87
+          f-n: "39"  # línea 94
+      
+      models_card:  # líneas 105-160
+        descripcion: "Tabla comparativa LR vs RF vs GB"
+        ids_dinamicos:
+          row-lr: "Fila Logistic Regression (AUC, Sens, Spec)"
+          row-rf: "Fila Random Forest"
+          row-gb: "Fila Gradient Boosting"
+        nota: "Resalta automáticamente la fila con mejor AUC"
+    
+    javascript:  # líneas ~480-696
+      descripcion: >
+        Fetch polar_live.json, poblar todos los ids dinámicos,
+        dibujar sparkline SVG, highlight best model.
+      lee_de_json:
+        - "data.latest.*"
+        - "data.finding.*"
+        - "data.predictor.*"
+        - "data.predictor.models.*"
+        - "data.series[]"
+
+  # ── 4. PROJECTS ───────────────────────────────────────────────────
+  projects:
+    archivo: src/components/sections/Projects.astro
+    lineas: 423
+    id_html: "projects"
+    fuente_datos: "fetch('/data/polar_live.json') — client-side JS"
+    
+    cards:
+      predictor_card:  # líneas 7-48
+        titulo: "ANS-Based Symptom Prediction in Post-Lyme Fatigue"
+        subtitulo: "N=1 Longitudinal Study · Consumer Wearable + AI Pipeline"
+        descripcion_estatica: "línea 24 — texto sobre 48-hour prediction, model v2, etc."
+        metricas_dinamicas:
+          pm-auc: "AUC del predictor"
+          pm-sens: "Sensibilidad"
+          pm-spec: "Especificidad"
+          pm-n: "N pares training"
+        stack: "Python · scikit-learn · LangGraph · Polar Grit X2 · ChromaDB"  # línea 46
+        link_github: "https://github.com/kinetica-IA/polar-lyme-predictor"  # línea 47
+        lee_de_json: "data.predictor.{auc, sensitivity, specificity, n_training}"
+      
+      residual_card:  # líneas 50-97
+        titulo: "Residual Patterns as Clinical Signal"
+        subtitulo: "N=1 Longitudinal · Residual Analysis · Cognitive Phenotyping"
+        descripcion_estatica: "línea 75 — texto con spans dinámicos inline"
+        metricas_dinamicas:
+          res-bf-rho: "Brain fog ρ"
+          res-au-rho: "Autonomic ρ"
+          res-bf-stat: "Brain fog ρ + p inline en descripción"
+          res-au-stat: "Autonomic ρ + p inline en descripción"
+          res-n: "N pares en descripción"
+          res-pairs: "N pares en metric card"
+        fallback_estatico:
+          res-bf-rho: "+0.663"
+          res-au-rho: "+0.393"
+          res-n: "34"
+        lee_de_json: "data.predictor.residuals.{brain_fog, autonomic_dysfunction}"
+      
+      io_card:  # líneas 99-144
+        titulo: "IO · Local-First Clinical AI Agent"
+        subtitulo: "Context Engine · LangGraph · ALMA Framework"
+        descripcion_estatica: "línea 135 — texto largo sobre arquitectura IO"
+        contenido_desactualizado:
+          - "7-node LangGraph graph → ahora es 9 nodos (IO3)"
+          - "branch phase1/react-graph (commit 835b892) → obsoleto"
+          - "20-tool registry → verificar número actual"
+          - "3 autonomous loops → verificar"
+          - "LoRA pair logging → ALMA L2 declarado no funcional"
+        stack: "LangGraph · Anthropic Claude · ChromaDB · Python 3.13 · FastAPI · sentence-transformers · uv"
+        links:
+          github: "https://github.com/kinetica-IA/polar-lyme-predictor"  # NOTA: apunta a polar, no a IO
+          architecture: "/io-architecture.html"
+    
+    javascript:  # líneas 363-423
+      descripcion: "Fetch polar_live.json, poblar métricas predictor + residuales"
+
+  # ── 5. SERVICES ───────────────────────────────────────────────────
+  services:
+    archivo: src/components/sections/Services.astro
+    lineas: 88
+    id_html: "services"
+    contenido_estatico:
+      cards:
+        - titulo: "Clinical AI Consulting"  # línea 8
+          icono: "/icons/consult.svg"
+          descripcion: "línea 9"
+          ejemplo: "línea 10"
+        - titulo: "Autonomic & Biomechanical Assessment"  # línea 15
+          icono: "/icons/biomech.svg"
+          descripcion: "línea 16"
+        - titulo: "AI Model Evaluation (Healthcare)"  # línea 21
+          icono: "/icons/neuro.svg"
+          descripcion: "línea 22"
+
+  # ── 6. CONTACT ────────────────────────────────────────────────────
+  contact:
+    archivo: src/components/sections/Contact.astro
+    lineas: 51
+    id_html: "contact"
+    contenido_estatico:
+      email: "alfon.atman@gmail.com"  # línea 11
+      linkedin: "/navarro-kinetica-ai"  # línea 12
+      github: "kinetica-IA"  # línea 13
+
+# ═══════════════════════════════════════════════════════════════════════
+# PÁGINAS ESTÁTICAS (public/)
+# ═══════════════════════════════════════════════════════════════════════
+
+paginas_estaticas:
+
+  diary:
+    archivo: public/diary.html
+    lineas: 888
+    url: "/diary"
+    descripcion: "Formulario de entrada de diario de síntomas"
+    conecta_con: "scripts/log_diary.py → data/diary_live.csv"
+
+  io_architecture:
+    archivo: public/io-architecture.html
+    lineas: 1177
+    url: "/io-architecture.html"
+    descripcion: "Página de arquitectura IO"
+    estado: >
+      DESACTUALIZADA — referencia IO2, no IO3.
+      Pendiente reescritura completa (Session C/D del audit anterior).
+
+  lyme_hrv:
+    archivo: public/lyme-hrv.html
+    lineas: 676
+    url: "/lyme-hrv.html"
+    descripcion: "Página dedicada al estudio HRV-Lyme"
+    nota: "Verificar si contenido está alineado con resultados v3"
+
+# ═══════════════════════════════════════════════════════════════════════
+# DATOS Y SCRIPTS
+# ═══════════════════════════════════════════════════════════════════════
+
+datos:
+
+  polar_live_json:
+    archivo: public/data/polar_live.json
+    descripcion: "Serie temporal Polar + predictor + finding — fuente de verdad para toda la web"
+    actualizado_por:
+      nightly: "scripts/fetch_polar_live.py via .github/workflows/polar-biometrics.yml (06:00 UTC)"
+      on_diary_push: "scripts/retrain_predictor.py via .github/workflows/polar-retrain.yml"
+    estructura:
+      updated_at: "ISO datetime"
+      latest: "último día de datos Polar"
+      series: "array de 198 entradas (22 claves originales + 8 HRV nuevas)"
+      predictor: "resultados del modelo v3 (multi-target, forward selection, bootstrap CIs)"
+      finding: "hallazgo top-level (backward compatible)"
+    claves_serie_originales:
+      - date, hrv_rmssd_night, hrv_rri_mean_ms, hrv_rmssd_daily
+      - ans_status, recovery_indicator, recovery_sublevel
+      - sleep_score, sleep_duration_h, sleep_wake_min, sleep_interruptions
+      - sleep_long_interruptions, sleep_long_wake_min
+      - sleep_rem_min, sleep_deep_min, sleep_rem_pct, sleep_deep_pct
+      - sleep_refresh_score, sleep_continuity_score, sleep_efficiency_pct
+      - sleep_score_rate, steps
+    claves_serie_nuevas_hrv:  # Añadidas por Session A
+      - hrv_sdnn, hrv_pnn50, hrv_lf_power, hrv_hf_power
+      - hrv_lf_hf_ratio, hrv_sd1, hrv_sd2, hrv_dfa_alpha1
+    bloque_predictor:  # Escrito por retrain_predictor.py v3
+      campos_top_level: "model_version, n_diary, n_training, auc, sensitivity, specificity, features, coefficients, lag_analysis, residuals, models, generated"
+      targets: "severity, pem, fatiga, niebla_mental, disfuncion_autonomica — cada uno con best_model, best_auc, best_auc_ci95, selected_features, n_training, threshold, models{lr,rf,gb}"
+    bloque_finding: "spearman_rho, p_value, auc, sensitivity_pct, n_pairs, n_diary, description"
+
+  diary_live_csv:
+    archivo: data/diary_live.csv
+    descripcion: "Diario de síntomas — cada push triggerea retrain"
+    entradas: 62
+    columnas: "date, schema_version, severidad_global, fatiga, pem, niebla_mental, disfuncion_autonomica, dolor, nota"
+
+  hrv_rr_nightly_csv:
+    archivo: data/hrv_rr_nightly.csv
+    descripcion: "RR intervals por noche extraídos del ZIP Polar"
+    creado_por: "scripts/extract_rr.py (Session A)"
+
+  hrv_features_csv:
+    archivo: data/hrv_features.csv
+    descripcion: "Métricas HRV avanzadas calculadas por neurokit2"
+    creado_por: "scripts/compute_hrv.py (Session A)"
+
+scripts:
+
+  fetch_polar_live:
+    archivo: scripts/fetch_polar_live.py
+    lineas: 192
+    descripcion: "Polar AccessLink API → polar_live.json (nightly)"
+    trigger: ".github/workflows/polar-biometrics.yml (cron 06:00 UTC)"
+    dependencias: "httpx"
+    bug_conocido: >
+      Líneas 25-32: FINDING hardcoded con AUC=0.656 — solo se usa como
+      fallback si no existe AUC del retrain. Líneas 178-180 protegen
+      contra sobreescritura, pero verificar.
+
+  retrain_predictor:
+    archivo: scripts/retrain_predictor.py
+    lineas: "~500+ post Session B"
+    descripcion: "Multi-target LOO-CV + forward selection + bootstrap CIs"
+    trigger: ".github/workflows/polar-retrain.yml (push to diary_live.csv)"
+    dependencias: "numpy, scikit-learn, scipy"
+    version: "v3"
+
+  log_diary:
+    archivo: scripts/log_diary.py
+    lineas: 327
+    descripcion: "Procesa entrada de diario desde diary.html"
+
+  extract_rr:
+    archivo: scripts/extract_rr.py
+    descripcion: "ZIP Polar → RR intervals nocturnos por fecha"
+    creado: "Session A"
+    uso: "Local only (ZIP no está en repo)"
+
+  compute_hrv:
+    archivo: scripts/compute_hrv.py
+    descripcion: "RR intervals → métricas HRV con neurokit2"
+    creado: "Session A"
+    uso: "Local only"
+
+  merge_hrv:
+    archivo: scripts/merge_hrv.py
+    descripcion: "Mergea hrv_features.csv en polar_live.json"
+    creado: "Session A"
+    uso: "Local only (one-time batch)"
+
+  polar_seed:
+    archivo: scripts/polar_seed.py
+    lineas: 139
+    descripcion: "Script de seed inicial para polar_live.json"
+
+# ═══════════════════════════════════════════════════════════════════════
+# GITHUB ACTIONS
+# ═══════════════════════════════════════════════════════════════════════
+
+workflows:
+
+  deploy:
+    archivo: .github/workflows/deploy.yml
+    trigger: "push to main"
+    descripcion: "Build Astro + deploy a GitHub Pages"
+
+  polar_biometrics:
+    archivo: .github/workflows/polar-biometrics.yml
+    trigger: "cron 06:00 UTC + workflow_dispatch"
+    descripcion: "Fetch Polar API → polar_live.json → commit"
+    dependencias: "httpx"
+    secretos: "POLAR_ACCESS_TOKEN, POLAR_USER_ID"
+
+  polar_retrain:
+    archivo: .github/workflows/polar-retrain.yml
+    trigger: "push to data/diary_live.csv + workflow_dispatch"
+    descripcion: "Retrain predictor → polar_live.json → commit"
+    dependencias: "numpy, scikit-learn, scipy"
+
+# ═══════════════════════════════════════════════════════════════════════
+# CONTENIDO DESACTUALIZADO CONOCIDO (pendiente de corregir)
+# ═══════════════════════════════════════════════════════════════════════
+
+contenido_desactualizado:
+
+  io_card_projects:
+    archivo: src/components/sections/Projects.astro
+    lineas: "99-144"
+    problemas:
+      - "7-node → 9 nodos (IO3)"
+      - "branch phase1/react-graph obsoleta"
+      - "20-tool registry → verificar"
+      - "LoRA pair logging → ALMA L2 no funcional"
+      - "Link GitHub apunta a polar-lyme-predictor, no a IO"
+
+  io_architecture_page:
+    archivo: public/io-architecture.html
+    problema: "Referencia IO2 completo, no IO3"
+    estado: "Pendiente reescritura completa"
+
+  biometrics_fallbacks:
+    archivo: src/components/sections/Biometrics.astro
+    nota: >
+      Los fallbacks estáticos (ρ=+0.431, AUC=0.656 en sparkline footer)
+      se muestran si el fetch falla. Son valores del estudio original,
+      no del modelo v3. No es crítico porque el JS los sobreescribe
+      cuando el fetch funciona.
+
+  predictor_card_text:
+    archivo: src/components/sections/Projects.astro
+    linea: 24
+    problema: >
+      Texto dice "Model v2 retrains automatically" — ahora es v3.
+      También dice "autonomic charge lag-2 (ρ=+0.55)" — con multi-target
+      la narrativa debería actualizarse.
+
+  lyme_hrv_page:
+    archivo: public/lyme-hrv.html
+    estado: "No verificado contra resultados v3"
