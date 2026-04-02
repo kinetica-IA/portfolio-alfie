@@ -22,7 +22,7 @@ export default function Founder() {
     <section className="section" id="founder">
       <div className="eyebrow" style={{ marginBottom: 24 }}>FOUNDER</div>
 
-      <div className="founder-card">
+      <div className="founder-card card-glass">
         <CornerMarks size={16} stroke={1.5} color="var(--accent)" opacity={0.3} />
 
         <h3 className="founder-name">Alfonso Navarro</h3>
@@ -66,12 +66,6 @@ export default function Founder() {
 
       <style>{`
         .founder-card {
-          position: relative;
-          background: rgba(14, 20, 20, 0.55);
-          backdrop-filter: blur(6px);
-          -webkit-backdrop-filter: blur(6px);
-          border: 1px solid var(--border);
-          border-radius: 0;
           padding: 36px 32px;
           max-width: 700px;
         }

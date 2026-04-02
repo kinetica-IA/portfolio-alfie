@@ -13,7 +13,7 @@ export default function ProjectCards({ data }) {
 
       <div className="project-grid">
         {/* Predictor Card */}
-        <div className="project-card" style={{position:'relative'}}>
+        <div className="project-card card-glass">
           <CornerMarks size={14} stroke={1.5} color="var(--accent)" opacity={0.25} />
           <div className="project-badge">PUBLISHED · PUBLIC REPO</div>
           <h3 className="project-title">ANS-Based Multi-Symptom Prediction</h3>
@@ -45,7 +45,7 @@ export default function ProjectCards({ data }) {
         </div>
 
         {/* IO3 Card */}
-        <div className="project-card" style={{position:'relative'}}>
+        <div className="project-card card-glass">
           <CornerMarks size={14} stroke={1.5} color="var(--accent)" opacity={0.25} />
           <div className="project-badge" style={{ color: 'var(--warm)' }}>IN PROGRESS · ARCHITECTURE PUBLIC</div>
           <h3 className="project-title">IO3 · Clinical AI Agent</h3>
@@ -72,18 +72,7 @@ export default function ProjectCards({ data }) {
           .project-grid { grid-template-columns: 1fr; }
         }
         .project-card {
-          background: rgba(14, 20, 20, 0.55);
-          backdrop-filter: blur(6px);
-          -webkit-backdrop-filter: blur(6px);
-          border: 1px solid var(--border);
-          border-radius: 0;
           padding: 24px;
-          position: relative;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .project-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 16px var(--shadow);
         }
         .project-badge {
           font-family: var(--mono);

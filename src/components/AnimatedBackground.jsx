@@ -1,28 +1,9 @@
 import { useRef, useEffect } from 'react'
 
 /*
- * AnimatedBackground — Dark mode, dense, cursor-reactive
- * Full-bleed 2D canvas: dot grid + Perlin waves + particles + cursor bloom
+ * AnimatedBackground — Game of Life + particles + cursor seeding
+ * Full palette, high density, integrated with content
  */
-
-function hash(x, y) {
-  let h = x * 374761393 + y * 668265263
-  h = (h ^ (h >> 13)) * 1274126177
-  return ((h ^ (h >> 16)) & 0x7fffffff) / 0x7fffffff
-}
-function smoothstep(t) { return t * t * (3 - 2 * t) }
-function noise2D(x, y) {
-  const ix = Math.floor(x), iy = Math.floor(y)
-  const fx = smoothstep(x - ix), fy = smoothstep(y - iy)
-  const a = hash(ix, iy), b = hash(ix + 1, iy)
-  const c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1)
-  return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy
-}
-function fbm(x, y, oct = 3) {
-  let v = 0, a = 1, f = 1, t = 0
-  for (let i = 0; i < oct; i++) { v += noise2D(x * f, y * f) * a; t += a; a *= 0.5; f *= 2 }
-  return v / t
-}
 
 const PALETTE = [
   [144, 167, 165],  // accent
@@ -32,19 +13,21 @@ const PALETTE = [
   [110, 180, 186],  // sea
   [224, 184, 80],   // gold
   [106, 148, 116],  // moss
+  [168, 196, 194],  // accent-bright
+  [200, 164, 126],  // clay
 ]
 
 export default function AnimatedBackground() {
   const canvasRef = useRef(null)
-  const mouse = useRef({ x: -1, y: -1, active: false })
-  const particles = useRef(null)
+  const mouse = useRef({ x: -1, y: -1, pressed: false })
   const raf = useRef(null)
+  const stateRef = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let W, H
+    let W, H, CELL, COLS, ROWS
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -55,177 +38,172 @@ export default function AnimatedBackground() {
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      CELL = 8
+      COLS = Math.ceil(W / CELL) + 2
+      ROWS = Math.ceil(H / CELL) + 2
+      initGrid()
     }
+
+    function initGrid() {
+      const grid = new Uint8Array(COLS * ROWS)
+      const colors = new Uint8Array(COLS * ROWS)
+      // Sparse initial: ~8% alive
+      for (let i = 0; i < grid.length; i++) {
+        if (Math.random() < 0.08) {
+          grid[i] = 1
+          colors[i] = Math.floor(Math.random() * PALETTE.length)
+        }
+      }
+      stateRef.current = { grid, colors, next: new Uint8Array(COLS * ROWS), nextColors: new Uint8Array(COLS * ROWS) }
+    }
+
+    function stepLife() {
+      const { grid, colors, next, nextColors } = stateRef.current
+      next.fill(0)
+      nextColors.fill(0)
+
+      for (let y = 1; y < ROWS - 1; y++) {
+        for (let x = 1; x < COLS - 1; x++) {
+          let alive = 0
+          const colorCounts = new Uint8Array(PALETTE.length)
+
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              if (dx === 0 && dy === 0) continue
+              const idx = (y + dy) * COLS + (x + dx)
+              if (grid[idx]) {
+                alive++
+                colorCounts[colors[idx]]++
+              }
+            }
+          }
+
+          const idx = y * COLS + x
+          if (grid[idx]) {
+            // Survive with 2-3 neighbors
+            if (alive === 2 || alive === 3) {
+              next[idx] = 1
+              nextColors[idx] = colors[idx]
+            }
+          } else {
+            // Birth with exactly 3 neighbors
+            if (alive === 3) {
+              next[idx] = 1
+              // Inherit dominant neighbor color
+              let maxC = 0, maxV = 0
+              for (let c = 0; c < PALETTE.length; c++) {
+                if (colorCounts[c] > maxV) { maxV = colorCounts[c]; maxC = c }
+              }
+              nextColors[idx] = maxC
+            }
+          }
+        }
+      }
+
+      // Swap
+      stateRef.current.grid = next.slice()
+      stateRef.current.colors = nextColors.slice()
+
+      // Reseed if too sparse (< 3%)
+      let total = 0
+      for (let i = 0; i < next.length; i++) if (next[i]) total++
+      if (total < COLS * ROWS * 0.03) {
+        for (let i = 0; i < 80; i++) {
+          const rx = Math.floor(Math.random() * COLS)
+          const ry = Math.floor(Math.random() * ROWS)
+          const idx = ry * COLS + rx
+          stateRef.current.grid[idx] = 1
+          stateRef.current.colors[idx] = Math.floor(Math.random() * PALETTE.length)
+        }
+      }
+    }
+
+    // Cursor seeding
+    function seedAt(px, py, radius) {
+      if (!stateRef.current) return
+      const cx = Math.floor(px / CELL)
+      const cy = Math.floor(py / CELL)
+      const r = Math.ceil(radius / CELL)
+      const col = Math.floor(Math.random() * PALETTE.length)
+
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (dx * dx + dy * dy > r * r) continue
+          const x = cx + dx, y = cy + dy
+          if (x < 0 || x >= COLS || y < 0 || y >= ROWS) continue
+          if (Math.random() < 0.5) {
+            const idx = y * COLS + x
+            stateRef.current.grid[idx] = 1
+            stateRef.current.colors[idx] = col + Math.floor(Math.random() * 3) < PALETTE.length
+              ? col + Math.floor(Math.random() * 3)
+              : col
+          }
+        }
+      }
+    }
+
     resize()
     window.addEventListener('resize', resize)
 
-    // Dense particles
-    const COUNT = 300
-    if (!particles.current) {
-      particles.current = Array.from({ length: COUNT }, () => {
-        const col = PALETTE[Math.floor(Math.random() * PALETTE.length)]
-        return {
-          x: Math.random(), y: Math.random(),
-          vx: (Math.random() - 0.5) * 0.0002,
-          vy: (Math.random() - 0.5) * 0.0002,
-          size: 1 + Math.random() * 2,
-          col,
-          alpha: 0.06 + Math.random() * 0.12,
-          baseAlpha: 0.06 + Math.random() * 0.12,
-          phase: Math.random() * Math.PI * 2,
-        }
-      })
-    }
-    const pts = particles.current
-
     function onMove(e) {
-      mouse.current.x = e.clientX / W
-      mouse.current.y = e.clientY / H
-      mouse.current.active = true
+      mouse.current.x = e.clientX
+      mouse.current.y = e.clientY
+      // Continuous seeding on hover
+      seedAt(e.clientX, e.clientY, 20)
     }
-    function onLeave() { mouse.current.active = false }
-    window.addEventListener('pointermove', onMove)
-    window.addEventListener('pointerleave', onLeave)
+    function onDown(e) {
+      mouse.current.pressed = true
+      seedAt(e.clientX, e.clientY, 40)
+    }
+    function onUp() { mouse.current.pressed = false }
 
-    let t = 0
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerdown', onDown)
+    window.addEventListener('pointerup', onUp)
+
+    let frame = 0
     function draw() {
-      t += 0.002
-      ctx.fillStyle = 'rgba(10, 15, 15, 0.15)'
+      frame++
+      // Step every 4 frames (~15fps for life, 60fps render)
+      if (frame % 4 === 0) stepLife()
+
+      if (!stateRef.current) { raf.current = requestAnimationFrame(draw); return }
+
+      // Fade trail (gives glow persistence)
+      ctx.fillStyle = 'rgba(10, 15, 15, 0.12)'
       ctx.fillRect(0, 0, W, H)
 
+      const { grid, colors } = stateRef.current
+
+      // Draw cells
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const idx = y * COLS + x
+          if (!grid[idx]) continue
+          const col = PALETTE[colors[idx]] || PALETTE[0]
+          const px = x * CELL, py = y * CELL
+
+          // Glow: larger, lower opacity
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.12)`
+          ctx.fillRect(px - 2, py - 2, CELL + 4, CELL + 4)
+
+          // Core cell
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.4)`
+          ctx.fillRect(px + 1, py + 1, CELL - 2, CELL - 2)
+        }
+      }
+
+      // Cursor glow
       const mx = mouse.current.x, my = mouse.current.y
-      const cursorActive = mouse.current.active && mx >= 0
-
-      // ── Dot grid ──────────────────────
-      const sp = 50
-      for (let gx = sp / 2; gx < W; gx += sp) {
-        for (let gy = sp / 2; gy < H; gy += sp) {
-          let alpha = 0.06
-          // Cursor activates nearby dots
-          if (cursorActive) {
-            const dx = gx / W - mx, dy = gy / H - my
-            const d2 = dx * dx + dy * dy
-            if (d2 < 0.04) alpha = 0.06 + (1 - d2 / 0.04) * 0.15
-          }
-          ctx.fillStyle = `rgba(144,167,165,${alpha})`
-          ctx.beginPath()
-          ctx.arc(gx, gy, 1, 0, Math.PI * 2)
-          ctx.fill()
-        }
-      }
-
-      // ── Flowing waves ─────────────────
-      const waves = 7
-      for (let w = 0; w < waves; w++) {
-        const baseY = H * (0.12 + w * 0.12)
-        const col = PALETTE[w % PALETTE.length]
-        let alpha = 0.06
-        ctx.beginPath()
-        ctx.lineWidth = 1.2
-
-        for (let x = 0; x <= W; x += 3) {
-          const nx = x / W * 3.5
-          const n = fbm(nx + t * 0.35 + w * 1.3, w * 0.4 + t * 0.12, 3)
-          let y = baseY + (n - 0.5) * 70
-
-          // Cursor distorts waves nearby
-          if (cursorActive) {
-            const dx = x / W - mx
-            const dy = y / H - my
-            const d2 = dx * dx + dy * dy
-            if (d2 < 0.03) {
-              y += (1 - d2 / 0.03) * 30 * Math.sin(t * 6 + w)
-              alpha = 0.06 + (1 - d2 / 0.03) * 0.08
-            }
-          }
-
-          if (x === 0) ctx.moveTo(x, y)
-          else ctx.lineTo(x, y)
-        }
-        ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`
-        ctx.stroke()
-      }
-
-      // ── Cursor bloom ──────────────────
-      if (cursorActive) {
-        const px = mx * W, py = my * H
-        // Radial glow
-        const grad = ctx.createRadialGradient(px, py, 0, px, py, 120)
-        grad.addColorStop(0, 'rgba(124,184,138,0.06)')
-        grad.addColorStop(0.5, 'rgba(144,167,165,0.03)')
+      if (mx >= 0) {
+        const grad = ctx.createRadialGradient(mx, my, 0, mx, my, mouse.current.pressed ? 80 : 50)
+        grad.addColorStop(0, 'rgba(124,184,138,0.08)')
         grad.addColorStop(1, 'rgba(10,15,15,0)')
         ctx.fillStyle = grad
         ctx.beginPath()
-        ctx.arc(px, py, 120, 0, Math.PI * 2)
+        ctx.arc(mx, my, mouse.current.pressed ? 80 : 50, 0, Math.PI * 2)
         ctx.fill()
-
-        // Rings
-        for (let r = 0; r < 4; r++) {
-          const radius = 20 + r * 22 + Math.sin(t * 5 + r) * 4
-          const a = 0.08 - r * 0.018
-          ctx.beginPath()
-          ctx.arc(px, py, radius, 0, Math.PI * 2)
-          ctx.strokeStyle = `rgba(124,184,138,${Math.max(0, a)})`
-          ctx.lineWidth = 1
-          ctx.stroke()
-        }
-      }
-
-      // ── Particles ─────────────────────
-      for (const p of pts) {
-        p.x += p.vx + Math.sin(t * 1.5 + p.phase) * 0.00006
-        p.y += p.vy + Math.cos(t + p.phase) * 0.00005
-
-        if (p.x < -0.02) p.x = 1.02
-        if (p.x > 1.02) p.x = -0.02
-        if (p.y < -0.02) p.y = 1.02
-        if (p.y > 1.02) p.y = -0.02
-
-        let drawAlpha = p.baseAlpha
-
-        // Cursor activates nearby particles — brighter + bigger
-        if (cursorActive) {
-          const dx = p.x - mx, dy = p.y - my
-          const d2 = dx * dx + dy * dy
-          if (d2 < 0.02) {
-            const force = 0.0004 / (d2 + 0.001)
-            p.x += dx * force * 0.5
-            p.y += dy * force * 0.5
-            drawAlpha = p.baseAlpha + (1 - d2 / 0.02) * 0.35
-          }
-        }
-
-        const sx = p.x * W, sy = p.y * H
-        ctx.beginPath()
-        ctx.arc(sx, sy, p.size * (drawAlpha > p.baseAlpha + 0.1 ? 1.5 : 1), 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${p.col[0]},${p.col[1]},${p.col[2]},${drawAlpha})`
-        ctx.fill()
-      }
-
-      // ── Connections (cursor-range only) ─
-      if (cursorActive) {
-        ctx.lineWidth = 0.5
-        const cx = mx * W, cy = my * H
-        for (let i = 0; i < pts.length; i++) {
-          const ax = pts[i].x * W, ay = pts[i].y * H
-          const dcx = ax - cx, dcy = ay - cy
-          if (dcx * dcx + dcy * dcy > 22500) continue // 150px radius
-          for (let j = i + 1; j < pts.length; j++) {
-            const bx = pts[j].x * W, by = pts[j].y * H
-            const dbx = bx - cx, dby = by - cy
-            if (dbx * dbx + dby * dby > 22500) continue
-            const dx = ax - bx, dy = ay - by
-            const d2 = dx * dx + dy * dy
-            if (d2 < 8100) { // 90px
-              const alpha = (1 - d2 / 8100) * 0.08
-              ctx.beginPath()
-              ctx.moveTo(ax, ay)
-              ctx.lineTo(bx, by)
-              ctx.strokeStyle = `rgba(144,167,165,${alpha})`
-              ctx.stroke()
-            }
-          }
-        }
       }
 
       raf.current = requestAnimationFrame(draw)
@@ -236,7 +214,8 @@ export default function AnimatedBackground() {
       cancelAnimationFrame(raf.current)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('pointerleave', onLeave)
+      window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('pointerup', onUp)
     }
   }, [])
 
@@ -247,7 +226,6 @@ export default function AnimatedBackground() {
         position: 'fixed',
         inset: 0,
         zIndex: 0,
-        pointerEvents: 'none',
         background: '#0a0f0f',
       }}
     />

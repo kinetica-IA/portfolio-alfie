@@ -25,8 +25,8 @@ export default function Landing({ data }) {
 
   return (
     <section className="landing section" id="landing">
-      <div className="landing-glass">
-        <CornerMarks size={18} stroke={1.5} color="var(--accent)" opacity={0.25} />
+      <div className="landing-glass card-glass">
+        <CornerMarks size={18} stroke={1.5} color="var(--accent)" opacity={0.35} />
         <h1 className="landing-title">{brandDecoded}</h1>
 
         <p className="landing-tagline">
@@ -63,12 +63,6 @@ export default function Landing({ data }) {
           text-align: center;
           max-width: 620px;
           padding: 48px 40px;
-          background: rgba(14, 20, 20, 0.6);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid var(--border);
-          border-radius: 0;
-          position: relative;
         }
         .landing-title {
           font-family: var(--sans);

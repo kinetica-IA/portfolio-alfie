@@ -3,53 +3,41 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* Core palette — dark */
   --bg: #0a0f0f;
-  --bg-subtle: #0e1414;
-  --surface: #131a1a;
-  --surface-hover: #1a2322;
+  --surface: rgba(10, 15, 15, 0.7);
+  --surface-hover: rgba(16, 24, 22, 0.85);
   --accent: #90a7a5;
-  --accent-bright: #a8c4c2;
+  --accent-bright: #b0ccc9;
   --warm: #d4955a;
   --green: #7cb88a;
   --green-dim: #5a8a66;
-  --text: #e2ece8;
-  --text-sec: #a0b5b0;
-  --text-dim: #607875;
-  --border: rgba(144, 167, 165, 0.12);
-  --border-bright: rgba(144, 167, 165, 0.22);
-  --shadow: rgba(0, 0, 0, 0.3);
+  --text: #eaf2ee;
+  --text-sec: #b5c8c2;
+  --text-dim: #6a8580;
+  --border: rgba(144, 167, 165, 0.15);
+  --border-glow: rgba(144, 167, 165, 0.25);
+  --shadow: rgba(124, 184, 138, 0.06);
+  --gold: #e0b850;
 
-  /* Extended palette */
   --slate: #7a9ca5;
   --sea: #6eb4ba;
   --moss: #6a9474;
   --ice: #2a4446;
   --clay: #c8a47e;
-  --sand: #3a3028;
-  --gold: #e0b850;
 
-  /* Category colors (pipeline) */
   --cat-pre: #7a9ca5;
   --cat-loop: #7cb88a;
   --cat-gap: #d4955a;
   --cat-synth: #e0b850;
 
-  /* Typography */
   --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
 
-  /* Spacing & shape */
   --radius: 0;
   --radius-sm: 0;
 }
 
-/* ── Reset ─────────────────────────────────────────────── */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
@@ -61,32 +49,22 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  color: var(--text);
-  min-height: 100dvh;
-}
+body { color: var(--text); min-height: 100dvh; }
 
 a {
   color: var(--accent-bright);
   text-decoration: none;
   transition: color 0.2s ease;
 }
-a:hover {
-  color: var(--green);
-}
+a:hover { color: var(--green); }
 
-img {
-  max-width: 100%;
-  display: block;
-}
+img { max-width: 100%; display: block; }
 
-/* ── Scrollbar ─────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* ── Utility ───────────────────────────────────────────── */
 .eyebrow {
   font-family: var(--mono);
   font-size: 10px;
@@ -99,13 +77,25 @@ img {
 .section { padding: 80px 0; }
 @media (max-width: 768px) { .section { padding: 48px 0; } }
 
-/* ── Scroll reveal ─────────────────────────────────────── */
 .reveal-base {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.reveal-base.revealed {
-  opacity: 1;
-  transform: translateY(0);
+.reveal-base.revealed { opacity: 1; transform: translateY(0); }
+
+/* ── Card base (shared) ────────────────────────────────── */
+.card-glass {
+  position: relative;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.card-glass:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px var(--shadow), 0 0 40px rgba(124,184,138,0.03);
+  background: var(--surface-hover);
 }

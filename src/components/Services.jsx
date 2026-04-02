@@ -25,7 +25,7 @@ export default function Services() {
 
       <div className="services-grid">
         {SERVICES.map(s => (
-          <div key={s.title} className="service-card">
+          <div key={s.title} className="service-card card-glass">
             <CornerMarks size={12} stroke={1} color="var(--accent)" opacity={0.25} />
             <img src={s.icon} alt="" className="service-icon" />
             <h3 className="service-title">{s.title}</h3>
@@ -44,18 +44,7 @@ export default function Services() {
           .services-grid { grid-template-columns: 1fr; }
         }
         .service-card {
-          background: rgba(14, 20, 20, 0.55);
-          backdrop-filter: blur(6px);
-          -webkit-backdrop-filter: blur(6px);
-          border: 1px solid var(--border);
-          border-radius: 0;
           padding: 24px;
-          position: relative;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .service-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 16px var(--shadow);
         }
         .service-icon {
           width: 48px;

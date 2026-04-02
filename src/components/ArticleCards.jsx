@@ -102,7 +102,7 @@ export default function ArticleCards({ data, loading }) {
       ) : (
         <div className="ac-grid">
           {articles.map(a => (
-            <article key={a.num} className="ac">
+            <article key={a.num} className="ac card-glass">
               <CornerMarks size={16} stroke={1.5} color="var(--accent)" opacity={0.35} />
               <span className="ac-num" style={{ color: a.numColor }}>{a.num}</span>
               <div className="ac-eyebrow eyebrow">{a.eyebrow}</div>
@@ -135,20 +135,8 @@ export default function ArticleCards({ data, loading }) {
           .ac-grid { grid-template-columns: 1fr; }
         }
         .ac {
-          position: relative;
-          background: rgba(14, 20, 20, 0.55);
-          backdrop-filter: blur(6px);
-          -webkit-backdrop-filter: blur(6px);
-          border: 1px solid var(--border);
-          border-radius: 0;
           padding: 28px;
-          transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
           overflow: hidden;
-        }
-        .ac:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(26,42,40,0.08);
-          background: rgba(19, 26, 26, 0.75);
         }
         .ac-num {
           display: block;
