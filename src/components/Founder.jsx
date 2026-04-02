@@ -1,151 +1,101 @@
-import CornerMarks from './CornerMarks'
-
 const TIMELINE = [
-  { year: '2006', label: 'Physics degree', detail: 'Universidad de Granada' },
-  { year: '2010', label: 'Osteopathy & Biomechanics', detail: 'Clinical specialist' },
-  { year: '2014', label: 'Private practice', detail: '10+ years clinical' },
-  { year: '2020', label: 'COVID-19 acute care', detail: '2 years frontline' },
-  { year: '2024', label: 'Post-Lyme diagnosis', detail: 'Patient + researcher' },
-  { year: '2025', label: 'Kinetica AI', detail: 'Clinical AI systems' },
-]
-
-const BADGES = [
-  'Universidad de Granada',
-  '10+ years osteopathy',
-  'Biomechanics specialist',
-  'AI evaluator · Anthropic',
-  'Nordic-based · Remote',
+  { year: '2006', label: 'Physics, Universidad de Granada' },
+  { year: '2010', label: 'Osteopathy & biomechanics' },
+  { year: '2014', label: 'Private clinical practice' },
+  { year: '2020', label: 'COVID-19 acute care' },
+  { year: '2024', label: 'Post-Lyme diagnosis' },
+  { year: '2025', label: 'Kinetica AI' },
 ]
 
 export default function Founder() {
   return (
-    <section className="section" id="founder">
-      <div className="eyebrow" style={{ marginBottom: 24 }}>FOUNDER</div>
+    <section className="section founder" id="founder">
+      <div className="founder-left">
+        <span className="eyebrow">FOUNDER</span>
+        <h2 className="founder-name">Alfonso Navarro</h2>
+        <p className="founder-role">Physicist · Osteopath · Clinical AI Builder</p>
+        <p className="founder-bio">
+          10+ years of clinical practice including two years of intensive acute care
+          during COVID-19. Post-Lyme patient turned researcher — building predictive
+          models from personal biometric data. Active AI model evaluator for Anthropic.
+        </p>
+        <div className="founder-badges">
+          <span className="founder-badge">Universidad de Granada</span>
+          <span className="founder-badge">10+ years clinical</span>
+          <span className="founder-badge">AI Evaluator · Anthropic</span>
+          <span className="founder-badge">Nordic-based · Remote</span>
+        </div>
+        <div className="founder-links">
+          <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com</a>
+          <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
 
-      <div className="founder-card card-glass">
-        <CornerMarks size={16} stroke={1.5} color="var(--accent)" opacity={0.3} />
-
-        <h3 className="founder-name">Alfonso Navarro</h3>
-        <p className="founder-role">Osteopath · Biomechanics Specialist · Physicist · Clinical AI Builder</p>
-
-        {/* Timeline */}
-        <div className="founder-timeline">
-          <div className="ft-line" />
+      <div className="founder-right">
+        <div className="timeline">
           {TIMELINE.map(t => (
-            <div key={t.year} className="ft-node">
-              <span className="ft-year">{t.year}</span>
-              <span className="ft-dot" />
-              <span className="ft-label">{t.label}</span>
+            <div key={t.year} className="tl-item">
+              <span className="tl-year">{t.year}</span>
+              <span className="tl-label">{t.label}</span>
             </div>
           ))}
-        </div>
-
-        <p className="founder-bio">
-          Building AI systems that work in clinical reality — not in theory.
-          10+ years of hands-on patient care, including 2 years of intensive
-          acute care during COVID-19. Currently building Kinetica AI — a suite
-          of clinical AI models that predict autonomic dysfunction from consumer
-          wearable data. Also developing IO3, a clinical reasoning agent with
-          human-on-loop architecture. Active AI model evaluator for Anthropic.
-          Post-Lyme patient using personal biometric data to advance understanding
-          of post-infectious fatigue.
-        </p>
-
-        <div className="founder-badges">
-          {BADGES.map(b => (
-            <span key={b} className="founder-badge">{b}</span>
-          ))}
-        </div>
-
-        <div className="founder-links">
-          <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com →</a>
-          <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn →</a>
-          <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub →</a>
         </div>
       </div>
 
       <style>{`
-        .founder-card {
-          padding: 36px 32px;
-          max-width: 700px;
+        .founder {
+          display: grid;
+          grid-template-columns: 1fr 280px;
+          gap: 64px;
+          align-items: start;
+        }
+        @media (max-width: 768px) {
+          .founder {
+            grid-template-columns: 1fr;
+            gap: 40px;
+          }
+          .founder-right { order: -1; }
+        }
+
+        .founder .eyebrow {
+          display: block;
+          margin-bottom: var(--space-tight);
         }
         .founder-name {
           font-family: var(--sans);
-          font-weight: 500;
-          font-size: 1.6rem;
+          font-size: var(--text-section);
+          font-weight: 400;
           color: var(--text);
-          letter-spacing: 0.04em;
-          margin-bottom: 4px;
+          line-height: 1.2;
+          margin-bottom: 6px;
         }
         .founder-role {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: var(--text-caption);
           color: var(--text-dim);
-          letter-spacing: 0.06em;
-          margin-bottom: 28px;
-        }
-        .founder-timeline {
-          position: relative;
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 28px;
-          padding: 0 4px;
-        }
-        .ft-line {
-          position: absolute;
-          top: 22px;
-          left: 8px;
-          right: 8px;
-          height: 2px;
-          background: var(--border);
-        }
-        .ft-node {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 4px;
-          position: relative;
-          z-index: 1;
-        }
-        .ft-year {
-          font-family: var(--mono);
-          font-size: 13px;
-          font-weight: 500;
-          color: var(--text);
-        }
-        .ft-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: var(--green);
-          border: 2px solid var(--surface);
-        }
-        .ft-label {
-          font-family: var(--mono);
-          font-size: 9px;
-          color: var(--text-dim);
-          text-align: center;
-          max-width: 80px;
+          margin-bottom: var(--space-element);
         }
         .founder-bio {
-          font-size: 14px;
+          font-size: var(--text-body);
+          font-weight: 300;
           color: var(--text-sec);
-          line-height: 1.65;
-          margin-bottom: 20px;
+          line-height: 1.7;
+          max-width: 520px;
+          margin-bottom: var(--space-element);
         }
         .founder-badges {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin-bottom: 20px;
+          margin-bottom: var(--space-element);
         }
         .founder-badge {
           font-family: var(--mono);
-          font-size: 10px;
+          font-size: 11px;
           color: var(--text-dim);
           border: 1px solid var(--border);
-          border-radius: 0;
-          padding: 4px 10px;
+          padding: 4px 12px;
         }
         .founder-links {
           display: flex;
@@ -154,13 +104,50 @@ export default function Founder() {
         }
         .founder-links a {
           font-family: var(--mono);
-          font-size: 12px;
-          color: var(--accent);
-          transition: color 0.2s ease;
+          font-size: var(--text-caption);
+          color: var(--teal);
         }
-        .founder-links a:hover {
-          color: var(--green);
-          text-decoration: underline;
+
+        /* Vertical typographic timeline */
+        .timeline {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          border-left: 1px solid var(--border);
+          padding-left: 20px;
+        }
+        .tl-item {
+          padding: 12px 0;
+          border-bottom: 1px solid var(--border);
+        }
+        .tl-item:last-child { border-bottom: none; }
+        .tl-year {
+          display: block;
+          font-family: var(--mono);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text);
+          margin-bottom: 2px;
+        }
+        .tl-label {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+        }
+        @media (max-width: 768px) {
+          .timeline {
+            flex-direction: row;
+            flex-wrap: wrap;
+            border-left: none;
+            border-top: 1px solid var(--border);
+            padding-left: 0;
+            padding-top: 16px;
+            gap: 16px;
+          }
+          .tl-item {
+            padding: 0;
+            border-bottom: none;
+          }
         }
       `}</style>
     </section>
