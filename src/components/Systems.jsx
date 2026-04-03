@@ -173,7 +173,7 @@ export default function Systems({ data }) {
         }
         .sys-badge {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           letter-spacing: 0.06em;
           text-transform: uppercase;
           display: inline-block;

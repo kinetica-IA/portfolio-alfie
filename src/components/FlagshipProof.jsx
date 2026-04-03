@@ -241,7 +241,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-metric-label {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.08em;
@@ -293,7 +293,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-target-auc {
           font-family: var(--mono);
-          font-size: 15px;
+          font-size: var(--text-body);
           font-weight: 500;
           text-align: right;
         }
@@ -322,7 +322,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-target-ci {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           text-align: right;
         }
@@ -336,7 +336,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-residuals-note {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           margin-bottom: 8px;
         }
@@ -350,7 +350,7 @@ export default function FlagshipProof({ data, loading }) {
         }
         .fp-brain-fog-note {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           font-style: italic;
           line-height: 1.6;
