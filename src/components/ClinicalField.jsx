@@ -33,8 +33,10 @@ const SECTION_COLORS = [
 const CELL_SIZE = 18           // px between dots — tight grid
 const DOT_RADIUS = 0.6        // tiny dots
 const DOT_IDLE_ALPHA = 0.045  // barely visible idle
-const ALIVE_ALPHA = 0.14      // alive but subtle
-const DYING_DURATION = 2.5    // slow fade-out
+const ALIVE_ALPHA = 0.22      // alive — more visible
+const ALIVE_RADIUS = 2.2      // alive cells grow bigger
+const GLOW_RADIUS = 6         // diffuse glow around alive
+const DYING_DURATION = 3.0    // slower fade-out for longer trails
 const GEN_INTERVAL = 1100     // ~1.1s between generations — breathing pace
 const CURSOR_RADIUS = 120
 const SEED_CHANCE = 0.03      // sparse initial seeding
@@ -125,7 +127,11 @@ export default function ClinicalField() {
           const nowAlive = wasAlive ? (n === 2 || n === 3) : (n === 3)
 
           if (nowAlive && !wasAlive) {
-            newRow.push({ alive: true, dyingTimer: 0, color: Math.random() > 0.5 ? c1 : c2 })
+            // New births get varied colors from full palette
+            const birthColor = Math.random() < 0.6
+              ? (Math.random() > 0.5 ? c1 : c2)
+              : ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)]
+            newRow.push({ alive: true, dyingTimer: 0, color: birthColor })
           } else if (nowAlive) {
             newRow.push({ alive: true, dyingTimer: 0, color: cell.color })
           } else if (!nowAlive && wasAlive) {
@@ -198,14 +204,17 @@ export default function ClinicalField() {
 
           let alpha = DOT_IDLE_ALPHA
           let radius = DOT_RADIUS
+          let glowSize = 0
 
           if (cell.alive) {
             alpha = ALIVE_ALPHA
-            radius = DOT_RADIUS + 0.4
+            radius = ALIVE_RADIUS
+            glowSize = GLOW_RADIUS
           } else if (cell.dyingTimer > 0) {
             const t = cell.dyingTimer / DYING_DURATION
             alpha = DOT_IDLE_ALPHA + (ALIVE_ALPHA - DOT_IDLE_ALPHA) * t
-            radius = DOT_RADIUS + 0.4 * t
+            radius = DOT_RADIUS + (ALIVE_RADIUS - DOT_RADIUS) * t
+            glowSize = GLOW_RADIUS * t
           }
 
           // Cursor: gentle proximity glow
@@ -214,16 +223,24 @@ export default function ClinicalField() {
             const d2 = dx * dx + dy * dy
             if (d2 < cr2) {
               const p = 1 - d2 / cr2
-              alpha = Math.min(0.22, alpha + p * 0.10)
-              radius = Math.max(radius, DOT_RADIUS + 0.5 * p)
+              alpha = Math.min(0.28, alpha + p * 0.12)
+              radius = Math.max(radius, DOT_RADIUS + 0.8 * p)
             }
           }
 
-          // Soft glow ring for alive cells
-          if (cell.alive) {
+          // Diffuse outer glow for alive/dying cells
+          if (glowSize > 1) {
+            ctx.fillStyle = `rgba(${clr[0]},${clr[1]},${clr[2]}, ${alpha * 0.12})`
+            ctx.beginPath()
+            ctx.arc(x, y, glowSize, 0, Math.PI * 2)
+            ctx.fill()
+          }
+
+          // Inner glow ring
+          if (glowSize > 0.5) {
             ctx.fillStyle = `rgba(${clr[0]},${clr[1]},${clr[2]}, ${alpha * 0.25})`
             ctx.beginPath()
-            ctx.arc(x, y, radius + 2, 0, Math.PI * 2)
+            ctx.arc(x, y, radius + 1.5, 0, Math.PI * 2)
             ctx.fill()
           }
 

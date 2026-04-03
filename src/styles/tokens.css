@@ -81,7 +81,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body { color: var(--text); min-height: 100dvh; }
+body { color: var(--text); min-height: 100dvh; overflow-x: hidden; }
 
 a {
   color: var(--sea);
@@ -160,4 +160,13 @@ img { max-width: 100%; display: block; }
 :focus-visible {
   outline: 2px solid var(--teal);
   outline-offset: 3px;
+}
+
+/* ── Mobile typography clamp ──────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --text-section: clamp(1.5rem, 6vw, 2rem);
+    --text-subsection: clamp(1.1rem, 3.5vw, 1.25rem);
+    --text-body-lg: 1rem;
+  }
 }
