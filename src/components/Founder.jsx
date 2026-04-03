@@ -28,7 +28,7 @@ export default function Founder() {
     <section className="section founder" id="founder" ref={ref}>
       <div className="founder-main">
         <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <CellSymbol color="var(--teal)" size={22} />
+          <CellSymbol color="var(--clay)" size={44} />
           THE BUILDER
         </span>
         <h2 className="founder-name">{nameDisplay}</h2>

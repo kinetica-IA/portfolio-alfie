@@ -80,7 +80,7 @@ function PubCard({ card, index, revealed }) {
           {card.type}
         </span>
         <span className="pub-card-symbol">
-          <Symbol color={card.color} size={28} />
+          <Symbol color={card.color} size={56} />
         </span>
       </div>
       <h3 className="pub-card-title">{titleDisplay}</h3>
@@ -100,7 +100,7 @@ export default function Published() {
   return (
     <section className="section" id="published">
       <span className="eyebrow" style={{ color: 'var(--moss)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <HelixSymbol color="var(--moss)" size={22} />
+        <HelixSymbol color="var(--ice)" size={44} />
         PUBLISHED
       </span>
       <h2 className="pub-title">Open research, verifiable systems</h2>
