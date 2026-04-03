@@ -11,7 +11,7 @@ export default function Contact() {
   return (
     <section className="section contact" id="contact">
       <span className="eyebrow" style={{ color: 'var(--sea)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <OrbitSymbol color="var(--sea)" size={22} />
+        <OrbitSymbol color="var(--sand)" size={44} />
         COLLABORATE
       </span>
       <h2 className="contact-headline" ref={headRef}>

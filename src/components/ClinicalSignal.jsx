@@ -18,7 +18,7 @@ export default function ClinicalSignal() {
   return (
     <section className="section clinical-signal">
       <span className="eyebrow" style={{ color: 'var(--sea)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <PulseSymbol color="var(--sea)" size={22} />
+        <PulseSymbol color="var(--sea)" size={44} />
         THE IDEA
       </span>
       <h2 className="cs-headline" ref={headRef}>

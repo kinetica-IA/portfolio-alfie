@@ -116,7 +116,7 @@ export default function Systems({ data }) {
   return (
     <section className="section" id="systems" ref={sectionRef}>
       <span className="eyebrow" style={{ color: 'var(--slate)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <NetworkSymbol color="var(--slate)" size={22} />
+        <NetworkSymbol color="var(--warm)" size={44} />
         HOW IT WORKS
       </span>
       <h2 className="sys-title">From heartbeat to insight</h2>
