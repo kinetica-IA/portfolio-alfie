@@ -7,59 +7,108 @@ const SUB_STRINGS = [
   'open-source · patient-driven',
 ]
 
-/* ── Hero Symbol: living pulse that glows on hover ──────── */
-function HeroSymbol() {
+/* ── Constellation: ring of colored dots that breathe in sequence ── */
+const CONSTELLATION_DOTS = [
+  { angle: 0,   color: 'var(--teal)' },
+  { angle: 45,  color: 'var(--sea)' },
+  { angle: 90,  color: 'var(--green)' },
+  { angle: 135, color: 'var(--ice)' },
+  { angle: 180, color: 'var(--moss)' },
+  { angle: 225, color: 'var(--warm)' },
+  { angle: 270, color: 'var(--sand)' },
+  { angle: 315, color: 'var(--slate)' },
+]
+
+function Constellation() {
   const [hovered, setHovered] = useState(false)
+  const RADIUS = 52 // orbit radius in SVG units
+  const CENTER = 60  // SVG center
+
   return (
     <div
-      className="hero-symbol-wrap"
+      className="constellation-wrap"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <svg
-        width={72} height={72} viewBox="0 0 28 28"
-        className="hero-symbol"
+        width={140} height={140} viewBox="0 0 120 120"
+        className="constellation"
         style={{ overflow: 'visible' }}
       >
-        {/* Outer breathing ring */}
-        <circle cx="14" cy="14" r="12" fill="none" stroke="var(--teal)" strokeWidth="0.6"
-          opacity={hovered ? '0.7' : '0.3'} style={{ transition: 'opacity 0.5s ease' }}>
-          <animate attributeName="r" values="11;13;11" dur="4s" repeatCount="indefinite" />
-        </circle>
+        {/* Ghost orbit ring */}
+        <circle cx={CENTER} cy={CENTER} r={RADIUS} fill="none"
+          stroke="var(--teal)" strokeWidth="0.3"
+          opacity={hovered ? '0.35' : '0.12'}
+          style={{ transition: 'opacity 0.6s ease' }}
+        />
 
-        {/* Middle orbit ring */}
-        <circle cx="14" cy="14" r="8" fill="none" stroke="var(--sea)" strokeWidth="0.4"
-          opacity={hovered ? '0.5' : '0.2'} style={{ transition: 'opacity 0.5s ease' }}>
-          <animate attributeName="r" values="8;9;8" dur="3s" repeatCount="indefinite" />
-        </circle>
+        {/* Inner ghost ring */}
+        <circle cx={CENTER} cy={CENTER} r={RADIUS * 0.5} fill="none"
+          stroke="var(--sea)" strokeWidth="0.2"
+          opacity={hovered ? '0.25' : '0.08'}
+          style={{ transition: 'opacity 0.6s ease' }}
+        />
 
-        {/* ECG pulse trace */}
-        <polyline
-          points="2,14 7,14 9,7 11,21 13,5 15,19 17,9 19,14 26,14"
-          fill="none" stroke="var(--green)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"
-          opacity={hovered ? '0.95' : '0.6'}
-          strokeDasharray="50" strokeDashoffset="0"
-          style={{ transition: 'opacity 0.4s ease' }}
+        {/* Dots breathing in sequence */}
+        {CONSTELLATION_DOTS.map((dot, i) => {
+          const rad = (dot.angle * Math.PI) / 180
+          const x = CENTER + Math.cos(rad) * RADIUS
+          const y = CENTER + Math.sin(rad) * RADIUS
+          const delay = i * 0.4 // stagger the breathing wave
+
+          return (
+            <g key={i}>
+              {/* Glow ring */}
+              <circle cx={x} cy={y} r="5" fill={dot.color}
+                opacity={hovered ? '0.15' : '0.06'}
+                style={{ transition: 'opacity 0.5s ease' }}
+              >
+                <animate attributeName="r" values="4;6;4" dur="3.2s"
+                  begin={`${delay}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity"
+                  values={hovered ? '0.10;0.22;0.10' : '0.04;0.10;0.04'}
+                  dur="3.2s" begin={`${delay}s`} repeatCount="indefinite" />
+              </circle>
+              {/* Core dot */}
+              <circle cx={x} cy={y} r="1.8" fill={dot.color}
+                opacity={hovered ? '0.85' : '0.45'}
+                style={{ transition: 'opacity 0.5s ease' }}
+              >
+                <animate attributeName="r" values="1.5;2.2;1.5" dur="3.2s"
+                  begin={`${delay}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity"
+                  values={hovered ? '0.6;0.95;0.6' : '0.3;0.55;0.3'}
+                  dur="3.2s" begin={`${delay}s`} repeatCount="indefinite" />
+              </circle>
+            </g>
+          )
+        })}
+
+        {/* Faint connecting lines between adjacent dots */}
+        {CONSTELLATION_DOTS.map((dot, i) => {
+          const next = CONSTELLATION_DOTS[(i + 1) % CONSTELLATION_DOTS.length]
+          const rad1 = (dot.angle * Math.PI) / 180
+          const rad2 = (next.angle * Math.PI) / 180
+          const x1 = CENTER + Math.cos(rad1) * RADIUS
+          const y1 = CENTER + Math.sin(rad1) * RADIUS
+          const x2 = CENTER + Math.cos(rad2) * RADIUS
+          const y2 = CENTER + Math.sin(rad2) * RADIUS
+
+          return (
+            <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke="var(--teal)" strokeWidth="0.3"
+              opacity={hovered ? '0.25' : '0.08'}
+              style={{ transition: 'opacity 0.6s ease' }}
+            />
+          )
+        })}
+
+        {/* Center dot — tiny, subtle */}
+        <circle cx={CENTER} cy={CENTER} r="1.2" fill="var(--teal)"
+          opacity={hovered ? '0.6' : '0.25'}
+          style={{ transition: 'opacity 0.5s ease' }}
         >
-          <animate attributeName="stroke-dashoffset" values="50;0;0;50" dur="3s" repeatCount="indefinite" keyTimes="0;0.35;0.7;1" />
-        </polyline>
-
-        {/* Orbiting dot */}
-        <circle r="1.5" fill="var(--warm)" opacity={hovered ? '0.9' : '0.5'}
-          style={{ transition: 'opacity 0.4s ease' }}>
-          <animateMotion dur="6s" repeatCount="indefinite" path="M14,2 A12,12 0 1,1 13.99,2" />
-        </circle>
-
-        {/* Core pulse dot */}
-        <circle cx="14" cy="14" r="2.5" fill="var(--teal)"
-          opacity={hovered ? '0.9' : '0.5'} style={{ transition: 'opacity 0.4s ease' }}>
-          <animate attributeName="r" values="2;3;2" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="opacity" values={hovered ? '0.7;1;0.7' : '0.35;0.6;0.35'} dur="2s" repeatCount="indefinite" />
-        </circle>
-
-        {/* Hover glow */}
-        <circle cx="14" cy="14" r="10" fill="var(--teal)"
-          opacity={hovered ? '0.08' : '0'} style={{ transition: 'opacity 0.5s ease' }}>
+          <animate attributeName="r" values="1;1.5;1" dur="4s" repeatCount="indefinite" />
         </circle>
       </svg>
     </div>
@@ -112,7 +161,7 @@ export default function Hero() {
   return (
     <section className="hero section">
       <div className="hero-content">
-        <HeroSymbol />
+        <Constellation />
         <h1 className="hero-brand">{brand}</h1>
         <div className="hero-rule" />
         <p className="hero-tagline" style={{
@@ -156,18 +205,18 @@ export default function Hero() {
         .hero-content {
           margin-bottom: 56px;
         }
-        .hero-symbol-wrap {
+        .constellation-wrap {
           display: flex;
           justify-content: center;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
           cursor: default;
         }
-        .hero-symbol {
+        .constellation {
           filter: drop-shadow(0 0 0px transparent);
-          transition: filter 0.5s ease;
+          transition: filter 0.6s ease;
         }
-        .hero-symbol-wrap:hover .hero-symbol {
-          filter: drop-shadow(0 0 12px rgba(144, 167, 165, 0.3));
+        .constellation-wrap:hover .constellation {
+          filter: drop-shadow(0 0 16px rgba(144, 167, 165, 0.2));
         }
         .hero-brand {
           font-family: var(--sans);
