@@ -123,7 +123,7 @@ export default function Contact() {
         }
         .contact-links a {
           font-family: var(--mono);
-          font-size: 14px;
+          font-size: var(--text-caption);
           color: var(--sea);
           transition: color var(--duration-hover) ease;
         }

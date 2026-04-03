@@ -168,7 +168,7 @@ export default function Published() {
         }
         .pub-badge {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--card-color);

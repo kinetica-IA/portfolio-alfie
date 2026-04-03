@@ -142,7 +142,7 @@ img { max-width: 100%; display: block; }
 .scroll-hook:hover { opacity: 0.7; }
 .scroll-hook-text {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-eyebrow);
   color: var(--text-dim);
   letter-spacing: 0.06em;
 }

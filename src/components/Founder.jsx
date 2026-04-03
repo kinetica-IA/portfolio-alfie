@@ -159,7 +159,7 @@ export default function Founder() {
         }
         .founder-badge {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           background: var(--fill-teal);
           border: 1px solid var(--border);
@@ -223,13 +223,13 @@ export default function Founder() {
         }
         .tl-year {
           font-family: var(--mono);
-          font-size: 13px;
+          font-size: var(--text-caption);
           font-weight: 500;
           color: var(--text);
         }
         .tl-label {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           text-align: center;
           line-height: 1.3;

@@ -120,14 +120,14 @@ export default function LivePulse({ data }) {
         }
         .lp-label {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: var(--text-eyebrow);
           font-weight: 500;
           letter-spacing: 0.08em;
           color: var(--sea);
         }
         .lp-date {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           margin-left: auto;
         }
@@ -149,7 +149,7 @@ export default function LivePulse({ data }) {
         }
         .lp-spark-label {
           font-family: var(--mono);
-          font-size: 9px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.06em;
           text-transform: uppercase;
@@ -171,13 +171,13 @@ export default function LivePulse({ data }) {
         }
         .lp-stat-key {
           font-family: var(--mono);
-          font-size: 10px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.06em;
         }
         .lp-stat-key sub {
-          font-size: 8px;
+          font-size: var(--text-eyebrow);
           vertical-align: baseline;
         }
         @media (max-width: 640px) {
