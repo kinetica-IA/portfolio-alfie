@@ -10,7 +10,7 @@ const STAT_MARKERS = [
 
 export default function ClinicalSignal() {
   const { ref: headRef, words: headWords } = useWordStagger(
-    'Your body writes a health report every night — most doctors never read it.'
+    'Every night, your heart writes a story about your health. We built AI to listen.'
   )
   const { ref: bodyRef, revealed: bodyRevealed } = useReveal(0.25)
   const { ref: statsRef, revealed: statsRevealed } = useReveal(0.25)
@@ -51,7 +51,7 @@ export default function ClinicalSignal() {
               '--stat-rgb': s.rgb,
               opacity: statsRevealed ? 1 : 0,
               transform: statsRevealed ? 'scale(1)' : 'scale(0.95)',
-              transition: `opacity 0.5s var(--ease-out) ${i * 200}ms, transform 0.5s var(--ease-out) ${i * 200}ms`,
+              transition: `opacity 0.8s var(--ease-out) ${i * 300}ms, transform 0.8s var(--ease-out) ${i * 300}ms`,
             }}
           >
             <span className="cs-stat-value">{s.value}</span>
