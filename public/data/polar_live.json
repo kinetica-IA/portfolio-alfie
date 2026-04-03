@@ -1,25 +1,10 @@
 {
-  "updated_at": "2026-03-23T00:00:00Z",
+  "updated_at": "2026-04-03T06:00:00Z",
   "latest": {
-    "date": "2026-03-17",
-    "hrv_rmssd_night": 39.0,
-    "hrv_rri_mean_ms": 904.0,
-    "hrv_rmssd_daily": 62.6,
-    "sleep_score": 79.7,
-    "sleep_duration_h": 10.2,
-    "sleep_wake_min": 30.0,
-    "sleep_interruptions": 30,
-    "sleep_long_interruptions": 4,
-    "sleep_long_wake_min": 10.5,
-    "sleep_rem_min": 111.5,
-    "sleep_deep_min": 86.5,
-    "sleep_rem_pct": 24.7,
-    "sleep_deep_pct": 19.2,
-    "sleep_refresh_score": 95.18,
-    "sleep_continuity_score": 64.0,
-    "sleep_efficiency_pct": 93.3,
-    "sleep_score_rate": 4,
-    "steps": 2686
+    "date": "2026-04-02",
+    "sleep_score": 61,
+    "sleep_wake_min": 52.5,
+    "active_calories": 510
   },
   "series": [
     {
@@ -5964,6 +5949,12 @@
       "sleep_efficiency_pct": 93.3,
       "sleep_score_rate": 4,
       "steps": 2686
+    },
+    {
+      "date": "2026-04-02",
+      "sleep_score": 61,
+      "sleep_wake_min": 52.5,
+      "active_calories": 510
     }
   ],
   "finding": {
