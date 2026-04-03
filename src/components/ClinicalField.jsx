@@ -34,12 +34,12 @@ const CELL_SIZE = 18           // px between dots — tight grid
 const DOT_RADIUS = 0.6        // tiny dots
 const DOT_IDLE_ALPHA = 0.045  // barely visible idle
 const ALIVE_ALPHA = 0.22      // alive — more visible
-const ALIVE_RADIUS = 2.2      // alive cells grow bigger
-const GLOW_RADIUS = 6         // diffuse glow around alive
-const DYING_DURATION = 3.0    // slower fade-out for longer trails
-const GEN_INTERVAL = 1100     // ~1.1s between generations — breathing pace
+const ALIVE_RADIUS = 1.5      // alive cells grow bigger
+const GLOW_RADIUS = 9         // diffuse glow around alive
+const DYING_DURATION = 1.0    // slower fade-out for longer trails
+const GEN_INTERVAL = 900     // ~0.9s between generations — breathing pace
 const CURSOR_RADIUS = 120
-const SEED_CHANCE = 0.03      // sparse initial seeding
+const SEED_CHANCE = 0.09      // sparse initial seeding
 const CURSOR_SEED_CHANCE = 0.15
 
 export default function ClinicalField() {
