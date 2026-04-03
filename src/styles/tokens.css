@@ -50,7 +50,7 @@
   --text-body-lg: 1.125rem;
   --text-body: 1rem;
   --text-caption: 0.8125rem;
-  --text-eyebrow: 0.75rem;
+  --text-eyebrow: 0.9375rem;
 
   /* Spacing scale — tighter, no empty zones */
   --space-section: clamp(48px, 6vh, 72px);
