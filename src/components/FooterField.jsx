@@ -325,15 +325,15 @@ export default function FooterField() {
       <canvas ref={canvasRef} className="footer-canvas" aria-hidden="true" />
       <div className="footer-content">
         <OrbitalRing />
-        <span className="footer-brand">KINETICA AI</span>
-        <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
-        <div className="footer-links">
+        <div className="footer-contact-links">
+          <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com</a>
+          <span className="footer-sep">·</span>
           <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <span className="footer-sep">·</span>
           <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <span className="footer-sep">·</span>
-          <a href="mailto:alfon.atman@gmail.com">Contact</a>
         </div>
+        <span className="footer-brand">KINETICA AI</span>
+        <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
       </div>
 
       <style>{`
@@ -341,7 +341,7 @@ export default function FooterField() {
           position: relative;
           width: 100%;
           min-height: 320px;
-          margin-top: var(--space-section);
+          margin-top: 0;
           overflow: hidden;
         }
         .footer-canvas {
@@ -375,9 +375,23 @@ export default function FooterField() {
         .orbital-wrap:hover .orbital-ring {
           filter: drop-shadow(0 0 12px rgba(93, 138, 130, 0.25));
         }
+        .footer-contact-links {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        .footer-contact-links a {
+          font-family: var(--mono);
+          font-size: var(--text-body);
+          color: var(--sea);
+          text-decoration: none;
+          transition: color var(--duration-hover) ease;
+        }
+        .footer-contact-links a:hover { color: var(--green); }
         .footer-brand {
           font-family: var(--sans);
-          font-size: 1.1rem;
+          font-size: 1.6rem;
           font-weight: 300;
           letter-spacing: 0.25em;
           color: var(--text-heading);
@@ -389,19 +403,6 @@ export default function FooterField() {
           color: var(--text-dim);
           letter-spacing: 0.04em;
         }
-        .footer-links {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-        .footer-links a {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--sea);
-          text-decoration: none;
-          transition: color var(--duration-hover) ease;
-        }
-        .footer-links a:hover { color: var(--green); }
         .footer-sep {
           color: var(--text-dim);
           opacity: 0.3;

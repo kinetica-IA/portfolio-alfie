@@ -201,7 +201,7 @@ export default function FlagshipProof({ data, loading }) {
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
-          margin-bottom: var(--space-subsection);
+          margin-bottom: 16px;
         }
         .fp-loading {
           font-family: var(--mono);
@@ -213,9 +213,9 @@ export default function FlagshipProof({ data, loading }) {
         .fp-metrics {
           display: flex;
           gap: 20px;
-          margin-bottom: 40px;
+          margin-bottom: 24px;
           flex-wrap: wrap;
-          padding-bottom: 32px;
+          padding-bottom: 20px;
           border-bottom: 1px solid var(--border);
         }
         .fp-metric {
@@ -255,7 +255,7 @@ export default function FlagshipProof({ data, loading }) {
         .fp-finding {
           border-left: 2px solid var(--warm);
           padding-left: 20px;
-          margin-bottom: var(--space-subsection);
+          margin-bottom: 20px;
           max-width: 600px;
         }
         .fp-finding .eyebrow {

@@ -94,8 +94,8 @@ export default function LivePulse({ data }) {
 
       <style>{`
         .live-pulse {
-          margin-top: 32px;
-          margin-bottom: 48px;
+          margin-top: 20px;
+          margin-bottom: 24px;
           padding: 20px 24px;
           border: 1px solid var(--border);
           border-left: 3px solid var(--sea);

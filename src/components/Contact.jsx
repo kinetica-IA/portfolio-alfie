@@ -40,18 +40,13 @@ export default function Contact() {
       >
         Get in touch
       </a>
-      <div className="contact-links">
-        <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com</a>
-        <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
-      </div>
 
       <style>{`
         .contact {
           text-align: center;
           max-width: 600px;
           margin: 0 auto;
-          padding-bottom: 80px;
+          padding-bottom: 32px;
         }
         .contact .eyebrow {
           display: block;
@@ -115,19 +110,6 @@ export default function Contact() {
           color: white;
           box-shadow: 0 2px 16px rgba(107,158,122,0.20);
         }
-        .contact-links {
-          display: flex;
-          gap: 24px;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-        .contact-links a {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--sea);
-          transition: color var(--duration-hover) ease;
-        }
-        .contact-links a:hover { color: var(--green); }
       `}</style>
     </section>
   )
