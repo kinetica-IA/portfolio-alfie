@@ -56,7 +56,7 @@ export default function Founder() {
                 borderLeft: `2px solid ${b.borderColor}`,
                 opacity: revealed ? 1 : 0,
                 transform: revealed ? 'translateY(0)' : 'translateY(8px)',
-                transition: `opacity 0.5s var(--ease-out) ${i * 150}ms, transform 0.5s var(--ease-out) ${i * 150}ms`,
+                transition: `opacity 0.8s var(--ease-out) ${i * 220}ms, transform 0.5s var(--ease-out) ${i * 220}ms`,
               }}
             >
               {b.text}
@@ -84,7 +84,7 @@ export default function Founder() {
               style={{
                 opacity: revealed ? 1 : 0,
                 transform: revealed ? 'translateY(0)' : 'translateY(10px)',
-                transition: `opacity 0.6s var(--ease-out) ${i * 150 + 300}ms, transform 0.6s var(--ease-out) ${i * 150 + 300}ms`,
+                transition: `opacity 0.9s var(--ease-out) ${i * 150 + 300}ms, transform 0.6s var(--ease-out) ${i * 150 + 300}ms`,
               }}
             >
               <span

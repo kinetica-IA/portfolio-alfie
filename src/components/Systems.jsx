@@ -65,7 +65,7 @@ function SysItem({ item, nDays, nPairs, staggerIdx }) {
       className="sys-item"
       style={{
         opacity: revealed ? 1 : 0,
-        transition: `opacity 0.7s var(--ease-out) ${staggerIdx * 200}ms`,
+        transition: `opacity 1s var(--ease-out) ${staggerIdx * 300}ms`,
       }}
     >
       <span className="sys-num" style={{
@@ -78,7 +78,7 @@ function SysItem({ item, nDays, nPairs, staggerIdx }) {
       <div className="sys-content" style={{
         transform: revealed ? 'translateX(0)' : 'translateX(20px)',
         opacity: revealed ? 1 : 0,
-        transition: `transform 0.7s var(--ease-out) ${staggerIdx * 200 + 150}ms, opacity 0.7s var(--ease-out) ${staggerIdx * 200 + 150}ms`,
+        transition: `transform 1s var(--ease-out) ${staggerIdx * 200 + 150}ms, opacity 1s var(--ease-out) ${staggerIdx * 200 + 150}ms`,
       }}>
         <span className={`sys-badge ${item.badgeClass}`}>{item.badge}</span>
         <h3 className="sys-item-title">{item.title}</h3>

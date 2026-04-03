@@ -3,10 +3,10 @@ import { useRef, useState, useMemo, useEffect } from 'react'
 /**
  * useWordStagger — word-by-word reveal animation triggered by scroll
  *
- * Returns { ref, words } where words is an array of { text, style } objects.
- * Attach ref to the container element. Render each word in a <span>.
+ * Each word fades up individually with generous stagger delay.
+ * The animation is slow enough to read as the words "build" the sentence.
  */
-export function useWordStagger(text, { staggerMs = 100, threshold = 0.25 } = {}) {
+export function useWordStagger(text, { staggerMs = 140, threshold = 0.25 } = {}) {
   const ref = useRef(null)
   const [revealed, setRevealed] = useState(false)
 
@@ -29,8 +29,9 @@ export function useWordStagger(text, { staggerMs = 100, threshold = 0.25 } = {})
       display: 'inline-block',
       marginRight: '0.3em',
       opacity: revealed ? 1 : 0,
-      transform: revealed ? 'translateY(0)' : 'translateY(12px)',
-      transition: `opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)`,
+      transform: revealed ? 'translateY(0)' : 'translateY(18px)',
+      filter: revealed ? 'blur(0px)' : 'blur(4px)',
+      transition: `opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out), filter 0.9s var(--ease-out)`,
       transitionDelay: revealed ? `${i * staggerMs}ms` : '0ms',
     },
   }))

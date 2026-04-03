@@ -62,8 +62,8 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Your body writes a health report every night.<br />
-          We're teaching AI to read it.
+          Every night, your heart tells a story about your health.<br />
+          We're teaching AI to listen.
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
