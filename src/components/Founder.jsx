@@ -245,6 +245,14 @@ export default function Founder() {
           }
           .tl-line { display: none; }
         }
+        @media (max-width: 420px) {
+          .tl-item {
+            flex: 0 0 100%;
+          }
+          .founder-badges {
+            flex-direction: column;
+          }
+        }
       `}</style>
     </section>
   )

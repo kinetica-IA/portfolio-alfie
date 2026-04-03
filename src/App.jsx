@@ -57,7 +57,10 @@ export default function App() {
           padding: 0 48px;
         }
         @media (max-width: 768px) {
-          .content-layer { padding: 0 24px; }
+          .content-layer { padding: 0 20px; }
+        }
+        @media (max-width: 420px) {
+          .content-layer { padding: 0 16px; }
         }
       `}</style>
     </>
