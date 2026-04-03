@@ -1,49 +1,13 @@
 import { useRef, useEffect } from 'react'
 
 /*
- * ClinicalField — Living signal visualization
+ * ClinicalField — Game of Life on grid dots
  *
- * Four layers:
- * 1. Base field lines — horizontal flowing lines with simplex noise, cached offscreen
- * 2. Ambient signal pulses — traveling wavefronts along lines
- * 3. Cursor interaction — proximity brightening, magnetic pull, section-colored glow
- * 4. Scroll-responsive colors — background shifts hue per section
+ * A cellular automaton (Conway's Game of Life) runs on the same grid dot
+ * layout as before. Cells propagate top-to-bottom with slow ~800ms generations.
+ * Living cells glow with section-colored palette. Cursor seeds life nearby.
+ * No wavefronts, no waves — just dots breathing in cellular rhythm.
  */
-
-// ── Minimal 2D Simplex Noise ──────────────────────────────────────────
-const F2 = 0.5 * (Math.sqrt(3) - 1)
-const G2 = (3 - Math.sqrt(3)) / 6
-const GRAD = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]
-const PERM = new Uint8Array(512)
-;(function initPerm() {
-  const p = new Uint8Array(256)
-  for (let i = 0; i < 256; i++) p[i] = i
-  for (let i = 255; i > 0; i--) {
-    const j = (i * 16807 + 11) % 256 // deterministic shuffle
-    const t = p[i]; p[i] = p[j]; p[j] = t
-  }
-  for (let i = 0; i < 512; i++) PERM[i] = p[i & 255]
-})()
-
-function noise2D(x, y) {
-  const s = (x + y) * F2
-  const i = Math.floor(x + s), j = Math.floor(y + s)
-  const t = (i + j) * G2
-  const x0 = x - (i - t), y0 = y - (j - t)
-  const i1 = x0 > y0 ? 1 : 0, j1 = x0 > y0 ? 0 : 1
-  const x1 = x0 - i1 + G2, y1 = y0 - j1 + G2
-  const x2 = x0 - 1 + 2 * G2, y2 = y0 - 1 + 2 * G2
-  const ii = i & 255, jj = j & 255
-
-  let n0 = 0, n1 = 0, n2 = 0
-  let t0 = 0.5 - x0 * x0 - y0 * y0
-  if (t0 > 0) { t0 *= t0; const g = GRAD[PERM[ii + PERM[jj]] & 7]; n0 = t0 * t0 * (g[0] * x0 + g[1] * y0) }
-  let t1 = 0.5 - x1 * x1 - y1 * y1
-  if (t1 > 0) { t1 *= t1; const g = GRAD[PERM[ii + i1 + PERM[jj + j1]] & 7]; n1 = t1 * t1 * (g[0] * x1 + g[1] * y1) }
-  let t2 = 0.5 - x2 * x2 - y2 * y2
-  if (t2 > 0) { t2 *= t2; const g = GRAD[PERM[ii + 1 + PERM[jj + 1]] & 7]; n2 = t2 * t2 * (g[0] * x2 + g[1] * y2) }
-  return 70 * (n0 + n1 + n2)
-}
 
 // ── Palette (RGB arrays) ──────────────────────────────────────────────
 const PALETTE = {
@@ -55,32 +19,32 @@ const PALETTE = {
   ice:   [133, 168, 184],
   warm:  [196, 133, 90],
   clay:  [168, 121, 110],
+  sand:  [191, 168, 122],
 }
-const PULSE_COLORS = [PALETTE.teal, PALETTE.green, PALETTE.sea, PALETTE.moss, PALETTE.ice]
+const ALL_COLORS = [PALETTE.teal, PALETTE.green, PALETTE.sea, PALETTE.moss, PALETTE.ice, PALETTE.slate, PALETTE.warm, PALETTE.sand]
 
 // Section color pairs [primary, secondary]
 const SECTION_COLORS = [
   [PALETTE.teal, PALETTE.sea],     // 0 Hero
-  [PALETTE.sea, PALETTE.green],    // 1 ClinicalSignal
+  [PALETTE.sea, PALETTE.moss],     // 1 ClinicalSignal
   [PALETTE.green, PALETTE.warm],   // 2 FlagshipProof
-  [PALETTE.teal, PALETTE.ice],     // 3 Founder
-  [PALETTE.warm, PALETTE.sea],     // 4 Systems
-  [PALETTE.green, PALETTE.teal],   // 5 Published
-  [PALETTE.sea, PALETTE.moss],     // 6 Contact
+  [PALETTE.ice, PALETTE.teal],     // 3 Founder
+  [PALETTE.slate, PALETTE.sea],    // 4 Systems
+  [PALETTE.green, PALETTE.moss],   // 5 Published
+  [PALETTE.sea, PALETTE.sand],     // 6 Contact
 ]
 
-// ── Constants (boosted for visibility on light bg) ───────────────────
-const LINE_SPACING = 55
-const LINE_ALPHA = 0.09             // was 0.06 — more visible
-const NODE_SPACING = 120
-const NODE_IDLE_ALPHA = 0.12        // was 0.08 — actually visible now
-const NODE_IDLE_RADIUS = 1.8        // was 1 — bigger nodes
-const CURSOR_RADIUS = 180
-const WAVEFRONT_WIDTH_MIN = 80
-const WAVEFRONT_WIDTH_MAX = 140     // was 120 — wider sweeps
-const WAVEFRONT_SPEED = 90          // was 100 — slightly slower for perception
-const WAVEFRONT_ALPHA = 0.22        // was 0.15 — actually visible now
-const MAX_WAVEFRONTS = 3
+// ── Grid constants ───────────────────────────────────────────────────
+const COL_SPACING = 55
+const ROW_SPACING = 55
+const DOT_RADIUS = 1.5
+const DOT_IDLE_ALPHA = 0.10
+const ALIVE_ALPHA = 0.28
+const DYING_DURATION = 2.0  // seconds to fade from alive to idle
+const GEN_INTERVAL = 900    // ms between generations — slow breathing
+const CURSOR_RADIUS = 160
+const SEED_CHANCE = 0.04    // initial alive probability — sparse
+const CURSOR_SEED_CHANCE = 0.3 // chance to seed near cursor
 
 export default function ClinicalField() {
   const canvasRef = useRef(null)
@@ -92,16 +56,14 @@ export default function ClinicalField() {
     const ctx = canvas.getContext('2d')
 
     let W, H, dpr
-    let lines = []       // Array of { points: [{x,y}], nodes: [{x,y}] }
-    let gridCache = null
+    let cols, rows
+    let grid = []        // 2D: grid[row][col] = { alive, age, dyingTimer, color }
     const mouse = { x: -1, y: -1 }
     let sectionOffsets = []
     let currentSection = 0
     let currentColors = SECTION_COLORS[0]
-    let wavefronts = []
-    let nextWaveTime = 2000
+    let lastGenTime = 0
 
-    // ── Resize & build geometry ───────────────────────────────────
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       W = window.innerWidth
@@ -112,57 +74,29 @@ export default function ClinicalField() {
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      // Build line geometry
-      const numLines = Math.ceil(H / LINE_SPACING) + 2
-      lines = []
-      for (let li = 0; li < numLines; li++) {
-        const baseY = li * LINE_SPACING
-        const points = []
-        const nodes = []
-        for (let x = 0; x <= W; x += 5) {
-          const yOff = noise2D(x * 0.005, li * 7.3) * 3
-          points.push({ x, y: baseY + yOff })
-        }
-        // Nodes every ~NODE_SPACING px along line
-        for (let x = 60; x <= W - 60; x += NODE_SPACING) {
-          const yOff = noise2D(x * 0.005, li * 7.3) * 3
-          nodes.push({ x, y: baseY + yOff, alpha: NODE_IDLE_ALPHA, targetAlpha: 0, fadeTime: 0 })
-        }
-        lines.push({ baseY, points, nodes })
-      }
+      cols = Math.ceil(W / COL_SPACING) + 1
+      rows = Math.ceil(H / ROW_SPACING) + 1
 
-      // Cache static layer to offscreen canvas
-      const off = document.createElement('canvas')
-      off.width = canvas.width
-      off.height = canvas.height
-      const oc = off.getContext('2d')
-      oc.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      oc.strokeStyle = `rgba(144, 167, 165, ${LINE_ALPHA})`
-      oc.lineWidth = 0.5
-      for (const line of lines) {
-        oc.beginPath()
-        oc.moveTo(line.points[0].x, line.points[0].y)
-        for (let i = 1; i < line.points.length; i++) {
-          oc.lineTo(line.points[i].x, line.points[i].y)
+      // Initialize grid
+      grid = []
+      for (let r = 0; r < rows; r++) {
+        const row = []
+        for (let c = 0; c < cols; c++) {
+          const alive = Math.random() < SEED_CHANCE
+          const color = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)]
+          row.push({
+            alive,
+            age: alive ? 0 : -1,
+            dyingTimer: 0,
+            color,
+          })
         }
-        oc.stroke()
+        grid.push(row)
       }
-      // Draw idle nodes (bigger, more visible)
-      oc.fillStyle = `rgba(144, 167, 165, ${NODE_IDLE_ALPHA})`
-      for (const line of lines) {
-        for (const n of line.nodes) {
-          oc.beginPath()
-          oc.arc(n.x, n.y, NODE_IDLE_RADIUS, 0, Math.PI * 2)
-          oc.fill()
-        }
-      }
-      gridCache = off
 
       cacheSectionOffsets()
     }
 
-    // ── Section offset caching ────────────────────────────────────
     function cacheSectionOffsets() {
       const sections = document.querySelectorAll('.section')
       sectionOffsets = Array.from(sections).map(el => el.offsetTop)
@@ -180,21 +114,89 @@ export default function ClinicalField() {
       }
     }
 
-    // ── Wavefronts ────────────────────────────────────────────────
-    function spawnWavefront() {
-      if (wavefronts.length >= MAX_WAVEFRONTS) return
-      const li = Math.floor(Math.random() * lines.length)
-      const dir = Math.random() > 0.5 ? 1 : -1
-      const colorArr = [currentColors[0], currentColors[1], ...PULSE_COLORS]
-      const color = colorArr[Math.floor(Math.random() * colorArr.length)]
-      wavefronts.push({
-        lineIdx: li,
-        x: dir > 0 ? -WAVEFRONT_WIDTH_MAX : W + WAVEFRONT_WIDTH_MAX,
-        dir,
-        speed: WAVEFRONT_SPEED + Math.random() * 40,
-        width: WAVEFRONT_WIDTH_MIN + Math.random() * (WAVEFRONT_WIDTH_MAX - WAVEFRONT_WIDTH_MIN),
-        color,
-      })
+    // ── Game of Life step ─────────────────────────────────────────
+    function countNeighbors(r, c) {
+      let count = 0
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue
+          const nr = r + dr
+          const nc = c + dc
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+            if (grid[nr][nc].alive) count++
+          }
+        }
+      }
+      return count
+    }
+
+    function stepGeneration() {
+      const newGrid = []
+      const sectionPrimary = currentColors[0]
+      const sectionSecondary = currentColors[1]
+
+      for (let r = 0; r < rows; r++) {
+        const newRow = []
+        for (let c = 0; c < cols; c++) {
+          const cell = grid[r][c]
+          const n = countNeighbors(r, c)
+          let newAlive = false
+
+          if (cell.alive) {
+            // Standard: survive with 2 or 3
+            newAlive = (n === 2 || n === 3)
+          } else {
+            // Birth with exactly 3
+            newAlive = (n === 3)
+          }
+
+          if (newAlive && !cell.alive) {
+            // Newly born — use section color
+            const color = Math.random() > 0.5 ? sectionPrimary : sectionSecondary
+            newRow.push({ alive: true, age: 0, dyingTimer: 0, color })
+          } else if (newAlive && cell.alive) {
+            // Survived
+            newRow.push({ alive: true, age: cell.age + 1, dyingTimer: 0, color: cell.color })
+          } else if (!newAlive && cell.alive) {
+            // Just died — start dying fade
+            newRow.push({ alive: false, age: -1, dyingTimer: DYING_DURATION, color: cell.color })
+          } else {
+            // Still dead
+            newRow.push({
+              alive: false,
+              age: -1,
+              dyingTimer: Math.max(0, cell.dyingTimer),
+              color: cell.color,
+            })
+          }
+        }
+        newGrid.push(newRow)
+      }
+      grid = newGrid
+    }
+
+    // ── Seed cells near cursor ────────────────────────────────────
+    function seedNearCursor() {
+      if (mouse.x < 0 || mouse.y < 0) return
+      const cr = Math.round(mouse.y / ROW_SPACING)
+      const cc = Math.round(mouse.x / COL_SPACING)
+      const range = 2
+      for (let dr = -range; dr <= range; dr++) {
+        for (let dc = -range; dc <= range; dc++) {
+          const r = cr + dr
+          const c = cc + dc
+          if (r >= 0 && r < rows && c >= 0 && c < cols) {
+            if (!grid[r][c].alive && Math.random() < CURSOR_SEED_CHANCE) {
+              grid[r][c] = {
+                alive: true,
+                age: 0,
+                dyingTimer: 0,
+                color: currentColors[0],
+              }
+            }
+          }
+        }
+      }
     }
 
     // ── Mouse tracking ────────────────────────────────────────────
@@ -210,182 +212,88 @@ export default function ClinicalField() {
 
     // ── Main render loop ──────────────────────────────────────────
     let prevTime = performance.now()
+    lastGenTime = prevTime
 
     function draw(now) {
       const dt = (now - prevTime) / 1000
       prevTime = now
 
-      if (!gridCache) { raf.current = requestAnimationFrame(draw); return }
-
       // Throttled section check
-      if (now - lastSectionCheck > 100) {
+      if (now - lastSectionCheck > 200) {
         updateSection()
         lastSectionCheck = now
       }
 
-      // Spawn wavefronts
-      nextWaveTime -= dt * 1000
-      if (nextWaveTime <= 0) {
-        spawnWavefront()
-        nextWaveTime = 3000 + Math.random() * 2000
+      // Game of Life generation step
+      if (now - lastGenTime >= GEN_INTERVAL) {
+        seedNearCursor()
+        stepGeneration()
+        lastGenTime = now
       }
 
-      // Update wavefront positions
-      for (const wf of wavefronts) {
-        wf.x += wf.dir * wf.speed * dt
+      // Update dying timers
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (grid[r][c].dyingTimer > 0) {
+            grid[r][c].dyingTimer = Math.max(0, grid[r][c].dyingTimer - dt)
+          }
+        }
       }
-      // Remove offscreen wavefronts
-      wavefronts = wavefronts.filter(wf =>
-        wf.dir > 0 ? wf.x - wf.width < W : wf.x + wf.width > 0
-      )
 
       // ── Render ──────────────────────────────────────────────
       ctx.clearRect(0, 0, W, H)
-      ctx.drawImage(gridCache, 0, 0, W, H)
 
       const mx = mouse.x, my = mouse.y
       const cursorOn = mx >= 0 && my >= 0
-      const r2 = CURSOR_RADIUS * CURSOR_RADIUS
-      let closestNode = null, closestDist = Infinity
+      const cr2 = CURSOR_RADIUS * CURSOR_RADIUS
 
-      // Draw wavefronts & update nodes
-      for (let li = 0; li < lines.length; li++) {
-        const line = lines[li]
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * COL_SPACING
+          const y = r * ROW_SPACING
+          const cell = grid[r][c]
+          const clr = cell.color
 
-        // Check if this line has an active wavefront
-        for (const wf of wavefronts) {
-          if (wf.lineIdx !== li) continue
-          const wfStart = wf.x - wf.width / 2
-          const wfEnd = wf.x + wf.width / 2
-          const c = wf.color
+          let alpha = DOT_IDLE_ALPHA
+          let radius = DOT_RADIUS
 
-          // Draw wavefront glow (soft wide stroke behind)
-          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${WAVEFRONT_ALPHA * 0.3})`
-          ctx.lineWidth = 4
-          ctx.beginPath()
-          let startedGlow = false
-          for (const pt of line.points) {
-            if (pt.x >= wfStart && pt.x <= wfEnd) {
-              if (!startedGlow) { ctx.moveTo(pt.x, pt.y); startedGlow = true }
-              else ctx.lineTo(pt.x, pt.y)
+          if (cell.alive) {
+            // Alive: brighter, slightly larger
+            alpha = ALIVE_ALPHA
+            radius = DOT_RADIUS + 0.8
+          } else if (cell.dyingTimer > 0) {
+            // Dying: fade from alive alpha to idle
+            const t = cell.dyingTimer / DYING_DURATION
+            alpha = DOT_IDLE_ALPHA + (ALIVE_ALPHA - DOT_IDLE_ALPHA) * t
+            radius = DOT_RADIUS + 0.8 * t
+          }
+
+          // Cursor proximity boost
+          if (cursorOn) {
+            const dx = x - mx, dy = y - my
+            const d2 = dx * dx + dy * dy
+            if (d2 < cr2) {
+              const p = 1 - d2 / cr2
+              alpha = Math.min(0.45, alpha + p * 0.2)
+              radius = Math.max(radius, DOT_RADIUS + 1.2 * p)
             }
           }
-          ctx.stroke()
-          // Draw bright wavefront segment
-          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${WAVEFRONT_ALPHA})`
-          ctx.lineWidth = 1.2
-          ctx.beginPath()
-          let started = false
-          for (const pt of line.points) {
-            if (pt.x >= wfStart && pt.x <= wfEnd) {
-              if (!started) { ctx.moveTo(pt.x, pt.y); started = true }
-              else ctx.lineTo(pt.x, pt.y)
-            }
-          }
-          ctx.stroke()
 
-          // Brighten nodes near wavefront
-          for (const node of line.nodes) {
-            if (node.x >= wfStart - 20 && node.x <= wfEnd + 20) {
-              node.targetAlpha = 0.30
-              node.fadeTime = 1.5
-              node._color = c
-            }
-          }
-        }
-
-        // Update node fade
-        for (const node of line.nodes) {
-          if (node.fadeTime > 0) {
-            node.fadeTime -= dt
-            if (node.fadeTime <= 0) {
-              node.targetAlpha = 0
-            }
-          }
-          // Lerp alpha
-          if (node.targetAlpha > 0 && node.alpha < node.targetAlpha) {
-            node.alpha = Math.min(node.alpha + dt * 0.8, node.targetAlpha)
-          } else if (node.alpha > NODE_IDLE_ALPHA) {
-            node.alpha = Math.max(node.alpha - dt * 0.15, NODE_IDLE_ALPHA)
-          }
-        }
-
-        // Cursor interaction
-        if (cursorOn) {
-          const yDist = Math.abs(line.baseY - my)
-          if (yDist < CURSOR_RADIUS + 10) {
-            // Brighten line segments near cursor
-            ctx.strokeStyle = `rgba(144, 167, 165, 0.18)`
-            ctx.lineWidth = 0.5
+          // Draw glow for alive cells
+          if (cell.alive || cell.dyingTimer > 0.5) {
+            const glowAlpha = (cell.alive ? ALIVE_ALPHA : cell.dyingTimer / DYING_DURATION * ALIVE_ALPHA) * 0.3
+            ctx.fillStyle = `rgba(${clr[0]},${clr[1]},${clr[2]}, ${glowAlpha})`
             ctx.beginPath()
-            let drawing = false
-            for (const pt of line.points) {
-              const dx = pt.x - mx, dy = pt.y - my
-              const d2 = dx * dx + dy * dy
-              if (d2 < r2) {
-                if (!drawing) { ctx.moveTo(pt.x, pt.y); drawing = true }
-                else ctx.lineTo(pt.x, pt.y)
-              } else if (drawing) {
-                drawing = false
-              }
-            }
-            ctx.stroke()
-
-            // Brighten & attract nodes
-            for (const node of line.nodes) {
-              const dx = node.x - mx, dy = node.y - my
-              const d2 = dx * dx + dy * dy
-              if (d2 < r2) {
-                const p = 1 - d2 / r2
-                const cursorAlpha = NODE_IDLE_ALPHA + p * p * (0.35 - NODE_IDLE_ALPHA)
-                if (cursorAlpha > node.alpha) node.alpha = cursorAlpha
-
-                if (d2 < closestDist) {
-                  closestDist = d2
-                  closestNode = node
-                }
-              }
-            }
+            ctx.arc(x, y, radius + 3, 0, Math.PI * 2)
+            ctx.fill()
           }
-        }
-      }
 
-      // Draw active nodes (above idle threshold)
-      for (const line of lines) {
-        for (const node of line.nodes) {
-          if (node.alpha <= NODE_IDLE_ALPHA + 0.005) continue
-          const c = node._color || PALETTE.teal
-          // Soft glow
-          ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${node.alpha * 0.35})`
+          // Draw dot
+          ctx.fillStyle = `rgba(${clr[0]},${clr[1]},${clr[2]}, ${alpha})`
           ctx.beginPath()
-          ctx.arc(node.x, node.y, 5, 0, Math.PI * 2)
-          ctx.fill()
-          // Core
-          ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${node.alpha})`
-          ctx.beginPath()
-          ctx.arc(node.x, node.y, 1.5, 0, Math.PI * 2)
+          ctx.arc(x, y, radius, 0, Math.PI * 2)
           ctx.fill()
         }
-      }
-
-      // Closest node to cursor gets section-colored glow — dramatic
-      if (closestNode && cursorOn) {
-        const c = currentColors[0]
-        // Wide soft glow
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.10)`
-        ctx.beginPath()
-        ctx.arc(closestNode.x, closestNode.y, 16, 0, Math.PI * 2)
-        ctx.fill()
-        // Medium glow
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.25)`
-        ctx.beginPath()
-        ctx.arc(closestNode.x, closestNode.y, 8, 0, Math.PI * 2)
-        ctx.fill()
-        // Core
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, 0.55)`
-        ctx.beginPath()
-        ctx.arc(closestNode.x, closestNode.y, 2.5, 0, Math.PI * 2)
-        ctx.fill()
       }
 
       raf.current = requestAnimationFrame(draw)

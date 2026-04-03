@@ -19,9 +19,9 @@ const BADGES = [
 ]
 
 export default function Founder() {
-  const { ref, revealed } = useReveal(0.15)
+  const { ref, revealed } = useReveal(0.25)
   const nameDisplay = useTextDecode('Alfonso Navarro', {
-    duration: 800, delay: 0, loop: false, isActive: revealed,
+    duration: 1200, delay: 0, loop: false, isActive: revealed,
   })
 
   return (
@@ -29,7 +29,7 @@ export default function Founder() {
       <div className="founder-main">
         <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
           <CellSymbol color="var(--teal)" size={22} />
-          FOUNDER
+          THE BUILDER
         </span>
         <h2 className="founder-name">{nameDisplay}</h2>
         <p className="founder-role">
@@ -43,9 +43,9 @@ export default function Founder() {
           Clinical AI Builder
         </p>
         <p className="founder-bio">
-          10+ years of clinical practice including two years of intensive acute care
-          during COVID-19. Post-Lyme patient turned researcher — building predictive
-          models from personal biometric data. Active AI model evaluator for Anthropic.
+          A physicist who became an osteopath, spent two years in COVID-19 acute care, then became
+          a patient himself. Post-Lyme diagnosis turned personal frustration into a research project —
+          building AI that reads the body's signals from a wristwatch. Active AI model evaluator for Anthropic.
         </p>
         <div className="founder-badges">
           {BADGES.map((b, i) => (
@@ -56,7 +56,7 @@ export default function Founder() {
                 borderLeft: `2px solid ${b.borderColor}`,
                 opacity: revealed ? 1 : 0,
                 transform: revealed ? 'translateY(0)' : 'translateY(8px)',
-                transition: `opacity 0.3s var(--ease-out) ${i * 80}ms, transform 0.3s var(--ease-out) ${i * 80}ms`,
+                transition: `opacity 0.5s var(--ease-out) ${i * 150}ms, transform 0.5s var(--ease-out) ${i * 150}ms`,
               }}
             >
               {b.text}
@@ -74,7 +74,7 @@ export default function Founder() {
       <div className="tl-container">
         <div className="tl-line" style={{
           width: revealed ? '100%' : '0%',
-          transition: 'width 1.2s var(--ease-out) 0.2s',
+          transition: 'width 1.5s var(--ease-out) 0.3s',
         }} />
         <div className="tl-items">
           {TIMELINE.map((t, i) => (
@@ -84,7 +84,7 @@ export default function Founder() {
               style={{
                 opacity: revealed ? 1 : 0,
                 transform: revealed ? 'translateY(0)' : 'translateY(10px)',
-                transition: `opacity 0.4s var(--ease-out) ${i * 100 + 200}ms, transform 0.4s var(--ease-out) ${i * 100 + 200}ms`,
+                transition: `opacity 0.6s var(--ease-out) ${i * 150 + 300}ms, transform 0.6s var(--ease-out) ${i * 150 + 300}ms`,
               }}
             >
               <span
@@ -98,11 +98,16 @@ export default function Founder() {
         </div>
       </div>
 
+      <div className="scroll-hook">
+        <span className="scroll-hook-text">See the systems</span>
+        <span className="scroll-hook-arrow">↓</span>
+      </div>
+
       <style>{`
         .founder {
           display: flex;
           flex-direction: column;
-          gap: 48px;
+          gap: 40px;
         }
         .founder .eyebrow {
           display: block;
@@ -120,7 +125,7 @@ export default function Founder() {
           font-family: var(--mono);
           font-size: var(--text-caption);
           color: var(--text-dim);
-          margin-bottom: 28px;
+          margin-bottom: 24px;
           display: flex;
           align-items: center;
           flex-wrap: wrap;
@@ -144,17 +149,17 @@ export default function Founder() {
           color: var(--text-sec);
           line-height: 1.75;
           max-width: 520px;
-          margin-bottom: 28px;
+          margin-bottom: 24px;
         }
         .founder-badges {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin-bottom: 28px;
+          margin-bottom: 24px;
         }
         .founder-badge {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: 12px;
           color: var(--text-dim);
           background: var(--fill-teal);
           border: 1px solid var(--border);
@@ -224,7 +229,7 @@ export default function Founder() {
         }
         .tl-label {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: 12px;
           color: var(--text-dim);
           text-align: center;
           line-height: 1.3;

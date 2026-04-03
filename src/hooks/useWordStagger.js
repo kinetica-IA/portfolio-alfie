@@ -6,7 +6,7 @@ import { useRef, useState, useMemo, useEffect } from 'react'
  * Returns { ref, words } where words is an array of { text, style } objects.
  * Attach ref to the container element. Render each word in a <span>.
  */
-export function useWordStagger(text, { staggerMs = 60, threshold = 0.15 } = {}) {
+export function useWordStagger(text, { staggerMs = 100, threshold = 0.25 } = {}) {
   const ref = useRef(null)
   const [revealed, setRevealed] = useState(false)
 
@@ -30,7 +30,7 @@ export function useWordStagger(text, { staggerMs = 60, threshold = 0.15 } = {}) 
       marginRight: '0.3em',
       opacity: revealed ? 1 : 0,
       transform: revealed ? 'translateY(0)' : 'translateY(12px)',
-      transition: `opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out)`,
+      transition: `opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)`,
       transitionDelay: revealed ? `${i * staggerMs}ms` : '0ms',
     },
   }))

@@ -10,7 +10,7 @@ const CARDS = [
     type: 'REPOSITORY',
     color: 'var(--green)',
     colorRgb: '107,158,122',
-    desc: 'Multi-symptom clinical prediction from wearable HRV data',
+    desc: 'Multi-symptom clinical prediction from wearable HRV data. Open-source, fully reproducible.',
     stats: '5 models · 198 days · AUC 0.84',
     statNums: ['5', '198', '0.84'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
@@ -20,9 +20,9 @@ const CARDS = [
   {
     title: 'Biometric Data Archive',
     type: 'DATASET',
-    color: 'var(--teal)',
-    colorRgb: '144,167,165',
-    desc: '200+ nights of RR interval data, daily symptom diary, processed HRV features',
+    color: 'var(--ice)',
+    colorRgb: '133,168,184',
+    desc: '200+ nights of RR interval data, daily symptom diary, processed HRV features — all public.',
     stats: '3 CSV files · daily updates',
     statNums: ['3'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
@@ -34,7 +34,7 @@ const CARDS = [
     type: 'DOCUMENTATION',
     color: 'var(--warm)',
     colorRgb: '196,133,90',
-    desc: '9-node LangGraph clinical reasoning agent. Full system diagram.',
+    desc: '9-node LangGraph clinical reasoning agent. Full system diagram and design rationale.',
     stats: 'ReAct loop · dual-model',
     statNums: ['9'],
     link: '/io-architecture.html',
@@ -46,7 +46,7 @@ const CARDS = [
     type: 'APPLICATION',
     color: 'var(--sea)',
     colorRgb: '93,138,130',
-    desc: 'Interactive symptom + HRV time series visualization',
+    desc: 'Interactive symptom + HRV time series visualization. See the raw data behind the models.',
     stats: 'live data · daily sync',
     statNums: [],
     link: '/diary.html',
@@ -57,7 +57,7 @@ const CARDS = [
 
 function PubCard({ card, index, revealed }) {
   const titleDisplay = useTextDecode(card.title, {
-    duration: 800, delay: 0, loop: false, isActive: revealed,
+    duration: 1200, delay: 0, loop: false, isActive: revealed,
   })
   const Symbol = CARD_SYMBOLS[card.symbolIdx] || SignalSymbol
 
@@ -71,7 +71,7 @@ function PubCard({ card, index, revealed }) {
         '--card-rgb': card.colorRgb,
         opacity: revealed ? 1 : 0,
         transform: revealed ? 'scale(1)' : 'scale(0.96)',
-        transition: `opacity 0.4s var(--ease-out) ${index * 100}ms, transform 0.4s var(--ease-out) ${index * 100}ms`,
+        transition: `opacity 0.6s var(--ease-out) ${index * 200}ms, transform 0.6s var(--ease-out) ${index * 200}ms`,
       }}
     >
       <div className="pub-card-header">
@@ -91,12 +91,12 @@ function PubCard({ card, index, revealed }) {
 }
 
 export default function Published() {
-  const { ref, revealed } = useReveal(0.15)
+  const { ref, revealed } = useReveal(0.25)
 
   return (
     <section className="section" id="published">
-      <span className="eyebrow" style={{ color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <HelixSymbol color="var(--green)" size={22} />
+      <span className="eyebrow" style={{ color: 'var(--moss)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <HelixSymbol color="var(--moss)" size={22} />
         PUBLISHED
       </span>
       <h2 className="pub-title">Open research, verifiable systems</h2>
@@ -105,6 +105,11 @@ export default function Published() {
         {CARDS.map((card, i) => (
           <PubCard key={card.title} card={card} index={i} revealed={revealed} />
         ))}
+      </div>
+
+      <div className="scroll-hook">
+        <span className="scroll-hook-text">Get in touch</span>
+        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`
@@ -119,7 +124,7 @@ export default function Published() {
         .pub-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 24px;
+          gap: 20px;
         }
         @media (max-width: 640px) {
           .pub-grid { grid-template-columns: 1fr; }
@@ -129,7 +134,7 @@ export default function Published() {
           text-decoration: none;
           padding: 24px;
           border: 1px solid var(--border);
-          transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+          transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
           cursor: pointer;
         }
         .pub-card:hover {
@@ -152,7 +157,7 @@ export default function Published() {
         }
         .pub-badge {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: 12px;
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--card-color);
