@@ -60,7 +60,7 @@ export default function FlagshipProof({ data, loading }) {
   return (
     <section className="section" id="research">
       <span className="eyebrow" style={{ color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <SignalSymbol color="var(--green)" size={22} />
+        <SignalSymbol color="var(--green)" size={44} />
         THE PROOF
       </span>
       <h2 className="fp-title" ref={titleRef}>
