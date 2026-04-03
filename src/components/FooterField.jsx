@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 /**
  * FooterField — Dramatic closing animation
@@ -59,6 +59,95 @@ const COLORS = [
   [107, 138, 109],  // moss
   [196, 133, 90],   // warm (rare accent)
 ]
+
+/* ── Orbital Ring: single thin ring with orbiting dot ── */
+function OrbitalRing() {
+  const [hovered, setHovered] = useState(false)
+  const RING_R = 48
+  const CENTER = 55
+
+  return (
+    <div
+      className="orbital-wrap"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <svg
+        width={110} height={110} viewBox="0 0 110 110"
+        className="orbital-ring"
+        style={{ overflow: 'visible' }}
+      >
+        {/* Main ring — breathing */}
+        <circle cx={CENTER} cy={CENTER} r={RING_R} fill="none"
+          stroke="var(--sea)" strokeWidth="0.6"
+          opacity={hovered ? '0.45' : '0.18'}
+          style={{ transition: 'opacity 0.6s ease' }}
+        >
+          <animate attributeName="r" values={`${RING_R - 1};${RING_R + 1};${RING_R - 1}`}
+            dur="5s" repeatCount="indefinite" />
+          <animate attributeName="opacity"
+            values={hovered ? '0.35;0.55;0.35' : '0.14;0.22;0.14'}
+            dur="5s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Ghost inner ring */}
+        <circle cx={CENTER} cy={CENTER} r={RING_R * 0.45} fill="none"
+          stroke="var(--ice)" strokeWidth="0.3"
+          opacity={hovered ? '0.20' : '0.06'}
+          style={{ transition: 'opacity 0.6s ease' }}
+        >
+          <animate attributeName="r"
+            values={`${RING_R * 0.45 - 0.5};${RING_R * 0.45 + 0.5};${RING_R * 0.45 - 0.5}`}
+            dur="6s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Orbiting dot — travels the ring */}
+        <circle r="2.2" fill="var(--green)"
+          opacity={hovered ? '0.9' : '0.5'}
+          style={{ transition: 'opacity 0.4s ease' }}
+        >
+          <animateMotion
+            dur="12s" repeatCount="indefinite"
+            path={`M ${CENTER + RING_R},${CENTER} A ${RING_R},${RING_R} 0 1,1 ${CENTER + RING_R - 0.01},${CENTER}`}
+          />
+          <animate attributeName="r" values="1.8;2.8;1.8" dur="3s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Trail glow — follows the orbiting dot with larger radius */}
+        <circle r="6" fill="var(--green)"
+          opacity={hovered ? '0.12' : '0.03'}
+          style={{ transition: 'opacity 0.5s ease' }}
+        >
+          <animateMotion
+            dur="12s" repeatCount="indefinite"
+            path={`M ${CENTER + RING_R},${CENTER} A ${RING_R},${RING_R} 0 1,1 ${CENTER + RING_R - 0.01},${CENTER}`}
+          />
+          <animate attributeName="r" values="5;8;5" dur="3s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Second orbiting dot — opposite side, slower, different color */}
+        <circle r="1.5" fill="var(--warm)"
+          opacity={hovered ? '0.7' : '0.3'}
+          style={{ transition: 'opacity 0.4s ease' }}
+        >
+          <animateMotion
+            dur="18s" repeatCount="indefinite"
+            path={`M ${CENTER - RING_R},${CENTER} A ${RING_R},${RING_R} 0 1,1 ${CENTER - RING_R + 0.01},${CENTER}`}
+          />
+          <animate attributeName="r" values="1.2;2;1.2" dur="4s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Center whisper dot */}
+        <circle cx={CENTER} cy={CENTER} r="1" fill="var(--sea)"
+          opacity={hovered ? '0.5' : '0.15'}
+          style={{ transition: 'opacity 0.5s ease' }}
+        >
+          <animate attributeName="r" values="0.8;1.3;0.8" dur="4.5s" repeatCount="indefinite" />
+        </circle>
+      </svg>
+    </div>
+  )
+}
 
 export default function FooterField() {
   const canvasRef = useRef(null)
@@ -235,6 +324,7 @@ export default function FooterField() {
     <footer className="footer-field" ref={containerRef}>
       <canvas ref={canvasRef} className="footer-canvas" aria-hidden="true" />
       <div className="footer-content">
+        <OrbitalRing />
         <span className="footer-brand">KINETICA AI</span>
         <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
         <div className="footer-links">
@@ -271,6 +361,19 @@ export default function FooterField() {
           padding: 60px 24px;
           gap: 16px;
           text-align: center;
+        }
+        .orbital-wrap {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 8px;
+          cursor: default;
+        }
+        .orbital-ring {
+          filter: drop-shadow(0 0 0px transparent);
+          transition: filter 0.6s ease;
+        }
+        .orbital-wrap:hover .orbital-ring {
+          filter: drop-shadow(0 0 12px rgba(93, 138, 130, 0.25));
         }
         .footer-brand {
           font-family: var(--sans);
