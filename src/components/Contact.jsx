@@ -6,7 +6,7 @@ export default function Contact() {
   const { ref: headRef, words: headWords } = useWordStagger(
     "Let's build something that works in clinical reality."
   )
-  const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.15)
+  const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.25)
 
   return (
     <section className="section contact" id="contact">
@@ -23,7 +23,7 @@ export default function Contact() {
 
       <div className="contact-status" ref={ctaRef} style={{
         opacity: ctaRevealed ? 1 : 0,
-        transition: 'opacity 0.4s var(--ease-out) 0.3s',
+        transition: 'opacity 0.6s var(--ease-out) 0.3s',
       }}>
         <span className="status-led" />
         <span className="status-text">Available for projects</span>
@@ -35,7 +35,7 @@ export default function Contact() {
         style={{
           opacity: ctaRevealed ? 1 : 0,
           transform: ctaRevealed ? 'scale(1)' : 'scale(0.95)',
-          transition: 'opacity 0.4s var(--ease-out) 0.35s, transform 0.4s var(--ease-out) 0.35s',
+          transition: 'opacity 0.6s var(--ease-out) 0.4s, transform 0.6s var(--ease-out) 0.4s',
         }}
       >
         Get in touch
@@ -72,7 +72,7 @@ export default function Contact() {
           font-family: var(--mono);
           font-size: var(--text-caption);
           color: var(--text-dim);
-          margin-bottom: 32px;
+          margin-bottom: 28px;
         }
         .contact-status {
           display: flex;
@@ -108,12 +108,12 @@ export default function Contact() {
           padding: 14px 36px;
           text-decoration: none;
           transition: all var(--duration-hover) var(--ease-out);
-          margin-bottom: 32px;
+          margin-bottom: 28px;
         }
         .contact-cta:hover {
           background: var(--green);
           color: white;
-          box-shadow: 0 2px 12px rgba(107,158,122,0.15);
+          box-shadow: 0 2px 16px rgba(107,158,122,0.20);
         }
         .contact-links {
           display: flex;

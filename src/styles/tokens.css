@@ -11,12 +11,12 @@
   --green: #6b9e7a;
   --warm: #c4855a;
 
-  /* Text hierarchy — softer, palette-integrated */
-  --text: #24403c;
-  --text-heading: #1c322f;
-  --text-sec: #4a6560;
-  --text-dim: #7a9690;
-  --text-metric: #1c322f;
+  /* Text hierarchy — green-family, integrated with palette */
+  --text: #2a4a46;
+  --text-heading: #24403c;
+  --text-sec: #3d6058;
+  --text-dim: #6a918a;
+  --text-metric: #24403c;
 
   /* Extended (use sparingly, semantically) */
   --slate: #6a8690;
@@ -34,6 +34,8 @@
   --fill-sea: rgba(93, 138, 130, 0.10);
   --fill-ice: rgba(133, 168, 184, 0.10);
   --fill-clay: rgba(168, 121, 110, 0.10);
+  --fill-sand: rgba(191, 168, 122, 0.10);
+  --fill-moss: rgba(107, 138, 109, 0.10);
   --fill-active: rgba(144, 167, 165, 0.15);
 
   /* Structural */
@@ -42,7 +44,7 @@
   --shadow: rgba(26, 42, 40, 0.06);
 
   /* Typography scale */
-  --text-hero: clamp(3rem, 5vw, 4rem);
+  --text-hero: clamp(3.5rem, 6vw, 4.5rem);
   --text-section: clamp(2rem, 3.5vw, 2.5rem);
   --text-subsection: clamp(1.25rem, 2vw, 1.5rem);
   --text-body-lg: 1.125rem;
@@ -50,19 +52,19 @@
   --text-caption: 0.8125rem;
   --text-eyebrow: 0.75rem;
 
-  /* Spacing scale */
-  --space-section: clamp(80px, 10vh, 120px);
-  --space-subsection: 48px;
-  --space-element: 24px;
-  --space-tight: 12px;
+  /* Spacing scale — tighter, no empty zones */
+  --space-section: clamp(48px, 6vh, 72px);
+  --space-subsection: 32px;
+  --space-element: 20px;
+  --space-tight: 10px;
 
   /* Fonts */
   --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
 
-  /* Motion */
+  /* Motion — slower, more deliberate */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-reveal: 0.8s;
+  --duration-reveal: 1.2s;
   --duration-hover: 0.3s;
 }
 
@@ -106,7 +108,7 @@ img { max-width: 100%; display: block; }
 
 .section { padding: var(--space-section) 0; }
 
-/* ── Scroll reveal ─────────────────────────────────────── */
+/* ── Scroll reveal — slower, more breath ──────────────── */
 .reveal-base {
   opacity: 0;
   transform: translateY(24px);
@@ -126,7 +128,33 @@ img { max-width: 100%; display: block; }
 }
 
 /* ── Section separator — handled by SectionDivider component ── */
-/* .section + .section border removed — using animated dividers */
+
+/* ── Scroll hook hints ────────────────────────────────── */
+.scroll-hook {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 0;
+  opacity: 0.45;
+  transition: opacity 0.4s ease;
+}
+.scroll-hook:hover { opacity: 0.7; }
+.scroll-hook-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+.scroll-hook-arrow {
+  font-size: 14px;
+  color: var(--text-dim);
+  animation: hookBob 2.5s ease-in-out infinite;
+}
+@keyframes hookBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
 
 /* ── Focus visible ─────────────────────────────────────── */
 :focus-visible {

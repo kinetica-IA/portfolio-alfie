@@ -9,7 +9,7 @@ const ITEMS = [
     title: 'ANS-Based Multi-Symptom Prediction',
     sub: 'N=1 Longitudinal · Post-Lyme Fatigue · Consumer Wearable',
     desc: (nDays, nPairs) =>
-      `Five independent predictive models trained on ${nDays} days of nocturnal heart rate data from a Polar Grit X2. Each model selects its own features via forward selection across 13 candidates and 3 lag windows. Validated with leave-one-out cross-validation on ${nPairs} prospective pairs. Confidence intervals via 1000× bootstrap.`,
+      `What started as a personal health crisis became a research project. Five independent models trained on ${nDays} days of nocturnal heart rate data from a €300 wristwatch. Each model selects its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs — real data, real symptoms, real results.`,
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     linkText: 'View on GitHub →',
@@ -21,7 +21,7 @@ const ITEMS = [
     title: 'IO3 · Clinical AI Agent',
     sub: 'LangGraph ReAct Loop · Anthropic Claude · Human-on-Loop',
     desc: () =>
-      'Local-first clinical reasoning agent. 9-node LangGraph graph with Haiku for divergent exploration and Sonnet for clinical synthesis. Human-on-loop architecture as EU AI Act compliance differentiator. ALMA ethical framework for clinical safety boundaries.',
+      'A clinical reasoning agent that thinks step by step and always asks a human before acting. Built on LangGraph with Claude for nuanced clinical synthesis. Designed for EU AI Act compliance from day one — because clinical AI should earn trust, not assume it.',
     stack: 'LangGraph · Anthropic Claude · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
     linkText: 'View architecture →',
@@ -33,19 +33,19 @@ const ITEMS = [
     title: 'Longitudinal Biometric Pipeline',
     sub: 'Polar API · Automated ETL · 200+ Days',
     desc: () =>
-      'Fully automated nightly data extraction from consumer wearable. RR intervals processed into 13 HRV feature families across 3 lag windows. CSV artifacts + GitHub Actions CI.',
+      'Every night, the pipeline wakes up and pulls fresh data from a wristwatch API. Raw heart intervals become 13 HRV features across 3 time windows — fully automated, fully open. No manual steps, no data cleaning by hand.',
     stack: 'Python · Polar AccessLink API · GitHub Actions · CSV',
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     linkText: 'View data pipeline →',
     external: true,
   },
   {
-    num: '04', color: 'var(--ice)',
-    badge: 'FRAMEWORK · INTERNAL', badgeClass: 'sys-badge--ice',
+    num: '04', color: 'var(--slate)',
+    badge: 'FRAMEWORK · INTERNAL', badgeClass: 'sys-badge--slate',
     title: 'ALMA Ethical Framework',
     sub: 'EU AI Act · Clinical Safety Boundaries · Human-on-Loop',
     desc: () =>
-      'Ethical decision framework for clinical AI deployment. Defines safety boundaries, escalation triggers, and human override protocols. Designed for EU AI Act compliance from day one.',
+      'The guardrails that keep clinical AI safe. Defines when the system must stop and ask a human, when it must escalate, and when it must simply say "I don\'t know." Built for regulation, designed for trust.',
     stack: 'Policy design · EU AI Act · Clinical ethics',
     link: null,
     linkText: null,
@@ -54,9 +54,9 @@ const ITEMS = [
 ]
 
 function SysItem({ item, nDays, nPairs, staggerIdx }) {
-  const { ref, revealed } = useReveal(0.15)
+  const { ref, revealed } = useReveal(0.25)
   const numDisplay = useTextDecode(item.num, {
-    duration: 400, delay: 0, loop: false, isActive: revealed,
+    duration: 600, delay: 0, loop: false, isActive: revealed,
   })
 
   return (
@@ -65,20 +65,20 @@ function SysItem({ item, nDays, nPairs, staggerIdx }) {
       className="sys-item"
       style={{
         opacity: revealed ? 1 : 0,
-        transition: `opacity 0.5s var(--ease-out) ${staggerIdx * 150}ms`,
+        transition: `opacity 0.7s var(--ease-out) ${staggerIdx * 200}ms`,
       }}
     >
       <span className="sys-num" style={{
         color: item.color,
         opacity: revealed ? 0.6 : 0,
-        transition: 'opacity 0.4s var(--ease-out)',
+        transition: 'opacity 0.6s var(--ease-out)',
       }}>
         {numDisplay}
       </span>
       <div className="sys-content" style={{
         transform: revealed ? 'translateX(0)' : 'translateX(20px)',
         opacity: revealed ? 1 : 0,
-        transition: `transform 0.5s var(--ease-out) ${staggerIdx * 150 + 100}ms, opacity 0.5s var(--ease-out) ${staggerIdx * 150 + 100}ms`,
+        transition: `transform 0.7s var(--ease-out) ${staggerIdx * 200 + 150}ms, opacity 0.7s var(--ease-out) ${staggerIdx * 200 + 150}ms`,
       }}>
         <span className={`sys-badge ${item.badgeClass}`}>{item.badge}</span>
         <h3 className="sys-item-title">{item.title}</h3>
@@ -103,7 +103,7 @@ function SysDivider({ revealed, delay }) {
   return (
     <hr className="sys-divider" style={{
       width: revealed ? '100%' : '0%',
-      transition: `width 0.4s var(--ease-out) ${delay}ms`,
+      transition: `width 0.6s var(--ease-out) ${delay}ms`,
     }} />
   )
 }
@@ -115,18 +115,23 @@ export default function Systems({ data }) {
 
   return (
     <section className="section" id="systems" ref={sectionRef}>
-      <span className="eyebrow" style={{ color: 'var(--warm)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-        <NetworkSymbol color="var(--warm)" size={22} />
-        SYSTEMS
+      <span className="eyebrow" style={{ color: 'var(--slate)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <NetworkSymbol color="var(--slate)" size={22} />
+        HOW IT WORKS
       </span>
-      <h2 className="sys-title">From heartbeat to prediction</h2>
+      <h2 className="sys-title">From heartbeat to insight</h2>
 
       {ITEMS.map((item, i) => (
         <div key={item.num}>
-          {i > 0 && <SysDivider revealed={sectionRevealed} delay={i * 150} />}
+          {i > 0 && <SysDivider revealed={sectionRevealed} delay={i * 200} />}
           <SysItem item={item} nDays={nDays} nPairs={nPairs} staggerIdx={i} />
         </div>
       ))}
+
+      <div className="scroll-hook">
+        <span className="scroll-hook-text">See what's published</span>
+        <span className="scroll-hook-arrow">↓</span>
+      </div>
 
       <style>{`
         .sys-title {
@@ -168,7 +173,7 @@ export default function Systems({ data }) {
         }
         .sys-badge {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: 12px;
           letter-spacing: 0.06em;
           text-transform: uppercase;
           display: inline-block;
@@ -179,6 +184,7 @@ export default function Systems({ data }) {
         .sys-badge--warm { color: var(--warm); background: rgba(196,133,90,0.10); }
         .sys-badge--sea { color: var(--sea); background: rgba(93,138,130,0.10); }
         .sys-badge--ice { color: var(--ice); background: rgba(133,168,184,0.10); }
+        .sys-badge--slate { color: var(--slate); background: rgba(106,134,144,0.10); }
         .sys-item-title {
           font-family: var(--sans);
           font-size: var(--text-subsection);
@@ -216,8 +222,8 @@ export default function Systems({ data }) {
         .sys-divider {
           border: none;
           border-top: 1px solid var(--border);
-          margin: 44px 0;
-          transition: width 0.4s var(--ease-out);
+          margin: 36px 0;
+          transition: width 0.6s var(--ease-out);
         }
       `}</style>
     </section>

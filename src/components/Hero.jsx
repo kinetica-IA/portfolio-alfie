@@ -2,25 +2,25 @@ import { useState, useEffect, useRef } from 'react'
 import { useTextDecode } from '../hooks/useTextDecode'
 
 const SUB_STRINGS = [
-  'autonomic signal processing',
-  'multi-symptom prediction',
-  'wearable-first architecture',
+  'wearable health intelligence',
+  'clinical prediction from sleep data',
+  'open-source · patient-driven',
 ]
 
 export default function Hero() {
   const brand = useTextDecode('KINETICA AI', {
-    duration: 1400, delay: 400, loop: false, isActive: true,
+    duration: 1800, delay: 500, loop: false, isActive: true,
   })
 
-  // Boot sequence: 0=brand decoding, 1=tagline, 2=sub-tagline, 3=ctas
+  // Boot sequence: slower, more deliberate
   const [bootStep, setBootStep] = useState(0)
   const bootTimers = useRef([])
 
   useEffect(() => {
     bootTimers.current = [
-      setTimeout(() => setBootStep(1), 1800),
-      setTimeout(() => setBootStep(2), 2100),
-      setTimeout(() => setBootStep(3), 2300),
+      setTimeout(() => setBootStep(1), 2200),
+      setTimeout(() => setBootStep(2), 2800),
+      setTimeout(() => setBootStep(3), 3400),
     ]
     return () => bootTimers.current.forEach(clearTimeout)
   }, [])
@@ -35,14 +35,14 @@ export default function Hero() {
       subTimer.current = setTimeout(() => {
         setSubIndex(i => (i + 1) % SUB_STRINGS.length)
         cycle()
-      }, 5000)
+      }, 6000)
     }
     cycle()
     return () => clearTimeout(subTimer.current)
   }, [bootStep])
 
   const subText = useTextDecode(SUB_STRINGS[subIndex], {
-    duration: 800, delay: 0, loop: false, isActive: bootStep >= 2,
+    duration: 1200, delay: 0, loop: false, isActive: bootStep >= 2,
   })
 
   const [scrolled, setScrolled] = useState(false)
@@ -60,13 +60,14 @@ export default function Hero() {
         <p className="hero-tagline" style={{
           opacity: bootStep >= 1 ? 1 : 0,
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
-          transition: 'opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out)',
+          transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Clinical AI systems built where data meets the patient.
+          Your body writes a health report every night.<br />
+          We're teaching AI to read it.
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
-          transition: 'opacity 0.4s var(--ease-out)',
+          transition: 'opacity 0.6s var(--ease-out)',
         }}>
           {subText}
         </p>
@@ -74,10 +75,10 @@ export default function Hero() {
       <div className="hero-cta" style={{
         opacity: bootStep >= 3 ? 1 : 0,
         transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(8px)',
-        transition: 'opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out)',
+        transition: 'opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)',
       }}>
-        <a href="#research" className="hero-btn hero-btn--primary">Explore the research</a>
-        <a href="#founder" className="hero-btn hero-btn--secondary">About the founder</a>
+        <a href="#research" className="hero-btn hero-btn--primary">See the research</a>
+        <a href="#founder" className="hero-btn hero-btn--secondary">Meet the builder</a>
       </div>
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
         <span className="hero-scroll-line" />
@@ -100,19 +101,19 @@ export default function Hero() {
         .hero-brand {
           font-family: var(--sans);
           font-size: var(--text-hero);
-          font-weight: 300;
-          letter-spacing: 0.25em;
+          font-weight: 500;
+          letter-spacing: 0.18em;
           color: var(--text-heading);
           margin-bottom: 0;
           white-space: pre;
-          text-shadow: 0 1px 2px rgba(36, 64, 60, 0.04);
+          text-shadow: 0 1px 3px rgba(36, 64, 60, 0.06);
         }
         .hero-rule {
-          width: 40px;
-          height: 1px;
-          background: var(--teal);
+          width: 48px;
+          height: 2px;
+          background: linear-gradient(90deg, var(--teal), var(--sea));
           margin: 28px auto;
-          opacity: 0.5;
+          opacity: 0.6;
         }
         .hero-tagline {
           font-family: var(--sans);
@@ -126,7 +127,7 @@ export default function Hero() {
         .hero-sub {
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
-          color: var(--text-dim);
+          color: var(--ice);
           letter-spacing: 0.06em;
           margin: 20px auto 0;
           min-height: 1.4em;
