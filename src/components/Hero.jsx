@@ -7,110 +7,188 @@ const SUB_STRINGS = [
   'open-source · patient-driven',
 ]
 
-/* ── Constellation: ring of colored dots that breathe in sequence ── */
-const CONSTELLATION_DOTS = [
-  { angle: 0,   color: 'var(--teal)' },
-  { angle: 45,  color: 'var(--sea)' },
-  { angle: 90,  color: 'var(--green)' },
-  { angle: 135, color: 'var(--ice)' },
-  { angle: 180, color: 'var(--moss)' },
-  { angle: 225, color: 'var(--warm)' },
-  { angle: 270, color: 'var(--sand)' },
-  { angle: 315, color: 'var(--slate)' },
+/* ── Möbius Pulse: a dot bifurcates and traces a Möbius band ── */
+const MOEBIUS_PALETTE = [
+  [144, 167, 165], // teal
+  [93, 138, 130],  // sea
+  [107, 158, 122], // green
+  [133, 168, 184], // ice
+  [107, 138, 109], // moss
+  [196, 133, 90],  // warm
+  [174, 156, 120], // sand
 ]
 
-function Constellation() {
-  const [hovered, setHovered] = useState(false)
-  const RADIUS = 52 // orbit radius in SVG units
-  const CENTER = 60  // SVG center
+function MoebiusPulse() {
+  const canvasRef = useRef(null)
+  const hovRef = useRef(false)
+  const paramsRef = useRef(null)
+
+  // Random params — unique each page load
+  if (!paramsRef.current) {
+    const c = MOEBIUS_PALETTE[Math.floor(Math.random() * MOEBIUS_PALETTE.length)]
+    const c2Idx = (MOEBIUS_PALETTE.indexOf(c) + 1 + Math.floor(Math.random() * (MOEBIUS_PALETTE.length - 1))) % MOEBIUS_PALETTE.length
+    paramsRef.current = {
+      color: c,
+      color2: MOEBIUS_PALETTE[c2Idx],
+      rotation: Math.random() * Math.PI * 2,
+      scale: 0.92 + Math.random() * 0.16,
+      tilt: 0.32 + Math.random() * 0.28,
+      stripW: 0.14 + Math.random() * 0.08,
+      driftSpeed: 0.06 + Math.random() * 0.04,
+    }
+  }
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const p = paramsRef.current
+
+    const SIZE = 160
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = SIZE * dpr
+    canvas.height = SIZE * dpr
+    canvas.style.width = SIZE + 'px'
+    canvas.style.height = SIZE + 'px'
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    const cx = SIZE / 2, cy = SIZE / 2
+    const R = 38 * p.scale
+    const W = R * p.stripW
+    const TILT = p.tilt
+    const STEPS = 240
+
+    function edge(u, sign, breathe, drift) {
+      const hu = u / 2
+      const rr = R * breathe + sign * W * Math.cos(hu)
+      let x = rr * Math.cos(u + drift)
+      let y = rr * Math.sin(u + drift) * Math.cos(TILT) + sign * W * Math.sin(hu) * Math.sin(TILT)
+      const cos = Math.cos(p.rotation), sin = Math.sin(p.rotation)
+      return [cx + x * cos - y * sin, cy + x * sin + y * cos]
+    }
+
+    let t0 = null, raf
+
+    function draw(ts) {
+      if (!t0) t0 = ts
+      const sec = (ts - t0) / 1000
+      const hov = hovRef.current
+
+      ctx.clearRect(0, 0, SIZE, SIZE)
+
+      const c = p.color
+      const c2 = p.color2
+      const breathe = 1 + Math.sin(sec * 0.7) * 0.06
+      const drift = sec * p.driftSpeed
+
+      // ── Phase: dot → bifurcation → strip ──
+      const P1 = 1.2          // solo dot
+      const P2 = P1 + 3.2     // construction
+      const buildProg = sec < P1 ? 0
+        : sec < P2 ? Math.pow((sec - P1) / (P2 - P1), 0.7)
+        : 1
+
+      const baseAlpha = hov ? 0.38 : 0.18
+      const lineW = hov ? 0.7 : 0.45
+
+      // ── Draw strip surface (cross-hatching between edges) ──
+      if (buildProg > 0.3) {
+        const surfAlpha = baseAlpha * 0.12 * breathe * Math.min(1, (buildProg - 0.3) / 0.4)
+        const maxI = Math.floor(buildProg * STEPS)
+        for (let i = 0; i < maxI; i += 4) {
+          const u = (i / STEPS) * Math.PI * 2
+          const [x1, y1] = edge(u, 1, breathe, drift)
+          const [x2, y2] = edge(u, -1, breathe, drift)
+          ctx.beginPath()
+          ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${surfAlpha})`
+          ctx.lineWidth = 0.25
+          ctx.moveTo(x1, y1)
+          ctx.lineTo(x2, y2)
+          ctx.stroke()
+        }
+      }
+
+      // ── Draw two edge curves ──
+      if (buildProg > 0) {
+        const maxU = buildProg * Math.PI * 2
+        for (const sign of [1, -1]) {
+          const ec = sign === 1 ? c : c2
+          ctx.beginPath()
+          ctx.strokeStyle = `rgba(${ec[0]},${ec[1]},${ec[2]},${baseAlpha * breathe})`
+          ctx.lineWidth = lineW
+          for (let i = 0; i <= STEPS; i++) {
+            const u = (i / STEPS) * Math.PI * 2
+            if (u > maxU) break
+            const [x, y] = edge(u, sign, breathe, drift)
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+          }
+          ctx.stroke()
+        }
+      }
+
+      // ── Construction dot (leads the drawing) ──
+      if (buildProg > 0 && buildProg < 1) {
+        const leadU = buildProg * Math.PI * 2
+        for (const sign of [1, -1]) {
+          const [dx, dy] = edge(leadU, sign, breathe, drift)
+          const ec = sign === 1 ? c : c2
+          ctx.beginPath()
+          ctx.fillStyle = `rgba(${ec[0]},${ec[1]},${ec[2]},${hov ? 0.8 : 0.5})`
+          ctx.arc(dx, dy, hov ? 2.2 : 1.6, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+
+      // ── Orbiting dots after construction ──
+      if (buildProg >= 1) {
+        const speed = 0.25
+        const u1 = (sec * speed) % (Math.PI * 2)
+        const u2 = (sec * speed + Math.PI) % (Math.PI * 2)
+        const pairs = [[u1, 1, c], [u2, -1, c2]]
+
+        for (const [u, sign, col] of pairs) {
+          const [dx, dy] = edge(u, sign, breathe, drift)
+          // Glow
+          ctx.beginPath()
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${hov ? 0.14 : 0.04})`
+          ctx.arc(dx, dy, hov ? 7 : 4.5, 0, Math.PI * 2)
+          ctx.fill()
+          // Core
+          ctx.beginPath()
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${hov ? 0.85 : 0.4})`
+          ctx.arc(dx, dy, hov ? 2 : 1.4, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+
+      // ── Center origin dot (always) ──
+      const dotA = buildProg < 1 ? (hov ? 0.6 : 0.3) : (hov ? 0.35 : 0.12)
+      const dotR = (buildProg < 1 ? 2.2 : 1.2) * breathe
+      // Halo
+      ctx.beginPath()
+      ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${dotA * 0.25})`
+      ctx.arc(cx, cy, dotR * 3.5, 0, Math.PI * 2)
+      ctx.fill()
+      // Core
+      ctx.beginPath()
+      ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${dotA})`
+      ctx.arc(cx, cy, dotR, 0, Math.PI * 2)
+      ctx.fill()
+
+      raf = requestAnimationFrame(draw)
+    }
+
+    raf = requestAnimationFrame(draw)
+    return () => cancelAnimationFrame(raf)
+  }, [])
 
   return (
     <div
-      className="constellation-wrap"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="moebius-wrap"
+      onMouseEnter={() => { hovRef.current = true }}
+      onMouseLeave={() => { hovRef.current = false }}
     >
-      <svg
-        width={140} height={140} viewBox="0 0 120 120"
-        className="constellation"
-        style={{ overflow: 'visible' }}
-      >
-        {/* Ghost orbit ring */}
-        <circle cx={CENTER} cy={CENTER} r={RADIUS} fill="none"
-          stroke="var(--teal)" strokeWidth="0.3"
-          opacity={hovered ? '0.35' : '0.12'}
-          style={{ transition: 'opacity 0.6s ease' }}
-        />
-
-        {/* Inner ghost ring */}
-        <circle cx={CENTER} cy={CENTER} r={RADIUS * 0.5} fill="none"
-          stroke="var(--sea)" strokeWidth="0.2"
-          opacity={hovered ? '0.25' : '0.08'}
-          style={{ transition: 'opacity 0.6s ease' }}
-        />
-
-        {/* Dots breathing in sequence */}
-        {CONSTELLATION_DOTS.map((dot, i) => {
-          const rad = (dot.angle * Math.PI) / 180
-          const x = CENTER + Math.cos(rad) * RADIUS
-          const y = CENTER + Math.sin(rad) * RADIUS
-          const delay = i * 0.4 // stagger the breathing wave
-
-          return (
-            <g key={i}>
-              {/* Glow ring */}
-              <circle cx={x} cy={y} r="5" fill={dot.color}
-                opacity={hovered ? '0.15' : '0.06'}
-                style={{ transition: 'opacity 0.5s ease' }}
-              >
-                <animate attributeName="r" values="4;6;4" dur="3.2s"
-                  begin={`${delay}s`} repeatCount="indefinite" />
-                <animate attributeName="opacity"
-                  values={hovered ? '0.10;0.22;0.10' : '0.04;0.10;0.04'}
-                  dur="3.2s" begin={`${delay}s`} repeatCount="indefinite" />
-              </circle>
-              {/* Core dot */}
-              <circle cx={x} cy={y} r="1.8" fill={dot.color}
-                opacity={hovered ? '0.85' : '0.45'}
-                style={{ transition: 'opacity 0.5s ease' }}
-              >
-                <animate attributeName="r" values="1.5;2.2;1.5" dur="3.2s"
-                  begin={`${delay}s`} repeatCount="indefinite" />
-                <animate attributeName="opacity"
-                  values={hovered ? '0.6;0.95;0.6' : '0.3;0.55;0.3'}
-                  dur="3.2s" begin={`${delay}s`} repeatCount="indefinite" />
-              </circle>
-            </g>
-          )
-        })}
-
-        {/* Faint connecting lines between adjacent dots */}
-        {CONSTELLATION_DOTS.map((dot, i) => {
-          const next = CONSTELLATION_DOTS[(i + 1) % CONSTELLATION_DOTS.length]
-          const rad1 = (dot.angle * Math.PI) / 180
-          const rad2 = (next.angle * Math.PI) / 180
-          const x1 = CENTER + Math.cos(rad1) * RADIUS
-          const y1 = CENTER + Math.sin(rad1) * RADIUS
-          const x2 = CENTER + Math.cos(rad2) * RADIUS
-          const y2 = CENTER + Math.sin(rad2) * RADIUS
-
-          return (
-            <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke="var(--teal)" strokeWidth="0.3"
-              opacity={hovered ? '0.25' : '0.08'}
-              style={{ transition: 'opacity 0.6s ease' }}
-            />
-          )
-        })}
-
-        {/* Center dot — tiny, subtle */}
-        <circle cx={CENTER} cy={CENTER} r="1.2" fill="var(--teal)"
-          opacity={hovered ? '0.6' : '0.25'}
-          style={{ transition: 'opacity 0.5s ease' }}
-        >
-          <animate attributeName="r" values="1;1.5;1" dur="4s" repeatCount="indefinite" />
-        </circle>
-      </svg>
+      <canvas ref={canvasRef} className="moebius-canvas" />
     </div>
   )
 }
@@ -161,7 +239,7 @@ export default function Hero() {
   return (
     <section className="hero section">
       <div className="hero-content">
-        <Constellation />
+        <MoebiusPulse />
         <h1 className="hero-brand">{brand}</h1>
         <div className="hero-rule" />
         <p className="hero-tagline" style={{
@@ -205,18 +283,17 @@ export default function Hero() {
         .hero-content {
           margin-bottom: 56px;
         }
-        .constellation-wrap {
+        .moebius-wrap {
           display: flex;
           justify-content: center;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
           cursor: default;
         }
-        .constellation {
-          filter: drop-shadow(0 0 0px transparent);
+        .moebius-canvas {
           transition: filter 0.6s ease;
         }
-        .constellation-wrap:hover .constellation {
-          filter: drop-shadow(0 0 16px rgba(144, 167, 165, 0.2));
+        .moebius-wrap:hover .moebius-canvas {
+          filter: drop-shadow(0 0 18px rgba(144, 167, 165, 0.15));
         }
         .hero-brand {
           font-family: var(--sans);
