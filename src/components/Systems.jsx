@@ -9,8 +9,8 @@ const ITEMS = [
     title: 'ANS-Based Multi-Symptom Prediction',
     sub: 'N=1 Longitudinal · Post-Lyme Fatigue · Consumer Wearable',
     desc: (nDays, nPairs) =>
-      `What started as a personal health crisis became a research project. Five independent models trained on ${nDays} days of nocturnal heart rate data from a €300 wristwatch. Each model selects its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs — real data, real symptoms, real results.`,
-    stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
+      `What started as a personal health crisis became a research project. Five independent models trained on ${nDays} days of nocturnal heart rate data from a €600 equipe. Each model selects its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs — real data, real symptoms, real results.`,
+    stack: 'Python · scikit-learn · neurokit2 · kubios + verity sense · Polar Grit X2 · GitHub Actions',
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     linkText: 'View on GitHub →',
     external: true,
