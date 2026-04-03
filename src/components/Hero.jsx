@@ -7,12 +7,70 @@ const SUB_STRINGS = [
   'open-source · patient-driven',
 ]
 
+/* ── Hero Symbol: living pulse that glows on hover ──────── */
+function HeroSymbol() {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      className="hero-symbol-wrap"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <svg
+        width={72} height={72} viewBox="0 0 28 28"
+        className="hero-symbol"
+        style={{ overflow: 'visible' }}
+      >
+        {/* Outer breathing ring */}
+        <circle cx="14" cy="14" r="12" fill="none" stroke="var(--teal)" strokeWidth="0.6"
+          opacity={hovered ? '0.7' : '0.3'} style={{ transition: 'opacity 0.5s ease' }}>
+          <animate attributeName="r" values="11;13;11" dur="4s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Middle orbit ring */}
+        <circle cx="14" cy="14" r="8" fill="none" stroke="var(--sea)" strokeWidth="0.4"
+          opacity={hovered ? '0.5' : '0.2'} style={{ transition: 'opacity 0.5s ease' }}>
+          <animate attributeName="r" values="8;9;8" dur="3s" repeatCount="indefinite" />
+        </circle>
+
+        {/* ECG pulse trace */}
+        <polyline
+          points="2,14 7,14 9,7 11,21 13,5 15,19 17,9 19,14 26,14"
+          fill="none" stroke="var(--green)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"
+          opacity={hovered ? '0.95' : '0.6'}
+          strokeDasharray="50" strokeDashoffset="0"
+          style={{ transition: 'opacity 0.4s ease' }}
+        >
+          <animate attributeName="stroke-dashoffset" values="50;0;0;50" dur="3s" repeatCount="indefinite" keyTimes="0;0.35;0.7;1" />
+        </polyline>
+
+        {/* Orbiting dot */}
+        <circle r="1.5" fill="var(--warm)" opacity={hovered ? '0.9' : '0.5'}
+          style={{ transition: 'opacity 0.4s ease' }}>
+          <animateMotion dur="6s" repeatCount="indefinite" path="M14,2 A12,12 0 1,1 13.99,2" />
+        </circle>
+
+        {/* Core pulse dot */}
+        <circle cx="14" cy="14" r="2.5" fill="var(--teal)"
+          opacity={hovered ? '0.9' : '0.5'} style={{ transition: 'opacity 0.4s ease' }}>
+          <animate attributeName="r" values="2;3;2" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values={hovered ? '0.7;1;0.7' : '0.35;0.6;0.35'} dur="2s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Hover glow */}
+        <circle cx="14" cy="14" r="10" fill="var(--teal)"
+          opacity={hovered ? '0.08' : '0'} style={{ transition: 'opacity 0.5s ease' }}>
+        </circle>
+      </svg>
+    </div>
+  )
+}
+
 export default function Hero() {
   const brand = useTextDecode('KINETICA AI', {
     duration: 1800, delay: 500, loop: false, isActive: true,
   })
 
-  // Boot sequence: slower, more deliberate
   const [bootStep, setBootStep] = useState(0)
   const bootTimers = useRef([])
 
@@ -25,7 +83,6 @@ export default function Hero() {
     return () => bootTimers.current.forEach(clearTimeout)
   }, [])
 
-  // Cycling sub-tagline
   const [subIndex, setSubIndex] = useState(0)
   const subTimer = useRef(null)
 
@@ -55,6 +112,7 @@ export default function Hero() {
   return (
     <section className="hero section">
       <div className="hero-content">
+        <HeroSymbol />
         <h1 className="hero-brand">{brand}</h1>
         <div className="hero-rule" />
         <p className="hero-tagline" style={{
@@ -98,6 +156,19 @@ export default function Hero() {
         .hero-content {
           margin-bottom: 56px;
         }
+        .hero-symbol-wrap {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 20px;
+          cursor: default;
+        }
+        .hero-symbol {
+          filter: drop-shadow(0 0 0px transparent);
+          transition: filter 0.5s ease;
+        }
+        .hero-symbol-wrap:hover .hero-symbol {
+          filter: drop-shadow(0 0 12px rgba(144, 167, 165, 0.3));
+        }
         .hero-brand {
           font-family: var(--sans);
           font-size: var(--text-hero);
@@ -126,8 +197,8 @@ export default function Hero() {
         }
         .hero-sub {
           font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--ice);
+          font-size: var(--text-caption);
+          color: var(--teal);
           letter-spacing: 0.06em;
           margin: 20px auto 0;
           min-height: 1.4em;
