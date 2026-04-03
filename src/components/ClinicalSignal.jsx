@@ -4,22 +4,22 @@ import { PulseSymbol } from './OrganicSymbols'
 
 const STAT_MARKERS = [
   { value: 'HRV', label: 'primary biomarker', color: 'var(--sea)', rgb: '93,138,130' },
-  { value: 'ANS', label: 'target system', color: 'var(--teal)', rgb: '144,167,165' },
-  { value: 'N=1', label: 'longitudinal proof', color: 'var(--warm)', rgb: '196,133,90' },
+  { value: 'ANS', label: 'target system', color: 'var(--moss)', rgb: '107,138,109' },
+  { value: 'N=1', label: 'single-patient proof', color: 'var(--warm)', rgb: '196,133,90' },
 ]
 
 export default function ClinicalSignal() {
   const { ref: headRef, words: headWords } = useWordStagger(
-    'The signal lives in the autonomic nervous system. Not in sleep. Not in serology.'
+    'Your body writes a health report every night — most doctors never read it.'
   )
-  const { ref: bodyRef, revealed: bodyRevealed } = useReveal(0.15)
-  const { ref: statsRef, revealed: statsRevealed } = useReveal(0.15)
+  const { ref: bodyRef, revealed: bodyRevealed } = useReveal(0.25)
+  const { ref: statsRef, revealed: statsRevealed } = useReveal(0.25)
 
   return (
     <section className="section clinical-signal">
       <span className="eyebrow" style={{ color: 'var(--sea)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
         <PulseSymbol color="var(--sea)" size={22} />
-        THE CLINICAL QUESTION
+        THE IDEA
       </span>
       <h2 className="cs-headline" ref={headRef}>
         {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
@@ -27,16 +27,17 @@ export default function ClinicalSignal() {
       <div className="cs-body-wrap" ref={bodyRef}>
         <div className="cs-border-line" style={{
           height: bodyRevealed ? '100%' : '0%',
-          transition: 'height 0.6s var(--ease-out)',
+          transition: 'height 0.9s var(--ease-out)',
         }} />
         <p className="cs-body" style={{
           opacity: bodyRevealed ? 1 : 0,
           transform: bodyRevealed ? 'translateY(0)' : 'translateY(12px)',
-          transition: 'opacity 0.5s var(--ease-out) 0.1s, transform 0.5s var(--ease-out) 0.1s',
+          transition: 'opacity 0.7s var(--ease-out) 0.2s, transform 0.7s var(--ease-out) 0.2s',
         }}>
-          Conventional monitoring misses post-infectious fatigue because it looks in the wrong place.
-          We extract predictive signal from nocturnal heart rate variability — the autonomic fingerprint
-          the body writes every night.
+          While you sleep, your heart rate variability captures patterns that blood tests and
+          questionnaires miss. It's the autonomic fingerprint — a nightly window into fatigue,
+          recovery, and nervous system health. We trained AI to read these patterns and predict
+          symptoms before you feel them.
         </p>
       </div>
 
@@ -50,13 +51,18 @@ export default function ClinicalSignal() {
               '--stat-rgb': s.rgb,
               opacity: statsRevealed ? 1 : 0,
               transform: statsRevealed ? 'scale(1)' : 'scale(0.95)',
-              transition: `opacity 0.35s var(--ease-out) ${i * 120}ms, transform 0.35s var(--ease-out) ${i * 120}ms`,
+              transition: `opacity 0.5s var(--ease-out) ${i * 200}ms, transform 0.5s var(--ease-out) ${i * 200}ms`,
             }}
           >
             <span className="cs-stat-value">{s.value}</span>
             <span className="cs-stat-label">{s.label}</span>
           </div>
         ))}
+      </div>
+
+      <div className="scroll-hook">
+        <span className="scroll-hook-text">See the proof</span>
+        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`
@@ -73,19 +79,19 @@ export default function ClinicalSignal() {
           font-weight: 400;
           color: var(--text-heading);
           line-height: 1.35;
-          margin-bottom: 28px;
+          margin-bottom: 24px;
         }
         .cs-body-wrap {
           position: relative;
           padding-left: 22px;
-          margin-bottom: 32px;
+          margin-bottom: 28px;
         }
         .cs-border-line {
           position: absolute;
           left: 0;
           top: 0;
           width: 2px;
-          background: var(--green);
+          background: var(--moss);
         }
         .cs-body {
           font-family: var(--sans);
@@ -125,7 +131,7 @@ export default function ClinicalSignal() {
         }
         .cs-stat-label {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: 12px;
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.06em;
