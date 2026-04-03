@@ -44,7 +44,7 @@ function MoebiusPulse() {
     const ctx = canvas.getContext('2d')
     const p = paramsRef.current
 
-    const SIZE = 160
+    const SIZE = 240
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     canvas.width = SIZE * dpr
     canvas.height = SIZE * dpr
@@ -53,7 +53,7 @@ function MoebiusPulse() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     const cx = SIZE / 2, cy = SIZE / 2
-    const R = 38 * p.scale
+    const R = 57 * p.scale
     const W = R * p.stripW
     const TILT = p.tilt
     const STEPS = 240
@@ -302,8 +302,14 @@ export default function Hero() {
           letter-spacing: 0.18em;
           color: var(--text-heading);
           margin-bottom: 0;
-          white-space: pre;
+          white-space: nowrap;
           text-shadow: 0 1px 3px rgba(36, 64, 60, 0.06);
+        }
+        @media (max-width: 480px) {
+          .hero-brand {
+            font-size: clamp(2rem, 10vw, 3.5rem);
+            letter-spacing: 0.1em;
+          }
         }
         .hero-rule {
           width: 48px;
@@ -358,6 +364,10 @@ export default function Hero() {
         .hero-btn--secondary:hover {
           border-color: var(--teal);
           color: var(--text);
+        }
+        @media (max-width: 480px) {
+          .hero-cta { flex-direction: column; align-items: center; gap: 12px; }
+          .hero-btn { width: 100%; text-align: center; }
         }
         .hero-scroll {
           position: absolute;

@@ -331,6 +331,8 @@ export default function FlagshipProof({ data, loading }) {
         .fp-footnotes {
           margin-top: 16px;
           padding: 14px 16px;
+          overflow-wrap: break-word;
+          word-break: break-word;
           background: var(--fill-sand);
           border-left: 2px solid var(--sand);
         }
