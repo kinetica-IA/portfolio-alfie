@@ -1,190 +1,470 @@
 /**
- * OrganicSymbols — Living micro-objects for cards and sections
+ * OrganicSymbols — Canvas-based living micro-animations
  *
- * Each symbol is an SVG that animates continuously.
- * 2x size, high opacity, varied palette colors.
+ * Each symbol is a tiny canvas with thin lines (~0.45px),
+ * continuous breathing, and hover interaction — matching
+ * the Möbius hero animation style.
  */
 
 import { useRef, useEffect } from 'react'
 
-/* ── CSS-animated SVG symbols ──────────────────────────────── */
+/* ── Shared canvas wrapper ────────────────────────────────── */
+
+const PALETTE = {
+  teal:  [144, 167, 165],
+  sea:   [93, 138, 130],
+  green: [107, 158, 122],
+  ice:   [133, 168, 184],
+  moss:  [107, 138, 109],
+  warm:  [196, 133, 90],
+  sand:  [174, 156, 120],
+  clay:  [168, 130, 110],
+  slate: [130, 140, 148],
+}
+
+function resolveColor(cssColor) {
+  for (const [name, rgb] of Object.entries(PALETTE)) {
+    if (cssColor.includes(name)) return rgb
+  }
+  return PALETTE.teal
+}
+
+function useCanvasSymbol(size, colorStr, drawFn) {
+  const canvasRef = useRef(null)
+  const hovRef = useRef(false)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const c = resolveColor(colorStr)
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = size * dpr
+    canvas.height = size * dpr
+    canvas.style.width = size + 'px'
+    canvas.style.height = size + 'px'
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    let t0 = null, raf
+
+    function frame(ts) {
+      if (!t0) t0 = ts
+      const sec = (ts - t0) / 1000
+      ctx.clearRect(0, 0, size, size)
+      drawFn(ctx, size, c, sec, hovRef.current)
+      raf = requestAnimationFrame(frame)
+    }
+
+    raf = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(raf)
+  }, [size, colorStr, drawFn])
+
+  return { canvasRef, hovRef, wrapRef }
+}
+
+function SymbolWrap({ canvasRef, hovRef, wrapRef, className }) {
+  return (
+    <div
+      ref={wrapRef}
+      className={`org-symbol-wrap ${className || ''}`}
+      onMouseEnter={() => { hovRef.current = true }}
+      onMouseLeave={() => { hovRef.current = false }}
+      style={{ display: 'inline-flex', cursor: 'default' }}
+    >
+      <canvas
+        ref={canvasRef}
+        className="org-canvas"
+        style={{ transition: 'filter 0.5s ease' }}
+      />
+    </div>
+  )
+}
+
+
+/* ── 1. PulseSymbol — thin ECG line that traces + breathes ── */
+
+function drawPulse(ctx, S, c, t, hov) {
+  const cx = S / 2, cy = S / 2
+  const breathe = 1 + Math.sin(t * 0.8) * 0.05
+  const alpha = hov ? 0.42 : 0.2
+  const lw = hov ? 0.65 : 0.4
+
+  // ECG wave path
+  const amp = S * 0.25 * breathe
+  const w = S * 0.8
+  const x0 = S * 0.1
+
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+  ctx.lineWidth = lw
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'round'
+
+  const points = [
+    [0, 0], [0.25, 0], [0.32, -0.15], [0.38, 0.6],
+    [0.42, -0.85], [0.48, 0.35], [0.55, -0.08], [0.62, 0], [1, 0]
+  ]
+
+  for (let i = 0; i < points.length; i++) {
+    const px = x0 + points[i][0] * w
+    const py = cy + points[i][1] * amp
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+  }
+  ctx.stroke()
+
+  // Traveling dot along the ECG
+  const progress = (t * 0.35) % 1
+  const seg = progress * (points.length - 1)
+  const idx = Math.floor(seg)
+  const frac = seg - idx
+  const next = Math.min(idx + 1, points.length - 1)
+  const dx = x0 + (points[idx][0] + (points[next][0] - points[idx][0]) * frac) * w
+  const dy = cy + (points[idx][1] + (points[next][1] - points[idx][1]) * frac) * amp
+
+  // Glow
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.12 : 0.04})`
+  ctx.arc(dx, dy, hov ? 5 : 3.5, 0, Math.PI * 2)
+  ctx.fill()
+  // Core
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.8 : 0.38})`
+  ctx.arc(dx, dy, hov ? 1.6 : 1.1, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Breathing ring
+  const ringR = (S * 0.32) * breathe
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${(hov ? 0.15 : 0.06) * (0.7 + Math.sin(t * 1.2) * 0.3)})`
+  ctx.lineWidth = 0.3
+  ctx.arc(cx, cy, ringR, 0, Math.PI * 2)
+  ctx.stroke()
+}
 
 export function PulseSymbol({ color = 'var(--sea)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <circle cx="14" cy="14" r="10" fill="none" stroke={color} strokeWidth="1" opacity="0.55">
-        <animate attributeName="r" values="9;11;9" dur="3s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.55;0.25;0.55" dur="3s" repeatCount="indefinite" />
-      </circle>
-      <polyline
-        points="4,14 9,14 11,8 13,20 15,6 17,14 22,14"
-        fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-        opacity="0.9"
-        strokeDasharray="40"
-        strokeDashoffset="0"
-      >
-        <animate attributeName="stroke-dashoffset" values="40;0;0;40" dur="2.8s" repeatCount="indefinite" keyTimes="0;0.4;0.7;1" />
-        <animate attributeName="opacity" values="0.4;0.95;0.95;0.4" dur="2.8s" repeatCount="indefinite" keyTimes="0;0.4;0.7;1" />
-      </polyline>
-      <circle cx="14" cy="14" r="2" fill={color} opacity="0.85">
-        <animate attributeName="opacity" values="0.6;0.95;0.6" dur="2.8s" repeatCount="indefinite" />
-      </circle>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawPulse)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
+}
+
+
+/* ── 2. OrbitSymbol — thin ring + orbiting dot ──────────── */
+
+function drawOrbit(ctx, S, c, t, hov) {
+  const cx = S / 2, cy = S / 2
+  const breathe = 1 + Math.sin(t * 0.7) * 0.04
+  const R = S * 0.34 * breathe
+  const alpha = hov ? 0.38 : 0.16
+
+  // Orbit ring
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+  ctx.lineWidth = hov ? 0.6 : 0.35
+  ctx.arc(cx, cy, R, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // Inner whisper ring
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.4})`
+  ctx.lineWidth = 0.25
+  ctx.arc(cx, cy, R * 0.45, 0, Math.PI * 2)
+  ctx.stroke()
+
+  // Orbiting dot
+  const angle = t * 0.6
+  const dx = cx + Math.cos(angle) * R
+  const dy = cy + Math.sin(angle) * R
+
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.12 : 0.03})`
+  ctx.arc(dx, dy, hov ? 5 : 3, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.8 : 0.4})`
+  ctx.arc(dx, dy, hov ? 1.6 : 1, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Second slower dot — opposite
+  const a2 = t * 0.35 + Math.PI
+  const dx2 = cx + Math.cos(a2) * R * 0.45
+  const dy2 = cy + Math.sin(a2) * R * 0.45
+
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.6 : 0.25})`
+  ctx.arc(dx2, dy2, hov ? 1.2 : 0.8, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Center dot
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.4 : 0.12})`
+  ctx.arc(cx, cy, 1 * breathe, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 export function OrbitSymbol({ color = 'var(--teal)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <circle cx="14" cy="14" r="9" fill="none" stroke={color} strokeWidth="0.8" opacity="0.45" />
-      <circle r="2.2" fill={color} opacity="0.9">
-        <animateMotion dur="4s" repeatCount="indefinite" path="M14,5 A9,9 0 1,1 13.99,5" />
-        <animate attributeName="opacity" values="0.9;0.5;0.9" dur="4s" repeatCount="indefinite" />
-      </circle>
-      <circle r="1.5" fill={color} opacity="0.65">
-        <animateMotion dur="4s" repeatCount="indefinite" begin="-2s" path="M14,5 A9,9 0 1,1 13.99,5" />
-        <animate attributeName="opacity" values="0.65;0.3;0.65" dur="4s" repeatCount="indefinite" begin="-2s" />
-      </circle>
-      <circle cx="14" cy="14" r="2" fill="none" stroke={color} strokeWidth="1" opacity="0.6">
-        <animate attributeName="r" values="2;3;2" dur="3s" repeatCount="indefinite" />
-      </circle>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawOrbit)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
+}
+
+
+/* ── 3. SignalSymbol — undulating sine wave + traveling dots ── */
+
+function drawSignal(ctx, S, c, t, hov) {
+  const cy = S / 2
+  const breathe = 1 + Math.sin(t * 0.9) * 0.06
+  const alpha = hov ? 0.40 : 0.18
+  const amp = S * 0.22 * breathe
+  const pad = S * 0.08
+
+  // Flowing sine wave
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+  ctx.lineWidth = hov ? 0.6 : 0.38
+  ctx.lineCap = 'round'
+
+  for (let x = pad; x <= S - pad; x += 1) {
+    const norm = (x - pad) / (S - 2 * pad)
+    const y = cy + Math.sin(norm * Math.PI * 2.5 + t * 0.8) * amp * (0.4 + norm * 0.6)
+    x === pad ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+  }
+  ctx.stroke()
+
+  // Second harmonic wave — lighter
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.5})`
+  ctx.lineWidth = 0.25
+  for (let x = pad; x <= S - pad; x += 1) {
+    const norm = (x - pad) / (S - 2 * pad)
+    const y = cy + Math.sin(norm * Math.PI * 4 + t * 1.2 + 1) * amp * 0.35
+    x === pad ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+  }
+  ctx.stroke()
+
+  // Traveling dot on main wave
+  const prog = (t * 0.3) % 1
+  const px = pad + prog * (S - 2 * pad)
+  const py = cy + Math.sin(prog * Math.PI * 2.5 + t * 0.8) * amp * (0.4 + prog * 0.6)
+
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.12 : 0.04})`
+  ctx.arc(px, py, hov ? 5 : 3, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.8 : 0.38})`
+  ctx.arc(px, py, hov ? 1.5 : 1, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 export function SignalSymbol({ color = 'var(--green)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <path
-        d="M2,14 Q7,6 12,14 Q17,22 22,14 Q25,10 26,14"
-        fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"
-        opacity="0.85"
-        strokeDasharray="48"
-        strokeDashoffset="0"
-      >
-        <animate attributeName="stroke-dashoffset" values="48;0;-48" dur="3.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.35;0.9;0.35" dur="3.5s" repeatCount="indefinite" />
-      </path>
-      <circle cx="7" cy="9" r="1.5" fill={color} opacity="0">
-        <animate attributeName="opacity" values="0;0.85;0" dur="3.5s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="17" cy="19" r="1.5" fill={color} opacity="0">
-        <animate attributeName="opacity" values="0;0.85;0" dur="3.5s" repeatCount="indefinite" begin="0.5s" />
-      </circle>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawSignal)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
+}
+
+
+/* ── 4. CellSymbol — morphing ellipse + drifting organelles ── */
+
+function drawCell(ctx, S, c, t, hov) {
+  const cx = S / 2, cy = S / 2
+  const alpha = hov ? 0.38 : 0.16
+  const lw = hov ? 0.6 : 0.38
+
+  // Morphing membrane
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+  ctx.lineWidth = lw
+  const steps = 80
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * Math.PI * 2
+    const wobble = 1 + Math.sin(a * 3 + t * 0.6) * 0.08 + Math.sin(a * 5 + t * 0.9) * 0.04
+    const rx = S * 0.35 * wobble
+    const ry = S * 0.30 * (1 + Math.sin(t * 0.5) * 0.06) * wobble
+    const x = cx + Math.cos(a) * rx
+    const y = cy + Math.sin(a) * ry
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+  }
+  ctx.closePath()
+  ctx.stroke()
+
+  // Inner membrane
+  ctx.beginPath()
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.4})`
+  ctx.lineWidth = 0.25
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * Math.PI * 2
+    const wobble = 1 + Math.sin(a * 2 + t * 0.8 + 1) * 0.1
+    const rx = S * 0.18 * wobble
+    const ry = S * 0.16 * wobble
+    const x = cx + Math.cos(a) * rx
+    const y = cy + Math.sin(a) * ry
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+  }
+  ctx.closePath()
+  ctx.stroke()
+
+  // Drifting organelles
+  const orgs = [
+    { speed: 0.4, dist: 0.22, phase: 0 },
+    { speed: 0.3, dist: 0.15, phase: 2.1 },
+    { speed: 0.25, dist: 0.1, phase: 4.2 },
+  ]
+  for (const o of orgs) {
+    const ox = cx + Math.cos(t * o.speed + o.phase) * S * o.dist
+    const oy = cy + Math.sin(t * o.speed * 1.3 + o.phase) * S * o.dist * 0.8
+    ctx.beginPath()
+    ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.6 : 0.25})`
+    ctx.arc(ox, oy, hov ? 1.3 : 0.9, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  // Nucleus
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.35 : 0.1})`
+  const nR = (S * 0.06) * (1 + Math.sin(t * 0.7) * 0.15)
+  ctx.arc(cx, cy, nR, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 export function CellSymbol({ color = 'var(--warm)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <ellipse cx="14" cy="14" fill="none" stroke={color} strokeWidth="1" opacity="0.55">
-        <animate attributeName="rx" values="10;11;9.5;10" dur="4s" repeatCount="indefinite" />
-        <animate attributeName="ry" values="9;10;10.5;9" dur="4s" repeatCount="indefinite" />
-      </ellipse>
-      <circle cx="14" cy="14" fill={color} opacity="0.30">
-        <animate attributeName="r" values="4;5;4" dur="3s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="11" cy="12" r="1.3" fill={color} opacity="0.6">
-        <animate attributeName="cx" values="11;12;11" dur="5s" repeatCount="indefinite" />
-        <animate attributeName="cy" values="12;11;12" dur="5s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="17" cy="15" r="1" fill={color} opacity="0.55">
-        <animate attributeName="cx" values="17;16;17" dur="4s" repeatCount="indefinite" />
-        <animate attributeName="cy" values="15;16.5;15" dur="4s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="14" cy="14" r="2" fill={color} opacity="0.8">
-        <animate attributeName="opacity" values="0.65;0.95;0.65" dur="2s" repeatCount="indefinite" />
-      </circle>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawCell)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
+}
+
+
+/* ── 5. NetworkSymbol — 3 nodes + thin edges + traveling packet ── */
+
+function drawNetwork(ctx, S, c, t, hov) {
+  const alpha = hov ? 0.38 : 0.16
+  const lw = hov ? 0.55 : 0.35
+
+  // 3 node positions — gently drifting
+  const nodes = [
+    { bx: 0.25, by: 0.25, drift: 0 },
+    { bx: 0.75, by: 0.35, drift: 1.5 },
+    { bx: 0.45, by: 0.78, drift: 3 },
+  ]
+  const pts = nodes.map(n => ({
+    x: n.bx * S + Math.sin(t * 0.4 + n.drift) * S * 0.03,
+    y: n.by * S + Math.cos(t * 0.35 + n.drift) * S * 0.03,
+  }))
+
+  // Edges
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+  ctx.lineWidth = lw
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      ctx.beginPath()
+      ctx.moveTo(pts[i].x, pts[i].y)
+      ctx.lineTo(pts[j].x, pts[j].y)
+      ctx.stroke()
+    }
+  }
+
+  // Nodes
+  for (const p of pts) {
+    ctx.beginPath()
+    ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.1 : 0.04})`
+    ctx.arc(p.x, p.y, hov ? 4.5 : 3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.75 : 0.35})`
+    ctx.arc(p.x, p.y, hov ? 1.4 : 0.9, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  // Traveling data packet along edges
+  const totalEdges = 3
+  const edgePairs = [[0,1],[1,2],[2,0]]
+  const cycleT = (t * 0.4) % totalEdges
+  const edgeIdx = Math.floor(cycleT)
+  const frac = cycleT - edgeIdx
+  const [a, b] = edgePairs[edgeIdx]
+  const px = pts[a].x + (pts[b].x - pts[a].x) * frac
+  const py = pts[a].y + (pts[b].y - pts[a].y) * frac
+
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.85 : 0.4})`
+  ctx.arc(px, py, hov ? 1.6 : 1, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.12 : 0.03})`
+  ctx.arc(px, py, hov ? 5 : 3, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 export function NetworkSymbol({ color = 'var(--ice)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <line x1="8" y1="8" x2="20" y2="12" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.80;0.45" dur="3s" repeatCount="indefinite" />
-      </line>
-      <line x1="8" y1="8" x2="14" y2="22" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.75;0.45" dur="3s" repeatCount="indefinite" begin="0.5s" />
-      </line>
-      <line x1="20" y1="12" x2="14" y2="22" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.70;0.45" dur="3s" repeatCount="indefinite" begin="1s" />
-      </line>
-      <circle cx="8" cy="8" r="3" fill={color} opacity="0.30">
-        <animate attributeName="opacity" values="0.30;0.65;0.30" dur="3s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="8" cy="8" r="1.5" fill={color} opacity="0.8" />
-      <circle cx="20" cy="12" r="2.5" fill={color} opacity="0.25">
-        <animate attributeName="opacity" values="0.25;0.60;0.25" dur="3s" repeatCount="indefinite" begin="0.5s" />
-      </circle>
-      <circle cx="20" cy="12" r="1.3" fill={color} opacity="0.8" />
-      <circle cx="14" cy="22" r="2.8" fill={color} opacity="0.22">
-        <animate attributeName="opacity" values="0.22;0.55;0.22" dur="3s" repeatCount="indefinite" begin="1s" />
-      </circle>
-      <circle cx="14" cy="22" r="1.4" fill={color} opacity="0.8" />
-      <circle r="1.5" fill={color} opacity="0">
-        <animateMotion dur="2s" repeatCount="indefinite" path="M8,8 L20,12 L14,22 Z" />
-        <animate attributeName="opacity" values="0;0.95;0" dur="2s" repeatCount="indefinite" />
-      </circle>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawNetwork)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
+}
+
+
+/* ── 6. HelixSymbol — two thin twisting strands + rungs ──── */
+
+function drawHelix(ctx, S, c, t, hov) {
+  const alpha = hov ? 0.38 : 0.17
+  const lw = hov ? 0.6 : 0.38
+  const pad = S * 0.1
+  const h = S - 2 * pad
+  const cx = S / 2
+  const amp = S * 0.22
+  const twist = 2.5
+
+  // Two helix strands
+  for (const sign of [1, -1]) {
+    ctx.beginPath()
+    ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
+    ctx.lineWidth = lw
+    ctx.lineCap = 'round'
+    for (let i = 0; i <= 60; i++) {
+      const frac = i / 60
+      const y = pad + frac * h
+      const phase = frac * Math.PI * twist + t * 0.5
+      const x = cx + Math.sin(phase) * amp * sign * (1 + Math.sin(t * 0.6) * 0.05)
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    }
+    ctx.stroke()
+  }
+
+  // Cross rungs
+  const rungs = 6
+  for (let r = 0; r < rungs; r++) {
+    const frac = (r + 0.5) / rungs
+    const y = pad + frac * h
+    const phase = frac * Math.PI * twist + t * 0.5
+    const x1 = cx + Math.sin(phase) * amp * (1 + Math.sin(t * 0.6) * 0.05)
+    const x2 = cx - Math.sin(phase) * amp * (1 + Math.sin(t * 0.6) * 0.05)
+    const depth = Math.cos(phase)
+    const rungAlpha = alpha * (0.3 + Math.abs(depth) * 0.5)
+
+    ctx.beginPath()
+    ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${rungAlpha})`
+    ctx.lineWidth = 0.25
+    ctx.moveTo(x1, y)
+    ctx.lineTo(x2, y)
+    ctx.stroke()
+  }
+
+  // Traveling dot up the helix
+  const prog = (t * 0.15) % 1
+  const py = pad + prog * h
+  const phase = prog * Math.PI * twist + t * 0.5
+  const px = cx + Math.sin(phase) * amp * (1 + Math.sin(t * 0.6) * 0.05)
+
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.8 : 0.35})`
+  ctx.arc(px, py, hov ? 1.5 : 1, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.beginPath()
+  ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.12 : 0.03})`
+  ctx.arc(px, py, hov ? 5 : 3, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 export function HelixSymbol({ color = 'var(--sea)', size = 44, className = '' }) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 28 28"
-      className={`org-symbol ${className}`}
-      style={{ overflow: 'visible' }}
-    >
-      <path
-        d="M8,4 Q14,8 8,12 Q2,16 8,20 Q14,24 8,28"
-        fill="none" stroke={color} strokeWidth="1.3" opacity="0.70"
-        strokeDasharray="60" strokeDashoffset="0"
-      >
-        <animate attributeName="stroke-dashoffset" values="0;-60" dur="6s" repeatCount="indefinite" />
-      </path>
-      <path
-        d="M20,4 Q14,8 20,12 Q26,16 20,20 Q14,24 20,28"
-        fill="none" stroke={color} strokeWidth="1.3" opacity="0.70"
-        strokeDasharray="60" strokeDashoffset="0"
-      >
-        <animate attributeName="stroke-dashoffset" values="0;-60" dur="6s" repeatCount="indefinite" />
-      </path>
-      <line x1="10" y1="6" x2="18" y2="6" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.75;0.45" dur="3s" repeatCount="indefinite" />
-      </line>
-      <line x1="6" y1="14" x2="22" y2="14" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.75;0.45" dur="3s" repeatCount="indefinite" begin="1s" />
-      </line>
-      <line x1="10" y1="22" x2="18" y2="22" stroke={color} strokeWidth="0.8" opacity="0.45">
-        <animate attributeName="opacity" values="0.45;0.75;0.45" dur="3s" repeatCount="indefinite" begin="2s" />
-      </line>
-    </svg>
-  )
+  const { canvasRef, hovRef, wrapRef } = useCanvasSymbol(size, color, drawHelix)
+  return <SymbolWrap canvasRef={canvasRef} hovRef={hovRef} wrapRef={wrapRef} className={className} />
 }
+
 
 /* ── Ambient floating decorators for margins ─────────────── */
 
