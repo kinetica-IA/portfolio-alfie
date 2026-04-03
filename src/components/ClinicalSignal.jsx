@@ -131,7 +131,7 @@ export default function ClinicalSignal() {
         }
         .cs-stat-label {
           font-family: var(--mono);
-          font-size: 12px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           text-transform: uppercase;
           letter-spacing: 0.06em;

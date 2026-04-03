@@ -385,7 +385,7 @@ export default function FooterField() {
         }
         .footer-copy {
           font-family: var(--mono);
-          font-size: 11px;
+          font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
         }
@@ -405,7 +405,7 @@ export default function FooterField() {
         .footer-sep {
           color: var(--text-dim);
           opacity: 0.3;
-          font-size: 11px;
+          font-size: var(--text-eyebrow);
         }
       `}</style>
     </footer>
