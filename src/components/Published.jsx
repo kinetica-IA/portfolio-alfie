@@ -11,8 +11,8 @@ const CARDS = [
     color: 'var(--green)',
     colorRgb: '107,158,122',
     desc: 'Multi-symptom clinical prediction from wearable HRV data. Open-source, fully reproducible.',
+    expandedDesc: 'Five independent models trained on nocturnal heart rate data. Each model selects its own features via forward selection across 13 HRV candidates and 3 lag windows. Validated with leave-one-out cross-validation.',
     stats: '5 models · 198 days · AUC 0.84',
-    statNums: ['5', '198', '0.84'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     external: true,
     symbolIdx: 0,
@@ -23,8 +23,8 @@ const CARDS = [
     color: 'var(--ice)',
     colorRgb: '133,168,184',
     desc: '200+ nights of RR interval data, daily symptom diary, processed HRV features — all public.',
+    expandedDesc: 'Raw RR intervals from Polar Grit X2, daily symptom severity scores across 5 dimensions, and 13 processed HRV features. Updated nightly via automated pipeline.',
     stats: '3 CSV files · daily updates',
-    statNums: ['3'],
     link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
     external: true,
     symbolIdx: 1,
@@ -35,8 +35,8 @@ const CARDS = [
     color: 'var(--warm)',
     colorRgb: '196,133,90',
     desc: '9-node LangGraph clinical reasoning agent. Full system diagram and design rationale.',
+    expandedDesc: 'ReAct loop with Haiku for divergent exploration and Sonnet for synthesis. Human-on-loop architecture for EU AI Act compliance. ALMA ethical framework for clinical safety boundaries.',
     stats: 'ReAct loop · dual-model',
-    statNums: ['9'],
     link: '/io-architecture.html',
     external: false,
     symbolIdx: 2,
@@ -47,8 +47,8 @@ const CARDS = [
     color: 'var(--sea)',
     colorRgb: '93,138,130',
     desc: 'Interactive symptom + HRV time series visualization. See the raw data behind the models.',
+    expandedDesc: 'Explore the full timeline: daily severity, HRV trends, sleep scores, and prediction confidence. All data rendered from the live pipeline — nothing simulated.',
     stats: 'live data · daily sync',
-    statNums: [],
     link: '/diary.html',
     external: false,
     symbolIdx: 3,
@@ -70,8 +70,8 @@ function PubCard({ card, index, revealed }) {
         '--card-color': card.color,
         '--card-rgb': card.colorRgb,
         opacity: revealed ? 1 : 0,
-        transform: revealed ? 'scale(1)' : 'scale(0.96)',
-        transition: `opacity 0.6s var(--ease-out) ${index * 200}ms, transform 0.6s var(--ease-out) ${index * 200}ms`,
+        transform: revealed ? 'translateY(0)' : 'translateY(20px)',
+        transition: `opacity 0.8s var(--ease-out) ${index * 250}ms, transform 0.8s var(--ease-out) ${index * 250}ms`,
       }}
     >
       <div className="pub-card-header">
@@ -85,7 +85,11 @@ function PubCard({ card, index, revealed }) {
       </div>
       <h3 className="pub-card-title">{titleDisplay}</h3>
       <p className="pub-card-desc">{card.desc}</p>
+      <div className="pub-card-expanded">
+        <p className="pub-card-expanded-text">{card.expandedDesc}</p>
+      </div>
       <p className="pub-card-stats">{card.stats}</p>
+      <span className="pub-card-arrow">→</span>
     </a>
   )
 }
@@ -134,13 +138,19 @@ export default function Published() {
           text-decoration: none;
           padding: 24px;
           border: 1px solid var(--border);
-          transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
           cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.4s var(--ease-out),
+                      box-shadow 0.4s var(--ease-out),
+                      border-color 0.4s var(--ease-out),
+                      padding-bottom 0.4s var(--ease-out);
         }
         .pub-card:hover {
-          transform: translateY(-3px) !important;
-          box-shadow: 0 6px 24px var(--shadow);
+          transform: translateY(-4px) !important;
+          box-shadow: 0 8px 32px var(--shadow);
           border-color: var(--card-color);
+          padding-bottom: 28px;
         }
         .pub-card-header {
           display: flex;
@@ -149,11 +159,12 @@ export default function Published() {
           margin-bottom: 4px;
         }
         .pub-card-symbol {
-          opacity: 0.6;
-          transition: opacity 0.3s ease;
+          opacity: 0.5;
+          transition: opacity 0.4s ease, transform 0.4s ease;
         }
         .pub-card:hover .pub-card-symbol {
           opacity: 1;
+          transform: scale(1.1);
         }
         .pub-badge {
           font-family: var(--mono);
@@ -167,7 +178,7 @@ export default function Published() {
           align-items: center;
           gap: 6px;
           margin-bottom: 12px;
-          transition: background 0.25s ease;
+          transition: background 0.3s ease;
         }
         .pub-card:hover .pub-badge {
           background: rgba(var(--card-rgb), 0.18);
@@ -198,13 +209,51 @@ export default function Published() {
           font-weight: 300;
           color: var(--text-sec);
           line-height: 1.6;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
         }
+
+        /* Expanded content — hidden by default, grows on hover */
+        .pub-card-expanded {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: max-height 0.5s var(--ease-out), opacity 0.4s var(--ease-out) 0.1s;
+        }
+        .pub-card:hover .pub-card-expanded {
+          max-height: 120px;
+          opacity: 1;
+        }
+        .pub-card-expanded-text {
+          font-size: var(--text-caption);
+          font-weight: 300;
+          color: var(--text-dim);
+          line-height: 1.6;
+          padding: 4px 0 12px;
+          border-top: 1px solid var(--border);
+          margin-top: 4px;
+        }
+
         .pub-card-stats {
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
+        }
+
+        /* Arrow that appears on hover */
+        .pub-card-arrow {
+          position: absolute;
+          bottom: 16px;
+          right: 20px;
+          font-size: 18px;
+          color: var(--card-color);
+          opacity: 0;
+          transform: translateX(-8px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .pub-card:hover .pub-card-arrow {
+          opacity: 0.7;
+          transform: translateX(0);
         }
       `}</style>
     </section>

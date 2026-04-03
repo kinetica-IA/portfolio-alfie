@@ -35,7 +35,7 @@ function Metric({ value, decimals, label, delay = 0, active, colorIdx }) {
       borderTop: `2px solid ${colors.accent}`,
       transform: active ? 'scale(1)' : 'scale(0.97)',
       opacity: active ? 1 : 0,
-      transition: `transform 0.7s var(--ease-out) ${delay}s, opacity 0.7s var(--ease-out) ${delay}s`,
+      transition: `transform 1s var(--ease-out) ${delay}s, opacity 1s var(--ease-out) ${delay}s`,
     }}>
       <span className="fp-metric-value" style={{ color: colors.accent }}>{display}</span>
       <span className="fp-metric-label">{label}</span>
@@ -80,9 +80,9 @@ export default function FlagshipProof({ data, loading }) {
         <>
           <div className="fp-metrics" ref={metricsRef}>
             <Metric value={severity?.best_auc || 0.84} decimals={2} label="Severity AUC" delay={0} active={metricsVisible} colorIdx={0} />
-            <Metric value={autonomic?.best_auc || 0.86} decimals={2} label="Autonomic AUC" delay={0.15} active={metricsVisible} colorIdx={1} />
-            <Metric value={nDays} decimals={0} label="Days monitored" delay={0.30} active={metricsVisible} colorIdx={2} />
-            <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.45} active={metricsVisible} colorIdx={3} />
+            <Metric value={autonomic?.best_auc || 0.86} decimals={2} label="Autonomic AUC" delay={0.25} active={metricsVisible} colorIdx={1} />
+            <Metric value={nDays} decimals={0} label="Days monitored" delay={0.50} active={metricsVisible} colorIdx={2} />
+            <Metric value={nTargets} decimals={0} label="Symptom targets" delay={0.75} active={metricsVisible} colorIdx={3} />
           </div>
 
           {/* Live data pulse */}
@@ -115,7 +115,7 @@ export default function FlagshipProof({ data, loading }) {
                   style={{
                     opacity: metricsVisible ? 1 : 0,
                     transform: metricsVisible ? 'translateY(0)' : 'translateY(12px)',
-                    transition: `opacity 0.6s var(--ease-out) ${i * 100 + 800}ms, transform 0.6s var(--ease-out) ${i * 100 + 800}ms`,
+                    transition: `opacity 0.8s var(--ease-out) ${i * 180 + 1000}ms, transform 0.8s var(--ease-out) ${i * 180 + 1000}ms`,
                   }}
                 >
                   <span className="fp-target-name">

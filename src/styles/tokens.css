@@ -11,12 +11,12 @@
   --green: #6b9e7a;
   --warm: #c4855a;
 
-  /* Text hierarchy — green-family, integrated with palette */
-  --text: #2a4a46;
-  --text-heading: #24403c;
-  --text-sec: #3d6058;
-  --text-dim: #6a918a;
-  --text-metric: #24403c;
+  /* Text hierarchy — soft, warm, breathable */
+  --text: #3d5c57;
+  --text-heading: #34504b;
+  --text-sec: #4d6e68;
+  --text-dim: #7a9e97;
+  --text-metric: #34504b;
 
   /* Extended (use sparingly, semantically) */
   --slate: #6a8690;
@@ -62,9 +62,9 @@
   --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
 
-  /* Motion — slower, more deliberate */
+  /* Motion — slow, breathing rhythm */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-reveal: 1.2s;
+  --duration-reveal: 1.6s;
   --duration-hover: 0.3s;
 }
 
@@ -108,10 +108,10 @@ img { max-width: 100%; display: block; }
 
 .section { padding: var(--space-section) 0; }
 
-/* ── Scroll reveal — slower, more breath ──────────────── */
+/* ── Scroll reveal — slow rise from below ─────────────── */
 .reveal-base {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(40px);
   transition: opacity var(--duration-reveal) var(--ease-out),
               transform var(--duration-reveal) var(--ease-out);
 }
