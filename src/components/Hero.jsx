@@ -30,9 +30,9 @@ function MoebiusPulse() {
     paramsRef.current = {
       color: c,
       color2: MOEBIUS_PALETTE[c2Idx],
-      rotation: Math.random() * Math.PI * 2,
+      rotation: Math.random() * Math.PI * 5,
       scale: 0.92 + Math.random() * 0.46,
-      tilt: 0.52 + Math.random() * 0.48,
+      tilt: 0.72 + Math.random() * 0.48,
       stripW: 0.34 + Math.random() * 0.08,
       driftSpeed: 0.06 + Math.random() * 0.09,
     }
@@ -44,7 +44,7 @@ function MoebiusPulse() {
     const ctx = canvas.getContext('2d')
     const p = paramsRef.current
 
-    const SIZE = 640
+    const SIZE = 300
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     canvas.width = SIZE * dpr
     canvas.height = SIZE * dpr
@@ -56,7 +56,7 @@ function MoebiusPulse() {
     const R = 70 * p.scale
     const W = R * p.stripW
     const TILT = p.tilt
-    const STEPS = 440
+    const STEPS = 1440
 
     function edge(u, sign, breathe, drift) {
       const hu = u / 2
