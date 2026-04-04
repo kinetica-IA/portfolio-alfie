@@ -8,7 +8,7 @@ import { useRef, useState, useMemo, useEffect } from 'react'
  */
 export function useWordStagger(text, { staggerMs = 140, threshold = 0.25 } = {}) {
   const ref = useRef(null)
-  const [revealed, setRevealed] = useState(false)
+  const [revealed, setRevealed] = useState(() => typeof window === 'undefined')
 
   useEffect(() => {
     const el = ref.current
