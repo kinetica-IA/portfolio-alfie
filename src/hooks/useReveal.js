@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 
 export function useReveal(threshold = 0.25) {
   const ref = useRef(null)
-  const [revealed, setRevealed] = useState(false)
+  const [revealed, setRevealed] = useState(() => typeof window === 'undefined')
 
   useEffect(() => {
     const obs = new IntersectionObserver(

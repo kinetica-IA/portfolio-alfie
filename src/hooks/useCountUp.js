@@ -9,7 +9,10 @@ import { useState, useEffect, useRef } from 'react'
  * @param {number} duration - Animation duration in ms
  */
 export function useCountUp(target, decimals = 0, active = false, duration = 900) {
-  const [value, setValue] = useState(0)
+  const [value, setValue] = useState(() => {
+    if (typeof window === 'undefined') return target ?? 0
+    return 0
+  })
   const startTime = useRef(null)
   const raf = useRef(null)
 

@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
-Sitemap: https://kineticaai.com/sitemap.xml
+
+# Bloquear PDFs fantasma de deploy antiguo (hasta que salgan del índice de Google)
+Disallow: /assets/Optimizacion-ARM64.pdf
+Disallow: /assets/IA-y-Empatia.pdf
+
+# Bloquear datos internos
+Disallow: /data/
+
+Sitemap: https://www.kineticaai.com/sitemap-index.xml

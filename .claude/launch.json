@@ -4,8 +4,8 @@
     {
       "name": "dev",
       "runtimeExecutable": "/opt/homebrew/Cellar/node/25.5.0/bin/node",
-      "runtimeArgs": ["node_modules/.bin/vite", "--port", "5173"],
-      "port": 5173
+      "runtimeArgs": ["node_modules/.bin/astro", "dev", "--port", "4321"],
+      "port": 4321
     }
   ]
 }

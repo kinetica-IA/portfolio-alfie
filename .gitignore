@@ -24,8 +24,6 @@ pnpm-debug.log*
 .idea/
 
 # backup files
-*.backup.*.astro
-*_backup.astro
 estructura_portfolio_alfie.txt
 
 # large intermediate data

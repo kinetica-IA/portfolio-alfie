@@ -32,10 +32,14 @@ export function useTextDecode(
     delay = 0,
   } = {}
 ) {
-  const [displayed, setDisplayed] = useState(() => scramble(text))
+  const [displayed, setDisplayed] = useState(() => {
+    if (typeof window === 'undefined') return text
+    return scramble(text)
+  })
   const timersRef = useRef([])
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
     timersRef.current.forEach(id => clearTimeout(id))
     timersRef.current = []
 
