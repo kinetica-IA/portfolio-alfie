@@ -31,13 +31,13 @@ const SECTION_PALETTES = [
 ]
 
 // ── Config ──────────────────────────────────────────────────────────
-const BLOB_COUNT       = 5        // flowing shapes
-const BASE_ALPHA       = 0.04     // subtle but visible
-const CURSOR_BOOST     = 0.025    // gentle extra glow near cursor
-const CURSOR_RADIUS    = 280      // influence zone
-const DRIFT_SPEED      = 0.00012  // very slow drift
-const BREATHE_SPEED    = 0.0004   // inhale/exhale rhythm
-const BREATHE_AMP      = 0.15     // how much blobs expand/contract
+const BLOB_COUNT       = 7        // flowing shapes
+const BASE_ALPHA       = 0.08     // subtle but visible
+const CURSOR_BOOST     = 0.045    // gentle extra glow near cursor
+const CURSOR_RADIUS    = 220      // influence zone
+const DRIFT_SPEED      = 0.0002  // very slow drift
+const BREATHE_SPEED    = 0.0008   // inhale/exhale rhythm
+const BREATHE_AMP      = 0.35     // how much blobs expand/contract
 const COLOR_LERP_SPEED = 0.008    // smooth palette transitions
 const RESOLUTION_SCALE = 0.35     // render at lower res for perf + softness
 

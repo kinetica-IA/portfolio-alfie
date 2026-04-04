@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scanimation — Orbital Triads · Kinetica AI</title>
+<style>
+  :root {
+    --bg: #f0f9f9;
+    --teal: #90a7a5;
+    --text: #1a2a28;
+    --slate: #6a8690;
+    --sea: #5d8a82;
+    --ice: #85a8b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  #scanimation {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  #composite { position: absolute; inset: 0; }
+  #overlay   { position: absolute; inset: 0; will-change: transform; }
+
+  .demo-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    pointer-events: none;
+  }
+
+  .demo-content h1 {
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .demo-content p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--slate);
+    opacity: 0.7;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: rgba(26,42,40, 0.88);
+    backdrop-filter: blur(12px);
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: #cde0dd;
+  }
+
+  .controls label {
+    display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+  }
+
+  .controls input[type="range"] { width: 70px; accent-color: var(--teal); }
+
+  .controls select {
+    background: rgba(144,167,165,0.2);
+    border: 1px solid rgba(144,167,165,0.3);
+    color: #cde0dd; border-radius: 0.5rem;
+    padding: 0.25rem 0.4rem;
+    font-family: inherit; font-size: inherit;
+  }
+
+  @media (max-width: 640px) {
+    .controls { flex-wrap: wrap; justify-content: center; font-size: 0.65rem; padding: 0.6rem 1rem; }
+    .controls input[type="range"] { width: 50px; }
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="scanimation">
+  <canvas id="composite"></canvas>
+  <canvas id="overlay"></canvas>
+</div>
+
+<div class="demo-content">
+  <h1>Kinetica AI</h1>
+  <p>scanimation · orbital triads</p>
+</div>
+
+<div class="controls">
+  <label>Vel
+    <input type="range" id="ctrl-speed" min="1" max="40" value="14" step="1">
+  </label>
+  <label>Opac
+    <input type="range" id="ctrl-opacity" min="0.08" max="0.60" value="0.18" step="0.01">
+  </label>
+  <label>Escala
+    <input type="range" id="ctrl-scale" min="0.3" max="2.5" value="1" step="0.1">
+  </label>
+  <label>Línea
+    <input type="range" id="ctrl-line" min="1" max="6" value="2" step="0.5">
+  </label>
+  <label>Radio puntos
+    <input type="range" id="ctrl-dot" min="1" max="12" value="3" step="0.5">
+  </label>
+  <label>Paleta
+    <select id="ctrl-palette">
+      <option value="mixed" selected>Mixta</option>
+      <option value="teal">Teal</option>
+      <option value="sea">Sea</option>
+      <option value="slate">Slate</option>
+      <option value="ice">Ice</option>
+    </select>
+  </label>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  SCANIMATION ENGINE v4 — Orbital Triads
+//
+//  Seder technique (US Patent 5,901,484):
+//  Both layers = colored lines, same color, same width, same pitch.
+//  Static layer encodes animation; sliding layer reveals it.
+//
+//  PATTERN: 3 dots arranged as a scalene triangle,
+//  rotating around their barycenter (centroid).
+//  Each cell has slightly different triangle proportions
+//  and orbit radii to avoid a mechanical look.
+// ══════════════════════════════════════════════════════════════════
+
+const NUM_FRAMES = 6;
+
+// ── Palette ──
+const PAL = {
+  teal:  { r: 144, g: 167, b: 165 },
+  sea:   { r:  93, g: 138, b: 130 },
+  slate: { r: 106, g: 134, b: 144 },
+  ice:   { r: 133, g: 168, b: 184 },
+};
+
+const PAL_SETS = {
+  mixed: ['teal', 'sea', 'slate', 'ice'],
+  teal:  ['teal'],
+  sea:   ['sea'],
+  slate: ['slate'],
+  ice:   ['ice'],
+};
+
+// ── State ──
+let LINE_W   = 2;
+let PITCH;
+let opacity  = 0.18;
+let scale    = 1;
+let dotR     = 3;
+let palette  = 'mixed';
+let speed    = 14;
+
+const compC = document.getElementById('composite');
+const overC = document.getElementById('overlay');
+const compX = compC.getContext('2d');
+const overX = overC.getContext('2d');
+let W, H;
+
+function recalc() { PITCH = LINE_W * NUM_FRAMES; }
+
+// ══════════════════════════════════════
+//  SCALENE TRIANGLE TRIAD GEOMETRY
+//
+//  Each triad = 3 dots at different distances
+//  from the centroid (scalene), rotating.
+//  The three "arms" have different lengths
+//  and different angular offsets.
+// ══════════════════════════════════════
+
+function makeTriad(seed) {
+  // Scalene: 3 different radii, 3 irregular angular offsets
+  // Using seed for deterministic randomness per cell
+  const s1 = ((seed * 137.5) % 1);
+  const s2 = ((seed * 241.3) % 1);
+  const s3 = ((seed * 389.7) % 1);
+
+  // Orbit radii — scalene means all 3 are different
+  const rBase = 18 * scale;
+  const r1 = rBase * (0.6 + s1 * 0.5);   // short arm
+  const r2 = rBase * (1.0 + s2 * 0.4);   // medium arm
+  const r3 = rBase * (1.3 + s3 * 0.5);   // long arm
+
+  // Angular offsets — irregular spacing (not 120° each)
+  const a1 = 0;
+  const a2 = (1.6 + s1 * 0.9);           // ~92°–143° from dot 1
+  const a3 = (3.4 + s2 * 0.8);           // ~195°–241° from dot 1
+
+  return [
+    { r: r1, aOff: a1 },
+    { r: r2, aOff: a2 },
+    { r: r3, aOff: a3 },
+  ];
+}
+
+// Compute dot positions for a triad at a given frame
+function triadPositions(cx, cy, triad, frameAngle) {
+  return triad.map(dot => ({
+    x: cx + dot.r * Math.cos(frameAngle + dot.aOff),
+    y: cy + dot.r * Math.sin(frameAngle + dot.aOff),
+  }));
+}
+
+// ══════════════════════════════════════
+//  CELL GRID
+// ══════════════════════════════════════
+
+function buildCells() {
+  const cells = [];
+  const spacing = 120 * scale;
+  const cols = Math.ceil(W / spacing) + 2;
+  const rows = Math.ceil(H / spacing) + 2;
+  const colors = PAL_SETS[palette];
+  let ci = 0;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const cx = -spacing + col * spacing + (row % 2 ? spacing * 0.5 : 0);
+      const cy = -spacing + row * spacing * 0.92;
+      const seed = (row * 173 + col * 337 + 7) / 1000;
+
+      cells.push({
+        cx, cy,
+        triad: makeTriad(seed),
+        color: PAL[colors[ci % colors.length]],
+        // Per-cell rotation offset for organic feel
+        rotOff: seed * Math.PI * 2,
+      });
+      ci++;
+    }
+  }
+  return cells;
+}
+
+// ══════════════════════════════════════════════════════════
+//  LAYER 1: STATIC COMPOSITE
+//
+//  For each frame f: render all triads at rotation angle
+//  f/N * 2π, then clip into frame f's strip columns.
+// ══════════════════════════════════════════════════════════
+
+function buildComposite() {
+  compC.width  = W;
+  compC.height = H;
+
+  const off = document.createElement('canvas');
+  off.width = W; off.height = H;
+  const ox = off.getContext('2d');
+
+  const cells = buildCells();
+
+  compX.clearRect(0, 0, W, H);
+
+  for (let f = 0; f < NUM_FRAMES; f++) {
+    ox.clearRect(0, 0, W, H);
+
+    const baseAngle = (f / NUM_FRAMES) * Math.PI * 2;
+
+    for (const cell of cells) {
+      const angle = baseAngle + cell.rotOff;
+      const dots = triadPositions(cell.cx, cell.cy, cell.triad, angle);
+      const { r, g, b } = cell.color;
+
+      // Draw the 3 dots
+      for (const d of dots) {
+        ox.beginPath();
+        ox.arc(d.x, d.y, dotR, 0, Math.PI * 2);
+        ox.fillStyle = `rgba(${r},${g},${b},${opacity})`;
+        ox.fill();
+      }
+
+      // Draw faint connecting lines between dots (the triangle)
+      ox.beginPath();
+      ox.moveTo(dots[0].x, dots[0].y);
+      ox.lineTo(dots[1].x, dots[1].y);
+      ox.lineTo(dots[2].x, dots[2].y);
+      ox.closePath();
+      ox.strokeStyle = `rgba(${r},${g},${b},${opacity * 0.5})`;
+      ox.lineWidth = LINE_W * 0.6;
+      ox.stroke();
+    }
+
+    // Clip frame f into its strip columns
+    compX.save();
+    compX.beginPath();
+    for (let x = f * LINE_W; x < W + PITCH; x += PITCH) {
+      compX.rect(x, 0, LINE_W, H);
+    }
+    compX.clip();
+    compX.drawImage(off, 0, 0);
+    compX.restore();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  LAYER 2: SLIDING OVERLAY
+//
+//  Same colored lines, same width, same pitch.
+//  Bar = LINE_W * (N-1), gap = LINE_W
+// ══════════════════════════════════════════════════════════
+
+function buildOverlay() {
+  const mw = W + PITCH * 2;
+  overC.width  = mw;
+  overC.height = H;
+  overC.style.position = 'absolute';
+  overC.style.top  = '0';
+  overC.style.left = '0';
+  overC.style.width  = mw + 'px';
+  overC.style.height = H + 'px';
+
+  overX.clearRect(0, 0, mw, H);
+
+  const barW = LINE_W * (NUM_FRAMES - 1);
+  const colors = PAL_SETS[palette];
+  const c = PAL[colors[0]];
+
+  for (let x = 0; x < mw; x += PITCH) {
+    overX.fillStyle = `rgba(${c.r},${c.g},${c.b},${opacity * 1.4})`;
+    overX.fillRect(x + LINE_W, 0, barW, H);
+  }
+}
+
+// ══════════════════════════════════════
+//  ANIMATION — only the overlay moves
+// ══════════════════════════════════════
+
+let maskX = 0, lastT = 0;
+
+function animate(ts) {
+  if (!lastT) lastT = ts;
+  const dt = (ts - lastT) / 1000;
+  lastT = ts;
+
+  maskX -= speed * dt;
+  if (maskX <= -PITCH) maskX += PITCH;
+
+  overC.style.transform = `translateX(${maskX}px)`;
+  requestAnimationFrame(animate);
+}
+
+// ══════════════════════════════════════
+//  REBUILD & RESIZE
+// ══════════════════════════════════════
+
+function rebuild() {
+  recalc();
+  buildComposite();
+  buildOverlay();
+}
+
+window.addEventListener('resize', () => {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  rebuild();
+});
+
+// ══════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════
+
+document.getElementById('ctrl-speed').addEventListener('input', e => {
+  speed = parseFloat(e.target.value);
+});
+document.getElementById('ctrl-opacity').addEventListener('input', e => {
+  opacity = parseFloat(e.target.value);
+  rebuild();
+});
+document.getElementById('ctrl-scale').addEventListener('input', e => {
+  scale = parseFloat(e.target.value);
+  rebuild();
+});
+document.getElementById('ctrl-line').addEventListener('input', e => {
+  LINE_W = parseFloat(e.target.value);
+  rebuild();
+});
+document.getElementById('ctrl-dot').addEventListener('input', e => {
+  dotR = parseFloat(e.target.value);
+  rebuild();
+});
+document.getElementById('ctrl-palette').addEventListener('change', e => {
+  palette = e.target.value;
+  rebuild();
+});
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+
+W = window.innerWidth;
+H = window.innerHeight;
+rebuild();
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
