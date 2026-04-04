@@ -1,5 +1,5 @@
 import { usePolarData } from './hooks/usePolarData'
-import ClinicalField from './components/ClinicalField'
+import BreathingField from './components/BreathingField'
 import { FloatingDecorators } from './components/OrganicSymbols'
 import Hero from './components/Hero'
 import ClinicalSignal from './components/ClinicalSignal'
@@ -17,7 +17,7 @@ export default function App() {
 
   return (
     <>
-      <ClinicalField />
+      <BreathingField />
       <FloatingDecorators />
       <div className="content-layer">
         <Hero />
