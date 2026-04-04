@@ -695,9 +695,9 @@
       </p>
     </div>
     <div class="hero-meta">
-      <div>IO3 · FASE 0 · active development</div>
-      <div>Mac Mini M4 · Local-first · Private</div>
-      <div>Loop: claude-haiku-4-5 · Synthesis: claude-sonnet-4-6</div>
+      <div>LangGraph · Anthropic API · Mac Mini M4</div>
+      <div>FASE 0 active · Anthropic-only since 2026-03-30</div>
+      <div>Haiku (loop) · Sonnet (synthesis) · Opus (planned)</div>
       <div>Embeddings: intfloat/multilingual-e5-large · 1024 dims</div>
       <div>RAG: ChromaDB · 1880 chunks · cosine similarity</div>
       <div class="meta-green">✓ 5/5 benchmark queries passing · ~28s loop</div>
@@ -707,28 +707,28 @@
   <!-- STATS -->
   <div class="stats-row reveal">
     <div class="stat-item">
-      <span class="stat-val">9</span>
-      <span class="stat-label">Graph nodes</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">5</span>
-      <span class="stat-label">ALMA axioms</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">28s</span>
+      <span class="stat-val">~28s</span>
       <span class="stat-label">Loop latency</span>
     </div>
     <div class="stat-item">
       <span class="stat-val">1880</span>
-      <span class="stat-label">RAG chunks</span>
+      <span class="stat-label">ChromaDB chunks</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">0</span>
-      <span class="stat-label">Cloud deps</span>
+      <span class="stat-val">9 nodes</span>
+      <span class="stat-label">Graph nodes</span>
     </div>
     <div class="stat-item">
-      <span class="stat-val">2</span>
-      <span class="stat-label">ALMA layers</span>
+      <span class="stat-val">5/5 pass</span>
+      <span class="stat-label">Benchmarks</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">Anthropic only</span>
+      <span class="stat-label">Provider</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">Haiku</span>
+      <span class="stat-label">Loop model</span>
     </div>
   </div>
 
@@ -887,117 +887,113 @@ if (c) {
 /* ── DATA ── */
 const modules = [
   {
-    id: "classify", name: "classify.py", icon: "⌬", color: "#6b8a88", badge: "L0",
+    id: "classify", name: "classify.py", icon: "⬡", color: "#6b8a88", badge: "REGEX",
     short: "Regex puro · 0 tokens · determinístico",
-    summary: "Primera decisión del grafo. Clasifica la query usando regex puro — sin LLM, sin tokens. Determinístico y auditable. Asigna task_type que el registry usa para seleccionar modelo. Si no hay match, task_type='general' y Haiku resuelve.",
+    summary: "Clasificación de la query entrante usando regex puro. Sin tokens LLM, sin latencia cloud. Determinístico y auditable — la primera decisión del grafo no depende de un modelo probabilístico.",
     sections: [
       { name: "classify.py", lines: "nodes/classify.py",
-        desc: "Regex patterns sobre la query raw. Devuelve task_type como string. 0 llamadas LLM. Latencia <1ms. Decisión completamente auditable — no hay incertidumbre estocástica en el routing." },
-      { name: "registry.py", lines: "shared/providers/registry.py",
-        desc: "Mapea task_type → modelo. Haiku para loop reasoning y tasks medias. Sonnet para síntesis final y casos de alta complejidad clínica. Objetivo FASE 0.2: ≤20 líneas, 0 keywords." },
+        desc: "Pattern matching contra categorías clínicas predefinidas. Cada pattern mapea a un task_type que determina el routing downstream. Zero ambiguity, zero cost." }
     ],
-    vsLLM: "Un plain LLM clasifica intent con probabilidad — puede equivocarse y nunca sabes por qué. classify.py es determinístico: si falla, el bug es reproducible y fixeable. En un sistema clínico, eso no es una preferencia estética — es un requisito."
+    vsLLM: "Un plain LLM clasifica con otro LLM call — más latencia, más coste, más varianza. IO3 clasifica con regex: instantáneo, gratuito, reproducible."
   },
   {
-    id: "context_engine", name: "context_engine.py", icon: "⬡", color: "#90a7a5", badge: "CORE",
-    short: "Profile + rules + RAG + ALMA L1",
-    summary: "Segundo nodo. Construye enriched_context antes de cualquier call LLM. Carga el perfil del usuario, recupera chunks relevantes de ChromaDB (1880 chunks, intfloat/multilingual-e5-large, cosine), inyecta reglas clínicas de config/clinical_rules.yaml, y activa ALMA L1 — los 5 axiomas como contexto pre-generación, zero tokens adicionales.",
+    id: "context_engine", name: "context_engine.py", icon: "◈", color: "#90a7a5", badge: "CONTEXT",
+    short: "profile + rules + RAG + ALMA L1 · pre-generation",
+    summary: "Ensambla todo el contexto antes de que el LLM vea la query. Perfil del paciente, reglas clínicas, chunks RAG relevantes de ChromaDB (1880 chunks), y los 5 axiomas ALMA L1 inyectados como contexto. Zero tokens extra en runtime para ALMA L1.",
     sections: [
       { name: "profile_loader", lines: "shared/context/profile_loader.py",
-        desc: "Carga perfil profesional, contexto clínico y estado del proyecto como bloque estructurado. Siempre presente — no recuperado por similitud, siempre cargado." },
+        desc: "Carga perfil clínico del paciente. Datos estructurados, no texto libre." },
       { name: "rag_retriever", lines: "shared/context/rag_retriever.py",
-        desc: "Query → embedding → cosine similarity → top-K chunks de ChromaDB. 1880 chunks indexados (347 base + 1533 deltas). intfloat/multilingual-e5-large, 1024 dims." },
-      { name: "ALMA L1", lines: "shared/context/assembler.py",
-        desc: "5 axiomas (Conciencia, Claridad, Límite, Pragmatismo, Cuidado) inyectados como contexto antes de cualquier generación. Zero latencia adicional. Zero tokens de runtime. Implementación real: inyección de prompt." },
+        desc: "Query contra ChromaDB (1880 chunks, intfloat/multilingual-e5-large, 1024 dims, cosine). Devuelve los chunks más relevantes." },
+      { name: "ALMA L1 injection", lines: "shared/safety/alma/",
+        desc: "5 axiomas epistémicos (Conciencia · Claridad · Límite · Pragmatismo · Cuidado) inyectados como system context. Zero-cost: no es un LLM call, es inyección de prompt." }
     ],
-    vsLLM: "Un plain LLM recibe lo que el usuario escribió. El Context Engine recibe lo mismo y produce enriched_context — perfil + RAG + reglas clínicas + axiomas ALMA — antes de que ningún LLM lo vea. El techo de calidad del LLM lo determina lo que recibe."
+    vsLLM: "Un plain LLM recibe solo la query del usuario. IO3 enriquece cada query con perfil clínico, reglas, evidencia RAG, y axiomas éticos — antes de que el modelo genere una sola palabra."
   },
   {
-    id: "reason", name: "reason.py", icon: "◆", color: "#9b8ab5", badge: "HAIKU",
-    short: "Haiku · JSON hypothesis+plan",
-    summary: "Primer nodo LLM del loop. Haiku genera una hipótesis y un plan de acción en JSON estructurado. Recibe enriched_context completo. Produce hypothesis (qué cree que necesita el usuario) y plan (qué herramientas o pasos ejecutar). La hipótesis persiste en el estado del grafo para el siguiente ciclo.",
+    id: "reason", name: "reason.py", icon: "◇", color: "#9b8ab5", badge: "HAIKU",
+    short: "claude-haiku-4-5 · hypothesis + plan · JSON structured",
+    summary: "Haiku genera una hipótesis clínica y un plan de acción en formato JSON estructurado. Es la fase divergente del loop — explora posibilidades antes de comprometerse con una respuesta.",
     sections: [
       { name: "reason.py", lines: "nodes/reason.py",
-        desc: "Call a claude-haiku-4-5 con enriched_context + historial de sesión. Output: JSON con campos hypothesis y plan. Structured output — no texto libre. La hipótesis se usa como query semántica en act/dispatcher.py." },
-      { name: "Loop cycling", lines: "agents/loop/graph.py",
-        desc: "Si respond devuelve answer=None y step < max_steps, el grafo vuelve a reason. Queries web+RAG típicamente corren 2 ciclos: ciclo 1 fetcha contexto externo, ciclo 2 cruza con ChromaDB y produce respuesta final." },
+        desc: "Call a Haiku con contexto enriquecido. Output: JSON con hypothesis y plan. El formato estructurado permite que downstream nodes actúen sobre datos, no sobre texto libre." }
     ],
-    vsLLM: "Un plain LLM genera texto. reason.py genera una hipótesis estructurada que act/dispatcher.py usa como query semántica. La diferencia es trazabilidad: puedes auditar por qué el sistema hizo lo que hizo en cada ciclo."
+    vsLLM: "Un plain LLM genera texto libre. IO3 genera hipótesis estructuradas que el resto del grafo puede inspeccionar, validar, y actuar sobre ellas programáticamente."
   },
   {
-    id: "act", name: "act/dispatcher.py", icon: "⌘", color: "#7a9bb5", badge: "TOOLS",
-    short: "RAG · hypothesis como query",
-    summary: "Ejecuta el plan generado por reason.py. Usa la hypothesis como query semántica para recuperar contexto adicional de ChromaDB o para despachar herramientas. El dispatcher decide qué ejecutar basándose en el plan estructurado — no en texto libre.",
+    id: "act", name: "act/dispatcher.py", icon: "⬢", color: "#7a9bb5", badge: "TOOLS",
+    short: "RAG dispatch · hypothesis+plan como query",
+    summary: "Toma la hipótesis y el plan de reason y los usa como query para buscar evidencia en ChromaDB. No es un tool executor genérico — es un dispatcher que busca evidencia para validar o refutar la hipótesis.",
     sections: [
       { name: "dispatcher.py", lines: "nodes/act/dispatcher.py",
-        desc: "Lee el plan de reason.py. Selecciona herramienta o path RAG. Ejecuta. Devuelve resultado al estado del grafo para que respond.py lo use. Sin ambigüedad — el plan es JSON, no texto interpretable." },
-      { name: "Tool registry", lines: "shared/providers/registry.py",
-        desc: "Herramientas disponibles para dispatch: web search, RAG query, diary query, polar query, research analysis. Cada herramienta devuelve resultado tipado que el grafo puede validar." },
+        desc: "Usa hypothesis+plan como query RAG. Los chunks recuperados se añaden al contexto para que respond tenga evidencia concreta, no solo la opinión del modelo." }
     ],
-    vsLLM: "Un plain LLM ejecuta herramientas porque el texto de su respuesta contiene el nombre de la herramienta — parsing frágil. act/dispatcher.py ejecuta herramientas porque reason.py produjo un plan JSON con el campo tool explícito. Sin parsing, sin ambigüedad."
+    vsLLM: "Un plain LLM responde desde su training data. IO3 busca evidencia específica en una knowledge base clínica curada antes de responder."
   },
   {
-    id: "respond", name: "respond.py", icon: "◉", color: "#6b9e7a", badge: "HAIKU",
-    short: "Haiku · MSU por task_type",
-    summary: "Genera la respuesta del loop. Haiku recibe enriched_context + resultado de act + historial. El system prompt (MSU) varía por task_type — las respuestas clínicas tienen instrucciones distintas a las respuestas de búsqueda web. Si la respuesta es insuficiente, devuelve answer=None y el grafo vuelve a reason.",
+    id: "respond", name: "respond.py", icon: "◎", color: "#6b8a88", badge: "HAIKU",
+    short: "claude-haiku-4-5 · MSU por task_type",
+    summary: "Genera la respuesta visible al usuario usando Haiku con system prompts clínicos diferenciados por task_type (MSUs). Cada tipo de consulta tiene su propio prompt optimizado.",
     sections: [
       { name: "respond.py", lines: "nodes/respond.py",
-        desc: "Call a claude-haiku-4-5 con MSU específico por task_type. Evalúa si la respuesta es suficiente. Devuelve answer o None. None desencadena otro ciclo — razón por la que el loop puede iterar." },
-      { name: "MSUs", lines: "shared/msus/",
-        desc: "System prompts clínicos diferenciados por task_type. Cada MSU define tono, estructura y límites de la respuesta para ese contexto. Separación entre instrucción y generación — el LLM no decide cómo responder, el MSU lo define." },
+        desc: "Haiku genera respuesta con MSU (Minimal System Unit) seleccionado por el task_type de classify. El output va a ALMA gate para evaluación post-generación." }
     ],
-    vsLLM: "Un plain LLM usa el mismo system prompt para todo. respond.py selecciona el MSU por task_type — una consulta sobre HRV nocturno recibe instrucciones distintas a una búsqueda de literatura. El LLM es el mismo. El contexto que recibe no."
+    vsLLM: "Un plain LLM usa un system prompt genérico. IO3 selecciona el system prompt óptimo para cada tipo de consulta clínica."
   },
   {
-    id: "alma_gate", name: "alma_gate.py", icon: "◍", color: "#c4855a", badge: "ALMA L2",
-    short: "Post-gen · en rediseño v3 · nunca corta",
-    summary: "Evalúa la respuesta generada contra los 5 axiomas ALMA post-generación. Diseño actual: nunca corta el flujo — siempre llega al gap para que el clínico decida. ALMA L2 está en rediseño estructural (v3): 3 bugs auditados y confirmados. El clínico tiene siempre la última palabra.",
+    id: "alma_gate", name: "alma_gate.py", icon: "⊘", color: "#c4855a", badge: "ALMA L2",
+    short: "Post-generation evaluation · en rediseño v3",
+    summary: "Evalúa la respuesta generada contra los axiomas ALMA. Produce APPROVE/REWRITE/SILENCE. Actualmente en rediseño: el bug principal es que Haiku evalúa sus propios outputs y el RLHF domina sobre los axiomas. ALMA L2 nunca corta el flujo — siempre llega al gap para que el clínico decida.",
     sections: [
-      { name: "Bugs auditados (2026-03-31)", lines: "shared/safety/alma/alma2.py",
-        desc: "Bug 1: string de decisión LLM sobreescribe el score ponderado calculado. Bug 2: 85+100 pares de training con schema v1 incompatible con v2 de 5 axiomas. Bug 3: axioma CUIDADO evalúa si el output discute daño, no si la situación presenta riesgo real — resultado: APPROVE en consulta de clenbuterol." },
-      { name: "Causa raíz", lines: "shared/safety/alma/alma2.py",
-        desc: "Haiku juzgando sus propios outputs. El RLHF de Anthropic domina sobre los axiom prompts. LLM-as-judge en el mismo modelo que genera es una limitación arquitectónica." },
-      { name: "Dirección v3", lines: "IO3context/roadmap/FASE_1.yaml",
-        desc: "Determinística donde sea posible. Árbol: regex exacto → cosine similarity → Haiku (effort:low) → Sonnet (effort:high + extended thinking). LLM solo para incertidumbre real." },
+      { name: "alma2.py", lines: "shared/safety/alma/alma2.py",
+        desc: "Evaluación post-generación en secuencia DAG. Versión v2 documentada con 3 bugs estructurales. Dirección v3: determinístico donde sea posible. Árbol: regex exacto → cosine similarity → Haiku effort:low → Sonnet effort:high." }
     ],
-    vsLLM: "Los filtros de seguridad de un plain LLM son constraints entrenados — operan antes de la generación y no son auditables. ALMA L2 opera post-generación con axiomas explícitos y trazables. Cuando falla, el bug es documentable y fixeable. Eso es lo que separa un sistema clínico de un chatbot con guardrails."
+    vsLLM: "Un plain LLM no evalúa sus propias respuestas contra principios éticos. IO3 sí — y documenta públicamente cuándo esa evaluación falla y por qué."
   },
   {
-    id: "human_interrupt", name: "human_interrupt.py", icon: "⊙", color: "#d4a843", badge: "GAP",
-    short: "Human-on-loop · 3 opciones · clínico decide",
-    summary: "El gap es el contrato central de IO3. Después de cada ciclo de loop, el clínico decide: otra vuelta (más contexto), síntesis Sonnet (respuesta final de alta calidad), o end (cerrar). ALMA nunca corta — siempre llega aquí. El clínico tiene la última palabra en cada iteración.",
+    id: "store_feedback", name: "store_feedback.py", icon: "▣", color: "#7a9e8a", badge: "STORE",
+    short: "session_delta · snapshots · persistencia",
+    summary: "Almacena el feedback de cada iteración del loop. Session deltas y snapshots que permiten trazabilidad completa de cómo el agente llegó a cada respuesta.",
     sections: [
-      { name: "Gap contract", lines: "nodes/human_interrupt.py",
-        desc: "3 opciones verificadas: 'otra_vuelta' → reason (+ LOOP), 'sonnet' → sonnet_synthesis → END, 'end' → END. Strings alineados frontend↔backend. update_state bypass — el gap no es un nodo LLM, es una pausa de control humano." },
-      { name: "Gap panel UI", lines: "ui/frontend/src/components/GapPanel.jsx",
-        desc: "Tres botones: [+ LOOP] [+ Sonnet] [· END ·] + textarea de redirección opcional. Colores gap en paleta Kinetica AI: warm #c4855a. El clínico ve el estado del reasoning antes de decidir." },
+      { name: "store_feedback.py", lines: "nodes/store_feedback.py",
+        desc: "Guarda delta de la sesión y snapshot del estado. SQLite WAL para persistencia. Cada iteración deja rastro auditable." }
     ],
-    vsLLM: "Un plain LLM decide cuándo ha terminado. IO3 no decide nunca — el clínico decide. El gap es la implementación arquitectónica del principio de que en contextos clínicos, la IA informa y el humano decide. No es una feature — es el diseño."
+    vsLLM: "Un plain LLM no tiene memoria de cómo llegó a una respuesta. IO3 almacena cada paso del razonamiento para auditoría clínica."
+  },
+  {
+    id: "human_interrupt", name: "human_interrupt.py", icon: "⏸", color: "#d4a843", badge: "GAP",
+    short: "Human-on-loop · 3 opciones · el clínico decide",
+    summary: "El punto de decisión humana. Después de cada iteración del loop, el agente se detiene y presenta 3 opciones: otra vuelta de loop, síntesis con Sonnet, o terminar. El clínico siempre tiene la última palabra — el agente nunca actúa sin aprobación.",
+    sections: [
+      { name: "human_interrupt.py", lines: "nodes/human_interrupt.py",
+        desc: "LangGraph interrupt() real. Gap contract verificado: strings 'otra_vuelta' / 'sonnet' / 'end' alineados frontend↔backend. SILENCE de ALMA visible en el gap para que el clínico decida." }
+    ],
+    vsLLM: "Un plain LLM responde y no pregunta. IO3 se detiene, muestra su trabajo, y espera instrucciones. EU AI Act compliant by design."
   },
   {
     id: "sonnet_synthesis", name: "sonnet_synthesis.py", icon: "✦", color: "#d4a843", badge: "SONNET",
     short: "claude-sonnet-4-6 · solo cuando el clínico decide",
-    summary: "Síntesis final de alta calidad. Solo se activa cuando el clínico elige 'sonnet' en el gap — después de que el loop ha acumulado contexto suficiente. Sonnet recibe el historial completo de iteraciones y produce una síntesis clínica estructurada. Elimina el coste cloud durante la exploración.",
+    summary: "Síntesis final de alta calidad. Solo se activa cuando el clínico elige 'sonnet' en el gap — después de que el loop ha acumulado contexto suficiente. Sonnet recibe el historial completo de iteraciones y produce una síntesis clínica estructurada.",
     sections: [
       { name: "sonnet_synthesis.py", lines: "nodes/sonnet_synthesis.py",
-        desc: "Call a claude-sonnet-4-6 con historial completo de iteraciones como contexto. Produce síntesis clínica con mayor capacidad de razonamiento que Haiku. Solo corre una vez por sesión — cuando el clínico decide que el contexto acumulado lo justifica." },
-      { name: "Coste strategy", lines: "nodes/sonnet_synthesis.py",
-        desc: "Haiku maneja todo el loop (~28s, coste bajo). Sonnet solo para síntesis final (coste alto, calidad máxima). El clínico controla cuándo se incurre en el coste de Sonnet. Sin síntesis automática — sin tokens de Sonnet desperdiciados en exploración." },
+        desc: "Call a claude-sonnet-4-6 con historial completo de iteraciones como contexto. Produce síntesis clínica con mayor capacidad de razonamiento que Haiku. Solo corre una vez por sesión — cuando el clínico decide que el contexto acumulado lo justifica." }
     ],
-    vsLLM: "Un plain LLM usa el mismo modelo para todo. IO3 usa Haiku para exploración (rápido, barato) y Sonnet para síntesis (lento, caro, alta calidad) — solo cuando el clínico decide que vale la pena. La selección de modelo es una decisión clínica, no una configuración técnica."
+    vsLLM: "Un plain LLM usa el mismo modelo para todo. IO3 usa Haiku para exploración (rápido, barato) y Sonnet para síntesis (lento, caro, alta calidad) — solo cuando el clínico decide que vale la pena."
   },
 ];
 
 const flowNodes = [
-  { label: "goal", color: "#6b8a88" }, { label: "→" },
-  { label: "context_engine", color: "#90a7a5", id: "context_engine" }, { label: "→" },
-  { label: "router: 5-priority", color: "#6b9e7a", id: "router" }, { label: "→" },
-  { label: "orchestrator: ReAct", color: "#9b8ab5", id: "orchestrator" }, { label: "→" },
-  { label: "tool_execute: 20 tools", color: "#7a9bb5", id: "tools" }, { label: "→" },
-  { label: "respond", color: "#6b8a88" }, { label: "→" },
-  { label: "alma_gate", color: "#c4855a", id: "alma" }, { label: "→" },
-  { label: "connector", color: "#90a7a5", id: "connector" }, { label: "→" },
-  { label: "END", color: "#6b9e7a" },
+  { label: "query", color: "#6b8a88" }, { label: "→" },
+  { label: "classify", color: "#6b8a88", id: "classify" }, { label: "→" },
+  { label: "context_engine + ALMA L1", color: "#90a7a5", id: "context_engine" }, { label: "→" },
+  { label: "[LOOP]", color: "#6b9e7a" }, { label: ":" },
+  { label: "reason", color: "#9b8ab5", id: "reason" }, { label: "→" },
+  { label: "act", color: "#7a9bb5", id: "act" }, { label: "→" },
+  { label: "respond", color: "#6b8a88", id: "respond" }, { label: "→" },
+  { label: "alma_gate", color: "#c4855a", id: "alma_gate" }, { label: "→" },
+  { label: "store", color: "#7a9e8a", id: "store_feedback" }, { label: "→" },
+  { label: "[GAP]", color: "#d4a843", id: "human_interrupt" }, { label: "→" },
+  { label: "sonnet / END", color: "#d4a843", id: "sonnet_synthesis" },
 ];
 
 const issues = [
@@ -1025,34 +1021,34 @@ const issues = [
 
 const roadmap = [
   { ver: "✅", title: "IO3 stack Anthropic-only — Ollama eliminado (2026-03-30)",
-    desc: "Migración completa de Ollama/qwen3:8b a Anthropic API. Haiku para loop reasoning, Sonnet para síntesis. Latencia 80s → 28s documentada con metodología real.",
+    desc: "Migración completa de Ollama/qwen3:8b a Anthropic API. Haiku para loop reasoning, Sonnet para síntesis. Latencia 80s → 28s documentada.",
     status: "done" },
   { ver: "✅", title: "Grafo LangGraph — 9 nodos · 1 gap · SqliteSaver WAL",
-    desc: "classify → context_engine → reason → act → respond → alma_gate → human_interrupt (gap) → sonnet_synthesis. 0 bifurcaciones dentro del loop. Gap contract verificado: strings 'otra_vuelta' / 'sonnet' / 'end' alineados frontend↔backend.",
+    desc: "classify → context_engine → reason → act → respond → alma_gate → store_feedback → human_interrupt (gap) → sonnet_synthesis. 0 bifurcaciones. Gap contract verificado.",
     status: "done" },
   { ver: "✅", title: "Context Engine — profile + RAG + clinical rules + ALMA L1",
-    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axiomas inyectados como contexto pre-generación, zero latencia, zero tokens.",
+    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axiomas inyectados pre-generación, zero cost.",
     status: "done" },
   { ver: "✅", title: "UI React 18 — Kinetica AI · SSE streaming · 0 eventos perdidos",
-    desc: "FastAPI + SSE. GraphPanel SVG animado. Role-differentiated messages (green=iteraciones, gold=síntesis). GAP panel con 3 opciones. Cross-validation 119.3s wall time, 0 eventos SSE perdidos.",
+    desc: "FastAPI + SSE. GraphPanel SVG animado. Role-differentiated messages. GAP panel con 3 opciones. 0 eventos SSE perdidos en testing.",
     status: "done" },
-  { ver: "✅", title: "ALMA L2 auditado — 3 bugs estructurales documentados públicamente",
-    desc: "Bug override, contaminación training data, evaluación CUIDADO invertida. Causa raíz: Haiku juzgando sus propios outputs. Documentación pública — el pensamiento crítico sobre las limitaciones del sistema es parte del proyecto.",
+  { ver: "✅", title: "ALMA L2 auditado — 4 bugs estructurales documentados",
+    desc: "Override bug, training data contamination, inverted CUIDADO evaluation, Haiku self-judging. Causa raíz: RLHF domina sobre axiom prompts. Documentación pública.",
     status: "done" },
-  { ver: "🔄", title: "FASE 0 — Fundamentos honestos ← ACTIVA",
-    desc: "0.0 Mapeo real del codebase · 0.1 Auditoría ChromaDB → chroma_audit_report.json · 0.2 Poda registry.py (≤20 líneas) · 0.3 ALMA test set 30 casos · 0.4 ALMA L2 determinístico · 0.5 Structured output · 0.6 Divergencia Haiku.",
+  { ver: "🔄", title: "FASE 0 — Fundamentos honestos",
+    desc: "0.0 Mapeo codebase · 0.1 Auditoría ChromaDB → chroma_audit_report.json · 0.2 Poda registry.py (≤20 líneas) · 0.3 ALMA test set 30 casos · 0.4 ALMA L2 determinístico · 0.5 Structured output · 0.6 Divergencia Haiku.",
     status: "active" },
   { ver: "📅", title: "FASE 1 — ALMA L2 con Arsenal Anthropic",
-    desc: "Prompt caching (-90% input tokens en ALMA) · Effort control · Extended thinking para casos ambiguos · Target F1 ≥ 0.85. Bloqueada hasta FASE 0 completa.",
+    desc: "Prompt caching (-90% input tokens) · Effort control · Extended thinking · F1 ≥ 0.85. Bloqueada hasta FASE 0.",
     status: "next" },
   { ver: "📅", title: "FASE 2 — Persistencia real y conocimiento",
-    desc: "Dedup ChromaDB · Re-chunking clínico · RAG accuracy ≥ 0.75 · Session persistence real. Bloqueada hasta FASE 1.",
+    desc: "Dedup ChromaDB · Re-chunking clínico · RAG accuracy ≥ 0.75 · Session persistence. Bloqueada hasta FASE 1.",
     status: "next" },
   { ver: "📅", title: "FASE 3 — Human-on-Loop completo y frontend",
     desc: "Severity badges ALMA · Timestamps · Export session · Loop feedback end-to-end. Bloqueada hasta FASE 2.",
     status: "future" },
   { ver: "📅", title: "FASE 4 — Validación con clínicos · Nordic positioning",
-    desc: "3–5 clínicos externos · Protocolo · Metodología abierta. Señal de parada: ALMA F1 ≥ 0.90 + RAG accuracy ≥ 0.75 + human-on-loop verificado en 5 casos. Bloqueada hasta FASE 3.",
+    desc: "3–5 clínicos externos · Protocolo · Metodología abierta. Señal de parada: ALMA F1 ≥ 0.90 + RAG ≥ 0.75 + HITL verificado en 5 casos. Bloqueada hasta FASE 3.",
     status: "future" },
 ];
 

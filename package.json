@@ -4,16 +4,20 @@
   "type": "module",
   "version": "2.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@astrojs/react": "^5.0.2",
+    "@astrojs/sitemap": "^3.7.2",
     "@vitejs/plugin-react": "^4.4.0",
+    "astro": "^6.1.3",
+    "sharp": "^0.34.5",
     "vite": "^6.3.0"
   }
 }
