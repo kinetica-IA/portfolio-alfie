@@ -70,14 +70,16 @@ const HALO_ALPHA_MULT   = 0.12      // halo opacity relative to ray alpha
 const PULSE_BPM         = 33
 const PULSE_INTERVAL    = 60000 / PULSE_BPM
 
-// ── Focal position (now computed dynamically in resize) ─────────────
+// ── Focal position & responsive ─────────────────────────────────────
 const FOCAL_X = 0.50
-const FOCAL_Y_FALLBACK = 0.38       // fallback if DOM query fails
-const BREATH_MARGIN = 60            // px gap between cone vertex and h1 top
-const BREATH_MARGIN_MOBILE = 36     // smaller margin on mobile
-const MOBILE_BP = 480               // mobile breakpoint px
-const MOBILE_RAY_SCALE = 0.65       // maxReach multiplier on mobile
-const MOBILE_RAY_THIN = 0.7         // width multiplier on mobile
+const FOCAL_Y_FALLBACK = 0.32       // fallback — higher up to avoid overlap
+const BREATH_MARGIN = 80            // px gap vertex → h1 top (desktop)
+const BREATH_MARGIN_MOBILE = 50     // px gap vertex → h1 top (mobile)
+const MOBILE_BP = 480
+const MOBILE_RAY_SCALE = 0.55       // maxReach multiplier on mobile
+const MOBILE_RAY_THIN = 0.65        // width multiplier on mobile
+const KILL_ZONE = 40                // px above h1 where rays start fading out
+const KILL_FADE = 60                // px over which the fade happens
 
 // ── Ray generation ──────────────────────────────────────────────────
 function generateRays() {
@@ -213,11 +215,37 @@ export default function BreathingField() {
     const ctx = canvas.getContext('2d')
 
     let W, H, dpr, maxReach
-    let focalYPx = 0          // computed focal Y in px (within canvas)
+    let focalYPx = 0          // cone vertex Y (px, parent-relative)
+    let killYPx = 0           // Y below which rays fade to zero
     let isMobile = false
     const mouse = { x: -1, y: -1 }
 
     const rays = generateRays()
+
+    // ── Recalculate focal point from live DOM ──────────────────
+    function updateFocal() {
+      const parent = canvas.parentElement
+      isMobile = W <= MOBILE_BP
+
+      const h1 = document.querySelector('.hero-brand')
+      if (h1 && parent) {
+        const parentRect = parent.getBoundingClientRect()
+        const h1Rect = h1.getBoundingClientRect()
+        const h1TopInParent = h1Rect.top - parentRect.top
+        const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
+        focalYPx = Math.max(H * 0.10, h1TopInParent - margin)
+        // Kill zone: rays that reach below this Y get faded/clipped
+        killYPx = h1TopInParent - KILL_ZONE
+      } else {
+        focalYPx = FOCAL_Y_FALLBACK * H
+        killYPx = focalYPx + 40
+      }
+
+      // maxReach proportional to available space above the title
+      const space = focalYPx
+      maxReach = Math.min(W * 0.50, space * 1.2, H * 0.55)
+      if (isMobile) maxReach *= MOBILE_RAY_SCALE
+    }
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -229,28 +257,7 @@ export default function BreathingField() {
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      isMobile = W <= MOBILE_BP
-
-      // ── Anchor to .hero-brand h1 ────────────────────────────
-      const h1 = document.querySelector('.hero-brand')
-      if (h1 && parent) {
-        const parentRect = parent.getBoundingClientRect()
-        const h1Rect = h1.getBoundingClientRect()
-        // h1 top relative to canvas parent
-        const h1TopInParent = h1Rect.top - parentRect.top
-        const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
-        focalYPx = h1TopInParent - margin
-        // Keep a sane minimum so cone doesn't collapse
-        focalYPx = Math.max(H * 0.12, focalYPx)
-      } else {
-        focalYPx = FOCAL_Y_FALLBACK * H
-      }
-
-      // Scale reach to available space above title
-      const availableSpace = focalYPx
-      maxReach = Math.min(W * 0.55, availableSpace * 1.3, H * 0.60)
-      if (isMobile) maxReach *= MOBILE_RAY_SCALE
+      updateFocal()
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -261,7 +268,11 @@ export default function BreathingField() {
     window.addEventListener('resize', resize)
     resize()
 
+    let focalFrame = 0   // re-check DOM every N frames
     function draw(now) {
+      // Re-check focal anchor every 30 frames (~0.5s) to track layout shifts
+      if (++focalFrame >= 30) { focalFrame = 0; updateFocal() }
+
       ctx.clearRect(0, 0, W, H)
 
       const pulse = 1 + Math.sin(now * PULSE_SPEED) * PULSE_AMP
@@ -273,7 +284,7 @@ export default function BreathingField() {
       // ── Invisible heartbeat (drives pulse reaction on rays) ──────
       const fY = focalYPx
       const beatProgress = (now % PULSE_INTERVAL) / PULSE_INTERVAL
-      const pulseY = fY - beatProgress * H * 0.3  // pulse travels upward from apex
+      const pulseY = fY - beatProgress * H * 0.3
 
       // ── Build draw list ──────────────────────────────────────────
       const drawList = []
@@ -289,6 +300,14 @@ export default function BreathingField() {
       for (let i = 0; i < drawList.length; i++) {
         const d = drawList[i]
 
+        // ── Kill zone: fade rays whose tips are near/below the title ──
+        let killMult = 1
+        const lowestY = Math.max(d.tipY, d.fy)  // whichever is lower on screen
+        if (lowestY > killYPx) {
+          killMult = Math.max(0, 1 - (lowestY - killYPx) / KILL_FADE)
+          if (killMult <= 0) continue  // fully invisible, skip drawing
+        }
+
         const ct = d.colorT
         const wc = d.warmColor
         const cc = d.coolColor
@@ -296,9 +315,12 @@ export default function BreathingField() {
         const g = wc[1] + (cc[1] - wc[1]) * ct
         const b = wc[2] + (cc[2] - wc[2]) * ct
 
+        // Apply kill zone fade to alpha
+        const effAlpha = d.alpha * killMult
+
         // v2: trail ghost from previous frame
         if (d.prevTipX !== null && d.prevTipY !== null) {
-          const ghostAlpha = d.alpha * TRAIL_ALPHA_MULT
+          const ghostAlpha = effAlpha * TRAIL_ALPHA_MULT
           ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${ghostAlpha})`
           ctx.lineWidth = d.width * 0.6
           ctx.lineCap = 'round'
@@ -310,10 +332,10 @@ export default function BreathingField() {
 
         // v2: curved ray with gradient
         const grad = ctx.createLinearGradient(d.fx, d.fy, d.tipX, d.tipY)
-        grad.addColorStop(0,    `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.6})`)
-        grad.addColorStop(0.25, `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha})`)
-        grad.addColorStop(0.65, `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.45})`)
-        grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.1})`)
+        grad.addColorStop(0,    `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.6})`)
+        grad.addColorStop(0.25, `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha})`)
+        grad.addColorStop(0.65, `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.45})`)
+        grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.1})`)
 
         ctx.strokeStyle = grad
         ctx.lineWidth = isMobile ? d.width * MOBILE_RAY_THIN : d.width
@@ -335,7 +357,7 @@ export default function BreathingField() {
         // v2: halo glow on front rays
         if (d.depthFactor > HALO_DEPTH_THRESH) {
           const haloStrength = (d.depthFactor - HALO_DEPTH_THRESH) / (1 - HALO_DEPTH_THRESH)
-          const haloAlpha = d.alpha * HALO_ALPHA_MULT * haloStrength
+          const haloAlpha = effAlpha * HALO_ALPHA_MULT * haloStrength
           ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${haloAlpha})`
           ctx.lineWidth = d.width * HALO_WIDTH_MULT
           ctx.beginPath()
