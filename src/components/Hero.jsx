@@ -41,7 +41,7 @@ const HALO_A = 0.12
 const PULSE_BPM = 33
 const PULSE_INT = 60000 / PULSE_BPM
 const MOBILE_BP = 480
-const MOBILE_THIN = 0.65
+const MOBILE_THIN = 0.80
 
 function makeRays() {
   const rays = []
@@ -191,6 +191,20 @@ export default function Hero() {
     const hero = heroRef.current
     const h1 = brandRef.current
     if (!canvas || !hero || !h1) return
+
+    // No animation on mobile — save battery & GPU
+    if (hero.offsetWidth <= MOBILE_BP) {
+      canvas.style.display = 'none'
+      const onResize = () => {
+        if (hero.offsetWidth > MOBILE_BP) {
+          canvas.style.display = ''
+          window.removeEventListener('resize', onResize)
+        }
+      }
+      window.addEventListener('resize', onResize)
+      return () => window.removeEventListener('resize', onResize)
+    }
+
     const ctx = canvas.getContext('2d')
 
     let W, H, maxReach, isMobile, fxPx, fyPx
@@ -198,7 +212,7 @@ export default function Hero() {
     const rays = makeRays()
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, 3)
       W = hero.offsetWidth
       H = hero.offsetHeight
       canvas.width = W * dpr
