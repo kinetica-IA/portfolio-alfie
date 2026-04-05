@@ -70,9 +70,14 @@ const HALO_ALPHA_MULT   = 0.12      // halo opacity relative to ray alpha
 const PULSE_BPM         = 33
 const PULSE_INTERVAL    = 60000 / PULSE_BPM
 
-// ── Focal position ──────────────────────────────────────────────────
+// ── Focal position (now computed dynamically in resize) ─────────────
 const FOCAL_X = 0.50
-const FOCAL_Y = 0.38    // above hero title
+const FOCAL_Y_FALLBACK = 0.38       // fallback if DOM query fails
+const BREATH_MARGIN = 60            // px gap between cone vertex and h1 top
+const BREATH_MARGIN_MOBILE = 36     // smaller margin on mobile
+const MOBILE_BP = 480               // mobile breakpoint px
+const MOBILE_RAY_SCALE = 0.65       // maxReach multiplier on mobile
+const MOBILE_RAY_THIN = 0.7         // width multiplier on mobile
 
 // ── Ray generation ──────────────────────────────────────────────────
 function generateRays() {
@@ -208,6 +213,8 @@ export default function BreathingField() {
     const ctx = canvas.getContext('2d')
 
     let W, H, dpr, maxReach
+    let focalYPx = 0          // computed focal Y in px (within canvas)
+    let isMobile = false
     const mouse = { x: -1, y: -1 }
 
     const rays = generateRays()
@@ -223,7 +230,27 @@ export default function BreathingField() {
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      maxReach = Math.min(W, H) * 0.70
+      isMobile = W <= MOBILE_BP
+
+      // ── Anchor to .hero-brand h1 ────────────────────────────
+      const h1 = document.querySelector('.hero-brand')
+      if (h1 && parent) {
+        const parentRect = parent.getBoundingClientRect()
+        const h1Rect = h1.getBoundingClientRect()
+        // h1 top relative to canvas parent
+        const h1TopInParent = h1Rect.top - parentRect.top
+        const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
+        focalYPx = h1TopInParent - margin
+        // Keep a sane minimum so cone doesn't collapse
+        focalYPx = Math.max(H * 0.12, focalYPx)
+      } else {
+        focalYPx = FOCAL_Y_FALLBACK * H
+      }
+
+      // Scale reach to available space above title
+      const availableSpace = focalYPx
+      maxReach = Math.min(W * 0.55, availableSpace * 1.3, H * 0.60)
+      if (isMobile) maxReach *= MOBILE_RAY_SCALE
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -244,15 +271,15 @@ export default function BreathingField() {
       const cr2 = CURSOR_RADIUS * CURSOR_RADIUS
 
       // ── Invisible heartbeat (drives pulse reaction on rays) ──────
-      const focalY = FOCAL_Y * H
+      const fY = focalYPx
       const beatProgress = (now % PULSE_INTERVAL) / PULSE_INTERVAL
-      const pulseY = focalY - beatProgress * H * 0.3  // pulse travels upward from apex
+      const pulseY = fY - beatProgress * H * 0.3  // pulse travels upward from apex
 
       // ── Build draw list ──────────────────────────────────────────
       const drawList = []
 
       buildCone(rays,
-        FOCAL_X * W, focalY,
+        FOCAL_X * W, fY,
         maxReach, pulse, rot, -1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
 
       // Sort back-to-front
@@ -289,7 +316,7 @@ export default function BreathingField() {
         grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.1})`)
 
         ctx.strokeStyle = grad
-        ctx.lineWidth = d.width
+        ctx.lineWidth = isMobile ? d.width * MOBILE_RAY_THIN : d.width
         ctx.lineCap = 'round'
 
         // v2: quadratic curve instead of straight line
