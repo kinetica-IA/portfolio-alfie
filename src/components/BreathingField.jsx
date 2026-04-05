@@ -1,91 +1,220 @@
 import { useRef, useEffect } from 'react'
 
 /*
- * BreathingField — Organic flowing background
+ * BreathingField v3 — Dual 3D cones of revolution
  *
- * Soft, undulating noise-based gradient blobs that drift across the canvas.
- * Feels like looking through still water or watching aurora borealis.
- * Responds gently to cursor proximity and shifts palette per section.
+ * Organic respiratory animation for Kinetica AI.
+ * Two symmetric cones rotate in opposition with perspective projection.
+ * v2: dynamic aspect scaling, scroll fade, aggressive depth,
+ *     motion trails, speed jitter, curved rays, sympathetic/parasympathetic
+ *     color breathing, and pulse-reactive ray intensification.
  */
 
 // ── Palette ─────────────────────────────────────────────────────────
-const PALETTE = {
-  teal:  [144, 167, 165],
-  green: [107, 158, 122],
-  sea:   [93, 138, 130],
-  moss:  [107, 138, 109],
-  ice:   [133, 168, 184],
-  slate: [106, 134, 144],
-  warm:  [196, 133, 90],
-  sand:  [191, 168, 122],
-}
+const WARM_COLORS = [
+  [235, 165, 35],
+  [230, 135, 50],
+  [215, 130, 70],
+  [242, 190, 55],
+  [210, 175, 95],
+]
 
-const SECTION_PALETTES = [
-  [PALETTE.teal, PALETTE.sea,   PALETTE.ice],
-  [PALETTE.sea,  PALETTE.moss,  PALETTE.teal],
-  [PALETTE.green,PALETTE.warm,  PALETTE.sand],
-  [PALETTE.ice,  PALETTE.teal,  PALETTE.slate],
-  [PALETTE.slate,PALETTE.sea,   PALETTE.moss],
-  [PALETTE.green,PALETTE.moss,  PALETTE.ice],
-  [PALETTE.sea,  PALETTE.sand,  PALETTE.warm],
+const COOL_COLORS = [
+  [60,  155, 140],
+  [120, 185, 180],
+  [105, 185, 205],
+  [80,  175, 120],
+  [80,  145, 160],
+  [85,  155, 100],
 ]
 
 // ── Config ──────────────────────────────────────────────────────────
-const BLOB_COUNT       = 7        // flowing shapes
-const BASE_ALPHA       = 0.08     // subtle but visible
-const CURSOR_BOOST     = 0.045    // gentle extra glow near cursor
-const CURSOR_RADIUS    = 220      // influence zone
-const DRIFT_SPEED      = 0.0002  // very slow drift
-const BREATHE_SPEED    = 0.0008   // inhale/exhale rhythm
-const BREATHE_AMP      = 0.35     // how much blobs expand/contract
-const COLOR_LERP_SPEED = 0.008    // smooth palette transitions
-const RESOLUTION_SCALE = 0.35     // render at lower res for perf + softness
+const RAY_COUNT        = 200
+const CONE_HALF_ANGLE  = 0.4363
+const CONE_VARIATION   = 0.5236
+const MIN_RAY_LENGTH   = 0.15
+const MAX_RAY_LENGTH   = 0.55
 
-// ── Simplex noise (compact 2D) ──────────────────────────────────────
-function createNoise() {
-  const perm = new Uint8Array(512)
-  const p = new Uint8Array(256)
-  for (let i = 0; i < 256; i++) p[i] = i
-  for (let i = 255; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [p[i], p[j]] = [p[j], p[i]]
+// v2: aggressive depth range
+const LINE_WIDTH_MIN   = 0.08
+const LINE_WIDTH_MAX   = 1.1
+const BASE_ALPHA       = 0.50
+const PULSE_SPEED      = 0.0009
+const PULSE_AMP        = 0.03
+const ROTATION_SPEED   = 0.00004
+const PERSPECTIVE      = 900
+const CURSOR_RADIUS    = 250
+const CURSOR_PUSH      = 0.04
+
+// v2: curve oscillation
+const CURVE_AMP        = 0.06       // max perpendicular offset as fraction of ray length
+const CURVE_SPEED      = 0.0005     // oscillation frequency
+
+// v2: color breathing (~12s cycle)
+const BREATH_SPEED     = 0.000523   // 2π / 12016ms ≈ 12s period
+const BREATH_MIX       = 0.45       // how much breathing dominates vs static colorT
+
+// v2: trail config
+const TRAIL_ALPHA_MULT = 0.07       // ghost opacity relative to ray alpha
+
+// v2: pulse reaction (invisible heartbeat drives ray intensity)
+const PULSE_REACT_RANGE = 0.10      // fraction of H within which rays react
+const PULSE_REACT_BOOST = 0.25      // max alpha/width boost
+
+// v2: front ray halo
+const HALO_DEPTH_THRESH = 0.55      // depthFactor above which halo appears
+const HALO_WIDTH_MULT   = 3.5       // halo width relative to ray width
+const HALO_ALPHA_MULT   = 0.12      // halo opacity relative to ray alpha
+
+// ── Spine (invisible heartbeat — drives ray reaction only) ───────
+const PULSE_BPM         = 33
+const PULSE_INTERVAL    = 60000 / PULSE_BPM
+
+// ── Dynamic focals ──────────────────────────────────────────────────
+function getFocals(W, H) {
+  const aspect = W / H
+  // portrait (≤0.7): cones far apart, more room for text
+  // landscape (≥1.5): cones tighter, compact composition
+  // between: smooth interpolation
+  const t = Math.max(0, Math.min(1, (aspect - 0.7) / (1.5 - 0.7)))
+  const topY = 0.22 + t * (0.36 - 0.22)
+  const botY = 0.78 - t * (0.78 - 0.64)
+  return { topFY: topY, botFY: botY, focalX: 0.50 }
+}
+
+// ── Ray generation ──────────────────────────────────────────────────
+function generateRays() {
+  const rays = []
+  for (let i = 0; i < RAY_COUNT; i++) {
+    const phi = (i / RAY_COUNT) * Math.PI * 2
+    const theta = CONE_HALF_ANGLE + Math.random() * CONE_VARIATION
+    const length = MIN_RAY_LENGTH + Math.random() * (MAX_RAY_LENGTH - MIN_RAY_LENGTH)
+    const warmIdx = Math.floor(Math.random() * WARM_COLORS.length)
+    const coolIdx = Math.floor(Math.random() * COOL_COLORS.length)
+
+    rays.push({
+      phi, theta, length,
+      baseWidth: LINE_WIDTH_MIN + Math.random() * (LINE_WIDTH_MAX - LINE_WIDTH_MIN),
+      baseAlpha: BASE_ALPHA * (0.35 + Math.random() * 0.65),
+      warmColor: WARM_COLORS[warmIdx],
+      coolColor: COOL_COLORS[coolIdx],
+      colorT: Math.random(),
+      // v2 additions
+      speedJitter: 0.85 + Math.random() * 0.30,
+      curvePhase: Math.random() * Math.PI * 2,
+      prevTipX: null,
+      prevTipY: null,
+    })
   }
-  for (let i = 0; i < 512; i++) perm[i] = p[i & 255]
+  return rays
+}
 
-  const G2 = (3 - Math.sqrt(3)) / 6
-  const grad = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]
+// ── Cone builder ────────────────────────────────────────────────────
+function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorOn, cr2, drawList, H, now, pulseY) {
+  const safeCenter = H * 0.50
+  const fadeMargin = H * 0.14
 
-  return function noise2D(x, y) {
-    const s = (x + y) * 0.5 * (Math.sqrt(3) - 1)
-    const i = Math.floor(x + s), j = Math.floor(y + s)
-    const t = (i + j) * G2
-    const X0 = i - t, Y0 = j - t
-    const x0 = x - X0, y0 = y - Y0
-    const i1 = x0 > y0 ? 1 : 0, j1 = x0 > y0 ? 0 : 1
-    const x1 = x0 - i1 + G2, y1 = y0 - j1 + G2
-    const x2 = x0 - 1 + 2 * G2, y2 = y0 - 1 + 2 * G2
-    const ii = i & 255, jj = j & 255
+  for (let i = 0; i < rays.length; i++) {
+    const ray = rays[i]
 
-    let n0 = 0, n1 = 0, n2 = 0
-    let t0 = 0.5 - x0*x0 - y0*y0
-    if (t0 > 0) { t0 *= t0; const g = grad[perm[ii + perm[jj]] & 7]; n0 = t0*t0*(g[0]*x0+g[1]*y0) }
-    let t1 = 0.5 - x1*x1 - y1*y1
-    if (t1 > 0) { t1 *= t1; const g = grad[perm[ii+i1 + perm[jj+j1]] & 7]; n1 = t1*t1*(g[0]*x1+g[1]*y1) }
-    let t2 = 0.5 - x2*x2 - y2*y2
-    if (t2 > 0) { t2 *= t2; const g = grad[perm[ii+1 + perm[jj+1]] & 7]; n2 = t2*t2*(g[0]*x2+g[1]*y2) }
-    return 70 * (n0 + n1 + n2)
+    // v2: per-ray rotation with jitter
+    const rayRot = rot * ray.speedJitter
+    const cosRot = Math.cos(rayRot)
+    const sinRot = Math.sin(rayRot)
+
+    const len = ray.length * maxReach * pulse
+    const sinT = Math.sin(ray.theta)
+    const cosT = Math.cos(ray.theta)
+
+    const localX = len * sinT * Math.cos(ray.phi)
+    const localY = direction * len * cosT
+    const localZ = len * sinT * Math.sin(ray.phi)
+
+    const worldX = localX * cosRot - localZ * sinRot
+    const worldZ = localX * sinRot + localZ * cosRot
+    const worldY = localY
+
+    const pScale = PERSPECTIVE / (PERSPECTIVE + worldZ)
+
+    // v2: more aggressive depth mapping
+    const depthFactor = Math.max(0.01, pScale)
+    const dWidth  = 0.10 + depthFactor * 0.90
+    const dLength = 0.40 + depthFactor * 0.60
+    const dAlpha  = 0.03 + depthFactor * depthFactor * 0.97
+
+    const adjLen = len * dLength
+    const aLocalX = adjLen * sinT * Math.cos(ray.phi)
+    const aLocalY = direction * adjLen * cosT
+    const aLocalZ = adjLen * sinT * Math.sin(ray.phi)
+    const aWorldX = aLocalX * cosRot - aLocalZ * sinRot
+    const aWorldZ = aLocalX * sinRot + aLocalZ * cosRot
+    const aWorldY = aLocalY
+    const aPScale = PERSPECTIVE / (PERSPECTIVE + aWorldZ)
+
+    let tipX = fx + aWorldX * aPScale
+    let tipY = fy + aWorldY * aPScale
+
+    // Skip: top cone lines below apex, bottom cone lines above apex
+    if (direction === -1 && tipY > fy) continue
+    if (direction === 1 && tipY < fy) continue
+
+    // Fade near center exclusion zone
+    const distToCenter = Math.abs(tipY - safeCenter)
+    const zoneFade = distToCenter < fadeMargin
+      ? distToCenter / fadeMargin
+      : 1
+
+    // Cursor push
+    if (cursorOn) {
+      const dx = tipX - mouse.x, dy = tipY - mouse.y
+      const d2 = dx * dx + dy * dy
+      if (d2 < cr2) {
+        const push = CURSOR_PUSH * maxReach * (1 - d2 / cr2) * aPScale
+        const pushAngle = Math.atan2(tipY - fy, tipX - fx)
+        tipX += Math.cos(pushAngle) * push
+        tipY += Math.sin(pushAngle) * push
+      }
+    }
+
+    // v2: pulse reaction — rays near spine pulse get boost
+    let pulseBoost = 0
+    if (pulseY !== null) {
+      const distToPulse = Math.abs(tipY - pulseY) / H
+      if (distToPulse < PULSE_REACT_RANGE) {
+        pulseBoost = (1 - distToPulse / PULSE_REACT_RANGE) * PULSE_REACT_BOOST
+      }
+    }
+
+    // v2: color breathing — sympathetic/parasympathetic oscillation
+    const breathPhase = Math.sin(now * BREATH_SPEED) * 0.5 + 0.5
+    const effectiveColorT = ray.colorT * (1 - BREATH_MIX) + breathPhase * BREATH_MIX
+
+    // v2: curve control point
+    const curveOffset = Math.sin(now * CURVE_SPEED + ray.curvePhase) * adjLen * CURVE_AMP
+
+    drawList.push({
+      fx, fy, tipX, tipY,
+      alpha: ray.baseAlpha * Math.max(0.03, dAlpha) * zoneFade * (1 + pulseBoost),
+      width: ray.baseWidth * Math.max(0.1, dWidth) * (1 + pulseBoost * 0.5),
+      warmColor: ray.warmColor,
+      coolColor: ray.coolColor,
+      colorT: effectiveColorT,
+      depth: worldZ,
+      depthFactor,
+      curveOffset,
+      // v2: trail data
+      prevTipX: ray.prevTipX,
+      prevTipY: ray.prevTipY,
+      rayRef: ray,
+    })
+
+    // Update prev for next frame
+    ray.prevTipX = tipX
+    ray.prevTipY = tipY
   }
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────
-function lerpColor(a, b, t) {
-  return [
-    a[0] + (b[0] - a[0]) * t,
-    a[1] + (b[1] - a[1]) * t,
-    a[2] + (b[2] - a[2]) * t,
-  ]
-}
-
+// ── Component ───────────────────────────────────────────────────────
 export default function BreathingField() {
   const canvasRef = useRef(null)
   const raf = useRef(null)
@@ -94,59 +223,36 @@ export default function BreathingField() {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    const noise = createNoise()
 
-    let W, H, rW, rH
+    let W, H, dpr, maxReach, scrollAlpha = 1
+    let topFY, botFY
     const mouse = { x: -1, y: -1 }
-    let sectionOffsets = []
-    let currentSection = 0
-    let targetPalette = SECTION_PALETTES[0]
-    let activePalette = SECTION_PALETTES[0].map(c => [...c])
 
-    // Each blob has: cx, cy (center as 0-1), rx, ry (radius), phase, speed offsets
-    const blobs = []
-    for (let i = 0; i < BLOB_COUNT; i++) {
-      blobs.push({
-        cx: Math.random(),
-        cy: Math.random(),
-        rx: 0.18 + Math.random() * 0.22,
-        ry: 0.18 + Math.random() * 0.22,
-        phase: Math.random() * Math.PI * 2,
-        driftX: (Math.random() - 0.5) * 2,
-        driftY: (Math.random() - 0.5) * 2,
-        noiseOffX: Math.random() * 100,
-        noiseOffY: Math.random() * 100,
-        colorIdx: i % 3,
-      })
-    }
+    const topRays = generateRays()
+    const botRays = generateRays()
 
     function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
       W = window.innerWidth
       H = window.innerHeight
-      rW = Math.round(W * RESOLUTION_SCALE)
-      rH = Math.round(H * RESOLUTION_SCALE)
-      canvas.width = rW
-      canvas.height = rH
+      canvas.width = W * dpr
+      canvas.height = H * dpr
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
-      cacheSectionOffsets()
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      // v2: maxReach scales with min dimension, not diagonal
+      maxReach = Math.min(W, H) * 0.55
+
+      // v2: dynamic focals
+      const focals = getFocals(W, H)
+      topFY = focals.topFY
+      botFY = focals.botFY
     }
 
-    function cacheSectionOffsets() {
-      const sections = document.querySelectorAll('.section')
-      sectionOffsets = Array.from(sections).map(el => el.offsetTop)
-    }
-
-    function updateSection() {
-      const scrollY = window.scrollY + H * 0.4
-      let idx = 0
-      for (let i = sectionOffsets.length - 1; i >= 0; i--) {
-        if (scrollY >= sectionOffsets[i]) { idx = i; break }
-      }
-      if (idx !== currentSection) {
-        currentSection = idx
-        targetPalette = SECTION_PALETTES[Math.min(idx, SECTION_PALETTES.length - 1)]
-      }
+    function onScroll() {
+      // v2: fade out as user scrolls past hero
+      scrollAlpha = Math.max(0, 1 - window.scrollY / (H * 0.6))
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -155,124 +261,114 @@ export default function BreathingField() {
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerleave', onLeave)
     window.addEventListener('resize', resize)
-    window.addEventListener('scroll', updateSection, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
     resize()
-
-    let lastSectionCheck = 0
+    onScroll()
 
     function draw(now) {
-      // Lerp palette colors smoothly
-      for (let i = 0; i < activePalette.length; i++) {
-        for (let ch = 0; ch < 3; ch++) {
-          activePalette[i][ch] += (targetPalette[i][ch] - activePalette[i][ch]) * COLOR_LERP_SPEED
-        }
+      // Skip drawing if fully scrolled away
+      if (scrollAlpha <= 0) {
+        raf.current = requestAnimationFrame(draw)
+        return
       }
 
-      if (now - lastSectionCheck > 300) { updateSection(); lastSectionCheck = now }
+      ctx.clearRect(0, 0, W, H)
+      ctx.globalAlpha = scrollAlpha
 
-      // Clear with background
-      ctx.clearRect(0, 0, rW, rH)
+      const pulse = 1 + Math.sin(now * PULSE_SPEED) * PULSE_AMP
+      const rot = now * ROTATION_SPEED
 
-      const time = now * 0.001  // seconds
-
-      // Cursor in render-space
       const cursorOn = mouse.x >= 0
-      const cmx = mouse.x * RESOLUTION_SCALE
-      const cmy = mouse.y * RESOLUTION_SCALE
-      const cr2 = (CURSOR_RADIUS * RESOLUTION_SCALE) ** 2
+      const cr2 = CURSOR_RADIUS * CURSOR_RADIUS
 
-      // Draw each blob as a large radial gradient
-      for (let b = 0; b < BLOB_COUNT; b++) {
-        const blob = blobs[b]
-        const color = activePalette[blob.colorIdx]
+      // ── Invisible heartbeat position ─────────────────────────────
+      const topY = topFY * H
+      const botY = botFY * H
 
-        // Organic drift via noise
-        const nx = noise(blob.noiseOffX + time * DRIFT_SPEED * 80, blob.noiseOffY)
-        const ny = noise(blob.noiseOffY + time * DRIFT_SPEED * 80, blob.noiseOffX + 50)
+      const beatProgress = (now % PULSE_INTERVAL) / PULSE_INTERVAL
+      const beatNumber = Math.floor(now / PULSE_INTERVAL)
+      const goingDown = beatNumber % 2 === 0
+      const t = goingDown ? beatProgress : 1 - beatProgress
+      const pulseY = topY + (botY - topY) * t
 
-        // Breathing: expand/contract
-        const breathe = 1 + Math.sin(time * BREATHE_SPEED * 6.28 + blob.phase) * BREATHE_AMP
+      // ── Build draw list ──────────────────────────────────────────
+      const drawList = []
 
-        const cx = (blob.cx + nx * 0.15 + Math.sin(time * DRIFT_SPEED * 3 + blob.phase) * 0.08) * rW
-        const cy = (blob.cy + ny * 0.15 + Math.cos(time * DRIFT_SPEED * 2.5 + blob.phase * 1.3) * 0.06) * rH
-        const rx = blob.rx * rW * breathe
-        const ry = blob.ry * rH * breathe
-        const r = Math.max(rx, ry)
+      buildCone(topRays,
+        0.50 * W, topY,
+        maxReach, pulse, rot, -1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
 
-        // Alpha boost near cursor
-        let alpha = BASE_ALPHA
-        if (cursorOn) {
-          const dx = cx - cmx, dy = cy - cmy
-          const d2 = dx * dx + dy * dy
-          const maxDist = cr2 * 4
-          if (d2 < maxDist) {
-            alpha += CURSOR_BOOST * (1 - d2 / maxDist)
-          }
+      buildCone(botRays,
+        0.50 * W, botY,
+        maxReach, pulse, -rot, 1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
+
+      // Sort back-to-front
+      drawList.sort((a, b) => a.depth - b.depth)
+
+      // ── Draw rays ────────────────────────────────────────────────
+      for (let i = 0; i < drawList.length; i++) {
+        const d = drawList[i]
+
+        const ct = d.colorT
+        const wc = d.warmColor
+        const cc = d.coolColor
+        const r = wc[0] + (cc[0] - wc[0]) * ct
+        const g = wc[1] + (cc[1] - wc[1]) * ct
+        const b = wc[2] + (cc[2] - wc[2]) * ct
+
+        // v2: trail ghost from previous frame
+        if (d.prevTipX !== null && d.prevTipY !== null) {
+          const ghostAlpha = d.alpha * TRAIL_ALPHA_MULT
+          ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${ghostAlpha})`
+          ctx.lineWidth = d.width * 0.6
+          ctx.lineCap = 'round'
+          ctx.beginPath()
+          ctx.moveTo(d.prevTipX, d.prevTipY)
+          ctx.lineTo(d.tipX, d.tipY)
+          ctx.stroke()
         }
 
-        // Draw with radial gradient for soft edges
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
-        grad.addColorStop(0,   `rgba(${color[0]|0},${color[1]|0},${color[2]|0}, ${alpha * 1.2})`)
-        grad.addColorStop(0.3, `rgba(${color[0]|0},${color[1]|0},${color[2]|0}, ${alpha * 0.8})`)
-        grad.addColorStop(0.7, `rgba(${color[0]|0},${color[1]|0},${color[2]|0}, ${alpha * 0.3})`)
-        grad.addColorStop(1,   `rgba(${color[0]|0},${color[1]|0},${color[2]|0}, 0)`)
+        // v2: curved ray with gradient
+        const grad = ctx.createLinearGradient(d.fx, d.fy, d.tipX, d.tipY)
+        grad.addColorStop(0,    `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.6})`)
+        grad.addColorStop(0.25, `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha})`)
+        grad.addColorStop(0.65, `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.45})`)
+        grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${d.alpha * 0.1})`)
 
-        ctx.save()
-        // Ellipse via scale transform
-        ctx.translate(cx, cy)
-        ctx.scale(1, ry / rx || 1)
-        ctx.translate(-cx, -cy)
+        ctx.strokeStyle = grad
+        ctx.lineWidth = d.width
+        ctx.lineCap = 'round'
 
-        ctx.fillStyle = grad
+        // v2: quadratic curve instead of straight line
+        const midX = (d.fx + d.tipX) / 2
+        const midY = (d.fy + d.tipY) / 2
+        const rayAngle = Math.atan2(d.tipY - d.fy, d.tipX - d.fx)
+        const perpAngle = rayAngle + Math.PI * 0.5
+        const cpX = midX + Math.cos(perpAngle) * d.curveOffset
+        const cpY = midY + Math.sin(perpAngle) * d.curveOffset
+
         ctx.beginPath()
-        ctx.arc(cx, cy, r, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.restore()
-      }
+        ctx.moveTo(d.fx, d.fy)
+        ctx.quadraticCurveTo(cpX, cpY, d.tipX, d.tipY)
+        ctx.stroke()
 
-      // ── Noise-driven texture layer ────────────────────────────────
-      // Very subtle organic distortion overlaid for "living" feel
-      const noiseScale = 0.008
-      const noiseTime = time * 0.15
-      const step = 6  // sample every 6 pixels for perf
-      const imgData = ctx.getImageData(0, 0, rW, rH)
-      const data = imgData.data
-
-      for (let py = 0; py < rH; py += step) {
-        for (let px = 0; px < rW; px += step) {
-          const n = noise(px * noiseScale + noiseTime, py * noiseScale + noiseTime * 0.7)
-          const v = (n + 1) * 0.5  // 0-1
-
-          // Blend a subtle noise tint
-          const mixColor = lerpColor(activePalette[0], activePalette[2], v)
-          const noiseAlpha = 0.012 * v
-
-          // Apply to step×step block
-          for (let dy = 0; dy < step && py + dy < rH; dy++) {
-            for (let dx = 0; dx < step && px + dx < rW; dx++) {
-              const idx = ((py + dy) * rW + (px + dx)) * 4
-              data[idx]     = Math.min(255, data[idx]     + mixColor[0] * noiseAlpha * 255)
-              data[idx + 1] = Math.min(255, data[idx + 1] + mixColor[1] * noiseAlpha * 255)
-              data[idx + 2] = Math.min(255, data[idx + 2] + mixColor[2] * noiseAlpha * 255)
-              data[idx + 3] = Math.min(255, data[idx + 3] + noiseAlpha * 255)
-            }
-          }
+        // v2: halo glow on front rays
+        if (d.depthFactor > HALO_DEPTH_THRESH) {
+          const haloStrength = (d.depthFactor - HALO_DEPTH_THRESH) / (1 - HALO_DEPTH_THRESH)
+          const haloAlpha = d.alpha * HALO_ALPHA_MULT * haloStrength
+          ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${haloAlpha})`
+          ctx.lineWidth = d.width * HALO_WIDTH_MULT
+          ctx.beginPath()
+          ctx.moveTo(d.fx, d.fy)
+          ctx.quadraticCurveTo(cpX, cpY, d.tipX, d.tipY)
+          ctx.stroke()
         }
       }
-      ctx.putImageData(imgData, 0, 0)
 
-      // ── Cursor glow ───────────────────────────────────────────────
-      if (cursorOn) {
-        const grad = ctx.createRadialGradient(cmx, cmy, 0, cmx, cmy, CURSOR_RADIUS * RESOLUTION_SCALE)
-        const c = activePalette[0]
-        grad.addColorStop(0,   `rgba(${c[0]|0},${c[1]|0},${c[2]|0}, 0.06)`)
-        grad.addColorStop(0.5, `rgba(${c[0]|0},${c[1]|0},${c[2]|0}, 0.025)`)
-        grad.addColorStop(1,   `rgba(${c[0]|0},${c[1]|0},${c[2]|0}, 0)`)
-        ctx.fillStyle = grad
-        ctx.beginPath()
-        ctx.arc(cmx, cmy, CURSOR_RADIUS * RESOLUTION_SCALE, 0, Math.PI * 2)
-        ctx.fill()
-      }
+      // (spine/pulse removed — invisible heartbeat drives ray reaction via pulseY)
+
+      // Reset global alpha
+      ctx.globalAlpha = 1
 
       raf.current = requestAnimationFrame(draw)
     }
@@ -282,7 +378,7 @@ export default function BreathingField() {
     return () => {
       cancelAnimationFrame(raf.current)
       window.removeEventListener('resize', resize)
-      window.removeEventListener('scroll', updateSection)
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerleave', onLeave)
     }
@@ -297,7 +393,6 @@ export default function BreathingField() {
         inset: 0,
         zIndex: 0,
         pointerEvents: 'none',
-        imageRendering: 'auto',
       }}
     />
   )
