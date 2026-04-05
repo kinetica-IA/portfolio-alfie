@@ -1,13 +1,11 @@
 import { useRef, useEffect } from 'react'
 
 /*
- * BreathingField v3 — Dual 3D cones of revolution
+ * BreathingField v4 — CSS-anchored cone of revolution
  *
- * Organic respiratory animation for Kinetica AI.
- * Two symmetric cones rotate in opposition with perspective projection.
- * v2: dynamic aspect scaling, scroll fade, aggressive depth,
- *     motion trails, speed jitter, curved rays, sympathetic/parasympathetic
- *     color breathing, and pulse-reactive ray intensification.
+ * Wraps the h1 title. The canvas extends upward from the title via CSS.
+ * Cone vertex = bottom-center of canvas = just above the h1.
+ * Zero DOM queries — position is 100% CSS-driven, fully responsive.
  */
 
 // ── Palette ─────────────────────────────────────────────────────────
@@ -35,7 +33,6 @@ const CONE_VARIATION   = 0.5236
 const MIN_RAY_LENGTH   = 0.25
 const MAX_RAY_LENGTH   = 0.80
 
-// v2: aggressive depth range
 const LINE_WIDTH_MIN   = 0.08
 const LINE_WIDTH_MAX   = 1.1
 const BASE_ALPHA       = 0.50
@@ -46,40 +43,27 @@ const PERSPECTIVE      = 900
 const CURSOR_RADIUS    = 250
 const CURSOR_PUSH      = 0.04
 
-// v2: curve oscillation
-const CURVE_AMP        = 0.06       // max perpendicular offset as fraction of ray length
-const CURVE_SPEED      = 0.0005     // oscillation frequency
+const CURVE_AMP        = 0.06
+const CURVE_SPEED      = 0.0005
 
-// v2: color breathing (~12s cycle)
-const BREATH_SPEED     = 0.000523   // 2π / 12016ms ≈ 12s period
-const BREATH_MIX       = 0.45       // how much breathing dominates vs static colorT
+const BREATH_SPEED     = 0.000523
+const BREATH_MIX       = 0.45
 
-// v2: trail config
-const TRAIL_ALPHA_MULT = 0.07       // ghost opacity relative to ray alpha
+const TRAIL_ALPHA_MULT = 0.07
 
-// v2: pulse reaction (invisible heartbeat drives ray intensity)
-const PULSE_REACT_RANGE = 0.10      // fraction of H within which rays react
-const PULSE_REACT_BOOST = 0.25      // max alpha/width boost
+const PULSE_REACT_RANGE = 0.10
+const PULSE_REACT_BOOST = 0.25
 
-// v2: front ray halo
-const HALO_DEPTH_THRESH = 0.55      // depthFactor above which halo appears
-const HALO_WIDTH_MULT   = 3.5       // halo width relative to ray width
-const HALO_ALPHA_MULT   = 0.12      // halo opacity relative to ray alpha
+const HALO_DEPTH_THRESH = 0.55
+const HALO_WIDTH_MULT   = 3.5
+const HALO_ALPHA_MULT   = 0.12
 
-// ── Spine (invisible heartbeat — drives ray reaction only) ───────
 const PULSE_BPM         = 33
 const PULSE_INTERVAL    = 60000 / PULSE_BPM
 
-// ── Focal position & responsive ─────────────────────────────────────
-const FOCAL_X = 0.50
-const FOCAL_Y_FALLBACK = 0.30       // fallback if h1 not found
-const BREATH_MARGIN = 80            // px gap vertex → h1 top (desktop)
-const BREATH_MARGIN_MOBILE = 50     // px gap vertex → h1 top (mobile)
-const MOBILE_BP = 480
-const MOBILE_RAY_SCALE = 0.55
-const MOBILE_RAY_THIN = 0.65
-const KILL_ZONE = 30                // px above h1 where rays start fading
-const KILL_FADE = 50                // px over which the fade completes
+// ── Responsive ──────────────────────────────────────────────────────
+const MOBILE_BP         = 480
+const MOBILE_RAY_THIN   = 0.65
 
 // ── Ray generation ──────────────────────────────────────────────────
 function generateRays() {
@@ -98,7 +82,6 @@ function generateRays() {
       warmColor: WARM_COLORS[warmIdx],
       coolColor: COOL_COLORS[coolIdx],
       colorT: Math.random(),
-      // v2 additions
       speedJitter: 0.85 + Math.random() * 0.30,
       curvePhase: Math.random() * Math.PI * 2,
       prevTipX: null,
@@ -113,7 +96,6 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
   for (let i = 0; i < rays.length; i++) {
     const ray = rays[i]
 
-    // v2: per-ray rotation with jitter
     const rayRot = rot * ray.speedJitter
     const cosRot = Math.cos(rayRot)
     const sinRot = Math.sin(rayRot)
@@ -132,7 +114,6 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
 
     const pScale = PERSPECTIVE / (PERSPECTIVE + worldZ)
 
-    // v2: more aggressive depth mapping
     const depthFactor = Math.max(0.01, pScale)
     const dWidth  = 0.10 + depthFactor * 0.90
     const dLength = 0.40 + depthFactor * 0.60
@@ -150,7 +131,7 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
     let tipX = fx + aWorldX * aPScale
     let tipY = fy + aWorldY * aPScale
 
-    // Skip: top cone lines below apex, bottom cone lines above apex
+    // Skip lines below vertex (cone opens upward only)
     if (direction === -1 && tipY > fy) continue
     if (direction === 1 && tipY < fy) continue
 
@@ -166,7 +147,7 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
       }
     }
 
-    // v2: pulse reaction — rays near spine pulse get boost
+    // Pulse reaction
     let pulseBoost = 0
     if (pulseY !== null) {
       const distToPulse = Math.abs(tipY - pulseY) / H
@@ -175,11 +156,11 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
       }
     }
 
-    // v2: color breathing — sympathetic/parasympathetic oscillation
+    // Color breathing
     const breathPhase = Math.sin(now * BREATH_SPEED) * 0.5 + 0.5
     const effectiveColorT = ray.colorT * (1 - BREATH_MIX) + breathPhase * BREATH_MIX
 
-    // v2: curve control point
+    // Curve control point
     const curveOffset = Math.sin(now * CURVE_SPEED + ray.curvePhase) * adjLen * CURVE_AMP
 
     drawList.push({
@@ -192,79 +173,60 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
       depth: worldZ,
       depthFactor,
       curveOffset,
-      // v2: trail data
       prevTipX: ray.prevTipX,
       prevTipY: ray.prevTipY,
       rayRef: ray,
     })
 
-    // Update prev for next frame
     ray.prevTipX = tipX
     ray.prevTipY = tipY
   }
 }
 
 // ── Component ───────────────────────────────────────────────────────
-export default function BreathingField() {
+export default function BreathingField({ children }) {
   const canvasRef = useRef(null)
+  const wrapRef = useRef(null)
   const raf = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    const wrap = wrapRef.current
+    if (!canvas || !wrap) return
     const ctx = canvas.getContext('2d')
 
-    let W, H, dpr, maxReach
-    let focalYPx = 0          // cone vertex Y (px, parent-relative)
-    let killYPx = 0           // Y below which rays fade to zero
-    let isMobile = false
+    let W, H, dpr, maxReach, isMobile
     const mouse = { x: -1, y: -1 }
-
     const rays = generateRays()
-
-    // ── Recalculate focal point from live DOM ──────────────────
-    // Canvas & h1 now share the same parent (.hero section),
-    // so offsetTop gives us position relative to that shared parent.
-    function updateFocal() {
-      isMobile = W <= MOBILE_BP
-      const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
-
-      // Find h1 within our shared parent (.hero)
-      const parent = canvas.parentElement
-      const h1 = parent && parent.querySelector('.hero-brand')
-
-      if (h1) {
-        // Walk offset chain to get h1 top relative to .hero section
-        let h1Top = 0
-        let el = h1
-        while (el && el !== parent) {
-          h1Top += el.offsetTop
-          el = el.offsetParent
-        }
-        focalYPx = Math.max(H * 0.10, h1Top - margin)
-        killYPx = h1Top - KILL_ZONE
-      } else {
-        focalYPx = FOCAL_Y_FALLBACK * H
-        killYPx = focalYPx + 50
-      }
-
-      // maxReach scales to available vertical space above h1
-      const space = focalYPx
-      maxReach = Math.min(W * 0.50, space * 1.1, H * 0.50)
-      if (isMobile) maxReach *= MOBILE_RAY_SCALE
-    }
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const parent = canvas.parentElement
-      W = parent ? parent.offsetWidth : window.innerWidth
-      H = parent ? parent.offsetHeight : window.innerHeight
+
+      // Canvas width = full viewport width (so cone can spread wide)
+      W = window.innerWidth
+      // Canvas height = distance from top of .hero to the h1 title
+      // The wrapper is positioned where the h1 is (by CSS flow).
+      // We measure how far the wrapper is from the top of the hero section.
+      const heroEl = wrap.closest('.hero')
+      const wrapRect = wrap.getBoundingClientRect()
+      const heroRect = heroEl ? heroEl.getBoundingClientRect() : wrapRect
+
+      // Canvas covers from the hero top down to the wrapper top
+      H = wrapRect.top - heroRect.top
+      // Minimum height so cone has room even on small screens
+      H = Math.max(H, 120)
+
       canvas.width = W * dpr
       canvas.height = H * dpr
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      updateFocal()
+
+      isMobile = W <= MOBILE_BP
+
+      // maxReach scales with available space
+      maxReach = Math.min(W * 0.50, H * 0.90)
+      if (isMobile) maxReach *= 0.60
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -275,10 +237,10 @@ export default function BreathingField() {
     window.addEventListener('resize', resize)
     resize()
 
-    let focalFrame = 0   // re-check DOM every N frames
+    let frameCount = 0
     function draw(now) {
-      // Re-check focal anchor every 30 frames (~0.5s) to track layout shifts
-      if (++focalFrame >= 30) { focalFrame = 0; updateFocal() }
+      // Re-measure every ~60 frames to catch layout shifts
+      if (++frameCount >= 60) { frameCount = 0; resize() }
 
       ctx.clearRect(0, 0, W, H)
 
@@ -288,32 +250,25 @@ export default function BreathingField() {
       const cursorOn = mouse.x >= 0
       const cr2 = CURSOR_RADIUS * CURSOR_RADIUS
 
-      // ── Invisible heartbeat (drives pulse reaction on rays) ──────
-      const fY = focalYPx
+      // Focal point = bottom-center of canvas = just above the title
+      const fX = W * 0.5
+      const fY = H  // bottom of canvas
+
       const beatProgress = (now % PULSE_INTERVAL) / PULSE_INTERVAL
       const pulseY = fY - beatProgress * H * 0.3
 
-      // ── Build draw list ──────────────────────────────────────────
       const drawList = []
 
       buildCone(rays,
-        FOCAL_X * W, fY,
+        fX, fY,
         maxReach, pulse, rot, -1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
 
       // Sort back-to-front
       drawList.sort((a, b) => a.depth - b.depth)
 
-      // ── Draw rays ────────────────────────────────────────────────
+      // ── Draw rays ──────────────────────────────────────────────
       for (let i = 0; i < drawList.length; i++) {
         const d = drawList[i]
-
-        // ── Kill zone: fade rays whose tips are near/below the title ──
-        let killMult = 1
-        const lowestY = Math.max(d.tipY, d.fy)  // whichever is lower on screen
-        if (lowestY > killYPx) {
-          killMult = Math.max(0, 1 - (lowestY - killYPx) / KILL_FADE)
-          if (killMult <= 0) continue  // fully invisible, skip drawing
-        }
 
         const ct = d.colorT
         const wc = d.warmColor
@@ -321,13 +276,11 @@ export default function BreathingField() {
         const r = wc[0] + (cc[0] - wc[0]) * ct
         const g = wc[1] + (cc[1] - wc[1]) * ct
         const b = wc[2] + (cc[2] - wc[2]) * ct
+        const a = d.alpha
 
-        // Apply kill zone fade to alpha
-        const effAlpha = d.alpha * killMult
-
-        // v2: trail ghost from previous frame
+        // Trail ghost
         if (d.prevTipX !== null && d.prevTipY !== null) {
-          const ghostAlpha = effAlpha * TRAIL_ALPHA_MULT
+          const ghostAlpha = a * TRAIL_ALPHA_MULT
           ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${ghostAlpha})`
           ctx.lineWidth = d.width * 0.6
           ctx.lineCap = 'round'
@@ -337,18 +290,18 @@ export default function BreathingField() {
           ctx.stroke()
         }
 
-        // v2: curved ray with gradient
+        // Gradient ray
         const grad = ctx.createLinearGradient(d.fx, d.fy, d.tipX, d.tipY)
-        grad.addColorStop(0,    `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.6})`)
-        grad.addColorStop(0.25, `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha})`)
-        grad.addColorStop(0.65, `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.45})`)
-        grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${effAlpha * 0.1})`)
+        grad.addColorStop(0,    `rgba(${r|0}, ${g|0}, ${b|0}, ${a * 0.6})`)
+        grad.addColorStop(0.25, `rgba(${r|0}, ${g|0}, ${b|0}, ${a})`)
+        grad.addColorStop(0.65, `rgba(${r|0}, ${g|0}, ${b|0}, ${a * 0.45})`)
+        grad.addColorStop(1,    `rgba(${r|0}, ${g|0}, ${b|0}, ${a * 0.1})`)
 
         ctx.strokeStyle = grad
         ctx.lineWidth = isMobile ? d.width * MOBILE_RAY_THIN : d.width
         ctx.lineCap = 'round'
 
-        // v2: quadratic curve instead of straight line
+        // Quadratic curve
         const midX = (d.fx + d.tipX) / 2
         const midY = (d.fy + d.tipY) / 2
         const rayAngle = Math.atan2(d.tipY - d.fy, d.tipX - d.fx)
@@ -361,10 +314,10 @@ export default function BreathingField() {
         ctx.quadraticCurveTo(cpX, cpY, d.tipX, d.tipY)
         ctx.stroke()
 
-        // v2: halo glow on front rays
+        // Halo glow on front rays
         if (d.depthFactor > HALO_DEPTH_THRESH) {
           const haloStrength = (d.depthFactor - HALO_DEPTH_THRESH) / (1 - HALO_DEPTH_THRESH)
-          const haloAlpha = effAlpha * HALO_ALPHA_MULT * haloStrength
+          const haloAlpha = a * HALO_ALPHA_MULT * haloStrength
           ctx.strokeStyle = `rgba(${r|0}, ${g|0}, ${b|0}, ${haloAlpha})`
           ctx.lineWidth = d.width * HALO_WIDTH_MULT
           ctx.beginPath()
@@ -388,18 +341,20 @@ export default function BreathingField() {
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        pointerEvents: 'none',
-      }}
-    />
+    <div ref={wrapRef} style={{ position: 'relative' }}>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          bottom: '100%',       /* canvas sits ABOVE the children (h1) */
+          left: '50%',
+          transform: 'translateX(-50%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      {children}
+    </div>
   )
 }
