@@ -72,14 +72,14 @@ const PULSE_INTERVAL    = 60000 / PULSE_BPM
 
 // ── Focal position & responsive ─────────────────────────────────────
 const FOCAL_X = 0.50
-const FOCAL_Y_FALLBACK = 0.32       // fallback — higher up to avoid overlap
+const FOCAL_Y_FALLBACK = 0.30       // fallback if h1 not found
 const BREATH_MARGIN = 80            // px gap vertex → h1 top (desktop)
 const BREATH_MARGIN_MOBILE = 50     // px gap vertex → h1 top (mobile)
 const MOBILE_BP = 480
-const MOBILE_RAY_SCALE = 0.55       // maxReach multiplier on mobile
-const MOBILE_RAY_THIN = 0.65        // width multiplier on mobile
-const KILL_ZONE = 40                // px above h1 where rays start fading out
-const KILL_FADE = 60                // px over which the fade happens
+const MOBILE_RAY_SCALE = 0.55
+const MOBILE_RAY_THIN = 0.65
+const KILL_ZONE = 30                // px above h1 where rays start fading
+const KILL_FADE = 50                // px over which the fade completes
 
 // ── Ray generation ──────────────────────────────────────────────────
 function generateRays() {
@@ -223,27 +223,34 @@ export default function BreathingField() {
     const rays = generateRays()
 
     // ── Recalculate focal point from live DOM ──────────────────
+    // Canvas & h1 now share the same parent (.hero section),
+    // so offsetTop gives us position relative to that shared parent.
     function updateFocal() {
-      const parent = canvas.parentElement
       isMobile = W <= MOBILE_BP
+      const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
 
-      const h1 = document.querySelector('.hero-brand')
-      if (h1 && parent) {
-        const parentRect = parent.getBoundingClientRect()
-        const h1Rect = h1.getBoundingClientRect()
-        const h1TopInParent = h1Rect.top - parentRect.top
-        const margin = isMobile ? BREATH_MARGIN_MOBILE : BREATH_MARGIN
-        focalYPx = Math.max(H * 0.10, h1TopInParent - margin)
-        // Kill zone: rays that reach below this Y get faded/clipped
-        killYPx = h1TopInParent - KILL_ZONE
+      // Find h1 within our shared parent (.hero)
+      const parent = canvas.parentElement
+      const h1 = parent && parent.querySelector('.hero-brand')
+
+      if (h1) {
+        // Walk offset chain to get h1 top relative to .hero section
+        let h1Top = 0
+        let el = h1
+        while (el && el !== parent) {
+          h1Top += el.offsetTop
+          el = el.offsetParent
+        }
+        focalYPx = Math.max(H * 0.10, h1Top - margin)
+        killYPx = h1Top - KILL_ZONE
       } else {
         focalYPx = FOCAL_Y_FALLBACK * H
-        killYPx = focalYPx + 40
+        killYPx = focalYPx + 50
       }
 
-      // maxReach proportional to available space above the title
+      // maxReach scales to available vertical space above h1
       const space = focalYPx
-      maxReach = Math.min(W * 0.50, space * 1.2, H * 0.55)
+      maxReach = Math.min(W * 0.50, space * 1.1, H * 0.50)
       if (isMobile) maxReach *= MOBILE_RAY_SCALE
     }
 

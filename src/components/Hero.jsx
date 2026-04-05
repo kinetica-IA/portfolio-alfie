@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTextDecode } from '../hooks/useTextDecode'
+import BreathingField from './BreathingField'
 
 const SUB_STRINGS = [
   'wearable health intelligence',
@@ -52,6 +53,7 @@ export default function Hero() {
 
   return (
     <section className="hero section">
+      <BreathingField />
       <div className="hero-content">
         <h1 className="hero-brand">{brand}</h1>
         <div className="hero-rule" />
@@ -92,6 +94,7 @@ export default function Hero() {
           text-align: center;
           padding: 40px 24px;
           position: relative;
+          overflow: hidden;
         }
         .hero-content {
           margin-bottom: 56px;

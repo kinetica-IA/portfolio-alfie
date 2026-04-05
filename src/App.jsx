@@ -1,5 +1,4 @@
 import { usePolarData } from './hooks/usePolarData'
-import BreathingField from './components/BreathingField'
 import { FloatingDecorators } from './components/OrganicSymbols'
 import Hero from './components/Hero'
 import ClinicalSignal from './components/ClinicalSignal'
@@ -19,10 +18,7 @@ export default function App() {
     <>
       <FloatingDecorators />
       <div className="content-layer">
-        <div className="hero-wrapper">
-          <BreathingField />
-          <Hero />
-        </div>
+        <Hero />
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal>
           <ClinicalSignal />
@@ -51,10 +47,6 @@ export default function App() {
       <FooterField />
 
       <style>{`
-        .hero-wrapper {
-          position: relative;
-          overflow: hidden;
-        }
         .content-layer {
           position: relative;
           z-index: 1;
