@@ -53,9 +53,11 @@ export default function Hero() {
 
   return (
     <section className="hero section">
-      <BreathingField />
       <div className="hero-content">
-        <h1 className="hero-brand">{brand}</h1>
+        {/* BreathingField wraps the h1 — cone vertex lives at the title */}
+        <BreathingField>
+          <h1 className="hero-brand">{brand}</h1>
+        </BreathingField>
         <div className="hero-rule" />
         <p className="hero-tagline" style={{
           opacity: bootStep >= 1 ? 1 : 0,
@@ -108,6 +110,8 @@ export default function Hero() {
           margin-bottom: 0;
           white-space: nowrap;
           text-shadow: 0 1px 3px rgba(36, 64, 60, 0.06);
+          position: relative;
+          z-index: 1;
         }
         @media (max-width: 480px) {
           .hero-brand {
