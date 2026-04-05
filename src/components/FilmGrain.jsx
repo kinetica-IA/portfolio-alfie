@@ -5,12 +5,12 @@ import { useRef, useEffect, useState } from 'react'
 // ════════════════════════════════════════════════════════════════════
 
 const PARAMS = {
-  grainAlpha:    0.63,
-  grainSize:     0.4,
+  grainAlpha:    0.43,
+  grainSize:     0.3,
   grainRange:    50,
   stripHeight:   400,
-  stripFadeV:    200,
-  stripFadeH:    400,
+  stripFadeV:    300,
+  stripFadeH:    600,
   stripSpeed:    2000,
   stripEase:     0.15,
 }
