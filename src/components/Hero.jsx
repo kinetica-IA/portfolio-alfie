@@ -23,7 +23,7 @@ const LW_MIN = 0.08
 const LW_MAX = 1.1
 const BASE_ALPHA = 0.50
 const PULSE_SPEED = 0.0009
-const PULSE_AMP = 0.03
+const PULSE_AMP = 0.05
 const ROT_SPEED = 0.00004
 const PERSP = 900
 const CURSOR_R = 250
@@ -215,9 +215,8 @@ export default function Hero() {
       fxPx = (h1Rect.left + h1Rect.right) / 2 - heroRect.left
       fyPx = h1Rect.top - heroRect.top  // top edge of h1
 
-      // maxReach = space above the title, capped
-      maxReach = Math.min(W * 0.50, fyPx * 0.95, H * 0.50)
-      if (isMobile) maxReach *= 0.55
+      // maxReach = proportion of space above the title — fyPx controls everything
+      maxReach = fyPx * (isMobile ? 0.70 : 0.85)
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -230,7 +229,7 @@ export default function Hero() {
 
     let fc = 0
     function draw(now) {
-      if (++fc >= 60) { fc = 0; resize() }
+      if (++fc >= 30) { fc = 0; resize() }
 
       ctx.clearRect(0, 0, W, H)
 
