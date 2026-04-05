@@ -32,8 +32,8 @@ const COOL_COLORS = [
 const RAY_COUNT        = 200
 const CONE_HALF_ANGLE  = 0.4363
 const CONE_VARIATION   = 0.5236
-const MIN_RAY_LENGTH   = 0.15
-const MAX_RAY_LENGTH   = 0.55
+const MIN_RAY_LENGTH   = 0.25
+const MAX_RAY_LENGTH   = 0.80
 
 // v2: aggressive depth range
 const LINE_WIDTH_MIN   = 0.08
@@ -70,17 +70,9 @@ const HALO_ALPHA_MULT   = 0.12      // halo opacity relative to ray alpha
 const PULSE_BPM         = 33
 const PULSE_INTERVAL    = 60000 / PULSE_BPM
 
-// ── Dynamic focals ──────────────────────────────────────────────────
-function getFocals(W, H) {
-  const aspect = W / H
-  // portrait (≤0.7): cones far apart, more room for text
-  // landscape (≥1.5): cones tighter, compact composition
-  // between: smooth interpolation
-  const t = Math.max(0, Math.min(1, (aspect - 0.7) / (1.5 - 0.7)))
-  const topY = 0.22 + t * (0.36 - 0.22)
-  const botY = 0.78 - t * (0.78 - 0.64)
-  return { topFY: topY, botFY: botY, focalX: 0.50 }
-}
+// ── Focal position ──────────────────────────────────────────────────
+const FOCAL_X = 0.50
+const FOCAL_Y = 0.38    // above hero title
 
 // ── Ray generation ──────────────────────────────────────────────────
 function generateRays() {
@@ -111,9 +103,6 @@ function generateRays() {
 
 // ── Cone builder ────────────────────────────────────────────────────
 function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorOn, cr2, drawList, H, now, pulseY) {
-  const safeCenter = H * 0.50
-  const fadeMargin = H * 0.14
-
   for (let i = 0; i < rays.length; i++) {
     const ray = rays[i]
 
@@ -158,12 +147,6 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
     if (direction === -1 && tipY > fy) continue
     if (direction === 1 && tipY < fy) continue
 
-    // Fade near center exclusion zone
-    const distToCenter = Math.abs(tipY - safeCenter)
-    const zoneFade = distToCenter < fadeMargin
-      ? distToCenter / fadeMargin
-      : 1
-
     // Cursor push
     if (cursorOn) {
       const dx = tipX - mouse.x, dy = tipY - mouse.y
@@ -194,7 +177,7 @@ function buildCone(rays, fx, fy, maxReach, pulse, rot, direction, mouse, cursorO
 
     drawList.push({
       fx, fy, tipX, tipY,
-      alpha: ray.baseAlpha * Math.max(0.03, dAlpha) * zoneFade * (1 + pulseBoost),
+      alpha: ray.baseAlpha * Math.max(0.03, dAlpha) * (1 + pulseBoost),
       width: ray.baseWidth * Math.max(0.1, dWidth) * (1 + pulseBoost * 0.5),
       warmColor: ray.warmColor,
       coolColor: ray.coolColor,
@@ -224,35 +207,23 @@ export default function BreathingField() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
 
-    let W, H, dpr, maxReach, scrollAlpha = 1
-    let topFY, botFY
+    let W, H, dpr, maxReach
     const mouse = { x: -1, y: -1 }
 
-    const topRays = generateRays()
-    const botRays = generateRays()
+    const rays = generateRays()
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      W = window.innerWidth
-      H = window.innerHeight
+      const parent = canvas.parentElement
+      W = parent ? parent.offsetWidth : window.innerWidth
+      H = parent ? parent.offsetHeight : window.innerHeight
       canvas.width = W * dpr
       canvas.height = H * dpr
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      // v2: maxReach scales with min dimension, not diagonal
-      maxReach = Math.min(W, H) * 0.55
-
-      // v2: dynamic focals
-      const focals = getFocals(W, H)
-      topFY = focals.topFY
-      botFY = focals.botFY
-    }
-
-    function onScroll() {
-      // v2: fade out as user scrolls past hero
-      scrollAlpha = Math.max(0, 1 - window.scrollY / (H * 0.6))
+      maxReach = Math.min(W, H) * 0.70
     }
 
     function onMove(e) { mouse.x = e.clientX; mouse.y = e.clientY }
@@ -261,19 +232,10 @@ export default function BreathingField() {
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerleave', onLeave)
     window.addEventListener('resize', resize)
-    window.addEventListener('scroll', onScroll, { passive: true })
     resize()
-    onScroll()
 
     function draw(now) {
-      // Skip drawing if fully scrolled away
-      if (scrollAlpha <= 0) {
-        raf.current = requestAnimationFrame(draw)
-        return
-      }
-
       ctx.clearRect(0, 0, W, H)
-      ctx.globalAlpha = scrollAlpha
 
       const pulse = 1 + Math.sin(now * PULSE_SPEED) * PULSE_AMP
       const rot = now * ROTATION_SPEED
@@ -281,26 +243,17 @@ export default function BreathingField() {
       const cursorOn = mouse.x >= 0
       const cr2 = CURSOR_RADIUS * CURSOR_RADIUS
 
-      // ── Invisible heartbeat position ─────────────────────────────
-      const topY = topFY * H
-      const botY = botFY * H
-
+      // ── Invisible heartbeat (drives pulse reaction on rays) ──────
+      const focalY = FOCAL_Y * H
       const beatProgress = (now % PULSE_INTERVAL) / PULSE_INTERVAL
-      const beatNumber = Math.floor(now / PULSE_INTERVAL)
-      const goingDown = beatNumber % 2 === 0
-      const t = goingDown ? beatProgress : 1 - beatProgress
-      const pulseY = topY + (botY - topY) * t
+      const pulseY = focalY - beatProgress * H * 0.3  // pulse travels upward from apex
 
       // ── Build draw list ──────────────────────────────────────────
       const drawList = []
 
-      buildCone(topRays,
-        0.50 * W, topY,
+      buildCone(rays,
+        FOCAL_X * W, focalY,
         maxReach, pulse, rot, -1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
-
-      buildCone(botRays,
-        0.50 * W, botY,
-        maxReach, pulse, -rot, 1, mouse, cursorOn, cr2, drawList, H, now, pulseY)
 
       // Sort back-to-front
       drawList.sort((a, b) => a.depth - b.depth)
@@ -365,11 +318,6 @@ export default function BreathingField() {
         }
       }
 
-      // (spine/pulse removed — invisible heartbeat drives ray reaction via pulseY)
-
-      // Reset global alpha
-      ctx.globalAlpha = 1
-
       raf.current = requestAnimationFrame(draw)
     }
 
@@ -378,7 +326,6 @@ export default function BreathingField() {
     return () => {
       cancelAnimationFrame(raf.current)
       window.removeEventListener('resize', resize)
-      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerleave', onLeave)
     }
@@ -389,8 +336,11 @@ export default function BreathingField() {
       ref={canvasRef}
       aria-hidden="true"
       style={{
-        position: 'fixed',
-        inset: 0,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         zIndex: 0,
         pointerEvents: 'none',
       }}

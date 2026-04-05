@@ -17,10 +17,12 @@ export default function App() {
 
   return (
     <>
-      <BreathingField />
       <FloatingDecorators />
       <div className="content-layer">
-        <Hero />
+        <div className="hero-wrapper">
+          <BreathingField />
+          <Hero />
+        </div>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal>
           <ClinicalSignal />
@@ -49,6 +51,10 @@ export default function App() {
       <FooterField />
 
       <style>{`
+        .hero-wrapper {
+          position: relative;
+          overflow: hidden;
+        }
         .content-layer {
           position: relative;
           z-index: 1;
