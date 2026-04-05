@@ -1,5 +1,6 @@
 import { usePolarData } from './hooks/usePolarData'
 import { FloatingDecorators } from './components/OrganicSymbols'
+import FilmGrain from './components/FilmGrain'
 import Hero from './components/Hero'
 import ClinicalSignal from './components/ClinicalSignal'
 import FlagshipProof from './components/FlagshipProof'
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <>
       <FloatingDecorators />
+      <FilmGrain />
       <div className="content-layer">
         <Hero />
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
