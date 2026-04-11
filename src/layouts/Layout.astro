@@ -85,5 +85,28 @@
   </head>
   <body>
     <slot />
+
+    <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
+    <script data-goatcounter="https://kineticaai.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+
+    <!-- Visit notification (ntfy.sh — fire-and-forget) -->
+    <script>
+    (function(){
+      try {
+        var d = {
+          p: location.pathname,
+          r: document.referrer || '(direct)',
+          l: navigator.language,
+          t: new Date().toISOString()
+        };
+        fetch('https://ntfy.sh/kineticaai-v-a7f3x9', {
+          method: 'POST',
+          headers: { Title: 'Visit: ' + d.p },
+          body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t
+        }).catch(function(){});
+      } catch(e) {}
+    })();
+    </script>
   </body>
 </html>
