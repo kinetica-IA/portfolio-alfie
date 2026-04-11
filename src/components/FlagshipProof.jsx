@@ -45,15 +45,15 @@ function Metric({ value, decimals, label, delay = 0, active, colorIdx }) {
 
 export default function FlagshipProof({ data, loading }) {
   const { ref: metricsRef, revealed: metricsVisible } = useReveal(0.2)
+  const nDays = data?.series?.length || 207
   const { ref: titleRef, words: titleWords } = useWordStagger(
-    '198 nights wearing a wristwatch. Five health predictions.'
+    `${nDays} nights wearing a wristwatch. Five health predictions.`
   )
 
   const targets = data?.predictor?.targets
   const severity = targets?.severity
   const autonomic = targets?.disfuncion_autonomica
   const residuals = data?.predictor?.residuals
-  const nDays = data?.series?.length || 198
   const nTargets = targets ? Object.keys(targets).length : 5
   const nPairs = data?.predictor?.n_training || 60
 
