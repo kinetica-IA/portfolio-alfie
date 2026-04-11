@@ -13,8 +13,8 @@ const CARDS = [
     desc: 'Multi-symptom clinical prediction from wearable HRV data. Open-source, fully reproducible.',
     expandedDesc: 'Five independent models trained on nocturnal heart rate data. Each model selects its own features via forward selection across 13 HRV candidates and 3 lag windows. Validated with leave-one-out cross-validation.',
     stats: '5 models · 200+ days · AUC 0.84',
-    link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
-    external: true,
+    link: '/ans-predictor.html',
+    external: false,
     symbolIdx: 0,
   },
   {
