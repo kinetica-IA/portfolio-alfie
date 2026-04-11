@@ -25,9 +25,9 @@ const PILLARS = [
       `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
     result: 'AUC 0.84 (severity), 48h predictive lag from autonomic signals — not yet replicated in literature. All code and data public.',
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
-    link: 'https://github.com/kinetica-IA/polar-lyme-predictor',
-    linkText: 'View on GitHub →',
-    external: true,
+    link: '/ans-predictor.html',
+    linkText: 'View research →',
+    external: false,
   },
   {
     num: '03', color: 'var(--sea)',
