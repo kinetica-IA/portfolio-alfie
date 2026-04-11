@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-04-11T16:15:46.354917+00:00",
+  "io3_path": "/Users/alfonsonavarro/IO3",
+  "models": {
+    "loop": "claude-haiku-4-5-20251001",
+    "synthesis": "claude-sonnet-4-6"
+  },
+  "graph": {
+    "node_count": 9,
+    "node_names": [
+      "classify",
+      "context_engine",
+      "reason",
+      "act",
+      "respond",
+      "alma_gate",
+      "store_feedback",
+      "human_interrupt",
+      "sonnet_synthesis"
+    ]
+  },
+  "alma": {
+    "axioms": [
+      "CONCIENCIA",
+      "CLARIDAD",
+      "LÍMITE",
+      "PRAGMATISMO",
+      "CUIDADO"
+    ],
+    "l2_threshold_high": 0.92,
+    "l2_threshold_medium": 0.92,
+    "l2_gray_zone": 0.75,
+    "risk_categories": [
+      "pharmacological_risk",
+      "diagnostic_overreach",
+      "false_urgency",
+      "scope_violation"
+    ]
+  },
+  "rag": {
+    "embed_model": "intfloat/multilingual-e5-large",
+    "top_k": 5,
+    "min_score": 0.6,
+    "collections": [
+      "io3_kb",
+      "io3_sessions"
+    ],
+    "chunk_count": 26
+  },
+  "classifier": {
+    "task_types": [
+      "greeting",
+      "rag_search",
+      "hrv_analysis",
+      "pem_assessment",
+      "clinical_reasoning",
+      "direct_generation"
+    ],
+    "domains": [
+      "clinical",
+      "professional",
+      "general"
+    ]
+  },
+  "ui": {
+    "react": "^19.2.4",
+    "vite": "^8.0.1",
+    "sse_events": [
+      "gap",
+      "node_enter",
+      "node_exit",
+      "interrupt",
+      "result",
+      "error"
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/health"
+      },
+      {
+        "method": "GET",
+        "path": "/api/status"
+      },
+      {
+        "method": "POST",
+        "path": "/chat"
+      },
+      {
+        "method": "GET",
+        "path": "/stream/{thread_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/resume"
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/{session_id}/export"
+      }
+    ]
+  },
+  "clinical_rules_count": 6,
+  "msu_files": [
+    "alma.md",
+    "clinical_role.md",
+    "prc.md",
+    "rag.md",
+    "sci.md"
+  ],
+  "knowledge_file_count": 474,
+  "python_deps": [
+    "langgraph>=0.2.0",
+    "langgraph-checkpoint-sqlite>=2.0.0",
+    "anthropic>=0.40.0",
+    "httpx>=0.27.0",
+    "sentence-transformers>=3.0.0",
+    "chromadb>=0.5.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "sseclient-py>=1.9.0"
+  ],
+  "latency_documented": "28"
+}
