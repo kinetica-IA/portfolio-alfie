@@ -682,83 +682,39 @@
     <div class="hero-left">
       <div class="eyebrow">
         <span class="pulse-dot"></span>
-        Kinetica AI · IO Agent · Architecture
+        Kinetica AI · IO3 · Architecture
       </div>
       <h1 class="page-title">
-        <span class="solid">IO</span><br>
+        <span class="solid">IO3</span><br>
         <em>is not a chatbot.</em>
       </h1>
       <p class="page-desc">
-        IO is a context engine — a persistent orchestration layer that enriches every
+        IO3 is a context engine — a persistent orchestration layer that enriches every
         prompt with personal RAG, clinical rules, and ethical reasoning before any LLM
-        processes it. The model is interchangeable. IO is not.
+        processes it. The model is interchangeable. IO3 is not.
       </p>
     </div>
-    <div class="hero-meta">
-      <div>LangGraph · Anthropic API · FastAPI · Vite 8 · sentence-transformers · Mac Mini M4</div>
-      <div>FASE 0 active · Anthropic-only since 2026-03-30</div>
-      <div>claude-haiku-4-5 (loop) · claude-sonnet-4-6 (synthesis)</div>
-      <div>Embeddings: intfloat/multilingual-e5-large · 1024 dims</div>
-      <div>RAG: ChromaDB · 1880 chunks · cosine similarity</div>
-      <div class="meta-green">✓ 5/5 benchmark queries passing · ~28s loop</div>
-    </div>
+    <div class="hero-meta" id="hero-meta">Loading state...</div>
   </div>
 
   <!-- STATS -->
-  <div class="stats-row reveal">
-    <div class="stat-item">
-      <span class="stat-val">~28s</span>
-      <span class="stat-label">Loop latency</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">1880</span>
-      <span class="stat-label">ChromaDB chunks</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">9 nodes</span>
-      <span class="stat-label">Graph nodes</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">5/5 pass</span>
-      <span class="stat-label">Benchmarks</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">Anthropic only</span>
-      <span class="stat-label">Provider</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">Haiku</span>
-      <span class="stat-label">Loop model</span>
-    </div>
+  <div class="stats-row reveal" id="stats-row">
+    <div class="stat-item"><span class="stat-val">...</span><span class="stat-label">Loading</span></div>
   </div>
 
   <!-- PHILOSOPHY -->
   <div class="section-eyebrow reveal">Design philosophy</div>
-  <div class="philosophy reveal">
+  <div class="philosophy reveal" id="philosophy">
     <p>
       Most AI assistants are <strong>prompt wrappers</strong> — you send text, you get
-      text back. IO is architecturally different. Before any LLM sees your input, the
-      Context Engine has already loaded your profile, retrieved relevant RAG chunks from
-      1880 knowledge base entries, assembled <code>enriched_context</code> as a structured
-      markdown block, and injected clinical rules from <code>config/clinical_rules.yaml</code>.
+      text back. IO3 is architecturally different. Before any LLM sees your input, the
+      Context Engine has already loaded your profile, retrieved relevant RAG chunks,
+      assembled <code>enriched_context</code> as a structured markdown block, and injected
+      clinical rules from <code>config/clinical_rules.yaml</code>.
       The LLM receives a fully enriched prompt every time, without being asked.
     </p>
-    <p>
-      After the LLM responds, <strong>ALMA</strong> evaluates the output against five axioms —
-      Conciencia, Claridad, Límite, Pragmatismo, Cuidado. Two independent layers:
-      L1 injects axioms as pre-generation context (zero latency, zero additional tokens after prompt caching).
-      L2 evaluates post-generation with a deterministic pipeline: regex patterns →
-      cosine similarity (threshold 0.92) → gray zone flag (≥0.75). No LLM in the
-      evaluation path. Every evaluation logs to <code>data/alma_log.jsonl</code>
-      for auditability.
-    </p>
-    <p>
-      Haiku handles loop reasoning (~28s total). Sonnet handles final synthesis —
-      only when the user decides the accumulated context justifies it.
-      The LLM is a <strong>replaceable component</strong>. IO is the layer that persists
-      across models, sessions, and interactions. That is the architectural bet
-      behind this project.
-    </p>
+    <p id="alma-philosophy"></p>
+    <p id="models-philosophy"></p>
   </div>
 
   <div class="section-divider"></div>
@@ -773,71 +729,41 @@
   <!-- EXECUTION FLOW -->
   <div class="flow-section reveal">
     <div class="section-eyebrow">Execution flow</div>
-    <h3>How a single query moves through IO</h3>
+    <h3>How a single query moves through IO3</h3>
     <p>
-      Every input passes through the Context Engine before the router sees it.
+      Every input passes through the Context Engine before the classifier sees it.
       No LLM call happens without <code>enriched_context</code>. No output leaves without ALMA evaluation.
     </p>
     <div class="flow-row" id="flow"></div>
-    <div class="flow-note">
-      <strong>Context Engine (L0):</strong> Deterministic — no LLM call. Runs ~200–400ms.
-      Loads profile, retrieves RAG chunks, assembles <code>enriched_context</code>, injects clinical rules.
-      Every node downstream receives a fully enriched state.<br><br>
-      <strong>Regex classifier:</strong> 6 task types (greeting, direct_generation, clinical_reasoning,
-      rag_search, hrv_analysis, pem_assessment). Deterministic — 0 tokens, 0 LLM calls.
-      Replaces the old <code>needs_planner()</code> gate.
-    </div>
+    <div class="flow-note" id="flow-note"></div>
   </div>
 
-  <!-- EVOLUTION NARRATIVE -->
+  <div class="section-divider"></div>
+
+  <!-- ALMA SECTION -->
   <div class="flow-section reveal">
-    <div class="section-eyebrow">Evolution</div>
-    <h3>How IO evolved</h3>
+    <div class="section-eyebrow">ALMA · Ethical safety framework</div>
+    <h3>Deterministic evaluation — no LLM in the safety path</h3>
     <p>
-      Two versions. One architectural decision that changed everything.
+      Every output is evaluated before reaching the patient. ALMA operates in two layers:
+      L1 injects axioms as pre-generation context (zero additional tokens after prompt caching).
+      L2 evaluates post-generation with a deterministic pipeline.
     </p>
-    <div class="flow-note" style="border-top:none;padding-top:0">
-      <strong>v1 (cleanup/minimal-rebuild, dd1d863):</strong> Monolithic <code>io_agent.py</code>
-      (2400 lines). Keyword routing. Ollama + qwen3:14b for all inference. ChromaDB RAG.
-      10-node graph. 32/32 benchmarks passing. The problem: routing failure was the primary
-      failure mode. <code>needs_planner()</code> gated most queries before the planner was
-      ever reached. Capability audit score: 28/52.<br><br>
-      <strong>v2 (phase1/react-graph, 835b892):</strong> <code>io_agent.py</code> split into
-      modular components under <code>io_core/</code>. Ollama eliminated — architectural
-      decision, not a failure. Anthropic Claude as sole LLM provider. Context Engine extracted
-      as deterministic L0 node (no LLM, ~200–400ms). 5-priority router replaces
-      <code>needs_planner()</code>. Connector pipeline verified end-to-end.
-      3 autonomous loops operational.<br><br>
-      <strong>What changed and why:</strong> The LLM was never the persistent layer — IO is.
-      Separating context construction (deterministic, auditable) from generation (stochastic,
-      interchangeable) is the architectural bet this project is built on.
-    </div>
+    <div class="flow-note" id="alma-detail"></div>
   </div>
 
-  <!-- KNOWN ISSUES -->
-  <div class="issues-section reveal">
-    <div class="section-eyebrow">Known issues · Honest engineering</div>
-    <p class="issues-intro">
-      IO is a working system under active development, not a polished product.
-      Current open items documented publicly — knowing the gap between what works
-      and what's next is what separates a system builder from a prompt engineer.
-    </p>
-    <div id="issues"></div>
-  </div>
+  <div class="section-divider"></div>
 
-  <!-- ROADMAP -->
-  <div class="roadmap-section reveal">
-    <div class="section-eyebrow">Roadmap</div>
-    <p class="roadmap-intro">
-      Current state of IO as of phase1/react-graph (commit 835b892).
-      ✅ shipped · 🔄 in progress · 📅 planned.
-    </p>
-    <div id="roadmap"></div>
+  <!-- STACK SECTION -->
+  <div class="flow-section reveal">
+    <div class="section-eyebrow">Stack</div>
+    <h3>Dependencies and infrastructure</h3>
+    <div class="flow-note" id="stack-detail" style="border-top:none;padding-top:0"></div>
   </div>
 
   <!-- FOOTER -->
   <div class="page-footer reveal">
-    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026 · <span id="generated-at"></span></div>
     <div class="footer-links">
       <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="footer-link">Clinical use case →</a>
       <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" class="footer-link">LinkedIn →</a>
@@ -997,57 +923,6 @@ const flowNodes = [
   { label: "sonnet / END", color: "#d4a843", id: "sonnet_synthesis" },
 ];
 
-const issues = [
-  {
-    id: "B-1", title: "ALMA L2: LLM string overrides weighted score",
-    desc: "The ALMA L2 result is what the LLM says, not what the weighted score logic computes. The decision string ('APPROVE'/'REWRITE'/'SILENCE') is produced before the score is evaluated — a silent override that invalidates the calculation.",
-    fix: "Implemented — deterministic ALMA L2. Decision tree: exact regex → cosine similarity (0.92) → gray zone flag (>=0.75). The decision emerges from the tree, not from the LLM."
-  },
-  {
-    id: "B-3", title: "Cuidado (Care): inverted evaluation — harm discussion vs real risk",
-    desc: "The Cuidado (Care) axiom evaluates whether the output discusses harm, not whether the situation presents real risk. Documented result: APPROVE on a clenbuterol query (real risk present), SILENCE on a solid clinical response (discusses harm correctly). The logic is inverted.",
-    fix: "PHASE 1.0 — Redefinition of the Cuidado (Care) axiom in v3: evaluate the situation context, not the output content. Requires a labeled test set of 30 cases (PHASE 0.3) before reimplementation."
-  },
-  {
-    id: "B-4", title: "Root cause: Haiku judging its own outputs",
-    desc: "ALMA L2 uses the same model that generates (Haiku) to evaluate its own output. Anthropic's RLHF dominates over the axiom prompts — the model produces what it was trained to produce, not what the axioms define. LLM-as-judge on the same model that generates is an architectural limitation.",
-    fix: "PHASE 1 — Anthropic Arsenal: prompt caching (-90% input tokens in ALMA), effort control, extended thinking for ambiguous cases. Evaluator/generator separation when the API allows it."
-  },
-];
-
-const roadmap = [
-  { ver: "✅", title: "IO3 stack Anthropic-only — Ollama removed (2026-03-30)",
-    desc: "Full migration from Ollama/qwen3:8b to Anthropic API. Haiku for loop reasoning, Sonnet for synthesis. Latency 80s → 28s documented.",
-    status: "done" },
-  { ver: "✅", title: "LangGraph graph — 9 nodes · 1 gap · SqliteSaver WAL",
-    desc: "classify → context_engine → reason → act → respond → alma_gate → store_feedback → human_interrupt (gap) → sonnet_synthesis. 0 branches. Gap contract verified.",
-    status: "done" },
-  { ver: "✅", title: "Context Engine — profile + RAG + clinical rules + ALMA L1",
-    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axioms injected pre-generation, zero cost.",
-    status: "done" },
-  { ver: "✅", title: "UI React 19 — Kinetica AI · SSE streaming · 0 lost events",
-    desc: "FastAPI + SSE. Animated GraphPanel SVG. Role-differentiated messages. GAP panel with 3 options. 0 SSE events lost in testing.",
-    status: "done" },
-  { ver: "✅", title: "ALMA L2 audited — 3 structural bugs documented",
-    desc: "Override bug, inverted Cuidado (Care) evaluation, Haiku self-judging. Root cause: RLHF dominates over axiom prompts. L2 reimplemented as deterministic pipeline (regex → cosine → gray zone).",
-    status: "done" },
-  { ver: "🔄", title: "PHASE 0 — Honest foundations",
-    desc: "0.0 Codebase mapping · 0.1 ChromaDB audit → chroma_audit_report.json · 0.2 registry.py pruning (<=20 lines) · 0.3 ALMA test set 30 cases · 0.4 Deterministic ALMA L2 · 0.5 Structured output · 0.6 Haiku divergence.",
-    status: "active" },
-  { ver: "📅", title: "PHASE 1 — ALMA L2 with Anthropic Arsenal",
-    desc: "Prompt caching (-90% input tokens) · Effort control · Extended thinking · F1 >= 0.85. Blocked until PHASE 0.",
-    status: "next" },
-  { ver: "📅", title: "PHASE 2 — Real persistence and knowledge",
-    desc: "Dedup ChromaDB · Clinical re-chunking · RAG accuracy >= 0.75 · Session persistence. Blocked until PHASE 1.",
-    status: "next" },
-  { ver: "📅", title: "PHASE 3 — Complete Human-on-Loop and frontend",
-    desc: "ALMA severity badges · Timestamps · Export session · Loop feedback end-to-end. Blocked until PHASE 2.",
-    status: "future" },
-  { ver: "📅", title: "PHASE 4 — Clinician validation · Nordic positioning",
-    desc: "3-5 external clinicians · Protocol · Open methodology. Stop signal: ALMA F1 >= 0.90 + RAG >= 0.75 + HITL verified on 5 cases. Blocked until PHASE 3.",
-    status: "future" },
-];
-
 /* ── RENDER ── */
 let activeId = null;
 
@@ -1091,7 +966,7 @@ function renderDetail(m) {
       </div>
     `).join('')}
     <div class="vs-llm" style="background:color-mix(in srgb,${m.color} 5%,white);border-color:${m.color}25">
-      <div class="vs-llm-label">IO vs plain LLM</div>
+      <div class="vs-llm-label">IO3 vs plain LLM</div>
       <div class="vs-llm-text">${m.vsLLM}</div>
     </div>
   `;
@@ -1116,33 +991,6 @@ function renderFlow() {
   ).join('');
 }
 
-function renderIssues() {
-  document.getElementById('issues').innerHTML = issues.map((issue, i) => `
-    <div class="issue-row" style="animation-delay:${i*0.08}s">
-      <div class="issue-id">${issue.id}</div>
-      <div>
-        <div class="issue-title">${issue.title}</div>
-        <div class="issue-desc">${issue.desc}</div>
-        <div class="issue-fix">✓ ${issue.fix}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderRoadmap() {
-  const pillClass = { done:'pill-done', active:'pill-active', next:'pill-next', future:'pill-future' };
-  const pillLabel = { done:'done', active:'active', next:'next', future:'planned' };
-  document.getElementById('roadmap').innerHTML = roadmap.map(item => `
-    <div class="roadmap-row">
-      <div class="roadmap-body">
-        <div class="roadmap-title">${item.title}</div>
-        <div class="roadmap-desc">${item.desc}</div>
-      </div>
-      <div class="roadmap-pill ${pillClass[item.status]}">${pillLabel[item.status]}</div>
-    </div>
-  `).join('');
-}
-
 /* ── SCROLL REVEAL ── */
 function setupReveal() {
   const obs = new IntersectionObserver(entries => {
@@ -1159,11 +1007,101 @@ function setupReveal() {
   });
 }
 
+/* ── DYNAMIC DATA FROM io3_state.json ── */
+function populateFromJSON(s) {
+  // Hero meta
+  document.getElementById('hero-meta').innerHTML = [
+    `LangGraph · Anthropic API · Mac Mini M4`,
+    `${s.models.loop} (loop) · ${s.models.synthesis} (synthesis)`,
+    `Embeddings: ${s.rag.embed_model}`,
+    `RAG: ChromaDB · ${s.rag.chunk_count} chunks · cosine · top_k=${s.rag.top_k}`,
+    `<span class="meta-green">~${s.latency_documented}s loop · ${s.graph.node_count} nodes · Anthropic only</span>`,
+  ].map(l => `<div>${l}</div>`).join('');
+
+  // Stats row
+  document.getElementById('stats-row').innerHTML = [
+    { val: `~${s.latency_documented}s`, label: 'Loop latency' },
+    { val: s.rag.chunk_count, label: 'RAG chunks' },
+    { val: `${s.graph.node_count} nodes`, label: 'Graph' },
+    { val: s.alma.axioms.length, label: 'ALMA axioms' },
+    { val: s.clinical_rules_count, label: 'Clinical rules' },
+    { val: s.classifier.task_types.length, label: 'Task types' },
+  ].map(i => `<div class="stat-item"><span class="stat-val">${i.val}</span><span class="stat-label">${i.label}</span></div>`).join('');
+
+  // Philosophy — ALMA paragraph
+  const axiomList = s.alma.axioms.join(', ');
+  document.getElementById('alma-philosophy').innerHTML = `
+    After the LLM responds, <strong>ALMA</strong> evaluates the output against ${s.alma.axioms.length} axioms —
+    ${axiomList}. Two independent layers:
+    L1 injects axioms as pre-generation context (zero latency, zero additional tokens after prompt caching).
+    L2 evaluates post-generation with a deterministic pipeline: regex patterns →
+    cosine similarity (threshold ${s.alma.l2_threshold_high}) → gray zone flag (≥${s.alma.l2_gray_zone}).
+    No LLM in the evaluation path.
+  `;
+
+  // Philosophy — models paragraph
+  document.getElementById('models-philosophy').innerHTML = `
+    <code>${s.models.loop}</code> handles loop reasoning (~${s.latency_documented}s total).
+    <code>${s.models.synthesis}</code> handles final synthesis —
+    only when the user decides the accumulated context justifies it.
+    The LLM is a <strong>replaceable component</strong>. IO3 is the layer that persists
+    across models, sessions, and interactions.
+  `;
+
+  // Flow note
+  const taskTypesStr = s.classifier.task_types.join(', ');
+  document.getElementById('flow-note').innerHTML = `
+    <strong>Context Engine (L0):</strong> Deterministic — no LLM call.
+    Loads profile, retrieves RAG chunks from ${s.rag.chunk_count} entries,
+    assembles <code>enriched_context</code>, injects ${s.clinical_rules_count} clinical rules.
+    Every node downstream receives a fully enriched state.<br><br>
+    <strong>Regex classifier:</strong> ${s.classifier.task_types.length} task types
+    (${taskTypesStr}). Deterministic — 0 tokens, 0 LLM calls.
+  `;
+
+  // ALMA detail
+  const riskCats = s.alma.risk_categories.map(c => c.replace(/_/g, ' ')).join(', ');
+  document.getElementById('alma-detail').innerHTML = `
+    <strong>L1 — Pre-generation (${s.alma.axioms.length} axioms):</strong>
+    ${s.alma.axioms.map(a => `<code>${a}</code>`).join(' · ')}<br>
+    Injected as cached system prompt. Zero additional tokens after first request.<br><br>
+    <strong>L2 — Post-generation (deterministic):</strong><br>
+    Layer 1: Regex patterns across ${s.alma.risk_categories.length} risk categories (${riskCats})<br>
+    Layer 2: Cosine similarity — threshold ${s.alma.l2_threshold_high} for high/medium risk<br>
+    Layer 3: Gray zone flag ≥${s.alma.l2_gray_zone} — flagged for uncertainty, not blocked<br><br>
+    <strong>Embedding model:</strong> <code>${s.rag.embed_model}</code><br>
+    <strong>Decisions:</strong> APPROVE / REWRITE / SILENCE — ALMA never cuts the flow. The clinician always decides.
+  `;
+
+  // Stack detail
+  const depsHtml = s.python_deps.map(d => `<code>${d}</code>`).join(' · ');
+  document.getElementById('stack-detail').innerHTML = `
+    <strong>Python:</strong> ${depsHtml}<br><br>
+    <strong>Frontend:</strong> React <code>${s.ui.react}</code> · Vite <code>${s.ui.vite}</code><br><br>
+    <strong>API endpoints (${s.ui.endpoints.length}):</strong><br>
+    ${s.ui.endpoints.map(e => `<code>${e.method} ${e.path}</code>`).join('<br>')}<br><br>
+    <strong>SSE events:</strong> ${s.ui.sse_events.map(e => `<code>${e}</code>`).join(' · ')}<br><br>
+    <strong>MSU files (${s.msu_files.length}):</strong> ${s.msu_files.map(f => `<code>${f}</code>`).join(' · ')}<br>
+    <strong>Knowledge base:</strong> ${s.knowledge_file_count} files<br>
+    <strong>ChromaDB collections:</strong> ${s.rag.collections.map(c => `<code>${c}</code>`).join(' · ')}
+  `;
+
+  // Footer timestamp
+  const genDate = new Date(s.generated_at).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric'
+  });
+  document.getElementById('generated-at').textContent = `Data extracted: ${genDate}`;
+}
+
+/* ── INIT ── */
 renderGrid();
 renderFlow();
-renderIssues();
-renderRoadmap();
 setupReveal();
+
+fetch('/data/io3_state.json')
+  .then(r => r.json())
+  .then(populateFromJSON)
+  .catch(e => console.warn('io3_state.json not available:', e));
 </script>
 
 <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
