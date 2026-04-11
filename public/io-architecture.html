@@ -889,97 +889,97 @@ if (c) {
 const modules = [
   {
     id: "classify", name: "classify.py", icon: "⬡", color: "#6b8a88", badge: "REGEX",
-    short: "Regex puro · 0 tokens · determinístico",
-    summary: "Clasificación de la query entrante usando regex puro. Sin tokens LLM, sin latencia cloud. Determinístico y auditable — la primera decisión del grafo no depende de un modelo probabilístico.",
+    short: "Pure regex · 0 tokens · deterministic",
+    summary: "Incoming query classification using pure regex. No LLM tokens, no cloud latency. Deterministic and auditable — the first decision in the graph does not depend on a probabilistic model.",
     sections: [
       { name: "classify.py", lines: "nodes/classify.py",
-        desc: "Pattern matching contra categorías clínicas predefinidas. Cada pattern mapea a un task_type que determina el routing downstream. Zero ambiguity, zero cost." }
+        desc: "Pattern matching against predefined clinical categories. Each pattern maps to a task_type that determines downstream routing. Zero ambiguity, zero cost." }
     ],
-    vsLLM: "Un plain LLM clasifica con otro LLM call — más latencia, más coste, más varianza. IO3 clasifica con regex: instantáneo, gratuito, reproducible."
+    vsLLM: "A plain LLM classifies with another LLM call — more latency, more cost, more variance. IO3 classifies with regex: instant, free, reproducible."
   },
   {
     id: "context_engine", name: "context_engine.py", icon: "◈", color: "#90a7a5", badge: "CONTEXT",
     short: "profile + rules + RAG + ALMA L1 · pre-generation",
-    summary: "Ensambla todo el contexto antes de que el LLM vea la query. Perfil del paciente, reglas clínicas, chunks RAG relevantes de ChromaDB (1880 chunks), y los 5 axiomas ALMA L1 inyectados como contexto. Zero tokens extra en runtime para ALMA L1.",
+    summary: "Assembles all context before the LLM sees the query. Patient profile, clinical rules, relevant RAG chunks from ChromaDB (1880 chunks), and the 5 ALMA L1 axioms injected as context. Zero extra tokens at runtime for ALMA L1.",
     sections: [
       { name: "profile_loader", lines: "shared/context/profile_loader.py",
-        desc: "Carga perfil clínico del paciente. Datos estructurados, no texto libre." },
+        desc: "Loads the patient's clinical profile. Structured data, not free text." },
       { name: "rag_retriever", lines: "shared/context/rag_retriever.py",
-        desc: "Query contra ChromaDB (1880 chunks, intfloat/multilingual-e5-large, 1024 dims, cosine). Devuelve los chunks más relevantes." },
+        desc: "Query against ChromaDB (1880 chunks, intfloat/multilingual-e5-large, 1024 dims, cosine). Returns the most relevant chunks." },
       { name: "ALMA L1 injection", lines: "shared/safety/alma/",
-        desc: "5 axiomas epistémicos (Conciencia · Claridad · Límite · Pragmatismo · Cuidado) inyectados como system context. Zero-cost: no es un LLM call, es inyección de prompt." }
+        desc: "5 epistemic axioms (Conciencia (Awareness) · Claridad (Clarity) · Límite (Boundary) · Pragmatismo (Pragmatism) · Cuidado (Care)) injected as system context. Zero-cost: not an LLM call, it is prompt injection." }
     ],
-    vsLLM: "Un plain LLM recibe solo la query del usuario. IO3 enriquece cada query con perfil clínico, reglas, evidencia RAG, y axiomas éticos — antes de que el modelo genere una sola palabra."
+    vsLLM: "A plain LLM receives only the user's query. IO3 enriches every query with clinical profile, rules, RAG evidence, and ethical axioms — before the model generates a single word."
   },
   {
     id: "reason", name: "reason.py", icon: "◇", color: "#9b8ab5", badge: "HAIKU",
     short: "claude-haiku-4-5 · hypothesis + plan · JSON structured",
-    summary: "Haiku genera una hipótesis clínica y un plan de acción en formato JSON estructurado. Es la fase divergente del loop — explora posibilidades antes de comprometerse con una respuesta.",
+    summary: "Haiku generates a clinical hypothesis and an action plan in structured JSON format. This is the divergent phase of the loop — it explores possibilities before committing to a response.",
     sections: [
       { name: "reason.py", lines: "nodes/reason.py",
-        desc: "Call a Haiku con contexto enriquecido. Output: JSON con hypothesis y plan. El formato estructurado permite que downstream nodes actúen sobre datos, no sobre texto libre." }
+        desc: "Call to Haiku with enriched context. Output: JSON with hypothesis and plan. The structured format allows downstream nodes to act on data, not on free text." }
     ],
-    vsLLM: "Un plain LLM genera texto libre. IO3 genera hipótesis estructuradas que el resto del grafo puede inspeccionar, validar, y actuar sobre ellas programáticamente."
+    vsLLM: "A plain LLM generates free text. IO3 generates structured hypotheses that the rest of the graph can inspect, validate, and act upon programmatically."
   },
   {
     id: "act", name: "act/dispatcher.py", icon: "⬢", color: "#7a9bb5", badge: "TOOLS",
-    short: "RAG dispatch · hypothesis+plan como query",
-    summary: "Toma la hipótesis y el plan de reason y los usa como query para buscar evidencia en ChromaDB. No es un tool executor genérico — es un dispatcher que busca evidencia para validar o refutar la hipótesis.",
+    short: "RAG dispatch · hypothesis+plan as query",
+    summary: "Takes the hypothesis and plan from reason and uses them as a query to search for evidence in ChromaDB. Not a generic tool executor — it is a dispatcher that searches for evidence to validate or refute the hypothesis.",
     sections: [
       { name: "dispatcher.py", lines: "nodes/act/dispatcher.py",
-        desc: "Usa hypothesis+plan como query RAG. Los chunks recuperados se añaden al contexto para que respond tenga evidencia concreta, no solo la opinión del modelo." }
+        desc: "Uses hypothesis+plan as RAG query. Retrieved chunks are added to the context so that respond has concrete evidence, not just the model's opinion." }
     ],
-    vsLLM: "Un plain LLM responde desde su training data. IO3 busca evidencia específica en una knowledge base clínica curada antes de responder."
+    vsLLM: "A plain LLM responds from its training data. IO3 searches for specific evidence in a curated clinical knowledge base before responding."
   },
   {
     id: "respond", name: "respond.py", icon: "◎", color: "#6b8a88", badge: "HAIKU",
-    short: "claude-haiku-4-5 · MSU por task_type",
-    summary: "Genera la respuesta visible al usuario usando Haiku con system prompts clínicos diferenciados por task_type (MSUs). Cada tipo de consulta tiene su propio prompt optimizado.",
+    short: "claude-haiku-4-5 · MSU per task_type",
+    summary: "Generates the user-visible response using Haiku with clinical system prompts differentiated by task_type (MSUs). Each query type has its own optimized prompt.",
     sections: [
       { name: "respond.py", lines: "nodes/respond.py",
-        desc: "Haiku genera respuesta con MSU (Minimal System Unit) seleccionado por el task_type de classify. El output va a ALMA gate para evaluación post-generación." }
+        desc: "Haiku generates a response with the MSU (Minimal System Unit) selected by the task_type from classify. The output goes to ALMA gate for post-generation evaluation." }
     ],
-    vsLLM: "Un plain LLM usa un system prompt genérico. IO3 selecciona el system prompt óptimo para cada tipo de consulta clínica."
+    vsLLM: "A plain LLM uses a generic system prompt. IO3 selects the optimal system prompt for each type of clinical query."
   },
   {
     id: "alma_gate", name: "alma_gate.py", icon: "⊘", color: "#c4855a", badge: "ALMA L2",
-    short: "Post-generation evaluation · en rediseño v3",
-    summary: "Evalúa la respuesta generada contra los axiomas ALMA. Produce APPROVE/REWRITE/SILENCE. Actualmente en rediseño: el bug principal es que Haiku evalúa sus propios outputs y el RLHF domina sobre los axiomas. ALMA L2 nunca corta el flujo — siempre llega al gap para que el clínico decida.",
+    short: "Post-generation evaluation · v3 redesign in progress",
+    summary: "Evaluates the generated response against the ALMA axioms. Produces APPROVE/REWRITE/SILENCE. Currently being redesigned: the main bug is that Haiku evaluates its own outputs and RLHF dominates over the axioms. ALMA L2 never cuts the flow — it always reaches the gap so the clinician decides.",
     sections: [
       { name: "alma_l2_deterministic.py", lines: "shared/safety/alma/alma_l2_deterministic.py",
-        desc: "Evaluación post-generación determinista. 3 capas: regex exacto → cosine similarity (threshold 0.92) → gray zone flag (≥0.75). No LLM in evaluation path. Produce APPROVE/REWRITE/SILENCE sin llamada cloud." }
+        desc: "Deterministic post-generation evaluation. 3 layers: exact regex → cosine similarity (threshold 0.92) → gray zone flag (>=0.75). No LLM in evaluation path. Produces APPROVE/REWRITE/SILENCE without a cloud call." }
     ],
-    vsLLM: "Un plain LLM no evalúa sus propias respuestas contra principios éticos. IO3 sí — y documenta públicamente cuándo esa evaluación falla y por qué."
+    vsLLM: "A plain LLM does not evaluate its own responses against ethical principles. IO3 does — and publicly documents when that evaluation fails and why."
   },
   {
     id: "store_feedback", name: "store_feedback.py", icon: "▣", color: "#7a9e8a", badge: "STORE",
-    short: "session_delta · snapshots · persistencia",
-    summary: "Almacena el feedback de cada iteración del loop. Session deltas y snapshots que permiten trazabilidad completa de cómo el agente llegó a cada respuesta.",
+    short: "session_delta · snapshots · persistence",
+    summary: "Stores the feedback from each loop iteration. Session deltas and snapshots that enable full traceability of how the agent arrived at each response.",
     sections: [
       { name: "store_feedback.py", lines: "nodes/store_feedback.py",
-        desc: "Guarda delta de la sesión y snapshot del estado. SQLite WAL para persistencia. Cada iteración deja rastro auditable." }
+        desc: "Saves session delta and state snapshot. SQLite WAL for persistence. Each iteration leaves an auditable trail." }
     ],
-    vsLLM: "Un plain LLM no tiene memoria de cómo llegó a una respuesta. IO3 almacena cada paso del razonamiento para auditoría clínica."
+    vsLLM: "A plain LLM has no memory of how it arrived at a response. IO3 stores every reasoning step for clinical audit."
   },
   {
     id: "human_interrupt", name: "human_interrupt.py", icon: "⏸", color: "#d4a843", badge: "GAP",
-    short: "Human-on-loop · 3 opciones · el clínico decide",
-    summary: "El punto de decisión humana. Después de cada iteración del loop, el agente se detiene y presenta 3 opciones: otra vuelta de loop, síntesis con Sonnet, o terminar. El clínico siempre tiene la última palabra — el agente nunca actúa sin aprobación.",
+    short: "Human-on-loop · 3 options · the clinician decides",
+    summary: "The human decision point. After each loop iteration, the agent stops and presents 3 options: another loop iteration, synthesis with Sonnet, or end. The clinician always has the final say — the agent never acts without approval.",
     sections: [
       { name: "human_interrupt.py", lines: "nodes/human_interrupt.py",
-        desc: "LangGraph interrupt() real. Gap contract verificado: strings 'otra_vuelta' / 'sonnet' / 'end' alineados frontend↔backend. SILENCE de ALMA visible en el gap para que el clínico decida." }
+        desc: "Real LangGraph interrupt(). Gap contract verified: strings 'otra_vuelta' / 'sonnet' / 'end' aligned frontend<->backend. ALMA SILENCE visible in the gap so the clinician decides." }
     ],
-    vsLLM: "Un plain LLM responde y no pregunta. IO3 se detiene, muestra su trabajo, y espera instrucciones. EU AI Act compliant by design."
+    vsLLM: "A plain LLM responds and does not ask. IO3 stops, shows its work, and waits for instructions. EU AI Act compliant by design."
   },
   {
     id: "sonnet_synthesis", name: "sonnet_synthesis.py", icon: "✦", color: "#d4a843", badge: "SONNET",
-    short: "claude-sonnet-4-6 · solo cuando el clínico decide",
-    summary: "Síntesis final de alta calidad. Solo se activa cuando el clínico elige 'sonnet' en el gap — después de que el loop ha acumulado contexto suficiente. Sonnet recibe el historial completo de iteraciones y produce una síntesis clínica estructurada.",
+    short: "claude-sonnet-4-6 · only when the clinician decides",
+    summary: "High-quality final synthesis. Only activates when the clinician chooses 'sonnet' in the gap — after the loop has accumulated enough context. Sonnet receives the complete iteration history and produces a structured clinical synthesis.",
     sections: [
       { name: "sonnet_synthesis.py", lines: "nodes/sonnet_synthesis.py",
-        desc: "Call a claude-sonnet-4-6 con historial completo de iteraciones como contexto. Produce síntesis clínica con mayor capacidad de razonamiento que Haiku. Solo corre una vez por sesión — cuando el clínico decide que el contexto acumulado lo justifica." }
+        desc: "Call to claude-sonnet-4-6 with complete iteration history as context. Produces clinical synthesis with greater reasoning capability than Haiku. Runs only once per session — when the clinician decides the accumulated context justifies it." }
     ],
-    vsLLM: "Un plain LLM usa el mismo modelo para todo. IO3 usa Haiku para exploración (rápido, barato) y Sonnet para síntesis (lento, caro, alta calidad) — solo cuando el clínico decide que vale la pena."
+    vsLLM: "A plain LLM uses the same model for everything. IO3 uses Haiku for exploration (fast, cheap) and Sonnet for synthesis (slow, expensive, high quality) — only when the clinician decides it is worth it."
   },
 ];
 
@@ -999,52 +999,52 @@ const flowNodes = [
 
 const issues = [
   {
-    id: "B-1", title: "ALMA L2: string LLM sobreescribe score ponderado",
-    desc: "El resultado de ALMA L2 es lo que el LLM dice, no lo que la lógica de score ponderado calcula. La string de decisión ('APPROVE'/'REWRITE'/'SILENCE') se produce antes de que el score se evalúe — override silencioso que invalida el cálculo.",
-    fix: "Implemented — ALMA L2 determinístico. Árbol: regex exacto → cosine similarity (0.92) → gray zone flag (≥0.75). La decisión emerge del árbol, no del LLM."
+    id: "B-1", title: "ALMA L2: LLM string overrides weighted score",
+    desc: "The ALMA L2 result is what the LLM says, not what the weighted score logic computes. The decision string ('APPROVE'/'REWRITE'/'SILENCE') is produced before the score is evaluated — a silent override that invalidates the calculation.",
+    fix: "Implemented — deterministic ALMA L2. Decision tree: exact regex → cosine similarity (0.92) → gray zone flag (>=0.75). The decision emerges from the tree, not from the LLM."
   },
   {
-    id: "B-3", title: "CUIDADO: evaluación invertida — discusión de daño vs riesgo real",
-    desc: "El axioma CUIDADO evalúa si el output discute daño, no si la situación presenta riesgo real. Resultado documentado: APPROVE en consulta de clenbuterol (riesgo real presente), SILENCE en respuesta clínica sólida (discute daño correctamente). La lógica está invertida.",
-    fix: "FASE 1.0 — Redefinición del axioma CUIDADO en v3: evaluar contexto de la situación, no contenido del output. Requiere test set de 30 casos etiquetados (FASE 0.3) antes de reimplementar."
+    id: "B-3", title: "Cuidado (Care): inverted evaluation — harm discussion vs real risk",
+    desc: "The Cuidado (Care) axiom evaluates whether the output discusses harm, not whether the situation presents real risk. Documented result: APPROVE on a clenbuterol query (real risk present), SILENCE on a solid clinical response (discusses harm correctly). The logic is inverted.",
+    fix: "PHASE 1.0 — Redefinition of the Cuidado (Care) axiom in v3: evaluate the situation context, not the output content. Requires a labeled test set of 30 cases (PHASE 0.3) before reimplementation."
   },
   {
-    id: "B-4", title: "Causa raíz: Haiku juzgando sus propios outputs",
-    desc: "ALMA L2 usa el mismo modelo que genera (Haiku) para evaluar su propio output. El RLHF de Anthropic domina sobre los axiom prompts — el modelo produce lo que fue entrenado a producir, no lo que los axiomas definen. LLM-as-judge en el mismo modelo que genera es una limitación arquitectónica.",
-    fix: "FASE 1 — Arsenal Anthropic: prompt caching (-90% input tokens en ALMA), effort control, extended thinking para casos ambiguos. Separación evaluador/generador cuando la API lo permita."
+    id: "B-4", title: "Root cause: Haiku judging its own outputs",
+    desc: "ALMA L2 uses the same model that generates (Haiku) to evaluate its own output. Anthropic's RLHF dominates over the axiom prompts — the model produces what it was trained to produce, not what the axioms define. LLM-as-judge on the same model that generates is an architectural limitation.",
+    fix: "PHASE 1 — Anthropic Arsenal: prompt caching (-90% input tokens in ALMA), effort control, extended thinking for ambiguous cases. Evaluator/generator separation when the API allows it."
   },
 ];
 
 const roadmap = [
-  { ver: "✅", title: "IO3 stack Anthropic-only — Ollama eliminado (2026-03-30)",
-    desc: "Migración completa de Ollama/qwen3:8b a Anthropic API. Haiku para loop reasoning, Sonnet para síntesis. Latencia 80s → 28s documentada.",
+  { ver: "✅", title: "IO3 stack Anthropic-only — Ollama removed (2026-03-30)",
+    desc: "Full migration from Ollama/qwen3:8b to Anthropic API. Haiku for loop reasoning, Sonnet for synthesis. Latency 80s → 28s documented.",
     status: "done" },
-  { ver: "✅", title: "Grafo LangGraph — 9 nodos · 1 gap · SqliteSaver WAL",
-    desc: "classify → context_engine → reason → act → respond → alma_gate → store_feedback → human_interrupt (gap) → sonnet_synthesis. 0 bifurcaciones. Gap contract verificado.",
+  { ver: "✅", title: "LangGraph graph — 9 nodes · 1 gap · SqliteSaver WAL",
+    desc: "classify → context_engine → reason → act → respond → alma_gate → store_feedback → human_interrupt (gap) → sonnet_synthesis. 0 branches. Gap contract verified.",
     status: "done" },
   { ver: "✅", title: "Context Engine — profile + RAG + clinical rules + ALMA L1",
-    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axiomas inyectados pre-generación, zero cost.",
+    desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axioms injected pre-generation, zero cost.",
     status: "done" },
-  { ver: "✅", title: "UI React 19 — Kinetica AI · SSE streaming · 0 eventos perdidos",
-    desc: "FastAPI + SSE. GraphPanel SVG animado. Role-differentiated messages. GAP panel con 3 opciones. 0 eventos SSE perdidos en testing.",
+  { ver: "✅", title: "UI React 19 — Kinetica AI · SSE streaming · 0 lost events",
+    desc: "FastAPI + SSE. Animated GraphPanel SVG. Role-differentiated messages. GAP panel with 3 options. 0 SSE events lost in testing.",
     status: "done" },
-  { ver: "✅", title: "ALMA L2 auditado — 3 bugs estructurales documentados",
-    desc: "Override bug, inverted CUIDADO evaluation, Haiku self-judging. Causa raíz: RLHF domina sobre axiom prompts. L2 reimplementado como pipeline determinista (regex → cosine → gray zone).",
+  { ver: "✅", title: "ALMA L2 audited — 3 structural bugs documented",
+    desc: "Override bug, inverted Cuidado (Care) evaluation, Haiku self-judging. Root cause: RLHF dominates over axiom prompts. L2 reimplemented as deterministic pipeline (regex → cosine → gray zone).",
     status: "done" },
-  { ver: "🔄", title: "FASE 0 — Fundamentos honestos",
-    desc: "0.0 Mapeo codebase · 0.1 Auditoría ChromaDB → chroma_audit_report.json · 0.2 Poda registry.py (≤20 líneas) · 0.3 ALMA test set 30 casos · 0.4 ALMA L2 determinístico · 0.5 Structured output · 0.6 Divergencia Haiku.",
+  { ver: "🔄", title: "PHASE 0 — Honest foundations",
+    desc: "0.0 Codebase mapping · 0.1 ChromaDB audit → chroma_audit_report.json · 0.2 registry.py pruning (<=20 lines) · 0.3 ALMA test set 30 cases · 0.4 Deterministic ALMA L2 · 0.5 Structured output · 0.6 Haiku divergence.",
     status: "active" },
-  { ver: "📅", title: "FASE 1 — ALMA L2 con Arsenal Anthropic",
-    desc: "Prompt caching (-90% input tokens) · Effort control · Extended thinking · F1 ≥ 0.85. Bloqueada hasta FASE 0.",
+  { ver: "📅", title: "PHASE 1 — ALMA L2 with Anthropic Arsenal",
+    desc: "Prompt caching (-90% input tokens) · Effort control · Extended thinking · F1 >= 0.85. Blocked until PHASE 0.",
     status: "next" },
-  { ver: "📅", title: "FASE 2 — Persistencia real y conocimiento",
-    desc: "Dedup ChromaDB · Re-chunking clínico · RAG accuracy ≥ 0.75 · Session persistence. Bloqueada hasta FASE 1.",
+  { ver: "📅", title: "PHASE 2 — Real persistence and knowledge",
+    desc: "Dedup ChromaDB · Clinical re-chunking · RAG accuracy >= 0.75 · Session persistence. Blocked until PHASE 1.",
     status: "next" },
-  { ver: "📅", title: "FASE 3 — Human-on-Loop completo y frontend",
-    desc: "Severity badges ALMA · Timestamps · Export session · Loop feedback end-to-end. Bloqueada hasta FASE 2.",
+  { ver: "📅", title: "PHASE 3 — Complete Human-on-Loop and frontend",
+    desc: "ALMA severity badges · Timestamps · Export session · Loop feedback end-to-end. Blocked until PHASE 2.",
     status: "future" },
-  { ver: "📅", title: "FASE 4 — Validación con clínicos · Nordic positioning",
-    desc: "3–5 clínicos externos · Protocolo · Metodología abierta. Señal de parada: ALMA F1 ≥ 0.90 + RAG ≥ 0.75 + HITL verificado en 5 casos. Bloqueada hasta FASE 3.",
+  { ver: "📅", title: "PHASE 4 — Clinician validation · Nordic positioning",
+    desc: "3-5 external clinicians · Protocol · Open methodology. Stop signal: ALMA F1 >= 0.90 + RAG >= 0.75 + HITL verified on 5 cases. Blocked until PHASE 3.",
     status: "future" },
 ];
 

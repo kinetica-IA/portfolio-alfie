@@ -6,9 +6,9 @@ import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
 
 const SUB_STRINGS = [
-  'wearable health intelligence',
-  'clinical prediction from sleep data',
-  'open-source · patient-driven',
+  'clinical AI systems',
+  'from wearable data to patient insight',
+  'open-source · responsible AI',
 ]
 
 export default function Hero() {
@@ -67,8 +67,14 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Every night, your heart tells a story about your health.<br />
-          We're teaching AI to listen.
+          Building AI that works in clinical reality.
+        </p>
+        <p className="hero-credentials" style={{
+          opacity: bootStep >= 1 ? 1 : 0,
+          transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(6px)',
+          transition: 'opacity 0.6s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
+        }}>
+          Osteopath · Biomechanics specialist · 10+ years clinical · AI builder
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
@@ -82,8 +88,8 @@ export default function Hero() {
         transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(8px)',
         transition: 'opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)',
       }}>
-        <a href="#research" className="hero-btn hero-btn--primary">See the research</a>
-        <a href="#founder" className="hero-btn hero-btn--secondary">Meet the builder</a>
+        <a href="#work" className="hero-btn hero-btn--primary">See the work</a>
+        <a href="#contact" className="hero-btn hero-btn--secondary">Get in touch</a>
       </div>
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
         <span className="hero-scroll-line" />
@@ -138,12 +144,19 @@ export default function Hero() {
           margin: 0 auto;
           line-height: 1.7;
         }
+        .hero-credentials {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          margin: 12px auto 0;
+        }
         .hero-sub {
           font-family: var(--mono);
           font-size: var(--text-caption);
           color: var(--teal);
           letter-spacing: 0.06em;
-          margin: 20px auto 0;
+          margin: 16px auto 0;
           min-height: 1.4em;
         }
         .hero-cta {

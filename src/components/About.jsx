@@ -18,18 +18,18 @@ const BADGES = [
   { text: 'Nordic-based · Remote', borderColor: 'var(--sea)' },
 ]
 
-export default function Founder() {
+export default function About() {
   const { ref, revealed } = useReveal(0.25)
   const nameDisplay = useTextDecode('Alfonso Navarro', {
     duration: 1200, delay: 0, loop: false, isActive: revealed,
   })
 
   return (
-    <section className="section founder" id="founder" ref={ref}>
+    <section className="section founder" id="about" ref={ref}>
       <div className="founder-main">
         <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
           <CellSymbol color="var(--clay)" size={44} />
-          THE BUILDER
+          ABOUT
         </span>
         <h2 className="founder-name">{nameDisplay}</h2>
         <p className="founder-role">
@@ -43,9 +43,10 @@ export default function Founder() {
           Clinical AI Builder
         </p>
         <p className="founder-bio">
-          A physicist who became an osteopath, spent two years in COVID-19 acute care, then became
-          a patient himself. Post-Lyme diagnosis turned personal frustration into a research project —
-          building AI that reads the body's signals from a wristwatch. Active AI model evaluator for Anthropic.
+          Physicist turned osteopath with 10+ years of clinical practice and two years in COVID-19 acute care.
+          Now building clinical AI systems that bridge wearable data and patient outcomes.
+          Post-Lyme diagnosis in 2024 became the proving ground — an N=1 research project where the builder is also the patient.
+          Active AI model evaluator for Anthropic.
         </p>
         <div className="founder-badges">
           {BADGES.map((b, i) => (
@@ -99,7 +100,7 @@ export default function Founder() {
       </div>
 
       <div className="scroll-hook">
-        <span className="scroll-hook-text">See the systems</span>
+        <span className="scroll-hook-text">See the research</span>
         <span className="scroll-hook-arrow">↓</span>
       </div>
 
