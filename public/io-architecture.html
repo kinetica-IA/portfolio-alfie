@@ -695,9 +695,9 @@
       </p>
     </div>
     <div class="hero-meta">
-      <div>LangGraph · Anthropic API · Mac Mini M4</div>
+      <div>LangGraph · Anthropic API · FastAPI · Vite 8 · sentence-transformers · Mac Mini M4</div>
       <div>FASE 0 active · Anthropic-only since 2026-03-30</div>
-      <div>Haiku (loop) · Sonnet (synthesis) · Opus (planned)</div>
+      <div>claude-haiku-4-5 (loop) · claude-sonnet-4-6 (synthesis)</div>
       <div>Embeddings: intfloat/multilingual-e5-large · 1024 dims</div>
       <div>RAG: ChromaDB · 1880 chunks · cosine similarity</div>
       <div class="meta-green">✓ 5/5 benchmark queries passing · ~28s loop</div>
@@ -746,11 +746,11 @@
     <p>
       After the LLM responds, <strong>ALMA</strong> evaluates the output against five axioms —
       Conciencia, Claridad, Límite, Pragmatismo, Cuidado. Two independent layers:
-      L1 injects axioms as pre-generation context (zero latency, zero tokens).
-      L2 evaluates post-generation against axiom inverses — currently in structural
-      redesign (v3) toward a deterministic pipeline. Every correction logs to
-      <strong>shared/training/active/alma_training.jsonl</strong> — structured reasoning
-      pairs for future fine-tuning when the Anthropic API supports it.
+      L1 injects axioms as pre-generation context (zero latency, zero additional tokens after prompt caching).
+      L2 evaluates post-generation with a deterministic pipeline: regex patterns →
+      cosine similarity (threshold 0.92) → gray zone flag (≥0.75). No LLM in the
+      evaluation path. Every evaluation logs to <code>data/alma_log.jsonl</code>
+      for auditability.
     </p>
     <p>
       Haiku handles loop reasoning (~28s total). Sonnet handles final synthesis —
@@ -783,8 +783,9 @@
       <strong>Context Engine (L0):</strong> Deterministic — no LLM call. Runs ~200–400ms.
       Loads profile, retrieves RAG chunks, assembles <code>enriched_context</code>, injects clinical rules.
       Every node downstream receives a fully enriched state.<br><br>
-      <strong>5-priority router:</strong> external_action → autonomous_loop → tool_dispatch →
-      rag_query → direct_response. Priority order replaces the old <code>needs_planner()</code> gate.
+      <strong>Regex classifier:</strong> 6 task types (greeting, direct_generation, clinical_reasoning,
+      rag_search, hrv_analysis, pem_assessment). Deterministic — 0 tokens, 0 LLM calls.
+      Replaces the old <code>needs_planner()</code> gate.
     </div>
   </div>
 
@@ -945,8 +946,8 @@ const modules = [
     short: "Post-generation evaluation · en rediseño v3",
     summary: "Evalúa la respuesta generada contra los axiomas ALMA. Produce APPROVE/REWRITE/SILENCE. Actualmente en rediseño: el bug principal es que Haiku evalúa sus propios outputs y el RLHF domina sobre los axiomas. ALMA L2 nunca corta el flujo — siempre llega al gap para que el clínico decida.",
     sections: [
-      { name: "alma2.py", lines: "shared/safety/alma/alma2.py",
-        desc: "Evaluación post-generación en secuencia DAG. Versión v2 documentada con 3 bugs estructurales. Dirección v3: determinístico donde sea posible. Árbol: regex exacto → cosine similarity → Haiku effort:low → Sonnet effort:high." }
+      { name: "alma_l2_deterministic.py", lines: "shared/safety/alma/alma_l2_deterministic.py",
+        desc: "Evaluación post-generación determinista. 3 capas: regex exacto → cosine similarity (threshold 0.92) → gray zone flag (≥0.75). No LLM in evaluation path. Produce APPROVE/REWRITE/SILENCE sin llamada cloud." }
     ],
     vsLLM: "Un plain LLM no evalúa sus propias respuestas contra principios éticos. IO3 sí — y documenta públicamente cuándo esa evaluación falla y por qué."
   },
@@ -1000,12 +1001,7 @@ const issues = [
   {
     id: "B-1", title: "ALMA L2: string LLM sobreescribe score ponderado",
     desc: "El resultado de ALMA L2 es lo que el LLM dice, no lo que la lógica de score ponderado calcula. La string de decisión ('APPROVE'/'REWRITE'/'SILENCE') se produce antes de que el score se evalúe — override silencioso que invalida el cálculo.",
-    fix: "FASE 1.0 — ALMA v3 determinístico. Árbol: regex exacto → cosine similarity → Haiku effort:low → Sonnet effort:high. La decisión emerge del árbol, no del LLM directamente."
-  },
-  {
-    id: "B-2", title: "Training data contaminado — schema v1 incompatible con v2",
-    desc: "85 pares activos + 100 golden entrenados con schema v1 (6 principios, incluyendo 'silencio' como axioma). Incompatibles con la estructura v2 de 5 axiomas. Los pares no son utilizables sin fine-tuning directo — que Anthropic API no ofrece actualmente.",
-    fix: "Pares documentados como metodología de referencia, no como training data activo. Nueva generación de pares requerida con schema v2. Fine-tuning esperando disponibilidad en Anthropic API."
+    fix: "Implemented — ALMA L2 determinístico. Árbol: regex exacto → cosine similarity (0.92) → gray zone flag (≥0.75). La decisión emerge del árbol, no del LLM."
   },
   {
     id: "B-3", title: "CUIDADO: evaluación invertida — discusión de daño vs riesgo real",
@@ -1029,11 +1025,11 @@ const roadmap = [
   { ver: "✅", title: "Context Engine — profile + RAG + clinical rules + ALMA L1",
     desc: "1880 chunks ChromaDB (intfloat/multilingual-e5-large, 1024 dims). ALMA L1: 5 axiomas inyectados pre-generación, zero cost.",
     status: "done" },
-  { ver: "✅", title: "UI React 18 — Kinetica AI · SSE streaming · 0 eventos perdidos",
+  { ver: "✅", title: "UI React 19 — Kinetica AI · SSE streaming · 0 eventos perdidos",
     desc: "FastAPI + SSE. GraphPanel SVG animado. Role-differentiated messages. GAP panel con 3 opciones. 0 eventos SSE perdidos en testing.",
     status: "done" },
-  { ver: "✅", title: "ALMA L2 auditado — 4 bugs estructurales documentados",
-    desc: "Override bug, training data contamination, inverted CUIDADO evaluation, Haiku self-judging. Causa raíz: RLHF domina sobre axiom prompts. Documentación pública.",
+  { ver: "✅", title: "ALMA L2 auditado — 3 bugs estructurales documentados",
+    desc: "Override bug, inverted CUIDADO evaluation, Haiku self-judging. Causa raíz: RLHF domina sobre axiom prompts. L2 reimplementado como pipeline determinista (regex → cosine → gray zone).",
     status: "done" },
   { ver: "🔄", title: "FASE 0 — Fundamentos honestos",
     desc: "0.0 Mapeo codebase · 0.1 Auditoría ChromaDB → chroma_audit_report.json · 0.2 Poda registry.py (≤20 líneas) · 0.3 ALMA test set 30 casos · 0.4 ALMA L2 determinístico · 0.5 Structured output · 0.6 Divergencia Haiku.",
