@@ -1,12 +1,11 @@
 import { usePolarData } from './hooks/usePolarData'
 import { FloatingDecorators } from './components/OrganicSymbols'
 import FilmGrain from './components/FilmGrain'
+import TopBar from './components/TopBar'
 import Hero from './components/Hero'
-import ClinicalSignal from './components/ClinicalSignal'
-import FlagshipProof from './components/FlagshipProof'
-import Founder from './components/Founder'
-import Systems from './components/Systems'
-import Published from './components/Published'
+import Work from './components/Work'
+import About from './components/About'
+import Research from './components/Research'
 import Contact from './components/Contact'
 import FooterField from './components/FooterField'
 import SectionDivider from './components/SectionDivider'
@@ -17,29 +16,22 @@ export default function App() {
 
   return (
     <>
+      <TopBar />
       <FloatingDecorators />
       <FilmGrain />
       <div className="content-layer">
         <Hero />
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal>
-          <ClinicalSignal />
-        </Reveal>
-        <SectionDivider color="var(--green)" colorRgb="107,158,122" />
-        <Reveal>
-          <FlagshipProof data={data} loading={loading} />
+          <Work data={data} />
         </Reveal>
         <SectionDivider color="var(--teal)" colorRgb="144,167,165" />
         <Reveal delay={0.1}>
-          <Founder />
-        </Reveal>
-        <SectionDivider color="var(--warm)" colorRgb="196,133,90" />
-        <Reveal delay={0.1}>
-          <Systems data={data} />
+          <About />
         </Reveal>
         <SectionDivider color="var(--green)" colorRgb="107,158,122" />
         <Reveal>
-          <Published />
+          <Research data={data} loading={loading} />
         </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal delay={0.05}>

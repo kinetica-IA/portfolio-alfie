@@ -55,6 +55,20 @@ const CARDS = [
   },
 ]
 
+const TARGET_LABELS = {
+  severity: 'Severity',
+  disfuncion_autonomica: 'Autonomic Dysfunction',
+  pem: 'Post-Exertional Malaise',
+  fatiga: 'Fatigue',
+  niebla_mental: 'Brain Fog',
+}
+
+function aucColor(v) {
+  if (v >= 0.80) return 'var(--green)'
+  if (v >= 0.70) return 'var(--teal)'
+  return 'var(--warm)'
+}
+
 function PubCard({ card, index, revealed }) {
   const titleDisplay = useTextDecode(card.title, {
     duration: 1200, delay: 0, loop: false, isActive: revealed,
@@ -94,14 +108,18 @@ function PubCard({ card, index, revealed }) {
   )
 }
 
-export default function Published() {
+export default function Research({ data, loading }) {
   const { ref, revealed } = useReveal(0.25)
+  const { ref: targetsRef, revealed: targetsVisible } = useReveal(0.2)
+
+  const targets = data?.predictor?.targets
+  const residuals = data?.predictor?.residuals
 
   return (
-    <section className="section" id="published">
+    <section className="section" id="research">
       <span className="eyebrow" style={{ color: 'var(--moss)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
         <HelixSymbol color="var(--ice)" size={44} />
-        PUBLISHED
+        RESEARCH
       </span>
       <h2 className="pub-title">Open research, verifiable systems</h2>
 
@@ -110,6 +128,83 @@ export default function Published() {
           <PubCard key={card.title} card={card} index={i} revealed={revealed} />
         ))}
       </div>
+
+      {/* Prediction results from polar_live.json */}
+      {!loading && targets && (
+        <div className="fp-results" ref={targetsRef}>
+          <div className="fp-finding">
+            <span className="eyebrow" style={{ color: 'var(--warm)' }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" style={{ verticalAlign: '-2px', marginRight: '6px' }}>
+                <path d="M2 8 Q5 4, 8 8 Q11 12, 14 8" fill="none" stroke="var(--warm)" strokeWidth="1.5" />
+              </svg>
+              KEY FINDING
+            </span>
+            <p className="fp-finding-text">
+              Autonomic dysfunction is the only symptom predicted by advanced HRV
+              features — LF/HF ratio and SD1 — extracted from raw RR intervals.
+              The model uses measures of autonomic balance to predict autonomic dysfunction.
+              Physiologically coherent.
+            </p>
+          </div>
+
+          <div className="fp-targets">
+            {Object.entries(targets).map(([key, t], i) => {
+              const isBrainFog = key === 'niebla_mental'
+              return (
+                <div
+                  key={key}
+                  className={`fp-target-row ${isBrainFog ? 'fp-target-row--flagged' : ''}`}
+                  style={{
+                    opacity: targetsVisible ? 1 : 0,
+                    transform: targetsVisible ? 'translateY(0)' : 'translateY(12px)',
+                    transition: `opacity 0.8s var(--ease-out) ${i * 180 + 400}ms, transform 0.8s var(--ease-out) ${i * 180 + 400}ms`,
+                  }}
+                >
+                  <span className="fp-target-name">
+                    {TARGET_LABELS[key] || key}
+                    {isBrainFog && <span className="fp-flag">*</span>}
+                  </span>
+                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
+                    {t.best_auc.toFixed(2)}
+                  </span>
+                  <div className="fp-target-bar">
+                    <div
+                      className="fp-target-bar-fill"
+                      style={{
+                        width: targetsVisible ? `${((t.best_auc - 0.5) / 0.5) * 100}%` : '0%',
+                        background: aucColor(t.best_auc),
+                        transitionDelay: `${i * 100 + 400}ms`,
+                      }}
+                    />
+                    <span
+                      className="fp-bar-pulse"
+                      style={{
+                        background: aucColor(t.best_auc),
+                        animationDelay: `${i * 600}ms`,
+                        opacity: targetsVisible ? 1 : 0,
+                      }}
+                    />
+                  </div>
+                  <span className="fp-target-ci">
+                    {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
+                  </span>
+                </div>
+              )
+            })}
+            <div className="fp-footnotes">
+              {residuals && (
+                <p className="fp-residuals-note">
+                  Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
+                </p>
+              )}
+              <p className="fp-brain-fog-note">
+                * Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (54/6 split).
+                Reported for transparency — not used as a headline metric.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="scroll-hook">
         <span className="scroll-hook-text">Get in touch</span>
@@ -190,9 +285,7 @@ export default function Published() {
           background: var(--card-color);
           animation: pulseDot 2.5s ease-in-out infinite;
         }
-        .pub-card:hover .pub-badge-dot {
-          animation-duration: 1s;
-        }
+        .pub-card:hover .pub-badge-dot { animation-duration: 1s; }
         @keyframes pulseDot {
           0%, 100% { opacity: 0.4; }
           50% { opacity: 0.8; }
@@ -211,8 +304,6 @@ export default function Published() {
           line-height: 1.6;
           margin-bottom: 8px;
         }
-
-        /* Expanded content — hidden by default, grows on hover */
         .pub-card-expanded {
           max-height: 0;
           opacity: 0;
@@ -232,15 +323,12 @@ export default function Published() {
           border-top: 1px solid var(--border);
           margin-top: 4px;
         }
-
         .pub-card-stats {
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
         }
-
-        /* Arrow that appears on hover */
         .pub-card-arrow {
           position: absolute;
           bottom: 16px;
@@ -254,6 +342,98 @@ export default function Published() {
         .pub-card:hover .pub-card-arrow {
           opacity: 0.7;
           transform: translateX(0);
+        }
+
+        /* Prediction results (merged from FlagshipProof) */
+        .fp-results { margin-top: var(--space-subsection); }
+        .fp-finding {
+          border-left: 2px solid var(--warm);
+          padding-left: 20px;
+          margin-bottom: 20px;
+          max-width: 600px;
+        }
+        .fp-finding .eyebrow { display: block; margin-bottom: 12px; }
+        .fp-finding-text {
+          font-size: var(--text-body);
+          color: var(--text-sec);
+          line-height: 1.75;
+        }
+        .fp-targets { margin-bottom: 24px; }
+        .fp-target-row {
+          display: grid;
+          grid-template-columns: 180px 48px 1fr 80px;
+          align-items: center;
+          gap: 16px;
+          padding: 14px 0;
+          border-bottom: 1px solid var(--border);
+          transition: background var(--duration-hover) ease;
+        }
+        .fp-target-row:hover { background: rgba(144, 167, 165, 0.08); }
+        .fp-target-row:last-of-type { border-bottom: none; }
+        .fp-target-name {
+          font-family: var(--sans);
+          font-size: var(--text-body);
+          font-weight: 400;
+          color: var(--text);
+        }
+        .fp-target-auc {
+          font-family: var(--mono);
+          font-size: var(--text-body);
+          font-weight: 500;
+          text-align: right;
+        }
+        .fp-target-bar {
+          height: 3px;
+          background: var(--fill-teal);
+          overflow: visible;
+          position: relative;
+        }
+        .fp-target-bar-fill { height: 100%; transition: width 1s var(--ease-out); }
+        .fp-bar-pulse {
+          position: absolute;
+          right: -2px;
+          top: -1.5px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          animation: barPulse 3s ease-in-out infinite;
+        }
+        @keyframes barPulse {
+          0%, 100% { opacity: 0.15; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.3); }
+        }
+        .fp-target-ci {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          text-align: right;
+        }
+        .fp-footnotes {
+          margin-top: 16px;
+          padding: 14px 16px;
+          overflow-wrap: break-word;
+          word-break: break-word;
+          background: var(--fill-sand);
+          border-left: 2px solid var(--sand);
+        }
+        .fp-residuals-note {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          margin-bottom: 8px;
+        }
+        .fp-target-row--flagged { opacity: 0.65; }
+        .fp-flag { color: var(--warm); font-weight: 500; margin-left: 4px; }
+        .fp-brain-fog-note {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          font-style: italic;
+          line-height: 1.6;
+        }
+        @media (max-width: 640px) {
+          .fp-target-row { grid-template-columns: 1fr 48px; }
+          .fp-target-bar, .fp-target-ci { display: none; }
         }
       `}</style>
     </section>
