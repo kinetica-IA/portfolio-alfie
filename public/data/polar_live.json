@@ -1,12 +1,10 @@
 {
-  "updated_at": "2026-04-18T06:00:00Z",
+  "updated_at": "2026-04-19T06:00:00Z",
   "latest": {
-    "date": "2026-04-17",
-    "recovery_sublevel": -5.1,
-    "recovery_heart_rate": 70,
-    "sleep_score": 55,
-    "sleep_wake_min": 35.0,
-    "active_calories": 152
+    "date": "2026-04-18",
+    "sleep_score": 0,
+    "sleep_wake_min": 55.0,
+    "active_calories": 201
   },
   "series": [
     {
@@ -6057,6 +6055,12 @@
       "sleep_score": 55,
       "sleep_wake_min": 35.0,
       "active_calories": 152
+    },
+    {
+      "date": "2026-04-18",
+      "sleep_score": 0,
+      "sleep_wake_min": 55.0,
+      "active_calories": 201
     }
   ],
   "finding": {
