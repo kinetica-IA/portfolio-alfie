@@ -6,10 +6,10 @@ import LivePulse from './LivePulse'
 const PILLARS = [
   {
     num: '01', color: 'var(--warm)',
-    badge: 'CLINICAL AI AGENT', badgeClass: 'wk-badge--warm',
+    badge: 'PREVIOUS ITERATION · LESSONS LEARNED', badgeClass: 'wk-badge--warm',
     title: 'IO3 — Clinical Reasoning Agent',
     problem: 'Clinical AI that hallucinates is dangerous. Clinicians need AI that knows its limits and stops when uncertain.',
-    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient.',
+    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient. IO3 is the v3 prototype; it seeded the design of the current agent (io), which starts from scratch under explicit EU regulatory framework. See github.com/kinetica-IA/io when public.',
     result: '1,880 RAG chunks, deterministic safety layer (regex + cosine, zero LLM calls in evaluation), zero autonomous escalation. Architected against EU AI Act Art. 14 (human oversight) and Art. 15 (accuracy and robustness) principles.',
     stack: 'LangGraph · Anthropic Claude · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
