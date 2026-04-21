@@ -14,16 +14,9 @@ export default function Contact() {
         Clinical AI consulting · Autonomic assessment · AI model evaluation
       </p>
 
-      <div className="contact-status" ref={ctaRef} style={{
-        opacity: ctaRevealed ? 1 : 0,
-        transition: 'opacity 0.6s var(--ease-out) 0.3s',
-      }}>
-        <span className="status-led" />
-        <span className="status-text">Available for projects</span>
-      </div>
-
       <a
         href="mailto:alfon.atman@gmail.com"
+        ref={ctaRef}
         className="contact-cta"
         style={{
           opacity: ctaRevealed ? 1 : 0,
