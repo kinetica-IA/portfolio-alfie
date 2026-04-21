@@ -67,7 +67,7 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Building AI that works in clinical reality.
+          Clinical AI tools built with clinical constraints.
         </p>
         <p className="hero-credentials" style={{
           opacity: bootStep >= 1 ? 1 : 0,
