@@ -9,8 +9,7 @@ export default function FooterField() {
           <span className="footer-sep">·</span>
           <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
-        <span className="footer-brand">KINETICA AI</span>
-        <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
+        <span className="footer-copy">© {new Date().getFullYear()} Kinetica AI SL · Alfonso Navarro</span>
       </div>
 
       <style>{`
