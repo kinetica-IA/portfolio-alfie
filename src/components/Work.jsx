@@ -138,7 +138,6 @@ export default function Work({ data }) {
 
       <div className="scroll-hook">
         <span className="scroll-hook-text">About the builder</span>
-        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`
