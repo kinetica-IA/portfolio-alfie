@@ -6,7 +6,6 @@ import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
 
 const SUB_STRINGS = [
-  'clinical AI systems',
   'from wearable data to patient insight',
   'open-source · responsible AI',
 ]
