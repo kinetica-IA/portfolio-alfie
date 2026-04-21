@@ -42,9 +42,7 @@ export default function About() {
           Clinical AI Builder
         </p>
         <p className="founder-bio">
-          Physicist turned osteopath with 10+ years of clinical practice and two years in COVID-19 acute care.
-          Now building clinical AI systems that bridge wearable data and patient outcomes.
-          Post-Lyme diagnosis in 2024 became the proving ground — an N=1 research project where the builder is also the patient.
+          Physicist (Universidad de Granada, 2006), osteopath and biomechanics specialist with 10+ years of clinical practice, including two years in COVID-19 acute care (2020–2021). Building clinical AI systems grounded in wearable data. Diagnosed with chronic Lyme in 2024; the N=1 longitudinal study on this site started from that context — patient and builder are the same person. Open to remote collaboration.
         </p>
         <div className="founder-badges">
           {BADGES.map((b, i) => (
