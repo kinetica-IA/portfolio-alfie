@@ -101,7 +101,6 @@ export default function About() {
 
       <div className="scroll-hook">
         <span className="scroll-hook-text">See the research</span>
-        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`
