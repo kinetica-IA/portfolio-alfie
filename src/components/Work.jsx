@@ -35,7 +35,7 @@ const PILLARS = [
     title: 'ALMA — Ethical Safety Framework',
     problem: 'LLMs in clinical contexts need guardrails that aren\'t just prompt tricks. Prompt-based safety fails silently.',
     approach: 'Five domain-independent axioms (Conciencia, Claridad, Límite, Pragmatismo, Cuidado). Deterministic evaluation pipeline: regex patterns, cosine similarity (0.92 threshold), gray zone flagging (≥0.75). No LLM in the evaluation path.',
-    result: 'Every output evaluated before reaching the patient. APPROVE / REWRITE / SILENCE decisions with full audit trail. Three structural bugs publicly documented.',
+    result: 'Every output evaluated before reaching the patient. APPROVE / REWRITE / SILENCE decisions with full audit trail.',
     stack: 'Deterministic pipeline · intfloat/multilingual-e5-large · Clinical ethics',
     link: '/io-architecture.html',
     linkText: 'View ALMA details →',
