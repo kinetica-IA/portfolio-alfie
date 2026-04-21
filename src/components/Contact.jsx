@@ -18,7 +18,7 @@ export default function Contact() {
         {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>
       <p className="contact-services">
-        Clinical AI consulting · Autonomic assessment · AI model evaluation
+        Open to: clinical AI advisory · autonomic-signal assessment design · frontier-model evaluation contributing
       </p>
 
       <div className="contact-status" ref={ctaRef} style={{
