@@ -6,11 +6,11 @@ import LivePulse from './LivePulse'
 const PILLARS = [
   {
     num: '01', color: 'var(--warm)',
-    badge: 'CLINICAL AI AGENT', badgeClass: 'wk-badge--warm',
+    badge: 'PREVIOUS ITERATION · LESSONS LEARNED', badgeClass: 'wk-badge--warm',
     title: 'IO3 — Clinical Reasoning Agent',
     problem: 'Clinical AI that hallucinates is dangerous. Clinicians need AI that knows its limits and stops when uncertain.',
-    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient.',
-    result: '1,880 RAG chunks, deterministic safety layer (regex + cosine, zero LLM calls in evaluation), zero autonomous escalation. EU AI Act compliant by design.',
+    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient. IO3 is the v3 prototype; it seeded the design of the current agent (io), which starts from scratch under explicit EU regulatory framework. See github.com/kinetica-IA/io when public.',
+    result: '1,880 RAG chunks, deterministic safety layer (regex + cosine, zero LLM calls in evaluation), zero autonomous escalation. Architected against EU AI Act Art. 14 (human oversight) and Art. 15 (accuracy and robustness) principles.',
     stack: 'LangGraph · Anthropic Claude · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
     linkText: 'View architecture →',
@@ -23,7 +23,7 @@ const PILLARS = [
     problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
     approach: (nDays, nPairs) =>
       `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
-    result: 'AUC 0.84 (severity), 48h predictive lag from autonomic signals — not yet replicated in literature. All code and data public.',
+    result: 'AUC 0.84 (severity), 48h predictive lag from autonomic signals in an N=1 longitudinal design; no equivalent result in the literature to our knowledge. All code and data public.',
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: '/ans-predictor.html',
     linkText: 'View research →',
@@ -138,7 +138,6 @@ export default function Work({ data }) {
 
       <div className="scroll-hook">
         <span className="scroll-hook-text">About the builder</span>
-        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`

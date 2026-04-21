@@ -1,11 +1,7 @@
 import { useReveal } from '../hooks/useReveal'
-import { useWordStagger } from '../hooks/useWordStagger'
 import { OrbitSymbol } from './OrganicSymbols'
 
 export default function Contact() {
-  const { ref: headRef, words: headWords } = useWordStagger(
-    "Let's build something that works in clinical reality."
-  )
   const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.25)
 
   return (
@@ -14,11 +10,9 @@ export default function Contact() {
         <OrbitSymbol color="var(--sand)" size={44} />
         COLLABORATE
       </span>
-      <h2 className="contact-headline" ref={headRef}>
-        {headWords.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
-      </h2>
+      <h2 className="contact-headline">Get in touch.</h2>
       <p className="contact-services">
-        Clinical AI consulting · Autonomic assessment · AI model evaluation
+        Open to: clinical AI advisory · autonomic-signal assessment design · frontier-model evaluation contributing
       </p>
 
       <div className="contact-status" ref={ctaRef} style={{
@@ -26,7 +20,7 @@ export default function Contact() {
         transition: 'opacity 0.6s var(--ease-out) 0.3s',
       }}>
         <span className="status-led" />
-        <span className="status-text">Available for projects</span>
+        <span className="status-text">Open to inbound — contact below</span>
       </div>
 
       <a

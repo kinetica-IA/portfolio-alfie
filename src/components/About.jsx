@@ -14,7 +14,7 @@ const TIMELINE = [
 const BADGES = [
   { text: 'Universidad de Granada', borderColor: 'var(--ice)' },
   { text: '10+ years clinical', borderColor: 'var(--teal)' },
-  { text: 'AI Evaluator · Anthropic', borderColor: 'var(--warm)' },
+  { text: 'AI evaluation · Outlier / Alignerr', borderColor: 'var(--warm)' },
   { text: 'Nordic-based · Remote', borderColor: 'var(--sea)' },
 ]
 
@@ -46,7 +46,7 @@ export default function About() {
           Physicist turned osteopath with 10+ years of clinical practice and two years in COVID-19 acute care.
           Now building clinical AI systems that bridge wearable data and patient outcomes.
           Post-Lyme diagnosis in 2024 became the proving ground — an N=1 research project where the builder is also the patient.
-          Active AI model evaluator for Anthropic.
+          Active contributor on frontier-model evaluation platforms.
         </p>
         <div className="founder-badges">
           {BADGES.map((b, i) => (
@@ -101,7 +101,6 @@ export default function About() {
 
       <div className="scroll-hook">
         <span className="scroll-hook-text">See the research</span>
-        <span className="scroll-hook-arrow">↓</span>
       </div>
 
       <style>{`
