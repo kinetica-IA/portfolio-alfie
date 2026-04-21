@@ -11,7 +11,7 @@ export default function Contact() {
         COLLABORATE
       </span>
       <p className="contact-services">
-        Clinical AI consulting · Autonomic assessment · AI model evaluation
+        Open to: AI evaluation work · clinical AI advisory · remote collaboration on digital biomarkers
       </p>
 
       <a
