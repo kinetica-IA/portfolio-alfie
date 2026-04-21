@@ -26,7 +26,7 @@ export default function Contact() {
         transition: 'opacity 0.6s var(--ease-out) 0.3s',
       }}>
         <span className="status-led" />
-        <span className="status-text">Available for projects</span>
+        <span className="status-text">Open to inbound — contact below</span>
       </div>
 
       <a
