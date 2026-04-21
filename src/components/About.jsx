@@ -15,7 +15,7 @@ const BADGES = [
   { text: 'Universidad de Granada', borderColor: 'var(--ice)' },
   { text: '10+ years clinical', borderColor: 'var(--teal)' },
   { text: 'Independent researcher', borderColor: 'var(--warm)' },
-  { text: 'Remote', borderColor: 'var(--sea)' },
+  { text: 'Spain · Remote', borderColor: 'var(--sea)' },
 ]
 
 export default function About() {
