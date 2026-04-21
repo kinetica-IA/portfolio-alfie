@@ -125,7 +125,7 @@ export default function Work({ data }) {
         <NetworkSymbol color="var(--warm)" size={44} />
         THE WORK
       </span>
-      <h2 className="wk-title">Three pillars of clinical AI</h2>
+      <h2 className="wk-title">Current and prior work</h2>
 
       {PILLARS.map((item, i) => (
         <div key={item.num}>
