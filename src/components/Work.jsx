@@ -34,7 +34,7 @@ const PILLARS = [
     title: 'ALMA — Ethical Safety Framework',
     problem: 'Prompt-based guardrails in clinical LLM systems fail silently and cannot be audited.',
     approach: 'Five domain-independent axioms (Conciencia, Claridad, Límite, Pragmatismo, Cuidado). Deterministic evaluation: regex patterns, cosine similarity (threshold 0.92), gray-zone flagging (≥0.75). No LLM call in the evaluation path.',
-    result: 'Every output gates through APPROVE / REWRITE / SILENCE with an audit trail. Known bugs tracked in the public repo. Current iteration moves ALMA from standalone node to middleware and post-model hook in the new io architecture.',
+    result: 'Every output gates through APPROVE / REWRITE / SILENCE with an audit trail. Known limitations documented in the repo README. Current iteration moves ALMA from standalone node to middleware and post-model hook in the new io architecture.',
     stack: 'Deterministic pipeline · intfloat/multilingual-e5-large · Clinical ethics',
     link: '/io-architecture.html',
     linkText: 'View ALMA details →',
