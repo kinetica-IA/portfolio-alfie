@@ -20,10 +20,9 @@ const PILLARS = [
     num: '02', color: 'var(--green)',
     badge: 'PUBLISHED · PUBLIC REPO', badgeClass: 'wk-badge--green',
     title: 'ANS Predictor — Wearable Symptom Forecasting',
-    problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
-    approach: (nDays, nPairs) =>
-      `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
-    result: 'AUC 0.84 (severity), 48h predictive lag from autonomic signals — not yet replicated in literature. All code and data public.',
+    problem: 'Patients with complex post-infectious chronic conditions struggle to predict crashes and pacing windows.',
+    approach: 'N=1 longitudinal observational study. 207 nights of nocturnal HRV from Polar Grit X2, processed with NeuroKit2. Five models, each with forward-selected features over 13 candidates and 3 lag windows. Validated on 60 prospective pairs via leave-one-out cross-validation.',
+    result: 'AUC 0.84 (severity), 48-hour predictive lag. Consistent with within-person HRV–symptom findings at cohort scale (Conoscenti et al. 2026, n=4244, AUC 73-85). Contribution: high-density single-subject design with fully open code and data. Preprint in preparation.',
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: '/ans-predictor.html',
     linkText: 'View research →',
