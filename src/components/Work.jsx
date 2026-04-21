@@ -6,11 +6,11 @@ import LivePulse from './LivePulse'
 const PILLARS = [
   {
     num: '01', color: 'var(--warm)',
-    badge: 'PREVIOUS ITERATION — SUPERSEDED', badgeClass: 'wk-badge--warm',
-    title: 'IO3 — Clinical Reasoning Agent (v3 prototype)',
-    problem: 'LLMs in clinical contexts can produce confident but wrong outputs. Prompt-based safety fails silently and cannot be audited.',
-    approach: 'ReAct agent with mandatory human-on-loop. LangGraph 9-node graph (IO3 architecture; next iteration redesigned under explicit EU regulatory framework). ALMA deterministic guardrail evaluates every output before it reaches the clinician.',
-    result: 'Deterministic safety pipeline (regex + cosine similarity, no LLM in evaluation path). Architecture aligned with EU AI Act Art. 14 (human oversight) and Art. 15 (accuracy) principles. IO3 is a prototype and is superseded by `io` (in progress, built under explicit regulatory framework from day zero).',
+    badge: 'CLINICAL AI AGENT', badgeClass: 'wk-badge--warm',
+    title: 'IO3 — Clinical Reasoning Agent',
+    problem: 'Clinical AI that hallucinates is dangerous. Clinicians need AI that knows its limits and stops when uncertain.',
+    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient.',
+    result: '1,880 RAG chunks, deterministic safety layer (regex + cosine, zero LLM calls in evaluation), zero autonomous escalation. EU AI Act compliant by design.',
     stack: 'LangGraph · Anthropic Claude · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
     linkText: 'View architecture →',
@@ -20,9 +20,10 @@ const PILLARS = [
     num: '02', color: 'var(--green)',
     badge: 'PUBLISHED · PUBLIC REPO', badgeClass: 'wk-badge--green',
     title: 'ANS Predictor — Wearable Symptom Forecasting',
-    problem: 'Patients with complex post-infectious chronic conditions struggle to predict crashes and pacing windows.',
-    approach: 'N=1 longitudinal observational study. 207 nights of nocturnal HRV from Polar Grit X2, processed with NeuroKit2. Five models, each with forward-selected features over 13 candidates and 3 lag windows. Validated on 60 prospective pairs via leave-one-out cross-validation.',
-    result: 'AUC 0.84 (severity), 48-hour predictive lag. Consistent with within-person HRV–symptom findings at cohort scale (Conoscenti et al. 2026, n=4244, AUC 73-85). Contribution: high-density single-subject design with fully open code and data. Preprint in preparation.',
+    problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
+    approach: (nDays, nPairs) =>
+      `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
+    result: 'AUC 0.84 (severity), 48h predictive lag from autonomic signals — not yet replicated in literature. All code and data public.',
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: '/ans-predictor.html',
     linkText: 'View research →',
@@ -32,24 +33,12 @@ const PILLARS = [
     num: '03', color: 'var(--sea)',
     badge: 'FRAMEWORK · EU AI ACT', badgeClass: 'wk-badge--sea',
     title: 'ALMA — Ethical Safety Framework',
-    problem: 'Prompt-based guardrails in clinical LLM systems fail silently and cannot be audited.',
-    approach: 'Five domain-independent axioms (Conciencia, Claridad, Límite, Pragmatismo, Cuidado). Deterministic evaluation: regex patterns, cosine similarity (threshold 0.92), gray-zone flagging (≥0.75). No LLM call in the evaluation path.',
-    result: 'Every output gates through APPROVE / REWRITE / SILENCE with an audit trail. Known limitations documented in the repo README. Current iteration moves ALMA from standalone node to middleware and post-model hook in the new io architecture.',
+    problem: 'LLMs in clinical contexts need guardrails that aren\'t just prompt tricks. Prompt-based safety fails silently.',
+    approach: 'Five domain-independent axioms (Conciencia, Claridad, Límite, Pragmatismo, Cuidado). Deterministic evaluation pipeline: regex patterns, cosine similarity (0.92 threshold), gray zone flagging (≥0.75). No LLM in the evaluation path.',
+    result: 'Every output evaluated before reaching the patient. APPROVE / REWRITE / SILENCE decisions with full audit trail. Three structural bugs publicly documented.',
     stack: 'Deterministic pipeline · intfloat/multilingual-e5-large · Clinical ethics',
     link: '/io-architecture.html',
     linkText: 'View ALMA details →',
-    external: false,
-  },
-  {
-    num: '04', color: 'var(--teal)',
-    badge: 'IN PROGRESS · NEW ARCHITECTURE', badgeClass: 'wk-badge--sea',
-    title: 'io — Clinical Agent under Regulatory Framework',
-    problem: 'Prior iterations evolved incrementally. The new agent starts from scratch under explicit EU regulatory framework (AI Act + GDPR + Directive 2024/2853 + ISO/IEC 25012).',
-    approach: 'LangGraph 1.0 Deep Agent supervisor with sync and async subagents. Cloud-primary reasoning with mandatory PHI redaction; local compute for deterministic pre/post-processing and guardrails. Sensorimotor integration focus: autonomic (HRV), postural-kinematic (pose), visual-functional (optometric).',
-    result: 'Under construction. Architecture: io repository (private during development). Master architecture document public on repo when first tag lands.',
-    stack: 'LangGraph 1.0 · LangChain 1.0 · MCP connectors · NeuroKit2 · MediaPipe',
-    link: null,
-    linkPending: 'Link enabled at first public tag',
     external: false,
   },
 ]
@@ -111,11 +100,6 @@ function PillarCard({ item, nDays, nPairs, staggerIdx }) {
             {item.linkText}
           </a>
         )}
-        {item.linkPending && (
-          <span className="wk-link" style={{ opacity: 0.35, cursor: 'default' }}>
-            {item.linkPending}
-          </span>
-        )}
       </div>
     </div>
   )
@@ -141,7 +125,7 @@ export default function Work({ data }) {
         <NetworkSymbol color="var(--warm)" size={44} />
         THE WORK
       </span>
-      <h2 className="wk-title">Current and prior work</h2>
+      <h2 className="wk-title">Three pillars of clinical AI</h2>
 
       {PILLARS.map((item, i) => (
         <div key={item.num}>

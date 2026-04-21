@@ -6,6 +6,7 @@ import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
 
 const SUB_STRINGS = [
+  'clinical AI systems',
   'from wearable data to patient insight',
   'open-source · responsible AI',
 ]
@@ -66,14 +67,14 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Clinical AI tools built with clinical constraints.
+          Building AI that works in clinical reality.
         </p>
         <p className="hero-credentials" style={{
           opacity: bootStep >= 1 ? 1 : 0,
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(6px)',
           transition: 'opacity 0.6s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}>
-          Osteopath · Biomechanics · Clinical AI builder
+          Osteopath · Biomechanics specialist · 10+ years clinical · AI builder
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
