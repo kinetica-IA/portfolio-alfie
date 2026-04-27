@@ -28,12 +28,12 @@ if not CSV_PATH.exists():
 LIVE_JSON = Path("public/data/polar_live.json")
 
 FINDING = {
-    "spearman_rho":    0.431,
-    "p_value":         0.016,
-    "auc":             0.656,
-    "sensitivity_pct": 81,
-    "n_pairs":         39,
-    "description":     "Nocturnal ANS predicts PEM 48h ahead",
+    "auc":             0.8608,
+    "auc_ci95":        [0.7529, 0.9505],
+    "n_pairs":         54,
+    "target":          "disfuncion_autonomica",
+    "features":        ["hrv_rmssd_night_t0", "hrv_lf_hf_ratio_t1", "hrv_sd1_t0"],
+    "description":     "Autonomic dysfunction predicted from nocturnal HRV · LOO-CV · Bootstrap 1000×",
 }
 
 
