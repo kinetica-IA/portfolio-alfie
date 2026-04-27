@@ -31,7 +31,12 @@ data/hrv_rr_nightly.csv
 
 # pipeline generated outputs (committed selectively in step 3)
 data/raw/
-data/processed/
+data/processed/L1/*
+data/processed/L2/*
+data/processed/L3/*
+!data/processed/L1/.gitkeep
+!data/processed/L2/.gitkeep
+!data/processed/L3/.gitkeep
 
 # local backup archives
 *.tar.gz
