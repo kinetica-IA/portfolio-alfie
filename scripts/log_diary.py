@@ -41,17 +41,18 @@ DIARY_COLS = ["date", "schema_version", "severidad_global", "fatiga", "pem",
               "niebla_mental", "disfuncion_autonomica", "dolor", "redacted", "nota"]
 
 # ── Logistic model coefficients (from last LOO-CV run) ───────────────────────
-# Updated by retrain_predictor.py — these are the current published values
+# v3 target: disfuncion_autonomica · features: hrv_rmssd_night_t0, hrv_lf_hf_ratio_t1, hrv_sd1_t0
+# Coefficients below are v1 approximations — update from retrain_predictor.py output
 MODEL_COEFS = {
-    "intercept":  -0.15,    # approximate
+    "intercept":  -0.15,
     "ans_t2":     +0.598,
     "hrv_t2":     -0.109,
     "rec_t1":     +0.539,
     "zlp":        +0.268,
 }
-MODEL_AUC         = 0.656
-MODEL_SENSITIVITY = 0.812
-MODEL_N           = 39
+MODEL_AUC         = 0.8608
+MODEL_SENSITIVITY = 0.7188
+MODEL_N           = 54
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
