@@ -14,7 +14,7 @@ const TIMELINE = [
 const BADGES = [
   { text: 'Universidad de Granada', borderColor: 'var(--ice)' },
   { text: '10+ years clinical', borderColor: 'var(--teal)' },
-  { text: 'AI Evaluator', borderColor: 'var(--warm)' },
+  { text: 'Open-source · MIT', borderColor: 'var(--warm)' },
   { text: 'Madrid · Remote', borderColor: 'var(--sea)' },
 ]
 
