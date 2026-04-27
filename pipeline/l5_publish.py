@@ -73,36 +73,48 @@ def _series_rows(df: pd.DataFrame) -> list[dict]:
 
 
 def _build_headline(predictor: dict) -> dict:
-    """Extract the headline AUC metric for the portfolio hero section.
+    """Build the headline metric block for polar_live.json.
 
-    Selects the best-performing target as the headline. Falls back to
-    disfuncion_autonomica if that is the deployment model target.
+    The headline is INTENTIONALLY locked to the deployment model target
+    (autonomic dysfunction), not the highest AUC across all targets.
+
+    Reason: brain fog has class split ~9:1 (positive:negative), making
+    its AUC statistically inflated. Selecting it as headline would lead
+    the portfolio with a number we explicitly document as unreliable.
+
+    Autonomic dysfunction is the target with:
+    - balanced classes
+    - physiologically coherent feature selection
+    - the only target that runs in production via deployment_model
 
     Args:
         predictor: Dict from predictor_results.json.
 
     Returns:
         Headline dict with metric, value, target, n, ci95, features.
+
+    Raises:
+        KeyError: If disfuncion_autonomica target is missing from results.
     """
-    targets = predictor.get("targets", {})
-    if not targets:
-        return {}
+    HEADLINE_TARGET: str = "disfuncion_autonomica"
 
-    best_name = max(targets, key=lambda k: targets[k].get("auc_loo", 0))
-    best = targets[best_name]
+    if HEADLINE_TARGET not in predictor.get("targets", {}):
+        raise KeyError(
+            f"Required headline target '{HEADLINE_TARGET}' not in "
+            f"predictor results. Available: {list(predictor.get('targets', {}).keys())}"
+        )
 
-    ci_lo = best.get("auc_ci95_lower")
-    ci_hi = best.get("auc_ci95_upper")
-
+    t = predictor["targets"][HEADLINE_TARGET]
     return {
         "metric": "AUC",
-        "value": round(best.get("auc_loo", 0), 4),
-        "target": best_name,
-        "n": best.get("n_training"),
-        "ci95": [ci_lo, ci_hi] if ci_lo is not None else None,
-        "features": best.get("selected_features", []),
-        "sensitivity": best.get("sensitivity"),
-        "specificity": best.get("specificity"),
+        "value": round(t["auc_loo"], 3),
+        "target": HEADLINE_TARGET,
+        "n": t["n_training"],
+        "ci95": [
+            round(t["auc_ci95_lower"], 3),
+            round(t["auc_ci95_upper"], 3),
+        ],
+        "features": t["selected_features"],
     }
 
 
