@@ -23,7 +23,11 @@ const PILLARS = [
     problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
     approach: (nDays, nPairs) =>
       `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
-    result: 'AUC 0.86 (autonomic dysfunction · CI95 0.75–0.95 · n=54 paired nights). Headline metric uses LF/HF ratio + SD1 — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.',
+    result: (headline) => {
+      if (!headline) return 'AUC 0.83 (autonomic dysfunction). Headline metric uses nocturnal RMSSD — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.'
+      const ci = headline.ci95
+      return `AUC ${headline.value.toFixed(2)} (autonomic dysfunction · CI95 ${ci[0].toFixed(2)}–${ci[1].toFixed(2)} · n=${headline.n} paired nights). Headline metric uses ${headline.features.join(' + ')} — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.`
+    },
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: '/ans-predictor.html',
     linkText: 'View research →',
@@ -43,7 +47,7 @@ const PILLARS = [
   },
 ]
 
-function PillarCard({ item, nDays, nPairs, staggerIdx }) {
+function PillarCard({ item, nDays, nPairs, headline, staggerIdx }) {
   const { ref, revealed } = useReveal(0.25)
   const numDisplay = useTextDecode(item.num, {
     duration: 600, delay: 0, loop: false, isActive: revealed,
@@ -52,6 +56,9 @@ function PillarCard({ item, nDays, nPairs, staggerIdx }) {
   const approachText = typeof item.approach === 'function'
     ? item.approach(nDays, nPairs)
     : item.approach
+  const resultText = typeof item.result === 'function'
+    ? item.result(headline)
+    : item.result
 
   return (
     <div
@@ -87,7 +94,7 @@ function PillarCard({ item, nDays, nPairs, staggerIdx }) {
         </div>
         <div className="wk-par">
           <span className="wk-label">Result</span>
-          <p className="wk-text">{item.result}</p>
+          <p className="wk-text">{resultText}</p>
         </div>
 
         <p className="wk-stack">{item.stack}</p>
@@ -130,7 +137,7 @@ export default function Work({ data }) {
       {PILLARS.map((item, i) => (
         <div key={item.num}>
           {i > 0 && <WkDivider revealed={sectionRevealed} delay={i * 200} />}
-          <PillarCard item={item} nDays={nDays} nPairs={nPairs} staggerIdx={i} />
+          <PillarCard item={item} nDays={nDays} nPairs={nPairs} headline={data?.headline} staggerIdx={i} />
         </div>
       ))}
 
