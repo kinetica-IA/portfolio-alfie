@@ -23,7 +23,7 @@ const PILLARS = [
     problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
     approach: (nDays, nPairs) =>
       `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
-    result: 'AUC 0.86 (autonomic dysfunction · CI95 0.75–0.95), 48h predictive lag from nocturnal HRV. All code and data public.',
+    result: 'AUC 0.86 (autonomic dysfunction · CI95 0.75–0.95 · n=54 paired nights). Headline metric uses LF/HF ratio + SD1 — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.',
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
     link: '/ans-predictor.html',
     linkText: 'View research →',
