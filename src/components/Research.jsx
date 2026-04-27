@@ -198,7 +198,7 @@ export default function Research({ data, loading }) {
                 </p>
               )}
               <p className="fp-brain-fog-note">
-                * Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (54/6 split).
+                * Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (55/6 split).
                 Reported for transparency — not used as a headline metric.
               </p>
             </div>
