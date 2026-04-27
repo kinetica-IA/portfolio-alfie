@@ -6,12 +6,12 @@ import LivePulse from './LivePulse'
 const PILLARS = [
   {
     num: '01', color: 'var(--warm)',
-    badge: 'CLINICAL AI AGENT', badgeClass: 'wk-badge--warm',
-    title: 'IO3 — Clinical Reasoning Agent',
-    problem: 'Clinical AI that hallucinates is dangerous. Clinicians need AI that knows its limits and stops when uncertain.',
-    approach: 'ReAct agent with human-on-loop architecture. 9-node LangGraph graph where the clinician decides at every gap. ALMA ethical framework evaluates every output before it reaches the patient.',
-    result: '1,880 RAG chunks, deterministic safety layer (regex + cosine, zero LLM calls in evaluation), zero autonomous escalation. EU AI Act compliant by design.',
-    stack: 'LangGraph · Anthropic Claude · ChromaDB · FastAPI · React',
+    badge: 'CLINICAL AI · CONTEXT ENGINE', badgeClass: 'wk-badge--warm',
+    title: 'IO3 — Context Engine for Clinical AI',
+    problem: 'Clinical AI that starts every query from scratch is brittle. Clinicians need persistent context — patient profile, clinical rules, evidence base — injected into every model call.',
+    approach: 'Persistent orchestration layer in front of the LLM. Each query is enriched with patient profile, clinical rules, RAG evidence (1,880 chunks in ChromaDB), and ALMA L1 axioms before any model sees it. The model is interchangeable. IO3 is not.',
+    result: '9-node LangGraph graph with human-on-loop interrupt at every gap. Full reasoning audit trail. Designed for EU AI Act compliance — clinician decides at every uncertainty, never the model alone.',
+    stack: 'LangGraph · Anthropic API · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
     linkText: 'View architecture →',
     external: false,
