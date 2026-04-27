@@ -37,6 +37,10 @@ data/processed/L3/*
 !data/processed/L1/.gitkeep
 !data/processed/L2/.gitkeep
 !data/processed/L3/.gitkeep
+data/processed/L4/*
+data/processed/L5/*
+!data/processed/L4/.gitkeep
+!data/processed/L5/.gitkeep
 
 # local backup archives
 *.tar.gz
