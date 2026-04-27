@@ -19,8 +19,9 @@ Live portfolio at **[kineticaai.com](https://kineticaai.com)** — a biodynamic 
 
 ## Key finding
 
-> **Nocturnal ANS status predicts Post-Exertional Malaise (PEM) 48 hours ahead**
-> Spearman ρ = +0.431 · p = .011 · AUC = 0.656 · Sensitivity 81.2% · N = 34 paired days
+> **Autonomic dysfunction predicted from nocturnal HRV**
+> AUC 0.86 · CI95 [0.75, 0.95] · N = 54 paired days · LOO-CV · Bootstrap 1000×
+> Features: hrv_rmssd_night_t0 · hrv_lf_hf_ratio_t1 · hrv_sd1_t0
 
 This is an N=1 longitudinal study, self-funded, reproducible. Full dataset and methodology:
 → [github.com/kinetica-IA/polar-lyme-predictor](https://github.com/kinetica-IA/polar-lyme-predictor)
@@ -42,7 +43,7 @@ portfolio-alfie/
 │
 ├── public/
 │   ├── data/
-│   │   └── polar_live.json         # 198-day biometric series + live finding
+│   │   └── polar_live.json         # 223-day biometric series + v3 multi-target predictor
 │   └── diary.html                  # Standalone DSQ web form (no server needed)
 │
 ├── scripts/
@@ -85,7 +86,7 @@ Writes: public/data/polar_live.json  →  git push
 ```
 Runs: scripts/retrain_predictor.py
 Deps: numpy scikit-learn scipy
-Writes: polar_live.json["predictor"] + polar_live.json["finding"]  →  git push
+Writes: polar_live.json["predictor"] (multi-target v3)  →  git push
 ```
 
 ---
@@ -105,15 +106,21 @@ Writes: polar_live.json["predictor"] + polar_live.json["finding"]  →  git push
     "sleep_interruptions": 18,
     "steps": 2686
   },
-  "series": [ /* 198+ days */ ],
-  "finding": {
-    "spearman_rho": 0.431,
-    "p_value": 0.011,
-    "auc": 0.6562,
-    "sensitivity_pct": 81.2,
-    "n_pairs": 34
-  },
-  "predictor": { /* LOO-CV coefficients + metrics */ }
+  "series": [ /* 223+ days */ ],
+  "predictor": {
+    "model_version": "v3",
+    "auc": 0.84,
+    "n_training": 60,
+    "targets": {
+      "disfuncion_autonomica": {
+        "best_auc": 0.8608,
+        "best_auc_ci95": [0.7529, 0.9505],
+        "selected_features": ["hrv_rmssd_night_t0", "hrv_lf_hf_ratio_t1", "hrv_sd1_t0"],
+        "n_training": 54
+      }
+      /* + fatiga, niebla_mental, pem, severity */
+    }
+  }
 }
 ```
 
