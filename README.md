@@ -20,8 +20,11 @@ Live portfolio at **[kineticaai.com](https://kineticaai.com)** — a biodynamic 
 ## Key finding
 
 > **Autonomic dysfunction predicted from nocturnal HRV**
-> AUC 0.86 · CI95 [0.75, 0.95] · N = 54 paired days · LOO-CV · Bootstrap 1000×
-> Features: hrv_rmssd_night_t0 · hrv_lf_hf_ratio_t1 · hrv_sd1_t0
+> AUC 0.83 · CI95 [0.72, 0.94] · N = 55 paired days · LOO-CV · Bootstrap 1000×
+> Features: hrv_rmssd_night_t0 · recovery_sublevel_t3
+
+> Numbers update on every pipeline run. Current canonical values live in
+> `public/data/polar_live.json` (read by portfolio runtime).
 
 This is an N=1 longitudinal study, self-funded, reproducible. Full dataset and methodology:
 → [github.com/kinetica-IA/polar-lyme-predictor](https://github.com/kinetica-IA/polar-lyme-predictor)
