@@ -28,3 +28,13 @@ estructura_portfolio_alfie.txt
 
 # large intermediate data
 data/hrv_rr_nightly.csv
+
+# pipeline generated outputs (committed selectively in step 3)
+data/raw/
+data/processed/
+
+# local backup archives
+*.tar.gz
+
+# Claude Code artifacts
+.claude/
