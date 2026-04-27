@@ -8,7 +8,7 @@ import { useTextDecode } from '../hooks/useTextDecode'
 const SUB_STRINGS = [
   'clinical AI systems',
   'from wearable data to patient insight',
-  'open-source · responsible AI',
+  'N-of-1 · open data · reproducible',
 ]
 
 export default function Hero() {
@@ -74,7 +74,7 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(6px)',
           transition: 'opacity 0.6s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}>
-          Osteopath · Biomechanics specialist · 10+ years clinical · AI builder
+          Biomechanics · Osteopath · clinical AI projects
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
