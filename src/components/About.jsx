@@ -6,8 +6,8 @@ const TIMELINE = [
   { year: '2006', label: 'Physics, Universidad de Granada', color: 'var(--ice)', rgb: '133,168,184' },
   { year: '2010', label: 'Osteopathy & biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
   { year: '2014', label: 'Private clinical practice', color: 'var(--teal)', rgb: '144,167,165' },
-  { year: '2020', label: 'COVID-19 acute care', color: 'var(--warm)', rgb: '196,133,90' },
-  { year: '2024', label: 'Post-Lyme diagnosis', color: 'var(--clay)', rgb: '168,121,110' },
+  { year: '2020', label: 'COVID acute care + Post-Lyme', color: 'var(--clay)', rgb: '168,121,110' },
+  { year: '2024', label: 'Clinical AI builder', color: 'var(--warm)', rgb: '196,133,90' },
   { year: '2025', label: 'Kinetica AI', color: 'var(--green)', rgb: '107,158,122', pulse: true },
 ]
 
@@ -15,7 +15,7 @@ const BADGES = [
   { text: 'Universidad de Granada', borderColor: 'var(--ice)' },
   { text: '10+ years clinical', borderColor: 'var(--teal)' },
   { text: 'AI Evaluator', borderColor: 'var(--warm)' },
-  { text: 'Nordic-based · Remote', borderColor: 'var(--sea)' },
+  { text: 'Madrid · Remote', borderColor: 'var(--sea)' },
 ]
 
 export default function About() {
@@ -34,19 +34,18 @@ export default function About() {
         <h2 className="founder-name">{nameDisplay}</h2>
         <p className="founder-role">
           <img src="/icons/neuro.svg" alt="" className="founder-role-icon" />
-          Physicist
+          Biomechanist
           <span className="founder-role-sep">·</span>
           <img src="/icons/biomech.svg" alt="" className="founder-role-icon" />
           Osteopath
           <span className="founder-role-sep">·</span>
           <img src="/icons/consult.svg" alt="" className="founder-role-icon" />
-          Clinical AI Builder
+          Clinical AI maker
         </p>
         <p className="founder-bio">
-          Physicist turned osteopath with 10+ years of clinical practice and two years in COVID-19 acute care.
-          Now building clinical AI systems that bridge wearable data and patient outcomes.
-          Post-Lyme diagnosis in 2020became the proving ground — an N=1 research project where the builder is also the patient.
-          Active AI model evaluator.
+          Physicist by training (Universidad de Granada). Biomechanics and osteopathy in practice — 10+ years clinical work.
+          Build clinical AI projects to solve problems I find in clinic, not the other way around.
+          Post-Lyme since 2020 turned into the proving ground: I'm both the patient and the researcher in the N-of-1 study below.
         </p>
         <div className="founder-badges">
           {BADGES.map((b, i) => (
@@ -63,11 +62,6 @@ export default function About() {
               {b.text}
             </span>
           ))}
-        </div>
-        <div className="founder-links">
-          <a href="mailto:alfon.atman@gmail.com">alfon.atman@gmail.com</a>
-          <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://github.com/kinetica-IA" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
 
@@ -168,19 +162,6 @@ export default function About() {
           transition: border-color var(--duration-hover) ease;
         }
         .founder-badge:hover { border-color: var(--border-active); }
-        .founder-links {
-          display: flex;
-          gap: 20px;
-          flex-wrap: wrap;
-        }
-        .founder-links a {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--sea);
-          transition: color var(--duration-hover) ease;
-        }
-        .founder-links a:hover { color: var(--green); }
-
         /* Horizontal timeline stepper */
         .tl-container {
           position: relative;
