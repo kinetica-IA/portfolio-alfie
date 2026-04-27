@@ -171,7 +171,7 @@ Every section except the hero uses the exact same animation: `opacity: 0 → 1` 
 **Without color contrast, the page has no visual landmarks.**
 
 ### 4. Metrics Are Undersold
-The strongest content on the page — AUC values of 0.84 and 0.86, 198 days, 5 targets — is styled identically to secondary text. The numbers use `--text-metric: #1c322f` which is indistinguishable from heading text. They have no background, no accent color, no border, no icon. Compare to Isidor's numbered cards where "01"–"05" are large, prominent structural markers with corner decorations.
+The strongest content on the page — AUC values of 0.86, 198+ days (daemon-updated), 5 targets — is styled identically to secondary text. The numbers use `--text-metric: #1c322f` which is indistinguishable from heading text. They have no background, no accent color, no border, no icon. Compare to Isidor's numbered cards where "01"–"05" are large, prominent structural markers with corner decorations.
 
 **The proof that makes Kinetica credible is visually buried.**
 
@@ -282,7 +282,7 @@ DO:
 **Content (keep existing + expand):**
 - Eyebrow: "FLAGSHIP RESEARCH"
 - Title: "Five symptoms, one watch, zero hospital visits"
-- Context line: N=60 · 198 days · LOO-CV · Bootstrap 1000×
+- Context line: N=60 · 198+ days · LOO-CV · Bootstrap 1000×
 - 4 metrics (AUC severity, AUC autonomic, days, targets)
 - Key finding block (warm border)
 - Expandable 5-target table
@@ -404,7 +404,7 @@ DO:
   **Card 1:** "polar-lyme-predictor"
   - Type badge: "REPOSITORY" in --green
   - Description: "Multi-symptom clinical prediction from wearable HRV data"
-  - Stats: "5 models · 198 days · AUC 0.84"
+  - Stats: "5 targets · 198+ days · best AUC 0.86"
   - Link: GitHub
 
   **Card 2:** "Biometric Data Archive"
