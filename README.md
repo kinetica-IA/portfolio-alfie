@@ -1,6 +1,6 @@
 # kineticaai.com — Portfolio Alfonso Navarro
 
-**Osteopath · Biomechanics · Clinical AI researcher**
+**Alfonso Navarro** — Biomechanist, Osteopath, Clinical AI maker
 
 Live portfolio at **[kineticaai.com](https://kineticaai.com)** — a biodynamic living document that updates automatically with real physiological data.
 
