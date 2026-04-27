@@ -22,15 +22,6 @@ import httpx
 API_BASE  = "https://www.polaraccesslink.com/v3"
 LIVE_JSON = Path("public/data/polar_live.json")
 
-FINDING = {
-    "spearman_rho":    0.431,
-    "p_value":         0.016,
-    "auc":             0.656,
-    "sensitivity_pct": 81,
-    "n_pairs":         39,
-    "description":     "Nocturnal ANS predicts PEM 48h ahead",
-}
-
 MAX_SERIES_DAYS = 365
 
 
@@ -134,7 +125,7 @@ def load_existing() -> dict:
             return json.loads(LIVE_JSON.read_text())
         except Exception as e:
             print(f"  WARN could not read existing JSON: {e}", file=sys.stderr)
-    return {"updated_at": "", "latest": {}, "series": [], "finding": FINDING}
+    return {"updated_at": "", "latest": {}, "series": []}
 
 
 def upsert_series(series: list, row: dict) -> list:
@@ -172,12 +163,6 @@ def main():
     data["updated_at"] = f"{date.today().isoformat()}T06:00:00Z"
     data["latest"]     = row
     data["series"]     = upsert_series(data.get("series", []), row)
-    # Preserve finding from retrain_predictor.py if it has a real AUC.
-    # Only fall back to the hardcoded FINDING if no AUC exists yet
-    # or if the stored AUC is the old seed value (0.656).
-    existing_auc = data.get("finding", {}).get("auc")
-    if not existing_auc or existing_auc == 0.656:
-        data["finding"] = FINDING
 
     LIVE_JSON.parent.mkdir(parents=True, exist_ok=True)
     LIVE_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False))
