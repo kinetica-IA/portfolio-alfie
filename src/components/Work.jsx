@@ -115,7 +115,7 @@ function WkDivider({ revealed, delay }) {
 }
 
 export default function Work({ data }) {
-  const nPairs = data?.predictor?.n_training || 60
+  const nPairs = data?.data_window?.n_paired || 61
   const nDays = data?.series?.length || 207
   const { ref: sectionRef, revealed: sectionRevealed } = useReveal(0.1)
 
