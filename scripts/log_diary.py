@@ -40,16 +40,6 @@ POLAR_JSON    = PORTFOLIO_DIR / "public" / "data" / "polar_live.json"
 DIARY_COLS = ["date", "schema_version", "severidad_global", "fatiga", "pem",
               "niebla_mental", "disfuncion_autonomica", "dolor", "zolpidem", "nota"]
 
-# ── Logistic model coefficients (from last LOO-CV run) ───────────────────────
-# v3 target: disfuncion_autonomica · features: hrv_rmssd_night_t0, hrv_lf_hf_ratio_t1, hrv_sd1_t0
-# Coefficients below are v1 approximations — update from retrain_predictor.py output
-MODEL_COEFS = {
-    "intercept":  -0.15,
-    "ans_t2":     +0.598,
-    "hrv_t2":     -0.109,
-    "rec_t1":     +0.539,
-    "zlp":        +0.268,
-}
 MODEL_AUC         = 0.8608
 MODEL_SENSITIVITY = 0.7188
 MODEL_N           = 54
@@ -129,48 +119,60 @@ def sigmoid(x: float) -> float:
     return 1.0 / (1.0 + math.exp(-x))
 
 
-def predict_48h(polar_series: dict, target_date: str) -> dict | None:
-    """
-    Compute 48h-ahead risk using published LogisticRegression coefficients.
-    target_date = symptom date
-    ans/hrv from lag-2, rec from lag-1.
-    """
-    from datetime import datetime, timedelta
-    dt = datetime.strptime(target_date, "%Y-%m-%d")
-    d2 = (dt - timedelta(days=2)).strftime("%Y-%m-%d")
-    d1 = (dt - timedelta(days=1)).strftime("%Y-%m-%d")
-
-    p2 = polar_series.get(d2, {})
-    p1 = polar_series.get(d1, {})
-
-    ans2 = p2.get("ans_status")
-    hrv2 = p2.get("hrv_rmssd_night")
-    rec1 = p1.get("recovery_indicator") or p1.get("ans_score") or 3.0
-
-    if ans2 is None or hrv2 is None:
+def load_deployment_model() -> dict | None:
+    """Read deployment_model from polar_live.json predictor block."""
+    try:
+        data = json.loads(POLAR_JSON.read_text())
+        return data.get("predictor", {}).get("deployment_model")
+    except Exception:
         return None
 
-    # Rough standardization (from training set stats)
-    ans_mean, ans_std = 2.0, 5.5
-    hrv_mean, hrv_std = 35.0, 12.0
-    rec_mean, rec_std = 3.0, 1.5
 
-    ans_s = (ans2 - ans_mean) / ans_std
-    hrv_s = (hrv2 - hrv_mean) / hrv_std
-    rec_s = (rec1 - rec_mean) / rec_std
+def predict_48h(polar_series: dict, target_date: str) -> dict | None:
+    """
+    Compute 48h-ahead risk using the v3 deployment model from polar_live.json.
+    target_date = future symptom date (entry_date + 2 days).
+    All features use lag≥2, so polar data for target_date-lag is available now.
+    """
+    dm = load_deployment_model()
+    if not dm:
+        return None
 
-    logit = (MODEL_COEFS["intercept"]
-             + MODEL_COEFS["ans_t2"] * ans_s
-             + MODEL_COEFS["hrv_t2"] * hrv_s
-             + MODEL_COEFS["rec_t1"] * rec_s)
+    from datetime import datetime, timedelta
+    feature_values = {}
+    missing = []
+    for fname in dm["features"]:
+        # parse "polar_key_tLAG" → polar_key and lag
+        lag = int(fname.rsplit("_t", 1)[1])
+        polar_key = fname.rsplit("_t", 1)[0]
+        day = (datetime.strptime(target_date, "%Y-%m-%d") - timedelta(days=lag)).strftime("%Y-%m-%d")
+        v = polar_series.get(day, {}).get(polar_key)
+        if v is None:
+            missing.append(fname)
+        feature_values[fname] = v
+
+    if missing:
+        return None
+
+    # Standardize and compute logit
+    logit = dm["intercept"]
+    for fname, coef in dm["coef"].items():
+        mean  = dm["scaler_mean"][fname]
+        scale = dm["scaler_scale"][fname]
+        logit += coef * ((feature_values[fname] - mean) / scale)
+
     prob = sigmoid(logit)
 
+    # Build label-friendly feature summary for display
+    feat_summary = {
+        fname: round(feature_values[fname], 2) for fname in dm["features"]
+    }
+
     return {
-        "prob_bad_day": round(prob, 3),
-        "ans_t2": ans2,
-        "hrv_t2": hrv2,
-        "rec_t1": rec1,
-        "date_polar_lag2": d2,
+        "prob_bad_day":  round(prob, 3),
+        "features_used": feat_summary,
+        "target":        dm.get("target", "disfuncion_autonomica"),
+        "auc_loo":       dm.get("auc_loo"),
     }
 
 
@@ -294,13 +296,16 @@ def main():
     if pred:
         prob = pred["prob_bad_day"]
         risk_label = red("ALTO ▲") if prob >= 0.55 else (yellow("MODERADO") if prob >= 0.4 else green("BAJO ▼"))
-        print(f"  Datos Polar usados: ANS(t-2)={pred['ans_t2']}  HRV(t-2)={pred['hrv_t2']}ms  Rec(t-1)={pred['rec_t1']}")
-        print(f"  Probabilidad día malo (sev≥7) en {day_after}: {bold(str(round(prob*100,1))+'%')}  →  Riesgo {risk_label}")
-        print(dim(f"  Modelo: LogReg LOO-CV · AUC={MODEL_AUC} · Sens={MODEL_SENSITIVITY} · n={MODEL_N}"))
+        feats_str = "  ".join(f"{k}={v}" for k, v in pred["features_used"].items())
+        print(f"  Datos Polar: {feats_str}")
+        print(f"  Prob. disfunción autonómica en {day_after}: {bold(str(round(prob*100,1))+'%')}  →  Riesgo {risk_label}")
+        auc_str = f" · AUC(LOO)={pred['auc_loo']}" if pred.get("auc_loo") else ""
+        print(dim(f"  Modelo: LogReg deployment (lag≥2){auc_str} · Sens={MODEL_SENSITIVITY} · n={MODEL_N}"))
         print(dim(f"  ⚠  Predicción N=1 idiográfica. No sustituye criterio clínico."))
     else:
-        print(dim(f"  Sin datos Polar para lag-2 ({tomorrow}). Predicción no disponible."))
+        print(dim(f"  Sin datos Polar disponibles (lag≥2 desde {day_after})."))
         print(dim(f"  Polar data actual hasta: {max(polar_s.keys()) if polar_s else 'sin datos'}"))
+        print(dim(f"  Ejecuta retrain_predictor.py para generar el deployment_model."))
 
     # ── History summary ───────────────────────────────────────────────────────
     recent = sorted([r for r in rows.values()], key=lambda r: r["date"])[-7:]
