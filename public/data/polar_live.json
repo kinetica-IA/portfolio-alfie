@@ -1,7 +1,7 @@
 {
   "schema_version": "v3.1",
-  "updated_at": "2026-04-27T20:23:13.646941+00:00",
-  "pipeline_run_id": "477245f",
+  "updated_at": "2026-04-27T20:39:07.953882+00:00",
+  "pipeline_run_id": "6d1c844",
   "latest": {
     "date": "2026-04-27",
     "hrv_rmssd_night": 40.0,
@@ -18000,20 +18000,17 @@
   },
   "headline": {
     "metric": "AUC",
-    "value": 0.9879,
-    "target": "niebla_mental",
-    "n": 61,
+    "value": 0.829,
+    "target": "disfuncion_autonomica",
+    "n": 55,
     "ci95": [
-      0.95,
-      1.0
+      0.715,
+      0.936
     ],
     "features": [
-      "ans_status_t0",
-      "hrv_rmssd_night_t1",
+      "hrv_rmssd_night_t0",
       "recovery_sublevel_t3"
-    ],
-    "sensitivity": 0.8909,
-    "specificity": 1.0
+    ]
   },
   "data_window": {
     "start": "2025-08-25",
