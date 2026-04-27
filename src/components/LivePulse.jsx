@@ -42,7 +42,7 @@ export default function LivePulse({ data }) {
 
   const rmssd = latest?.hrv_rmssd_night ?? latest?.hrv_rmssd_daily
   const sleepScore = latest?.sleep_score
-  const sparkPath = miniSparkline(series, 'hrv_rmssd_daily', 120, 28)
+  const sparkPath = miniSparkline(series, 'hrv_rmssd_night', 120, 28)
 
   return (
     <div

@@ -164,29 +164,29 @@ export default function Research({ data, loading }) {
                     {TARGET_LABELS[key] || key}
                     {isBrainFog && <span className="fp-flag">*</span>}
                   </span>
-                  <span className="fp-target-auc" style={{ color: aucColor(t.best_auc) }}>
-                    {t.best_auc.toFixed(2)}
+                  <span className="fp-target-auc" style={{ color: aucColor(t.auc_loo) }}>
+                    {t.auc_loo.toFixed(2)}
                   </span>
                   <div className="fp-target-bar">
                     <div
                       className="fp-target-bar-fill"
                       style={{
-                        width: targetsVisible ? `${((t.best_auc - 0.5) / 0.5) * 100}%` : '0%',
-                        background: aucColor(t.best_auc),
+                        width: targetsVisible ? `${((t.auc_loo - 0.5) / 0.5) * 100}%` : '0%',
+                        background: aucColor(t.auc_loo),
                         transitionDelay: `${i * 100 + 400}ms`,
                       }}
                     />
                     <span
                       className="fp-bar-pulse"
                       style={{
-                        background: aucColor(t.best_auc),
+                        background: aucColor(t.auc_loo),
                         animationDelay: `${i * 600}ms`,
                         opacity: targetsVisible ? 1 : 0,
                       }}
                     />
                   </div>
                   <span className="fp-target-ci">
-                    {t.best_auc_ci95[0].toFixed(2)}–{t.best_auc_ci95[1].toFixed(2)}
+                    {t.auc_ci95_lower.toFixed(2)}–{t.auc_ci95_upper.toFixed(2)}
                   </span>
                 </div>
               )
