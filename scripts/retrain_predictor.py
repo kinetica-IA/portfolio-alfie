@@ -70,6 +70,7 @@ TARGETS = [
 MAX_FEATURES = 5
 MIN_AUC_IMPROVEMENT = 0.01
 N_BOOTSTRAP = 1000
+DEPLOYMENT_LAGS = [2, 3]   # lags available ≥48h before symptom date
 
 MODELS = {
     "logistic_regression": lambda: LogisticRegression(
@@ -419,6 +420,94 @@ def run_single_target(diary, polar, target_cfg):
     }
 
 
+# ── Deployment model (lag ≥ 2 features, full-dataset fit, for CLI 48h prediction) ──
+
+def fit_deployment_model(diary, polar, target_cfg):
+    """Train a final LR on all data using only lag≥2 features (available at T-48h).
+    Returns a dict with coefficients and scaler params for log_diary.py."""
+    name      = target_cfg["name"]
+    diary_key = target_cfg["diary_key"]
+    threshold = target_cfg["threshold"]
+
+    deploy_candidates = [
+        (feat, lag)
+        for feat, lags in CANDIDATE_FEATURES
+        for lag in lags
+        if lag in DEPLOYMENT_LAGS
+    ]
+    deploy_feature_names = [f"{feat}_t{lag}" for feat, lag in deploy_candidates]
+
+    # Build dataset restricted to lag≥2 features
+    raw_rows = []
+    for row in diary:
+        target_val = row.get(diary_key)
+        if target_val is None:
+            continue
+        feat_vals = {}
+        has_any = False
+        for feat, lag in deploy_candidates:
+            fname = f"{feat}_t{lag}"
+            p = polar_at(polar, row["date"], lag)
+            v = _f(p.get(feat))
+            feat_vals[fname] = v
+            if v is not None:
+                has_any = True
+        if has_any:
+            raw_rows.append({
+                "date": row["date"],
+                "target": 1 if target_val >= threshold else 0,
+                **feat_vals,
+            })
+
+    if len(raw_rows) < 10:
+        return None
+
+    medians = {}
+    for fname in deploy_feature_names:
+        vals = [r[fname] for r in raw_rows if r[fname] is not None]
+        medians[fname] = sorted(vals)[len(vals) // 2] if vals else 0.0
+
+    X = np.zeros((len(raw_rows), len(deploy_feature_names)))
+    y = np.array([r["target"] for r in raw_rows])
+    for j, fname in enumerate(deploy_feature_names):
+        for i, r in enumerate(raw_rows):
+            X[i, j] = r[fname] if r[fname] is not None else medians[fname]
+
+    if int(y.sum()) < 3 or int((1 - y).sum()) < 3:
+        return None
+
+    # Forward selection within lag≥2 features
+    lr_factory = MODELS["logistic_regression"]
+    selected_idx, loo_auc = forward_select(X, y, deploy_feature_names, lr_factory)
+    if not selected_idx:
+        return None
+
+    selected_names = [deploy_feature_names[i] for i in selected_idx]
+    Xs = X[:, selected_idx]
+
+    # Fit final model on all data
+    sc  = StandardScaler().fit(Xs)
+    clf = LogisticRegression(C=0.5, max_iter=1000, class_weight="balanced", random_state=42)
+    clf.fit(sc.transform(Xs), y)
+
+    print(f"    deployment_model({name}): features={selected_names} "
+          f"loo_auc={loo_auc:.4f} "
+          f"intercept={clf.intercept_[0]:.4f} "
+          f"coef={[round(c,4) for c in clf.coef_[0]]}")
+
+    return {
+        "target":       name,
+        "threshold":    threshold,
+        "features":     selected_names,
+        "intercept":    round(float(clf.intercept_[0]), 6),
+        "coef":         {n: round(float(c), 6) for n, c in zip(selected_names, clf.coef_[0])},
+        "scaler_mean":  {n: round(float(m), 6) for n, m in zip(selected_names, sc.mean_)},
+        "scaler_scale": {n: round(float(s), 6) for n, s in zip(selected_names, sc.scale_)},
+        "auc_loo":      _safe_round(loo_auc),
+        "n_training":   len(raw_rows),
+    }
+
+
 # ── Core analysis ─────────────────────────────────────────────────────────────
 
 def run_analysis(diary, polar):
@@ -435,6 +524,14 @@ def run_analysis(diary, polar):
     targets_results = {}
     for tcfg in TARGETS:
         targets_results[tcfg["name"]] = run_single_target(diary, polar, tcfg)
+
+    # ── Deployment model: disfuncion_autonomica at lag≥2 for CLI 48h prediction ─
+    print("\n  Fitting deployment model (lag≥2 features)...")
+    deployment_model = None
+    for tcfg in TARGETS:
+        if tcfg["name"] == "disfuncion_autonomica":
+            deployment_model = fit_deployment_model(diary, polar, tcfg)
+            break
 
     # ── Backward-compatible severity result (top-level predictor fields) ─────
     sev_result = targets_results.get("severity", {})
@@ -502,6 +599,7 @@ def run_analysis(diary, polar):
         "models":           sev_result.get("models", {}),
         # ── New: multi-target ──
         "targets":          targets_results,
+        "deployment_model": deployment_model,
     }
 
 
