@@ -112,7 +112,16 @@ def parse_247ohr(input_files: list[Path] | None = None) -> pd.DataFrame:
             )
         )
 
-    log_pipeline("L1", "parse_247ohr", n_total_samples, len(rows))
+    n_input_days = len(day_buckets)
+    n_empty = n_input_days - len(rows)
+    log_pipeline(
+        "L1",
+        "parse_247ohr",
+        n_input_days,
+        len(rows),
+        "zero samples" if n_empty else None,
+    )
+    print(f"  [{n_total_samples:,} total HR samples across {len(rows)} days]", flush=True)
 
     df = pd.DataFrame([r.model_dump() for r in rows])
     df["date"] = pd.to_datetime(df["date"])
