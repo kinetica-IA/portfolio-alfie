@@ -12,7 +12,9 @@ const CARDS = [
     colorRgb: '107,158,122',
     desc: 'Open-source repository — code, raw data, automation. MIT licensed.',
     expandedDesc: 'GitHub repo with full pipeline: extract_polar.py, compute_hrv.py, retrain_predictor.py. GitHub Actions automate nightly Polar fetch + retrain on diary push. Reproducible from clone.',
-    stats: '5 targets · best AUC 0.86 (autonomic dysfunction · n=54)',
+    stats: (headline) => headline
+      ? `5 targets · best AUC ${headline.value.toFixed(2)} (autonomic dysfunction · n=${headline.n})`
+      : '5 targets · best AUC 0.83 (autonomic dysfunction · n=55)',
     link: '/ans-predictor.html',
     external: false,
     symbolIdx: 0,
@@ -69,7 +71,7 @@ function aucColor(v) {
   return 'var(--warm)'
 }
 
-function PubCard({ card, index, revealed }) {
+function PubCard({ card, index, revealed, headline }) {
   const titleDisplay = useTextDecode(card.title, {
     duration: 1200, delay: 0, loop: false, isActive: revealed,
   })
@@ -102,7 +104,7 @@ function PubCard({ card, index, revealed }) {
       <div className="pub-card-expanded">
         <p className="pub-card-expanded-text">{card.expandedDesc}</p>
       </div>
-      <p className="pub-card-stats">{card.stats}</p>
+      <p className="pub-card-stats">{typeof card.stats === 'function' ? card.stats(headline) : card.stats}</p>
       <span className="pub-card-arrow">→</span>
     </a>
   )
@@ -125,7 +127,7 @@ export default function Research({ data, loading }) {
 
       <div className="pub-grid" ref={ref}>
         {CARDS.map((card, i) => (
-          <PubCard key={card.title} card={card} index={i} revealed={revealed} />
+          <PubCard key={card.title} card={card} index={i} revealed={revealed} headline={data?.headline} />
         ))}
       </div>
 
