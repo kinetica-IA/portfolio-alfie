@@ -1,14 +1,79 @@
 {
   "schema_version": "v3.1",
-  "updated_at": "2026-04-28T06:00:00Z",
-  "pipeline_run_id": "6d1c844",
+  "updated_at": "2026-04-28T17:07:09.909148+00:00",
+  "pipeline_run_id": "1102e14",
   "latest": {
     "date": "2026-04-27",
-    "recovery_sublevel": 4.5,
-    "recovery_heart_rate": 68,
-    "sleep_score": 60,
+    "hrv_rmssd_night": 40.0,
+    "hrv_rri_mean_ms": 875.0,
+    "hrv_resp_interval": 5118.0,
+    "ans_status": 4.48178,
+    "ans_rate": 4.0,
+    "recovery_indicator": 4.0,
+    "recovery_sublevel": 37.0,
+    "baseline_rmssd": 31.0,
+    "sleep_duration_h": 5.95,
+    "sleep_asleep_h": 5.65,
+    "sleep_efficiency_pct": 94.957983,
+    "sleep_rem_pct": 17.226891,
+    "sleep_deep_pct": 25.210084,
     "sleep_wake_min": 18.0,
-    "active_calories": 2322
+    "sleep_interruptions": 15.0,
+    "sleep_long_interruptions": 4.0,
+    "sleep_score": 59.9764,
+    "sleep_continuity_score": 79.0,
+    "sleep_efficiency_score": 79.7199,
+    "sleep_rem_score": 72.0168,
+    "sleep_n3_score": 60.3481,
+    "sleep_long_int_score": 71.5,
+    "rr_intervals_count": 56870.0,
+    "rr_intervals_mean_ms": 802.094039,
+    "rr_intervals_p25_ms": 731.0,
+    "rr_intervals_p75_ms": 872.0,
+    "daily_calories": 1351.0,
+    "met_minutes": 50.584375,
+    "sedentary_min": 275.5,
+    "light_min": 79.5,
+    "moderate_min": 18.0,
+    "vigorous_min": null,
+    "non_wear_min": 14.5,
+    "hr_min": 59.0,
+    "hr_max": 86.0,
+    "hr_mean": 79.676404,
+    "hr_p25": 76.0,
+    "hr_p50": 83.0,
+    "hr_p75": 86.0,
+    "n_samples": 890.0,
+    "rmssd_supine": null,
+    "rmssd_stand": null,
+    "rr_supine_ms": null,
+    "rr_stand_ms": null,
+    "rr_min_standup_ms": null,
+    "delta_rmssd": null,
+    "delta_rr": null,
+    "vo2max_estimate": null,
+    "fitness_class": null,
+    "hrv_sdnn": 104.014352,
+    "hrv_pnn50": 21.111306,
+    "hrv_rmssd_calc": 86.004771,
+    "hrv_lf_power": 0.018649,
+    "hrv_hf_power": 0.057238,
+    "hrv_lf_hf_ratio": 0.325809,
+    "hrv_sd1": 109.697614,
+    "hrv_sd2": 115.984804,
+    "hrv_dfa_alpha1": 0.586441,
+    "sessions_count": null,
+    "total_duration_min": null,
+    "z1_total_min": null,
+    "z2_total_min": null,
+    "z3_total_min": null,
+    "z4_total_min": null,
+    "z5_total_min": null,
+    "pct_z1z2": null,
+    "pct_z3": null,
+    "pct_z4z5": null,
+    "has_z5_peaks": null,
+    "stratum": "rest"
   },
   "series": [
     {
@@ -17679,594 +17744,259 @@
     },
     {
       "date": "2026-04-27",
-      "recovery_sublevel": 4.5,
-      "recovery_heart_rate": 68,
-      "sleep_score": 60,
+      "hrv_rmssd_night": 40.0,
+      "hrv_rri_mean_ms": 875.0,
+      "hrv_resp_interval": 5118.0,
+      "ans_status": 4.48178,
+      "ans_rate": 4.0,
+      "recovery_indicator": 4.0,
+      "recovery_sublevel": 37.0,
+      "baseline_rmssd": 31.0,
+      "sleep_duration_h": 5.95,
+      "sleep_asleep_h": 5.65,
+      "sleep_efficiency_pct": 94.957983,
+      "sleep_rem_pct": 17.226891,
+      "sleep_deep_pct": 25.210084,
       "sleep_wake_min": 18.0,
-      "active_calories": 2322
+      "sleep_interruptions": 15.0,
+      "sleep_long_interruptions": 4.0,
+      "sleep_score": 59.9764,
+      "sleep_continuity_score": 79.0,
+      "sleep_efficiency_score": 79.7199,
+      "sleep_rem_score": 72.0168,
+      "sleep_n3_score": 60.3481,
+      "sleep_long_int_score": 71.5,
+      "rr_intervals_count": 56870.0,
+      "rr_intervals_mean_ms": 802.094039,
+      "rr_intervals_p25_ms": 731.0,
+      "rr_intervals_p75_ms": 872.0,
+      "daily_calories": 1351.0,
+      "met_minutes": 50.584375,
+      "sedentary_min": 275.5,
+      "light_min": 79.5,
+      "moderate_min": 18.0,
+      "vigorous_min": null,
+      "non_wear_min": 14.5,
+      "hr_min": 59.0,
+      "hr_max": 86.0,
+      "hr_mean": 79.676404,
+      "hr_p25": 76.0,
+      "hr_p50": 83.0,
+      "hr_p75": 86.0,
+      "n_samples": 890.0,
+      "rmssd_supine": null,
+      "rmssd_stand": null,
+      "rr_supine_ms": null,
+      "rr_stand_ms": null,
+      "rr_min_standup_ms": null,
+      "delta_rmssd": null,
+      "delta_rr": null,
+      "vo2max_estimate": null,
+      "fitness_class": null,
+      "hrv_sdnn": 104.014352,
+      "hrv_pnn50": 21.111306,
+      "hrv_rmssd_calc": 86.004771,
+      "hrv_lf_power": 0.018649,
+      "hrv_hf_power": 0.057238,
+      "hrv_lf_hf_ratio": 0.325809,
+      "hrv_sd1": 109.697614,
+      "hrv_sd2": 115.984804,
+      "hrv_dfa_alpha1": 0.586441,
+      "sessions_count": null,
+      "total_duration_min": null,
+      "z1_total_min": null,
+      "z2_total_min": null,
+      "z3_total_min": null,
+      "z4_total_min": null,
+      "z5_total_min": null,
+      "pct_z1z2": null,
+      "pct_z3": null,
+      "pct_z4z5": null,
+      "has_z5_peaks": null,
+      "stratum": "rest"
     }
   ],
   "predictor": {
-    "model_version": "v3",
-    "n_diary": 61,
-    "n_training": 61,
-    "n_positive": 35,
-    "n_negative": 26,
-    "threshold": 6,
-    "ans_lag2_rho": 0.258,
-    "ans_lag2_p": 0.0705,
-    "ans_lag2_n": 50,
-    "hrv_lag2_rho": 0.26,
-    "hrv_lag2_p": 0.0629,
-    "auc": 0.9209,
-    "sensitivity": 0.8857,
-    "specificity": 0.7692,
-    "accuracy": 0.8361,
-    "tp": 31,
-    "fp": 6,
-    "tn": 20,
-    "fn": 4,
-    "features": [
-      "hrv_rmssd_night_t0",
-      "ans_status_t2",
-      "hrv_sdnn_t2",
-      "hrv_dfa_alpha1_t2",
-      "recovery_sublevel_t0"
-    ],
-    "lag_analysis": {
-      "ans_status": {
-        "0": {
-          "rho": -0.466,
-          "p": 0.0004,
-          "n": 54
-        },
-        "1": {
-          "rho": -0.09,
-          "p": 0.529,
-          "n": 51
-        },
-        "2": {
-          "rho": 0.258,
-          "p": 0.0705,
-          "n": 50
-        },
-        "3": {
-          "rho": -0.145,
-          "p": 0.304,
-          "n": 52
-        }
-      },
-      "hrv_rmssd_night": {
-        "0": {
-          "rho": -0.589,
-          "p": 0.0,
-          "n": 55
-        },
-        "1": {
-          "rho": -0.094,
-          "p": 0.5067,
-          "n": 52
-        },
-        "2": {
-          "rho": 0.26,
-          "p": 0.0629,
-          "n": 52
-        },
-        "3": {
-          "rho": -0.048,
-          "p": 0.7296,
-          "n": 54
-        }
-      },
-      "recovery_sublevel": {
-        "0": {
-          "rho": 0.206,
-          "p": 0.1358,
-          "n": 54
-        },
-        "1": {
-          "rho": -0.067,
-          "p": 0.641,
-          "n": 51
-        },
-        "2": {
-          "rho": -0.17,
-          "p": 0.2384,
-          "n": 50
-        },
-        "3": {
-          "rho": 0.089,
-          "p": 0.5312,
-          "n": 52
-        }
-      },
-      "sleep_wake_min": {
-        "0": {
-          "rho": 0.343,
-          "p": 0.0097,
-          "n": 56
-        },
-        "1": {
-          "rho": 0.004,
-          "p": 0.9787,
-          "n": 53
-        },
-        "2": {
-          "rho": -0.34,
-          "p": 0.0137,
-          "n": 52
-        }
-      },
-      "sleep_interruptions": {
-        "0": {
-          "rho": 0.372,
-          "p": 0.0041,
-          "n": 58
-        },
-        "1": {
-          "rho": 0.173,
-          "p": 0.2057,
-          "n": 55
-        },
-        "2": {
-          "rho": -0.19,
-          "p": 0.1654,
-          "n": 55
-        }
-      },
-      "hrv_rri_mean_ms": {
-        "2": {
-          "rho": 0.154,
-          "p": 0.2747,
-          "n": 52
-        }
-      },
-      "hrv_sdnn": {
-        "0": {
-          "rho": -0.286,
-          "p": 0.0254,
-          "n": 61
-        },
-        "1": {
-          "rho": 0.004,
-          "p": 0.977,
-          "n": 61
-        },
-        "2": {
-          "rho": -0.337,
-          "p": 0.0085,
-          "n": 60
-        }
-      },
-      "hrv_pnn50": {
-        "0": {
-          "rho": -0.401,
-          "p": 0.0014,
-          "n": 61
-        },
-        "1": {
-          "rho": 0.087,
-          "p": 0.5069,
-          "n": 61
-        },
-        "2": {
-          "rho": -0.019,
-          "p": 0.8882,
-          "n": 60
-        }
-      },
-      "hrv_lf_hf_ratio": {
-        "0": {
-          "rho": -0.077,
-          "p": 0.5543,
-          "n": 61
-        },
-        "1": {
-          "rho": 0.243,
-          "p": 0.0593,
-          "n": 61
-        },
-        "2": {
-          "rho": 0.044,
-          "p": 0.739,
-          "n": 60
-        }
-      },
-      "hrv_hf_power": {
-        "0": {
-          "rho": 0.126,
-          "p": 0.3327,
-          "n": 61
-        },
-        "1": {
-          "rho": -0.153,
-          "p": 0.2377,
-          "n": 61
-        },
-        "2": {
-          "rho": -0.087,
-          "p": 0.5093,
-          "n": 60
-        }
-      },
-      "hrv_sd1": {
-        "0": {
-          "rho": -0.053,
-          "p": 0.6866,
-          "n": 61
-        },
-        "1": {
-          "rho": -0.192,
-          "p": 0.1382,
-          "n": 61
-        },
-        "2": {
-          "rho": 0.001,
-          "p": 0.9941,
-          "n": 60
-        }
-      },
-      "hrv_sd2": {
-        "0": {
-          "rho": -0.124,
-          "p": 0.34,
-          "n": 61
-        },
-        "1": {
-          "rho": -0.102,
-          "p": 0.4356,
-          "n": 61
-        },
-        "2": {
-          "rho": 0.138,
-          "p": 0.2944,
-          "n": 60
-        }
-      },
-      "hrv_dfa_alpha1": {
-        "0": {
-          "rho": -0.008,
-          "p": 0.9541,
-          "n": 61
-        },
-        "1": {
-          "rho": 0.2,
-          "p": 0.1231,
-          "n": 61
-        },
-        "2": {
-          "rho": 0.149,
-          "p": 0.2548,
-          "n": 60
-        }
-      }
-    },
-    "residuals": {
-      "generated": "2026-04-27 20:57",
-      "brain_fog": {
-        "rho": 0.587,
-        "p": 0.0,
-        "n": 61
-      },
-      "autonomic_dysfunction": {
-        "rho": 0.412,
-        "p": 0.0018,
-        "n": 55
-      }
-    },
-    "generated": "2026-04-27 20:57",
-    "models": {
-      "logistic_regression": {
-        "auc": 0.9209,
-        "sensitivity": 0.8857,
-        "specificity": 0.7692,
-        "accuracy": 0.8361,
-        "tp": 31,
-        "fp": 6,
-        "tn": 20,
-        "fn": 4
-      },
-      "random_forest": {
-        "auc": 0.8308,
-        "sensitivity": 0.8286,
-        "specificity": 0.6538,
-        "accuracy": 0.7541,
-        "tp": 29,
-        "fp": 9,
-        "tn": 17,
-        "fn": 6
-      },
-      "gradient_boosting": {
-        "auc": 0.8044,
-        "sensitivity": 0.8286,
-        "specificity": 0.6538,
-        "accuracy": 0.7541,
-        "tp": 29,
-        "fp": 9,
-        "tn": 17,
-        "fn": 6
-      }
-    },
+    "version": "v3",
+    "methodology_doc": "/methodology",
     "targets": {
       "severity": {
-        "best_model": "logistic_regression",
-        "best_auc": 0.9209,
-        "best_auc_ci95": [
-          0.8442,
-          0.9868
-        ],
-        "sensitivity": 0.8857,
-        "specificity": 0.7692,
-        "selected_features": [
-          "hrv_rmssd_night_t0",
-          "ans_status_t2",
-          "hrv_sdnn_t2",
-          "hrv_dfa_alpha1_t2",
-          "recovery_sublevel_t0"
-        ],
+        "target_name": "severity",
         "n_training": 61,
         "n_positive": 35,
         "n_negative": 26,
-        "threshold": 6,
-        "models": {
-          "logistic_regression": {
-            "auc": 0.9209,
-            "sensitivity": 0.8857,
-            "specificity": 0.7692,
-            "accuracy": 0.8361,
-            "tp": 31,
-            "fp": 6,
-            "tn": 20,
-            "fn": 4
-          },
-          "random_forest": {
-            "auc": 0.8308,
-            "sensitivity": 0.8286,
-            "specificity": 0.6538,
-            "accuracy": 0.7541,
-            "tp": 29,
-            "fp": 9,
-            "tn": 17,
-            "fn": 6
-          },
-          "gradient_boosting": {
-            "auc": 0.8044,
-            "sensitivity": 0.8286,
-            "specificity": 0.6538,
-            "accuracy": 0.7541,
-            "tp": 29,
-            "fp": 9,
-            "tn": 17,
-            "fn": 6
-          }
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "ans_status_t2"
+        ],
+        "auc_loo": 0.8374,
+        "auc_ci95_lower": 0.7265,
+        "auc_ci95_upper": 0.9416,
+        "sensitivity": 0.8571,
+        "specificity": 0.6923,
+        "coefficients": {
+          "hrv_rmssd_night_t0": -1.171227,
+          "ans_status_t2": 0.462974
+        },
+        "intercept": 0.081004,
+        "scaler_mean": {
+          "hrv_rmssd_night_t0": 38.688525,
+          "ans_status_t2": -1.330008
+        },
+        "scaler_scale": {
+          "hrv_rmssd_night_t0": 8.316566,
+          "ans_status_t2": 4.958342
         }
       },
       "pem": {
-        "best_model": "logistic_regression",
-        "best_auc": 0.7951,
-        "best_auc_ci95": [
-          0.6646,
-          0.9035
-        ],
-        "sensitivity": 0.6829,
-        "specificity": 0.8,
-        "selected_features": [
-          "hrv_rmssd_night_t0",
-          "hrv_pnn50_t1",
-          "hrv_rmssd_night_t1"
-        ],
+        "target_name": "pem",
         "n_training": 61,
         "n_positive": 41,
         "n_negative": 20,
-        "threshold": 5,
-        "models": {
-          "logistic_regression": {
-            "auc": 0.7951,
-            "sensitivity": 0.6829,
-            "specificity": 0.8,
-            "accuracy": 0.7213,
-            "tp": 28,
-            "fp": 4,
-            "tn": 16,
-            "fn": 13
-          },
-          "random_forest": {
-            "auc": 0.7524,
-            "sensitivity": 0.7561,
-            "specificity": 0.65,
-            "accuracy": 0.7213,
-            "tp": 31,
-            "fp": 7,
-            "tn": 13,
-            "fn": 10
-          },
-          "gradient_boosting": {
-            "auc": 0.7854,
-            "sensitivity": 0.8293,
-            "specificity": 0.6,
-            "accuracy": 0.7541,
-            "tp": 34,
-            "fp": 8,
-            "tn": 12,
-            "fn": 7
-          }
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "hrv_rmssd_calc_t1"
+        ],
+        "auc_loo": 0.7988,
+        "auc_ci95_lower": 0.6845,
+        "auc_ci95_upper": 0.9044,
+        "sensitivity": 0.7317,
+        "specificity": 0.7,
+        "coefficients": {
+          "hrv_rmssd_night_t0": -1.099281,
+          "hrv_rmssd_calc_t1": 0.37317
+        },
+        "intercept": 0.204648,
+        "scaler_mean": {
+          "hrv_rmssd_night_t0": 38.688525,
+          "hrv_rmssd_calc_t1": 67.879434
+        },
+        "scaler_scale": {
+          "hrv_rmssd_night_t0": 8.316566,
+          "hrv_rmssd_calc_t1": 8.876951
         }
       },
       "fatiga": {
-        "best_model": "logistic_regression",
-        "best_auc": 0.83,
-        "best_auc_ci95": [
-          0.7051,
-          0.9464
-        ],
-        "sensitivity": 0.7027,
-        "specificity": 0.7917,
-        "selected_features": [
-          "hrv_rmssd_night_t0",
-          "sleep_wake_min_t2",
-          "hrv_hf_power_t0"
-        ],
+        "target_name": "fatiga",
         "n_training": 61,
         "n_positive": 37,
         "n_negative": 24,
-        "threshold": 6,
-        "models": {
-          "logistic_regression": {
-            "auc": 0.83,
-            "sensitivity": 0.7027,
-            "specificity": 0.7917,
-            "accuracy": 0.7377,
-            "tp": 26,
-            "fp": 5,
-            "tn": 19,
-            "fn": 11
-          },
-          "random_forest": {
-            "auc": 0.7736,
-            "sensitivity": 0.7297,
-            "specificity": 0.5833,
-            "accuracy": 0.6721,
-            "tp": 27,
-            "fp": 10,
-            "tn": 14,
-            "fn": 10
-          },
-          "gradient_boosting": {
-            "auc": 0.7691,
-            "sensitivity": 0.7838,
-            "specificity": 0.5833,
-            "accuracy": 0.7049,
-            "tp": 29,
-            "fp": 10,
-            "tn": 14,
-            "fn": 8
-          }
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "hrv_rmssd_night_t1"
+        ],
+        "auc_loo": 0.7703,
+        "auc_ci95_lower": 0.6405,
+        "auc_ci95_upper": 0.8939,
+        "sensitivity": 0.6486,
+        "specificity": 0.7083,
+        "coefficients": {
+          "hrv_rmssd_night_t0": -0.921591,
+          "hrv_rmssd_night_t1": -0.364245
+        },
+        "intercept": 0.104775,
+        "scaler_mean": {
+          "hrv_rmssd_night_t0": 38.688525,
+          "hrv_rmssd_night_t1": 39.360656
+        },
+        "scaler_scale": {
+          "hrv_rmssd_night_t0": 8.316566,
+          "hrv_rmssd_night_t1": 7.401889
         }
       },
       "niebla_mental": {
-        "best_model": "logistic_regression",
-        "best_auc": 0.9879,
-        "best_auc_ci95": [
-          0.95,
-          1.0
-        ],
-        "sensitivity": 0.8909,
-        "specificity": 1.0,
+        "target_name": "niebla_mental",
+        "n_training": 61,
+        "n_positive": 55,
+        "n_negative": 6,
         "selected_features": [
           "ans_status_t0",
           "hrv_rmssd_night_t1",
           "recovery_sublevel_t3"
         ],
-        "n_training": 61,
-        "n_positive": 55,
-        "n_negative": 6,
-        "threshold": 5,
-        "models": {
-          "logistic_regression": {
-            "auc": 0.9879,
-            "sensitivity": 0.8909,
-            "specificity": 1.0,
-            "accuracy": 0.9016,
-            "tp": 49,
-            "fp": 0,
-            "tn": 6,
-            "fn": 6
-          },
-          "random_forest": {
-            "auc": 0.9152,
-            "sensitivity": 0.9091,
-            "specificity": 0.6667,
-            "accuracy": 0.8852,
-            "tp": 50,
-            "fp": 2,
-            "tn": 4,
-            "fn": 5
-          },
-          "gradient_boosting": {
-            "auc": 0.9121,
-            "sensitivity": 0.9818,
-            "specificity": 0.6667,
-            "accuracy": 0.9508,
-            "tp": 54,
-            "fp": 2,
-            "tn": 4,
-            "fn": 1
-          }
+        "auc_loo": 0.9879,
+        "auc_ci95_lower": 0.95,
+        "auc_ci95_upper": 1.0,
+        "sensitivity": 0.8909,
+        "specificity": 1.0,
+        "coefficients": {
+          "ans_status_t0": -2.007771,
+          "hrv_rmssd_night_t1": -0.903794,
+          "recovery_sublevel_t3": 0.608203
+        },
+        "intercept": 2.095354,
+        "scaler_mean": {
+          "ans_status_t0": -1.957787,
+          "hrv_rmssd_night_t1": 39.360656,
+          "recovery_sublevel_t3": 46.393443
+        },
+        "scaler_scale": {
+          "ans_status_t0": 5.819046,
+          "hrv_rmssd_night_t1": 7.401889,
+          "recovery_sublevel_t3": 18.631261
         }
       },
       "disfuncion_autonomica": {
-        "best_model": "logistic_regression",
-        "best_auc": 0.837,
-        "best_auc_ci95": [
-          0.7151,
-          0.9427
-        ],
-        "sensitivity": 0.8125,
-        "specificity": 0.7391,
-        "selected_features": [
-          "hrv_rmssd_night_t0",
-          "sleep_wake_min_t2"
-        ],
+        "target_name": "disfuncion_autonomica",
         "n_training": 55,
         "n_positive": 32,
         "n_negative": 23,
-        "threshold": 5,
-        "models": {
-          "logistic_regression": {
-            "auc": 0.837,
-            "sensitivity": 0.8125,
-            "specificity": 0.7391,
-            "accuracy": 0.7818,
-            "tp": 26,
-            "fp": 6,
-            "tn": 17,
-            "fn": 6
-          },
-          "random_forest": {
-            "auc": 0.8057,
-            "sensitivity": 0.7812,
-            "specificity": 0.7826,
-            "accuracy": 0.7818,
-            "tp": 25,
-            "fp": 5,
-            "tn": 18,
-            "fn": 7
-          },
-          "gradient_boosting": {
-            "auc": 0.716,
-            "sensitivity": 0.7188,
-            "specificity": 0.6957,
-            "accuracy": 0.7091,
-            "tp": 23,
-            "fp": 7,
-            "tn": 16,
-            "fn": 9
-          }
+        "selected_features": [
+          "hrv_rmssd_night_t0",
+          "recovery_sublevel_t3"
+        ],
+        "auc_loo": 0.8288,
+        "auc_ci95_lower": 0.7151,
+        "auc_ci95_upper": 0.9365,
+        "sensitivity": 0.75,
+        "specificity": 0.7391,
+        "coefficients": {
+          "hrv_rmssd_night_t0": -1.215541,
+          "recovery_sublevel_t3": 0.462884
+        },
+        "intercept": 0.119562,
+        "scaler_mean": {
+          "hrv_rmssd_night_t0": 38.472727,
+          "recovery_sublevel_t3": 45.8
+        },
+        "scaler_scale": {
+          "hrv_rmssd_night_t0": 8.736245,
+          "recovery_sublevel_t3": 18.744599
         }
       }
     },
     "deployment_model": {
       "target": "disfuncion_autonomica",
-      "threshold": 5,
-      "features": [
-        "hrv_sdnn_t2",
-        "sleep_wake_min_t2"
+      "target_name": "disfuncion_autonomica",
+      "lags": [
+        2,
+        3
       ],
-      "intercept": 0.033509,
-      "coef": {
-        "hrv_sdnn_t2": -0.451102,
-        "sleep_wake_min_t2": -0.48546
+      "selected_features": [
+        "hrv_rmssd_calc_t2",
+        "hrv_rmssd_night_t2"
+      ],
+      "auc_loo": 0.6875,
+      "auc_ci95_lower": 0.5417,
+      "auc_ci95_upper": 0.8297,
+      "sensitivity": 0.625,
+      "specificity": 0.7391,
+      "n_training": 55,
+      "n_positive": 32,
+      "n_negative": 23,
+      "coefficients": {
+        "hrv_rmssd_calc_t2": -0.755369,
+        "hrv_rmssd_night_t2": 0.539065
       },
+      "intercept": 0.041193,
       "scaler_mean": {
-        "hrv_sdnn_t2": 128.195556,
-        "sleep_wake_min_t2": 35.546296
+        "hrv_rmssd_calc_t2": 66.545169,
+        "hrv_rmssd_night_t2": 39.972727
       },
       "scaler_scale": {
-        "hrv_sdnn_t2": 22.862677,
-        "sleep_wake_min_t2": 12.18502
-      },
-      "auc_loo": 0.6802,
-      "n_training": 54
+        "hrv_rmssd_calc_t2": 7.377116,
+        "hrv_rmssd_night_t2": 7.57533
+      }
     }
   },
   "headline": {
@@ -18290,61 +18020,5 @@
     "n_diary_entries": 61,
     "n_paired": 61,
     "n_training_sessions": 107
-  },
-  "finding": {
-    "spearman_rho": 0.258,
-    "p_value": 0.0705,
-    "auc": 0.9209,
-    "sensitivity_pct": 88.6,
-    "n_pairs": 61,
-    "n_diary": 61,
-    "description": "Nocturnal ANS predicts PEM 48h ahead · model v3",
-    "targets_summary": {
-      "severity": {
-        "auc": 0.9209,
-        "ci95": [
-          0.8442,
-          0.9868
-        ],
-        "best_model": "logistic_regression",
-        "n": 61
-      },
-      "pem": {
-        "auc": 0.7951,
-        "ci95": [
-          0.6646,
-          0.9035
-        ],
-        "best_model": "logistic_regression",
-        "n": 61
-      },
-      "fatiga": {
-        "auc": 0.83,
-        "ci95": [
-          0.7051,
-          0.9464
-        ],
-        "best_model": "logistic_regression",
-        "n": 61
-      },
-      "niebla_mental": {
-        "auc": 0.9879,
-        "ci95": [
-          0.95,
-          1.0
-        ],
-        "best_model": "logistic_regression",
-        "n": 61
-      },
-      "disfuncion_autonomica": {
-        "auc": 0.837,
-        "ci95": [
-          0.7151,
-          0.9427
-        ],
-        "best_model": "logistic_regression",
-        "n": 55
-      }
-    }
   }
 }
