@@ -66,6 +66,7 @@ const TARGET_LABELS = {
 }
 
 function aucColor(v) {
+  if (v == null) return 'var(--teal)'
   if (v >= 0.80) return 'var(--green)'
   if (v >= 0.70) return 'var(--teal)'
   return 'var(--warm)'
@@ -152,6 +153,10 @@ export default function Research({ data, loading }) {
           <div className="fp-targets">
             {Object.entries(targets).map(([key, t], i) => {
               const isBrainFog = key === 'niebla_mental'
+              // Support both old schema (best_auc / best_auc_ci95) and new (auc_loo / auc_ci95_lower)
+              const auc = t.auc_loo ?? t.best_auc
+              const ciLo = t.auc_ci95_lower ?? t.best_auc_ci95?.[0]
+              const ciHi = t.auc_ci95_upper ?? t.best_auc_ci95?.[1]
               return (
                 <div
                   key={key}
@@ -166,29 +171,29 @@ export default function Research({ data, loading }) {
                     {TARGET_LABELS[key] || key}
                     {isBrainFog && <span className="fp-flag">*</span>}
                   </span>
-                  <span className="fp-target-auc" style={{ color: aucColor(t.auc_loo) }}>
-                    {t.auc_loo.toFixed(2)}
+                  <span className="fp-target-auc" style={{ color: aucColor(auc) }}>
+                    {auc != null ? auc.toFixed(2) : '—'}
                   </span>
                   <div className="fp-target-bar">
                     <div
                       className="fp-target-bar-fill"
                       style={{
-                        width: targetsVisible ? `${((t.auc_loo - 0.5) / 0.5) * 100}%` : '0%',
-                        background: aucColor(t.auc_loo),
+                        width: targetsVisible && auc != null ? `${((auc - 0.5) / 0.5) * 100}%` : '0%',
+                        background: aucColor(auc),
                         transitionDelay: `${i * 100 + 400}ms`,
                       }}
                     />
                     <span
                       className="fp-bar-pulse"
                       style={{
-                        background: aucColor(t.auc_loo),
+                        background: aucColor(auc),
                         animationDelay: `${i * 600}ms`,
                         opacity: targetsVisible ? 1 : 0,
                       }}
                     />
                   </div>
                   <span className="fp-target-ci">
-                    {t.auc_ci95_lower.toFixed(2)}–{t.auc_ci95_upper.toFixed(2)}
+                    {ciLo != null ? ciLo.toFixed(2) : '—'}–{ciHi != null ? ciHi.toFixed(2) : '—'}
                   </span>
                 </div>
               )
