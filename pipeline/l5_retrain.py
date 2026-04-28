@@ -83,6 +83,22 @@ class TargetResult(PipelineModel):
     scaler_scale: dict[str, float]
 
 
+# ── Metadata ───────────────────────────────────────────────────────────────────
+
+def _build_metadata() -> dict:
+    """Build a metadata block for predictor_results.json."""
+    import datetime
+    return {
+        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "model_version": "v3.1",
+        "validation": "LOO-CV + bootstrap 1000×",
+        "feature_selection": "forward greedy per target, max 5 features, stop if AUC gain < 0.01",
+        "candidate_features": 13,
+        "candidate_lags": [0, 1, 2],
+        "n_targets": 5,
+    }
+
+
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 def _safe_float(v: object) -> float | None:
@@ -427,6 +443,7 @@ def _fit_deployment_model(
 
     return {
         "target": target_cfg["name"],
+        "target_name": target_cfg["name"],
         "lags": DEPLOYMENT_LAGS,
         "selected_features": selected_names,
         "auc_loo": round(auc, 4),
@@ -486,7 +503,11 @@ def retrain(diary_features_path: Path | None = None) -> dict:
     deploy_target = next(t for t in TARGETS if t["name"] == "disfuncion_autonomica")
     deployment = _fit_deployment_model(df, deploy_target, feature_col_names)
 
-    return {"targets": results, "deployment_model": deployment}
+    return {
+        "metadata": _build_metadata(),
+        "targets": results,
+        "deployment_model": deployment,
+    }
 
 
 if __name__ == "__main__":
