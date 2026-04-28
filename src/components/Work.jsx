@@ -29,8 +29,8 @@ const PILLARS = [
       return `AUC ${headline.value.toFixed(2)} (autonomic dysfunction · CI95 ${ci[0].toFixed(2)}–${ci[1].toFixed(2)} · n=${headline.n} paired nights). Headline metric uses ${headline.features.join(' + ')} — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.`
     },
     stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
-    link: '/ans-predictor.html',
-    linkText: 'View research →',
+    link: '/pipeline.html',
+    linkText: 'View full pipeline →',
     external: false,
   },
   {

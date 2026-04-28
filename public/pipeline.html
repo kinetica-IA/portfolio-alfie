@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0f9f9">
+<title>Pipeline — Kinetica AI</title>
+<meta name="description" content="End-to-end traceable data pipeline: N-of-1 longitudinal ANS predictor from raw Polar wearable data to deployed portfolio model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/pipeline.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="back-link">← kineticaai.com</a>
+  <span class="brand">Kinetica AI</span>
+</header>
+
+<main>
+
+  <section class="page-header">
+    <span class="eyebrow">Traceable Pipeline</span>
+    <h1>From raw heartbeat to deployed predictor</h1>
+    <p class="subtitle">
+      Seven levels of transformations: GDPR cardiac export → structured features →
+      multi-target LOO-CV model → atomic portfolio publish.
+      Every step reproducible, every drop logged.
+    </p>
+    <p class="meta" id="meta-line">Loading pipeline state…</p>
+  </section>
+
+  <section class="overview">
+    <h2 class="eyebrow section-label">Overview</h2>
+    <div class="sankey" id="sankey" aria-label="Pipeline data flow overview"></div>
+  </section>
+
+  <section class="anatomy">
+    <h2 class="eyebrow section-label">Per-level anatomy</h2>
+    <div class="levels" id="levels"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Pipeline state regenerates on every run. Artifacts are deterministic given the same input export.</p>
+  <p>Source: <a href="https://github.com/kinetica-IA/portfolio-alfie" target="_blank" rel="noopener noreferrer">github.com/kinetica-IA/portfolio-alfie</a></p>
+</footer>
+
+<script type="module" src="/scripts/pipeline.js"></script>
+</body>
+</html>
