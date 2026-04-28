@@ -1,0 +1,116 @@
+{
+  "schema_version": "v1.0",
+  "generated_at": "2026-04-28T17:09:25.831701+00:00",
+  "levels": [
+    {
+      "level": "L0",
+      "name": "Raw ingest",
+      "color_hex": "#a8796e",
+      "status": "operational",
+      "description": "Polar GDPR export. 11 distinct data sources from a single subject's wearable. Lives outside the repo as raw personal cardiac data is not committed.",
+      "metrics": {
+        "files": 1025,
+        "size_gb": 2.05,
+        "sources": 11,
+        "date_start": "2025-08-25",
+        "date_end": "2026-04-27"
+      },
+      "versioned": false,
+      "last_run": null
+    },
+    {
+      "level": "L1",
+      "name": "Structured extract",
+      "color_hex": "#c4855a",
+      "status": "operational",
+      "description": "Eight Pydantic-validated parsers. Heterogeneous JSON schemas in, typed pandas DataFrames out. Every drop logged with reason.",
+      "metrics": {
+        "parsers": 9,
+        "rows_total": 1562,
+        "drops_total": 0
+      },
+      "versioned": false,
+      "last_run": null
+    },
+    {
+      "level": "L2",
+      "name": "Derived features",
+      "color_hex": "#d4a843",
+      "status": "operational",
+      "description": "Three feature computers. neurokit2 advanced HRV (SDNN, LF/HF, SD1, DFA-α1) on raw RR, daily zone aggregation, training session stratification.",
+      "metrics": {
+        "nights_with_hrv": 239,
+        "hrv_features": 9,
+        "training_days_classified": 107
+      },
+      "versioned": false,
+      "last_run": null
+    },
+    {
+      "level": "L3",
+      "name": "Unified daily frame",
+      "color_hex": "#6b8a6d",
+      "status": "operational",
+      "description": "Outer-merge of L1 and L2 across date. One row per day, NaN where source missing. The canonical L3 artifact.",
+      "metrics": {
+        "rows": 243,
+        "columns": 71,
+        "date_start": "2025-08-25",
+        "date_end": "2026-04-27"
+      },
+      "versioned": false,
+      "last_run": "2026-04-28T17:07:09.617796+00:00"
+    },
+    {
+      "level": "L4",
+      "name": "Joint with diary",
+      "color_hex": "#6b9e7a",
+      "status": "operational",
+      "description": "Inner merge with subjective symptom diary. Adds 4-lag temporal features (t0–t3) on autonomic columns.",
+      "metrics": {
+        "paired_days": 61,
+        "diary_columns": 7,
+        "lag_features_added": 24
+      },
+      "versioned": false,
+      "last_run": "2026-04-28T17:06:43.200617+00:00"
+    },
+    {
+      "level": "L5",
+      "name": "Model outputs",
+      "color_hex": "#5d8a82",
+      "status": "operational",
+      "description": "Multi-target predictor. Forward selection per target, LOO-CV, bootstrap CI95×1000. Headline locked to autonomic dysfunction (deployment target).",
+      "metrics": {
+        "targets": 5,
+        "headline_target": "disfuncion_autonomica",
+        "headline_auc": 0.829,
+        "headline_n": 55
+      },
+      "versioned": true,
+      "last_run": "2026-04-28T17:07:04.258605+00:00"
+    },
+    {
+      "level": "L6",
+      "name": "Portfolio render",
+      "color_hex": "#85a8b8",
+      "status": "operational",
+      "description": "polar_live.json regenerated atomically and served at kineticaai.com via React runtime. SSR fallback first, hydration fills CI and features.",
+      "metrics": {
+        "polar_live_size_kb": 522,
+        "schema_version": "v3.1",
+        "live_at": "kineticaai.com"
+      },
+      "versioned": true,
+      "last_run": "2026-04-28T17:07:09.932799+00:00"
+    }
+  ],
+  "summary": {
+    "total_days": 243,
+    "diary_pairs": 61,
+    "model_targets": 5,
+    "headline_auc": 0.829,
+    "data_start": "2025-08-25",
+    "data_end": "2026-04-27"
+  }
+}
