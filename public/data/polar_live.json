@@ -1,14 +1,10 @@
 {
   "schema_version": "v3.1",
-  "updated_at": "2026-05-08T06:00:00Z",
+  "updated_at": "2026-05-09T06:00:00Z",
   "pipeline_run_id": "1102e14",
   "latest": {
-    "date": "2026-05-07",
-    "recovery_sublevel": 1.1,
-    "recovery_heart_rate": 67,
-    "sleep_score": 81,
-    "sleep_wake_min": 12.0,
-    "active_calories": 2293
+    "date": "2026-05-08",
+    "active_calories": 1152
   },
   "series": [
     {
@@ -17829,6 +17825,10 @@
       "sleep_score": 81,
       "sleep_wake_min": 12.0,
       "active_calories": 2293
+    },
+    {
+      "date": "2026-05-08",
+      "active_calories": 1152
     }
   ],
   "predictor": {
