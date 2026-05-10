@@ -87,9 +87,9 @@ class TargetResult(PipelineModel):
 
 def _build_metadata() -> dict:
     """Build a metadata block for predictor_results.json."""
-    import datetime
+    from datetime import datetime, timezone
     return {
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "model_version": "v3.1",
         "validation": "LOO-CV + bootstrap 1000×",
         "feature_selection": "forward greedy per target, max 5 features, stop if AUC gain < 0.01",
@@ -510,7 +510,9 @@ def retrain(diary_features_path: Path | None = None) -> dict:
     }
 
 
-if __name__ == "__main__":
+# ── Entry point ────────────────────────────────────────────────────────────────
+
+def run() -> None:
     out_dir = DATA_PROCESSED_DIR / "L5"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -519,3 +521,7 @@ if __name__ == "__main__":
     out_path = out_dir / "predictor_results.json"
     out_path.write_text(json.dumps(results, indent=2, default=str))
     print(f"Written → {out_path}")
+
+
+if __name__ == "__main__":
+    run()

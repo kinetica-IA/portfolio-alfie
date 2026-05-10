@@ -1,3 +1,6 @@
+# This file reads outputs from all analysis modules.
+# Add new analysis output paths here as modules are implemented.
+
 """L6 pipeline state publisher: generates public/data/pipeline_state.json.
 
 Reads all L0–L5 outputs and publishes a machine-readable state snapshot
