@@ -35,7 +35,7 @@ jobs:
         run: |
           if [ -f data/processed/L3/daily_unified.csv ]; then
             pip install -q numpy pandas pyarrow pydantic scikit-learn neurokit2
-            python -m pipeline.l5_publish
+            python -m analysis.pem_predictor.l5_publish
           else
             echo "L3 not available, skipping publish"
           fi

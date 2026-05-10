@@ -30,7 +30,7 @@ jobs:
         run: uv sync
 
       - name: Retrain predictor
-        run: uv run python -m pipeline.l5_retrain
+        run: uv run python -m analysis.pem_predictor.run
 
       - name: Commit updated metrics
         run: |

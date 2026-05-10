@@ -7,7 +7,7 @@ the live file. The existing file is backed up before the swap.
 Atomic swap procedure: write to a .tmp sibling, validate it parses, then
 rename. If any step fails, the existing file is untouched.
 
-Run: python -m pipeline.l5_publish
+Run: python -m analysis.pem_predictor.l5_publish
 """
 
 from __future__ import annotations
@@ -249,5 +249,11 @@ def publish_polar_live(
     print(f"  atomic swap completed → {target} ({size_kb} KB)", flush=True)
 
 
-if __name__ == "__main__":
+# ── Entry point ────────────────────────────────────────────────────────────────
+
+def run() -> None:
     publish_polar_live(n_diary_entries=61)
+
+
+if __name__ == "__main__":
+    run()
