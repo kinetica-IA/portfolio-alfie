@@ -40,11 +40,19 @@ jobs:
             echo "L3 not available, skipping publish"
           fi
 
+      - name: Update pipeline state
+        run: |
+          if [ -f data/processed/L3/daily_unified.csv ]; then
+            uv run python -m pipeline.l6_publish_state
+          else
+            echo "L3 not available, skipping pipeline state update"
+          fi
+
       - name: Commit updated biometrics
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/polar_live.json
+          git add public/data/polar_live.json public/data/pipeline_state.json
           if git diff --cached --quiet; then
             echo "No changes to commit — data unchanged."
           else

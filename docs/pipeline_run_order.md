@@ -1,5 +1,12 @@
 Last verified: 2026-05-10, all steps exit 0, 243 rows, AUC 0.829 [0.715, 0.936]
 
+## Before every session
+  cd /Users/alfonsonavarro/portfolio-alfie
+  git pull origin main
+  
+This keeps the local NODE 2 worktree in sync with the nightly 
+biometrics commits that CI pushes to main automatically.
+
 ## Pipeline B — full local run order
 
 ### L1 — Structured extract
