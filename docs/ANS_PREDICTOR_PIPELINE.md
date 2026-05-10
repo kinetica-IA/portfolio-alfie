@@ -139,6 +139,8 @@ The consistent appearance of same-night RMSSD (`hrv_rmssd_night_t0`) across four
 
 **No regulatory status.** This system is a research and portfolio demonstration. It has no MDR, FDA, or equivalent regulatory clearance and makes no claims of diagnostic utility.
 
+**Live model freshness.** The `pipeline_run_id` field in `polar_live.json` reflects the git SHA of the last local full-pipeline run (L1–L5), not the nightly API fetch. The nightly workflow updates biometric series data but reuses the existing model block. The model is only retrained when `diary_live.csv` changes or when Pipeline B is run locally and pushed.
+
 ---
 
 ## 7. Tech stack
