@@ -18039,5 +18039,33 @@
     "n_diary_entries": 61,
     "n_paired": 61,
     "n_training_sessions": 107
+  },
+  "sleep_quality": {
+    "target_name": "fatiga",
+    "n_training": 61,
+    "n_positive": 37,
+    "n_negative": 24,
+    "selected_features": [
+      "hrv_rmssd_night_t0",
+      "hrv_rmssd_night_t1"
+    ],
+    "auc_loo": 0.7703,
+    "auc_ci95_lower": 0.6405,
+    "auc_ci95_upper": 0.8939,
+    "sensitivity": 0.6486,
+    "specificity": 0.7083,
+    "coefficients": {
+      "hrv_rmssd_night_t0": -0.921591,
+      "hrv_rmssd_night_t1": -0.364245
+    },
+    "intercept": 0.104775,
+    "scaler_mean": {
+      "hrv_rmssd_night_t0": 38.688525,
+      "hrv_rmssd_night_t1": 39.360656
+    },
+    "scaler_scale": {
+      "hrv_rmssd_night_t0": 8.316566,
+      "hrv_rmssd_night_t1": 7.401889
+    }
   }
 }
