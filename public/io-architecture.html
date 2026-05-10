@@ -826,12 +826,12 @@ const modules = [
   {
     id: "context_engine", name: "context_engine.py", icon: "◈", color: "#90a7a5", badge: "CONTEXT",
     short: "profile + rules + RAG + ALMA L1 · pre-generation",
-    summary: "Assembles all context before the LLM sees the query. Patient profile, clinical rules, relevant RAG chunks from ChromaDB (1880 chunks), and the 5 ALMA L1 axioms injected as context. Zero extra tokens at runtime for ALMA L1.",
+    summary: "Assembles all context before the LLM sees the query. Patient profile, clinical rules, relevant RAG chunks from ChromaDB (26 chunks, prototype dataset), and the 5 ALMA L1 axioms injected as context. Zero extra tokens at runtime for ALMA L1.",
     sections: [
       { name: "profile_loader", lines: "shared/context/profile_loader.py",
         desc: "Loads the patient's clinical profile. Structured data, not free text." },
       { name: "rag_retriever", lines: "shared/context/rag_retriever.py",
-        desc: "Query against ChromaDB (1880 chunks, intfloat/multilingual-e5-large, 1024 dims, cosine). Returns the most relevant chunks." },
+        desc: "Query against ChromaDB (26 chunks, prototype dataset · intfloat/multilingual-e5-large, 1024 dims, cosine). Returns the most relevant chunks." },
       { name: "ALMA L1 injection", lines: "shared/safety/alma/",
         desc: "5 epistemic axioms (Conciencia (Awareness) · Claridad (Clarity) · Límite (Boundary) · Pragmatismo (Pragmatism) · Cuidado (Care)) injected as system context. Zero-cost: not an LLM call, it is prompt injection." }
     ],
