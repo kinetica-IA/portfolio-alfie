@@ -5,11 +5,15 @@ sensitive personal cardiac data (raw RR intervals) that should not be
 committed. This module is the single source of truth for that path.
 """
 
+import os
 from pathlib import Path
 
 REPO_ROOT: Path = Path(__file__).resolve().parent.parent
 
-RAW_DATA_DIR: Path = Path.home() / "IO3" / "clinical_data_backup" / "polar_export_2026-04-27"
+RAW_DATA_DIR: Path = Path(
+    os.environ.get("POLAR_RAW_DATA_DIR",
+                   "~/IO3/clinical_data_backup/polar_export_2026-04-27")
+).expanduser()
 
 DATA_DIR: Path = REPO_ROOT / "data"
 DATA_PROCESSED_DIR: Path = DATA_DIR / "processed"

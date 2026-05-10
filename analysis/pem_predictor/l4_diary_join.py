@@ -136,7 +136,9 @@ def build_diary_features(
     return result
 
 
-if __name__ == "__main__":
+# ── Entry point ────────────────────────────────────────────────────────────────
+
+def run() -> None:
     out_dir = DATA_PROCESSED_DIR / "L4"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -149,3 +151,7 @@ if __name__ == "__main__":
 
     print(f"Written {len(df)} rows × {len(df.columns)} cols → {parquet_path}")
     print(f"Written CSV → {csv_path}")
+
+
+if __name__ == "__main__":
+    run()
