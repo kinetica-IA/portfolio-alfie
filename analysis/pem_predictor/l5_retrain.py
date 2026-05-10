@@ -510,7 +510,9 @@ def retrain(diary_features_path: Path | None = None) -> dict:
     }
 
 
-if __name__ == "__main__":
+# ── Entry point ────────────────────────────────────────────────────────────────
+
+def run() -> None:
     out_dir = DATA_PROCESSED_DIR / "L5"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -519,3 +521,7 @@ if __name__ == "__main__":
     out_path = out_dir / "predictor_results.json"
     out_path.write_text(json.dumps(results, indent=2, default=str))
     print(f"Written → {out_path}")
+
+
+if __name__ == "__main__":
+    run()

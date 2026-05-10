@@ -25,13 +25,22 @@ Last verified: 2026-05-10, all steps exit 0, 243 rows, AUC 0.829 [0.715, 0.936]
 
 ### L4 — Diary join
 
-13. `uv run python -m pipeline.l4_diary_join`
+13. `uv run python -m analysis.pem_predictor.l4_diary_join`
 
 ### L5 — Model + publish
 
-14. `uv run python -m pipeline.l5_retrain`
-15. `uv run python -m pipeline.l5_publish`
+14. `uv run python -m analysis.pem_predictor.l5_retrain`
+15. `uv run python -m analysis.pem_predictor.l5_publish`
 
 ### L6 — Pipeline state
 
 16. `uv run python -m pipeline.l6_publish_state`
+
+## Analysis modules (run after L3)
+
+### PEM Predictor (requires diary_live.csv)
+  uv run python -m analysis.pem_predictor.run
+
+### Training Response (no diary required) — stub, not yet implemented
+### Sleep Quality (no diary required) — stub, not yet implemented
+### Orthostatic Trend (no diary required) — stub, not yet implemented
