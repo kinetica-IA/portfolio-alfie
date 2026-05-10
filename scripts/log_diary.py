@@ -40,7 +40,6 @@ POLAR_JSON    = PORTFOLIO_DIR / "public" / "data" / "polar_live.json"
 DIARY_COLS = ["date", "schema_version", "severidad_global", "fatiga", "pem",
               "niebla_mental", "disfuncion_autonomica", "dolor", "zolpidem", "nota"]
 
-MODEL_AUC         = 0.8608
 MODEL_SENSITIVITY = 0.7188
 MODEL_N           = 54
 
