@@ -42,11 +42,11 @@ portfolio-alfie/
 │       └── polar-retrain.yml       # On diary push: retrain predictor
 │
 ├── data/
-│   └── diary_live.csv              # 39+ DSQ-PEM symptom entries (appends daily)
+│   └── diary_live.csv              # 61+ DSQ-PEM symptom entries (appends daily)
 │
 ├── public/
 │   ├── data/
-│   │   └── polar_live.json         # 223-day biometric series + v3 multi-target predictor
+│   │   └── polar_live.json         # 243-day biometric series + v3 multi-target predictor
 │   └── diary.html                  # Standalone DSQ web form (no server needed)
 │
 ├── scripts/
@@ -109,17 +109,17 @@ Writes: polar_live.json["predictor"] (multi-target v3)  →  git push
     "sleep_interruptions": 18,
     "steps": 2686
   },
-  "series": [ /* 223+ days */ ],
+  "series": [ /* 243+ days */ ],
   "predictor": {
     "model_version": "v3",
-    "auc": 0.84,
-    "n_training": 60,
+    "auc": 0.829,
+    "n_training": 55,
     "targets": {
       "disfuncion_autonomica": {
-        "best_auc": 0.8608,
-        "best_auc_ci95": [0.7529, 0.9505],
-        "selected_features": ["hrv_rmssd_night_t0", "hrv_lf_hf_ratio_t1", "hrv_sd1_t0"],
-        "n_training": 54
+        "best_auc": 0.8288,
+        "best_auc_ci95": [0.7151, 0.9365],
+        "selected_features": ["hrv_rmssd_night_t0", "recovery_sublevel_t3"],
+        "n_training": 55
       }
       /* + fatiga, niebla_mental, pem, severity */
     }

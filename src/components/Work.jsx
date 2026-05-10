@@ -6,10 +6,11 @@ import LivePulse from './LivePulse'
 const PILLARS = [
   {
     num: '01', color: 'var(--warm)',
-    badge: 'CLINICAL AI · CONTEXT ENGINE', badgeClass: 'wk-badge--warm',
+    badge: 'LEGACY · PAUSED', badgeClass: 'wk-badge--warm',
     title: 'IO3 — Context Engine for Clinical AI',
+    archivedNote: 'Archived prototype — not in active development. Architecture and audit trail documented below.',
     problem: 'Clinical AI that starts every query from scratch is brittle. Clinicians need persistent context — patient profile, clinical rules, evidence base — injected into every model call.',
-    approach: 'Persistent orchestration layer in front of the LLM. Each query is enriched with patient profile, clinical rules, RAG evidence (1,880 chunks in ChromaDB), and ALMA L1 axioms before any model sees it. The model is interchangeable. IO3 is not.',
+    approach: 'Persistent orchestration layer in front of the LLM. Each query is enriched with patient profile, clinical rules, RAG evidence (26 chunks, prototype dataset), and ALMA L1 axioms before any model sees it. The model is interchangeable. IO3 is not.',
     result: '9-node LangGraph graph with human-on-loop interrupt at every gap. Full reasoning audit trail. Designed for EU AI Act compliance — clinician decides at every uncertainty, never the model alone.',
     stack: 'LangGraph · Anthropic API · ChromaDB · FastAPI · React',
     link: '/io-architecture.html',
@@ -83,6 +84,9 @@ function PillarCard({ item, nDays, nPairs, headline, staggerIdx }) {
       }}>
         <span className={`wk-badge ${item.badgeClass}`}>{item.badge}</span>
         <h3 className="wk-item-title">{item.title}</h3>
+        {item.archivedNote && (
+          <p className="wk-archived-note">{item.archivedNote}</p>
+        )}
 
         <div className="wk-par">
           <span className="wk-label">Problem</span>
@@ -219,6 +223,16 @@ export default function Work({ data }) {
           color: var(--text-sec);
           line-height: 1.7;
           max-width: 600px;
+        }
+        .wk-archived-note {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--warm);
+          opacity: 0.75;
+          margin-bottom: 16px;
+          padding: 6px 10px;
+          border-left: 2px solid var(--warm);
+          background: rgba(196,133,90,0.06);
         }
         .wk-stack {
           font-family: var(--mono);
