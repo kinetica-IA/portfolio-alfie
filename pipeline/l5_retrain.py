@@ -87,9 +87,9 @@ class TargetResult(PipelineModel):
 
 def _build_metadata() -> dict:
     """Build a metadata block for predictor_results.json."""
-    import datetime
+    from datetime import datetime, timezone
     return {
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "model_version": "v3.1",
         "validation": "LOO-CV + bootstrap 1000×",
         "feature_selection": "forward greedy per target, max 5 features, stop if AUC gain < 0.01",

@@ -31,6 +31,15 @@ jobs:
           POLAR_USER_ID: '63255666'
         run: python scripts/fetch_polar_live.py
 
+      - name: Publish full polar_live.json (if L3 available)
+        run: |
+          if [ -f data/processed/L3/daily_unified.csv ]; then
+            pip install -q numpy pandas pyarrow pydantic scikit-learn neurokit2
+            python -m pipeline.l5_publish
+          else
+            echo "L3 not available, skipping publish"
+          fi
+
       - name: Commit updated biometrics
         run: |
           git config user.name  "github-actions[bot]"
