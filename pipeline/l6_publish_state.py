@@ -343,6 +343,19 @@ def build_state() -> PipelineState:
     l5_metrics = levels[4].metrics  # L4 index 4
     l5_model = levels[5].metrics
 
+    # Series counts: live JSON (includes AccessLink API entries) vs GDPR export window
+    try:
+        live_data = json.loads(POLAR_LIVE_FILE.read_text())
+        series_live_count: int | None = len(live_data.get("series", []))
+    except Exception:
+        series_live_count = None
+
+    l3_csv = DATA_PROCESSED_DIR / "L3" / "daily_unified.csv"
+    try:
+        series_gdpr_count: int | None = len(pd.read_csv(l3_csv))
+    except Exception:
+        series_gdpr_count = None
+
     return PipelineState(
         generated_at=datetime.now(timezone.utc).isoformat(),
         levels=levels,
@@ -353,6 +366,9 @@ def build_state() -> PipelineState:
             "headline_auc": l5_model.get("headline_auc", 0.829),
             "data_start": str(l3_metrics.get("date_start", "2025-08-25")),
             "data_end": str(l3_metrics.get("date_end", "2026-04-27")),
+            "series_live_count": series_live_count,
+            "series_gdpr_count": series_gdpr_count,
+            "series_note": "live count includes AccessLink API entries beyond GDPR export window",
         },
     )
 
