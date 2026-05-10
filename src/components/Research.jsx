@@ -114,9 +114,11 @@ function PubCard({ card, index, revealed, headline }) {
 export default function Research({ data, loading }) {
   const { ref, revealed } = useReveal(0.25)
   const { ref: targetsRef, revealed: targetsVisible } = useReveal(0.2)
+  const { ref: sqRef, revealed: sqVisible } = useReveal(0.2)
 
   const targets = data?.predictor?.targets
   const residuals = data?.predictor?.residuals
+  const sleepQuality = data?.sleep_quality
 
   return (
     <section className="section" id="research">
@@ -209,6 +211,128 @@ export default function Research({ data, loading }) {
                 Reported for transparency — not used as a headline metric.
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sleep Quality predictor — reads data?.sleep_quality from polar_live.json */}
+      {!loading && sleepQuality && (
+        <div className="sq-card" ref={sqRef}>
+          <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" style={{ verticalAlign: '-2px' }}>
+              <path d="M1 12 Q4 6, 7 9 Q10 12, 13 5" fill="none" stroke="var(--teal)" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="7" cy="9" r="1.5" fill="var(--teal)" opacity="0.5" />
+            </svg>
+            SLEEP QUALITY PREDICTOR
+          </span>
+
+          <div className="sq-finding">
+            <span className="eyebrow" style={{ color: 'var(--warm)' }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" style={{ verticalAlign: '-2px', marginRight: '6px' }}>
+                <path d="M2 8 Q5 4, 8 8 Q11 12, 14 8" fill="none" stroke="var(--warm)" strokeWidth="1.5" />
+              </svg>
+              KEY FINDING
+            </span>
+            <p className="fp-finding-text">
+              Nocturnal RMSSD on the same night (t0) and the preceding night (t1) is sufficient to
+              predict high-fatigue days (fatiga ≥ 6/10) with AUC 0.77. Forward selection across
+              20 candidate features — five HRV measures at four lags each — stopped at two. Both
+              selected features measure the same quantity at consecutive lags. The fatigue signal
+              is concentrated within 48 hours of the symptomatic day. No additional feature
+              improved AUC by more than the 0.01 stopping threshold.
+            </p>
+          </div>
+
+          <p className="sq-meta">
+            Logistic regression · LOO-CV · n=61 diary entries · 243 nights of nocturnal HRV · bootstrap CI 1000×
+          </p>
+
+          <div className="sq-headline" style={{
+            opacity: sqVisible ? 1 : 0,
+            transform: sqVisible ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'opacity 0.8s var(--ease-out) 200ms, transform 0.8s var(--ease-out) 200ms',
+          }}>
+            <span className="sq-auc" style={{ color: aucColor(sleepQuality.auc_loo) }}>
+              {sleepQuality.auc_loo?.toFixed(2)}
+            </span>
+            <span className="sq-auc-label">AUC LOO-CV</span>
+            <span className="sq-ci">
+              CI<sub>95</sub>&nbsp;{sleepQuality.auc_ci95_lower?.toFixed(2)}–{sleepQuality.auc_ci95_upper?.toFixed(2)}
+            </span>
+          </div>
+
+          <div className="sq-features" style={{
+            opacity: sqVisible ? 1 : 0,
+            transition: 'opacity 0.8s var(--ease-out) 350ms',
+          }}>
+            <div className="sq-feat-header">
+              <span>Feature</span>
+              <span>Coefficient</span>
+              <span>Direction</span>
+            </div>
+            {sleepQuality.selected_features?.map((feat, i) => {
+              const coef = sleepQuality.coefficients?.[feat]
+              const protective = typeof coef === 'number' && coef < 0
+              const lagMatch = feat.match(/_t(\d+)$/)
+              const lag = lagMatch ? parseInt(lagMatch[1]) : 0
+              const baseName = feat.replace(/_t\d+$/, '').replace(/_/g, ' ')
+              return (
+                <div key={feat} className="sq-feat-row" style={{
+                  opacity: sqVisible ? 1 : 0,
+                  transform: sqVisible ? 'translateY(0)' : 'translateY(8px)',
+                  transition: `opacity 0.6s var(--ease-out) ${400 + i * 120}ms, transform 0.6s var(--ease-out) ${400 + i * 120}ms`,
+                }}>
+                  <span className="sq-feat-name">
+                    <span className="sq-feat-base">{baseName}</span>
+                    <span className="sq-feat-lag">t−{lag}</span>
+                  </span>
+                  <span className="sq-feat-coef" style={{ color: aucColor(0.72) }}>
+                    {typeof coef === 'number' ? coef.toFixed(3) : '—'}
+                  </span>
+                  <span className={`sq-feat-dir sq-feat-dir--${protective ? 'protective' : 'risk'}`}>
+                    {protective ? 'protective ↓' : 'risk ↑'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="sq-stats" style={{
+            opacity: sqVisible ? 1 : 0,
+            transition: 'opacity 0.8s var(--ease-out) 600ms',
+          }}>
+            <div className="sq-stat">
+              <span className="sq-stat-val">{sleepQuality.n_training}</span>
+              <span className="sq-stat-label">n training</span>
+            </div>
+            <div className="sq-stat">
+              <span className="sq-stat-val">{sleepQuality.n_positive}</span>
+              <span className="sq-stat-label">high fatigue</span>
+            </div>
+            <div className="sq-stat">
+              <span className="sq-stat-val">{sleepQuality.n_negative}</span>
+              <span className="sq-stat-label">low fatigue</span>
+            </div>
+            <div className="sq-stat">
+              <span className="sq-stat-val">
+                {sleepQuality.sensitivity != null ? `${(sleepQuality.sensitivity * 100).toFixed(0)}%` : '—'}
+              </span>
+              <span className="sq-stat-label">sensitivity</span>
+            </div>
+            <div className="sq-stat">
+              <span className="sq-stat-val">
+                {sleepQuality.specificity != null ? `${(sleepQuality.specificity * 100).toFixed(0)}%` : '—'}
+              </span>
+              <span className="sq-stat-label">specificity</span>
+            </div>
+          </div>
+
+          <div className="sq-footnote">
+            <p className="sq-footnote-text">
+              N-of-1 longitudinal study, single subject. AUC reflects leave-one-out predictive
+              performance for this individual only. Results are not generalizable to other
+              individuals and do not constitute a diagnostic or clinical tool.
+            </p>
           </div>
         </div>
       )}
@@ -441,6 +565,147 @@ export default function Research({ data, loading }) {
         @media (max-width: 640px) {
           .fp-target-row { grid-template-columns: 1fr 48px; }
           .fp-target-bar, .fp-target-ci { display: none; }
+        }
+
+        /* ── Sleep Quality card ─────────────────────────────────────── */
+        .sq-card {
+          margin-top: var(--space-subsection);
+          border-left: 2px solid var(--teal);
+          padding-left: 20px;
+        }
+        .sq-headline {
+          display: flex;
+          align-items: baseline;
+          gap: 14px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+        .sq-auc {
+          font-family: var(--mono);
+          font-size: 2.2rem;
+          font-weight: 500;
+          line-height: 1;
+        }
+        .sq-auc-label {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+        .sq-ci {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text-dim);
+        }
+        .sq-features { margin-bottom: 20px; }
+        .sq-feat-header {
+          display: grid;
+          grid-template-columns: 1fr 100px 120px;
+          gap: 12px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border);
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          margin-bottom: 4px;
+        }
+        .sq-feat-row {
+          display: grid;
+          grid-template-columns: 1fr 100px 120px;
+          gap: 12px;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--border);
+        }
+        .sq-feat-row:last-of-type { border-bottom: none; }
+        .sq-feat-name {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .sq-feat-base {
+          font-size: var(--text-body);
+          color: var(--text);
+          font-weight: 300;
+        }
+        .sq-feat-lag {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          padding: 1px 5px;
+          background: var(--fill-sand);
+        }
+        .sq-feat-coef {
+          font-family: var(--mono);
+          font-size: var(--text-body);
+          text-align: right;
+        }
+        .sq-feat-dir {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          letter-spacing: 0.04em;
+        }
+        .sq-feat-dir--protective { color: var(--green); }
+        .sq-feat-dir--risk { color: var(--warm); }
+        .sq-stats {
+          display: flex;
+          gap: 24px;
+          flex-wrap: wrap;
+          padding: 14px 16px;
+          background: var(--fill-sand);
+          border-left: 2px solid var(--teal);
+        }
+        .sq-stat {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+        .sq-stat-val {
+          font-family: var(--mono);
+          font-size: var(--text-body);
+          font-weight: 500;
+          color: var(--text);
+        }
+        .sq-stat-label {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        @media (max-width: 640px) {
+          .sq-feat-header, .sq-feat-row { grid-template-columns: 1fr 80px; }
+          .sq-feat-dir { display: none; }
+        }
+        .sq-finding {
+          border-left: 2px solid var(--warm);
+          padding-left: 20px;
+          margin-bottom: 20px;
+          max-width: 600px;
+        }
+        .sq-finding .eyebrow { display: block; margin-bottom: 12px; }
+        .sq-meta {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          margin-bottom: 20px;
+        }
+        .sq-footnote {
+          margin-top: 16px;
+          padding: 14px 16px;
+          background: var(--fill-sand);
+          border-left: 2px solid var(--sand);
+        }
+        .sq-footnote-text {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          font-style: italic;
+          line-height: 1.6;
         }
       `}</style>
     </section>
