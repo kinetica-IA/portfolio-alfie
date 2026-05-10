@@ -1,9 +1,10 @@
 ---
 title: ANS Predictor — Pipeline Documentation
-version: 1.0
+version: 1.1
 date: 2026-05-10
 owner: Alfonso Navarro / Kinetica AI
 status: production
+changelog: "v1.1 — analysis layer architecture documented"
 ---
 
 # ANS Predictor — Pipeline Documentation
@@ -61,9 +62,30 @@ The pipeline is organised into seven discrete layers (L0–L6). Each layer has d
 
 **L3 — Unified daily frame.** The ten L1 and L2 Parquet files are outer-merged on calendar date (`pipeline/l3_unified.py`). The result is one row per calendar day, 243 rows by 70 columns. A NaN value in any column means that source had no data for that day — this is expected: orthostatic tests appear on only 8 days; fitness tests on 11; training zone data on 107. Non-training days are labelled with stratum "rest". The unified frame is written as both Parquet (machine-readable) and CSV (human-inspectable), and the CSV is the canonical input for all downstream steps.
 
-**L4 — Diary join.** The unified daily frame is inner-joined with the symptom diary on date (`pipeline/l4_diary_join.py`). Only the 61 days that have a diary entry are retained. For each such day D, the pipeline adds lagged copies of eight HRV and ANS columns — data from day D (lag t0), D−1 (lag t1), D−2 (lag t2), and D−3 (lag t3). These 32 lagged columns (8 features × 4 lags) represent the temporal history available before a symptom event. The output is 61 rows by 110 columns.
+**L4 — Diary join.** The unified daily frame is inner-joined with the symptom diary on date (`analysis/pem_predictor/l4_diary_join.py`). Only the 61 days that have a diary entry are retained. For each such day D, the pipeline adds lagged copies of eight HRV and ANS columns — data from day D (lag t0), D−1 (lag t1), D−2 (lag t2), and D−3 (lag t3). These 32 lagged columns (8 features × 4 lags) represent the temporal history available before a symptom event. The output is 61 rows by 110 columns.
 
-**L5 — Model training and publish.** The model step (`pipeline/l5_retrain.py`) trains a separate logistic regression for each of the five symptom targets. Logistic regression estimates the probability that a target score exceeds a clinical threshold (between 5 and 6 on the symptom scale, depending on the dimension). Feature selection is greedy and forward: features are added one at a time, keeping each addition only if it improves the area under the ROC curve (AUC) by at least 0.01, up to a maximum of five features. Performance is estimated by leave-one-out cross-validation (LOO-CV): for each diary entry, the model is trained on all other entries and then asked to predict that one — this prevents the model from seeing its own test data during training. A 95% confidence interval on the AUC is computed by bootstrapping the LOO predictions 1,000 times. A separate deployment model is fit for the autonomic dysfunction target using only lag-2 and lag-3 features, representing the realistic 48h-ahead scenario. The publish step (`pipeline/l5_publish.py`) then reads the 243-day unified frame and the predictor results, builds the full version-3.1 JSON payload, validates it, and atomically replaces `public/data/polar_live.json`.
+**L5 — Model training and publish.** The model step (`analysis/pem_predictor/l5_retrain.py`) trains a separate logistic regression for each of the five symptom targets. Logistic regression estimates the probability that a target score exceeds a clinical threshold (between 5 and 6 on the symptom scale, depending on the dimension). Feature selection is greedy and forward: features are added one at a time, keeping each addition only if it improves the area under the ROC curve (AUC) by at least 0.01, up to a maximum of five features. Performance is estimated by leave-one-out cross-validation (LOO-CV): for each diary entry, the model is trained on all other entries and then asked to predict that one — this prevents the model from seeing its own test data during training. A 95% confidence interval on the AUC is computed by bootstrapping the LOO predictions 1,000 times. A separate deployment model is fit for the autonomic dysfunction target using only lag-2 and lag-3 features, representing the realistic 48h-ahead scenario. The publish step (`analysis/pem_predictor/l5_publish.py`) then reads the 243-day unified frame and the predictor results, builds the full version-3.1 JSON payload, validates it, and atomically replaces `public/data/polar_live.json`.
+
+---
+
+## 4b. Analysis layer architecture
+
+From L3 onward, the pipeline splits into independent analysis modules, each consuming daily_unified.csv as its only data input. This separation means new clinical questions can be added without modifying the data pipeline.
+
+Each module lives under analysis/<module_name>/ and implements a common contract: load() to ingest L3 data and an optional symptom diary, run() to execute the analysis, and export() to write results.
+
+Current modules:
+
+| Module | Directory | Diary required | Status |
+|---|---|---|---|
+| PEM Predictor | analysis/pem_predictor/ | Yes (diary_live.csv) | Production |
+| Training Response | analysis/training_response/ | No | Planned |
+| Sleep Quality | analysis/sleep_quality/ | No | Planned |
+| Orthostatic Trend | analysis/orthostatic_trend/ | No | Planned — grows with daily orthostatic tests |
+
+New analyses requiring a symptom diary bring their own diary CSV. They do not modify diary_live.csv or any shared pipeline output.
+
+---
 
 **L6 — Pipeline state.** A state publisher (`pipeline/l6_publish_state.py`) reads all L0–L6 outputs, collects per-layer metrics (row counts, date ranges, model AUC, file sizes), and writes `public/data/pipeline_state.json`. This file is consumed by the pipeline status dashboard at `/pipeline.html` on the portfolio site.
 
