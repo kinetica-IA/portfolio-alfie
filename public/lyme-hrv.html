@@ -510,12 +510,12 @@
   <div class="section-divider"></div>
 
   <!-- METRICS -->
-  <div class="section-eyebrow reveal">Field data · Kinetica AI dataset · 200 days · 5 models</div>
+  <div class="section-eyebrow reveal">Field data · Kinetica AI dataset · 243 days · 5 models</div>
   <div class="stats-row reveal">
     <div class="stat-item">
-      <span class="stat-val">0.84</span>
+      <span class="stat-val">0.92</span>
       <span class="stat-label">Severity AUC (headline)</span>
-      <span class="stat-source">Navarro, Kinetica AI · 200 days · Polar Grit X2 · LOO-CV</span>
+      <span class="stat-source">Navarro, Kinetica AI · 243 days · Polar Grit X2 · LOO-CV</span>
     </div>
     <div class="stat-item">
       <span class="stat-val">24–48h</span>
@@ -525,16 +525,16 @@
     <div class="stat-item">
       <span class="stat-val">5 targets</span>
       <span class="stat-label">Independent prediction models</span>
-      <span class="stat-source">AUC 0.79–0.86 · LOO-CV · Bootstrap 1000×</span>
+      <span class="stat-source">AUC 0.77–0.99 · LOO-CV · Bootstrap 1000×</span>
     </div>
   </div>
 
   <!-- SECTION 3 -->
   <div class="article-section reveal">
-    <h2>Field evidence: 200 days of continuous monitoring</h2>
+    <h2>Field evidence: 243 days of continuous monitoring</h2>
     <p>
-      From my own longitudinal dataset — 200 consecutive days combining nocturnal HRV
-      monitoring (Polar Grit X2 + Kubios HRV) with a 5-domain symptom diary (DIARY_v2:
+      From my own longitudinal dataset — 243 consecutive days combining nocturnal HRV
+      monitoring (Polar Grit X2 + neurokit2) with a 5-domain symptom diary (DIARY_v3:
       global severity, fatigue, cognitive fog, post-exertional malaise, autonomic
       dysfunction) — the pattern is consistent with what the literature
       describes, and extends it in one specific direction.
@@ -547,8 +547,8 @@
     </p>
     <p>
       Five independent models now predict distinct symptom dimensions 24–48 hours ahead.
-      Severity prediction achieves an AUC of <strong>0.84</strong> (LOO-CV, Bootstrap 1000×,
-      n=60 training pairs). Autonomic dysfunction prediction reaches <strong>AUC 0.83</strong>
+      Severity prediction achieves an AUC of <strong>0.92</strong> (LOO-CV, Bootstrap 1000×,
+      n=61 training pairs). Autonomic dysfunction prediction reaches <strong>AUC 0.83</strong>
       — using advanced HRV features like LF/HF ratio and SD1 from raw RR intervals. The
       signal is not only present — it is physiologically coherent. Sleep score showed no
       predictive value (ρ≈0). The signal is in the autonomic system, not in subjective
@@ -599,9 +599,9 @@
       <li>
         <span class="ref-star">[★]</span>
         Navarro, A. — Kinetica AI longitudinal dataset, 2024–2026.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;200-day Polar Grit X2 + DIARY_v2 (5 symptom domains).<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;243-day Polar Grit X2 + DIARY_v3 (5 symptom domains).<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 independent models · LOO-CV · Bootstrap 1000×.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Headline: Severity AUC 0.84 · Autonomic AUC 0.83.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Headline: Severity AUC 0.92 · Autonomic AUC 0.83.<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;github.com/kinetica-IA/polar-lyme-predictor
       </li>
     </ul>

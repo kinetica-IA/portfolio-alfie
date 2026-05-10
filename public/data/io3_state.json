@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-04-11T16:15:46.354917+00:00",
-  "io3_path": "/Users/alfonsonavarro/IO3",
+  "io3_path": "archived",
   "models": {
     "loop": "claude-haiku-4-5-20251001",
     "synthesis": "claude-sonnet-4-6"
