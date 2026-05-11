@@ -1,18 +1,38 @@
 import { useReveal } from '../hooks/useReveal'
 import { NetworkSymbol } from './OrganicSymbols'
 
+const STEPS = [
+  {
+    label: 'Raw input',
+    detail: 'Wearable RR intervals, sleep outputs and symptom logs',
+    color: 'var(--teal)',
+    rgb: '144,167,165',
+  },
+  {
+    label: 'Data cleaning',
+    detail: 'Artefact removal, synchronization and consistency checks',
+    color: 'var(--green)',
+    rgb: '107,158,122',
+  },
+  {
+    label: 'Feature layer',
+    detail: 'HRV, sleep and symptom-linked variables prepared for analysis',
+    color: 'var(--sea)',
+    rgb: '93,138,130',
+  },
+  {
+    label: 'Predictors',
+    detail: 'Structured datasets used by independent predictors',
+    color: 'var(--ice)',
+    rgb: '133,168,184',
+  },
+]
+
 export default function Pipeline({ data }) {
   const { ref, revealed } = useReveal(0.25)
 
   const nDays = data?.data_window?.n_days ?? '—'
   const nPairs = data?.data_window?.n_paired ?? '—'
-
-  const BULLETS = [
-    'Ingestion from wearable and diary sources',
-    'Cleaning, synchronization and quality control',
-    'Feature engineering for HRV, sleep and symptom correlation',
-    'Structured outputs ready for multiple predictors',
-  ]
 
   return (
     <section className="section pipeline" id="pipeline" ref={ref}>
@@ -31,68 +51,76 @@ export default function Pipeline({ data }) {
         }}
       >
         <p className="pipeline-copy">
-          Raw wearable signals are not ready for clinical AI. Kinetica's pipeline ingests
-          RR intervals, sleep outputs and symptom logs, cleans noise, aligns timelines,
-          engineers interpretable features and turns fragmented records into datasets
-          that are ready for modelling.
+          Kinetica's pipeline transforms raw wearable physiology into structured,
+          model-ready clinical data. RR intervals, sleep outputs and symptom logs are
+          ingested, cleaned, synchronized, quality-checked and converted into
+          interpretable feature layers that can support multiple predictors.
         </p>
 
-        <div className="pipeline-bullets">
-          {BULLETS.map((b, i) => (
+        {/* 4 steps */}
+        <div className="pipeline-steps">
+          {STEPS.map((s, i) => (
             <div
-              key={i}
-              className="pipeline-bullet"
+              key={s.label}
+              className="pipeline-step"
               style={{
                 opacity: revealed ? 1 : 0,
                 transform: revealed ? 'translateX(0)' : 'translateX(-12px)',
-                transition: `opacity 0.7s var(--ease-out) ${i * 120 + 200}ms, transform 0.5s var(--ease-out) ${i * 120 + 200}ms`,
+                transition: `opacity 0.7s var(--ease-out) ${i * 110 + 200}ms, transform 0.5s var(--ease-out) ${i * 110 + 200}ms`,
               }}
             >
-              <span className="pipeline-bullet-dot" />
-              {b}
+              <span className="pipeline-step-num" style={{ color: s.color }}>{String(i + 1).padStart(2, '0')}</span>
+              <div className="pipeline-step-body">
+                <span className="pipeline-step-label" style={{ color: s.color }}>{s.label}</span>
+                <span className="pipeline-step-detail">{s.detail}</span>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Flow diagram */}
+        {/* Flow diagram: Raw input → Cleaning → Feature layer → Predictors */}
         <div className="pipeline-flow">
           <svg
-            viewBox="0 0 480 56"
+            viewBox="0 0 540 56"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="pipeline-flow-svg"
             aria-hidden="true"
           >
-            {/* Node 1 */}
-            <rect x="0" y="12" width="96" height="32" rx="4" stroke="var(--teal)" strokeWidth="0.8" fill="rgba(144,167,165,0.06)" />
-            <text x="48" y="32" textAnchor="middle" className="flow-label">Raw signals</text>
+            {/* Node 1 — Raw input */}
+            <rect x="0" y="12" width="108" height="32" rx="4" stroke="var(--teal)" strokeWidth="0.8" fill="rgba(144,167,165,0.06)" />
+            <text x="54" y="32" textAnchor="middle" className="flow-label">Raw input</text>
             {/* Arrow 1 */}
-            <line x1="96" y1="28" x2="128" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
-            <polygon points="128,25 134,28 128,31" fill="var(--border-active)" />
-            {/* Node 2 */}
-            <rect x="134" y="12" width="96" height="32" rx="4" stroke="var(--green)" strokeWidth="0.8" fill="rgba(107,158,122,0.06)" />
-            <text x="182" y="32" textAnchor="middle" className="flow-label">Cleaning</text>
+            <line x1="108" y1="28" x2="138" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
+            <polygon points="138,25 144,28 138,31" fill="var(--border-active)" />
+            {/* Node 2 — Cleaning */}
+            <rect x="144" y="12" width="108" height="32" rx="4" stroke="var(--green)" strokeWidth="0.8" fill="rgba(107,158,122,0.06)" />
+            <text x="198" y="32" textAnchor="middle" className="flow-label">Cleaning</text>
             {/* Arrow 2 */}
-            <line x1="230" y1="28" x2="262" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
-            <polygon points="262,25 268,28 262,31" fill="var(--border-active)" />
-            {/* Node 3 */}
-            <rect x="268" y="12" width="96" height="32" rx="4" stroke="var(--sea)" strokeWidth="0.8" fill="rgba(93,138,130,0.06)" />
-            <text x="316" y="32" textAnchor="middle" className="flow-label">Features</text>
+            <line x1="252" y1="28" x2="282" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
+            <polygon points="282,25 288,28 282,31" fill="var(--border-active)" />
+            {/* Node 3 — Feature layer */}
+            <rect x="288" y="12" width="108" height="32" rx="4" stroke="var(--sea)" strokeWidth="0.8" fill="rgba(93,138,130,0.06)" />
+            <text x="342" y="32" textAnchor="middle" className="flow-label">Feature layer</text>
             {/* Arrow 3 */}
-            <line x1="364" y1="28" x2="396" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
-            <polygon points="396,25 402,28 396,31" fill="var(--border-active)" />
-            {/* Node 4 */}
-            <rect x="402" y="12" width="78" height="32" rx="4" stroke="var(--teal)" strokeWidth="0.8" fill="rgba(144,167,165,0.06)" />
-            <text x="441" y="32" textAnchor="middle" className="flow-label">Model-ready</text>
+            <line x1="396" y1="28" x2="426" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
+            <polygon points="426,25 432,28 426,31" fill="var(--border-active)" />
+            {/* Node 4 — Predictors */}
+            <rect x="432" y="12" width="108" height="32" rx="4" stroke="var(--ice)" strokeWidth="1.2" fill="rgba(133,168,184,0.08)" />
+            <text x="486" y="32" textAnchor="middle" className="flow-label flow-label--final">Predictors</text>
           </svg>
         </div>
+
+        <p className="pipeline-closing">
+          One physiological foundation, multiple predictive models.
+        </p>
 
         <div className="pipeline-footer">
           <p className="pipeline-stat">
             {nDays} nights processed · {nPairs} diary entries aligned
           </p>
           <a href="/pipeline.html" className="pipeline-cta">
-            See how the data becomes usable →
+            See the full pipeline →
           </a>
         </div>
       </div>
@@ -123,37 +151,54 @@ export default function Pipeline({ data }) {
           color: var(--text-sec);
           line-height: 1.75;
           max-width: 640px;
-          margin-bottom: 28px;
-        }
-        .pipeline-bullets {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
           margin-bottom: 32px;
         }
-        .pipeline-bullet {
+        /* 4 steps */
+        .pipeline-steps {
           display: flex;
-          align-items: center;
-          gap: 12px;
+          flex-direction: column;
+          gap: 14px;
+          margin-bottom: 32px;
+        }
+        .pipeline-step {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .pipeline-step-num {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          font-weight: 500;
+          letter-spacing: 0.06em;
+          flex-shrink: 0;
+          margin-top: 2px;
+          opacity: 0.7;
+        }
+        .pipeline-step-body {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        .pipeline-step-label {
           font-family: var(--mono);
           font-size: var(--text-caption);
+          font-weight: 500;
+          letter-spacing: 0.04em;
+        }
+        .pipeline-step-detail {
+          font-size: var(--text-caption);
+          font-weight: 300;
           color: var(--text-dim);
+          line-height: 1.5;
         }
-        .pipeline-bullet-dot {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: var(--green);
-          flex-shrink: 0;
-          opacity: 0.6;
-        }
+        /* Flow diagram */
         .pipeline-flow {
-          margin-bottom: 28px;
+          margin-bottom: 20px;
           overflow-x: auto;
         }
         .pipeline-flow-svg {
           width: 100%;
-          max-width: 480px;
+          max-width: 540px;
           height: 56px;
         }
         .flow-label {
@@ -162,12 +207,26 @@ export default function Pipeline({ data }) {
           fill: var(--text-dim);
           letter-spacing: 0.04em;
         }
+        .flow-label--final {
+          fill: var(--text-sec);
+          font-weight: 500;
+        }
+        .pipeline-closing {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text-sec);
+          letter-spacing: 0.03em;
+          margin-bottom: 24px;
+          opacity: 0.8;
+        }
         .pipeline-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
           gap: 16px;
+          padding-top: 20px;
+          border-top: 1px solid var(--border);
         }
         .pipeline-stat {
           font-family: var(--mono);

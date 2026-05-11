@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0f9f9">
+<title>Sleep Quality Predictor — Research · Kinetica AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #f0f9f9;
+    --surface:      #ffffff;
+    --surface2:     #e8f4f4;
+    --accent:       #90a7a5;
+    --accent-dark:  #6b8a88;
+    --accent-teal:  #5d8a82;
+    --accent-green: #6b9e7a;
+    --text:         #1a2a28;
+    --text-muted:   #4a6a66;
+    --text-dim:     #90a7a5;
+    --border:       rgba(144,167,165,0.18);
+    --border-med:   rgba(144,167,165,0.32);
+    --shadow:       0 4px 24px rgba(144,167,165,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  #sleep-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .background-geo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .page-wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--accent); text-decoration: none; text-transform: uppercase;
+    margin-bottom: 2.5rem; opacity: 0.7; transition: opacity 0.2s, gap 0.2s;
+  }
+  .back-link:hover { opacity: 1; gap: 0.75rem; }
+
+  .page-hero { margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; }
+  .eyebrow {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-teal);
+    box-shadow: 0 0 8px rgba(93,138,130,0.7);
+    animation: pulse-glow 3s infinite; flex-shrink: 0;
+  }
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 4px rgba(93,138,130,0.5); }
+    50%     { box-shadow: 0 0 14px rgba(93,138,130,0.9); }
+  }
+  .page-title { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1.05; color: var(--text); margin-bottom: 1rem; }
+  .page-title .solid { font-weight: 700; }
+  .page-title em { font-style: italic; color: var(--accent-teal); }
+  .page-desc { font-size: 0.85rem; color: var(--text-muted); max-width: 480px; line-height: 1.75; }
+  .hero-meta { text-align: right; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.08em; color: var(--text-dim); line-height: 2; flex-shrink: 0; }
+  .meta-teal { color: var(--accent-teal); font-weight: 500; }
+
+  .section-divider { width: 100%; height: 1px; background: var(--border); margin: 2.5rem 0; }
+  .section-eyebrow { font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.25rem; opacity: 0.65; }
+
+  .stats-row { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 2.5rem; }
+  .stat-item { flex: 1; background: var(--surface); padding: 1.25rem 1rem; text-align: center; min-width: 80px; animation: fadeUp 0.5s ease both; }
+  .stat-val { font-size: 1.6rem; font-weight: 300; color: var(--accent-teal); letter-spacing: -0.03em; line-height: 1; display: block; margin-bottom: 0.3rem; }
+  .stat-label { font-size: 0.55rem; font-weight: 500; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+
+  .content-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 2rem; margin-bottom: 2.5rem;
+  }
+  .content-section h3 { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+  .content-section p { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.7; }
+  .content-section p:last-child { margin-bottom: 0; }
+  .content-section strong { color: var(--text); font-weight: 500; }
+  code { font-family: 'Courier New', monospace; font-size: 0.72rem; color: var(--accent-dark); background: var(--surface2); padding: 0.1em 0.4em; border-radius: 3px; }
+
+  /* Finding block */
+  .finding { border-left: 2px solid var(--accent-teal); padding-left: 20px; margin: 1.5rem 0; max-width: 600px; }
+  .finding-text { font-size: 0.8rem; color: var(--text-muted); line-height: 1.75; }
+
+  /* Feature cards */
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  .feature-card {
+    background: var(--surface2); border-radius: 8px; padding: 1.25rem;
+    border-left: 2px solid var(--accent-teal);
+  }
+  .feature-name { font-size: 0.68rem; font-weight: 600; color: var(--text); letter-spacing: 0.04em; margin-bottom: 0.4rem; font-family: 'Courier New', monospace; }
+  .feature-coef { font-size: 0.72rem; color: var(--accent-teal); font-family: 'Courier New', monospace; font-weight: 500; margin-bottom: 0.3rem; }
+  .feature-desc { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* Performance row */
+  .perf-row { display: grid; grid-template-columns: 160px 60px 1fr 80px; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .perf-row:last-of-type { border-bottom: none; }
+  .perf-name { font-size: 0.78rem; font-weight: 400; color: var(--text); }
+  .perf-val { font-family: 'Courier New', monospace; font-size: 0.8rem; font-weight: 500; text-align: right; color: var(--accent-teal); }
+  .perf-bar { height: 3px; background: rgba(144,167,165,0.1); overflow: visible; position: relative; }
+  .perf-bar-fill { height: 100%; background: var(--accent-teal); transition: width 1s ease; }
+  .perf-note { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--text-dim); text-align: right; }
+
+  /* Footnotes */
+  .footnotes { margin-top: 16px; padding: 14px 16px; background: rgba(93,138,130,0.04); border-left: 2px solid var(--accent-teal); font-size: 0.65rem; color: var(--text-dim); font-style: italic; line-height: 1.6; }
+
+  /* Pipeline link block */
+  .pipeline-link {
+    display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    padding: 1.25rem 1.5rem;
+    background: rgba(93,138,130,0.04);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent-teal);
+    border-radius: 8px; margin-top: 1rem;
+  }
+  .pipeline-link-text { font-size: 0.78rem; color: var(--text-muted); flex: 1; line-height: 1.6; }
+  .pipeline-link-cta {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    color: var(--accent-teal); text-decoration: none; text-transform: uppercase;
+    transition: opacity 0.2s; white-space: nowrap;
+  }
+  .pipeline-link-cta:hover { opacity: 0.65; }
+
+  /* Footer */
+  .page-footer { padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-brand { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-link { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  .footer-link:hover { opacity: 0.65; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 640px) {
+    .page-wrap { padding: 2rem 1.25rem 4rem; }
+    .stats-row { flex-wrap: wrap; }
+    .stat-item { min-width: 80px; }
+    .page-hero { flex-direction: column; }
+    .hero-meta { text-align: left; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .perf-row { grid-template-columns: 1fr 60px; }
+    .perf-bar, .perf-note { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sleep-bg" aria-hidden="true"></canvas>
+<svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="180" y="100" width="300" height="300" rx="40" fill="none" stroke="#5d8a82" stroke-width="1.2" opacity="0.06"/>
+  <rect x="680" y="70" width="260" height="260" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="1060" y="150" width="180" height="180" rx="40" fill="none" stroke="#5d8a82" stroke-width="1.2" opacity="0.05"/>
+</svg>
+
+<div class="page-wrap">
+
+  <a href="https://www.kineticaai.com" class="back-link">← kineticaai.com</a>
+
+  <!-- HERO -->
+  <div class="page-hero reveal">
+    <div class="hero-left">
+      <div class="eyebrow">
+        <span class="pulse-dot"></span>
+        Kinetica AI · Sleep Quality Predictor · Research
+      </div>
+      <h1 class="page-title">
+        <span class="solid">Sleep Quality Predictor</span><br>
+        <em>Nocturnal recovery as clinical signal.</em>
+      </h1>
+      <p class="page-desc">
+        An independent predictor that targets sleep quality as its own clinical output.
+        Built on the same physiological pipeline as the ANS Predictor, but asking a
+        different clinical question: can nocturnal autonomic recovery predict
+        next-day fatigue burden in a longitudinal N=1 study?
+      </p>
+    </div>
+    <div class="hero-meta" id="hero-meta">Loading data...</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal" id="stats-row"></div>
+
+  <!-- CLINICAL CONTEXT -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Clinical context</div>
+    <h3>Sleep quality as an independent clinical signal</h3>
+    <p>
+      In patients with complex chronic conditions — post-Lyme, ME/CFS, post-viral syndromes —
+      sleep is not merely a background variable. <strong>Nocturnal autonomic recovery</strong>
+      directly shapes next-day symptom burden. Poor sleep continuity and dysregulated overnight
+      HRV are not just correlates of fatigue; they are part of the physiological pathway.
+    </p>
+    <p>
+      This predictor was built to isolate that pathway. It uses <strong>nocturnal RMSSD</strong>
+      — measured from raw RR intervals during sleep — as the primary physiological window,
+      and predicts whether the following diary day will be a high-fatigue day
+      (fatigue ≥ 6/10, self-rated 0–10 scale).
+    </p>
+    <p>
+      It is not a subcomponent of the ANS Predictor. It is a separate model, with
+      its own feature selection, its own validation, and its own clinical interpretation.
+      Both predictors draw from the same cleaned physiological foundation, but ask different questions.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- METHODOLOGY -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Methodology</div>
+    <h3>N-of-1 longitudinal design — single autonomic target</h3>
+    <p>
+      A single post-Lyme patient wearing a <strong>Polar Grit X2</strong> every night.
+      Raw RR intervals are processed into nocturnal HRV features across multiple lag windows.
+      Each morning, fatigue severity is recorded in a standardized diary.
+    </p>
+    <p>
+      <strong>Feature selection:</strong> Greedy forward selection from 20 candidate features
+      (5 HRV variables × 4 lag windows: t0 to t3). Selection stops when AUC gain drops
+      below 0.01. The model independently selected its own optimal feature set — it was not
+      given the ANS Predictor's features.
+    </p>
+    <p>
+      <strong>Validation:</strong> Leave-one-out cross-validation (LOO-CV) for primary AUC.
+      1,000× bootstrap for confidence intervals. No separate test set — every paired
+      diary/physiology entry serves as both training and validation exactly once.
+    </p>
+    <p>
+      <strong>Algorithm:</strong> Logistic regression with L2 regularisation (C=0.5),
+      class-balanced weighting to compensate for the 37/24 positive/negative split,
+      StandardScaler re-fit inside each LOO fold to prevent data leakage.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- RESULTS -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Results</div>
+    <h3>Model performance</h3>
+    <p>Trained on 61 diary entries paired with nocturnal HRV from 243 monitored nights.</p>
+
+    <div class="finding">
+      <div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>
+      <p class="finding-text">
+        Nocturnal RMSSD from the same night (t0) and the previous night (t1) are the only
+        features that improve predictive accuracy. Forward selection stopped at two features —
+        no lag t2 or t3 feature provided ≥ 0.01 AUC gain. Both coefficients are negative,
+        confirming that <strong>higher overnight RMSSD is associated with lower next-day fatigue probability</strong>.
+        The result is physiologically coherent: stronger parasympathetic recovery during sleep
+        predicts better next-day autonomic regulation.
+      </p>
+    </div>
+
+    <div id="perf-table"></div>
+
+    <div class="footnotes" id="limitations">
+      N-of-1 study: results are subject-specific and cannot be generalised to other individuals.
+      LOO-CV provides an unbiased AUC estimate within the training set but does not constitute
+      prospective validation. Confidence intervals are wide (≈0.25 range) due to the small positive class
+      (37 positive / 24 negative days). Feature t0 uses data from the same night as the diary entry;
+      for prospective use, restrict to lag ≥ 1 features.
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SELECTED FEATURES -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Selected features</div>
+    <h3>Two features, two lags — minimal and interpretable</h3>
+    <p>
+      The model selected exactly two HRV variables. Both measure the same physiological
+      phenomenon — parasympathetic nocturnal recovery — at consecutive lag windows.
+      This is the simplest possible model that still achieves AUC 0.77.
+    </p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-name">hrv_rmssd_night_t0</div>
+        <div class="feature-coef">Coefficient: −0.9216</div>
+        <div class="feature-desc">
+          Nocturnal RMSSD from the same night as the diary entry.
+          Strongest predictor — higher overnight parasympathetic activity
+          strongly reduces predicted fatigue probability.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-name">hrv_rmssd_night_t1</div>
+        <div class="feature-coef">Coefficient: −0.3642</div>
+        <div class="feature-desc">
+          Nocturnal RMSSD from the previous night (lag 1).
+          Weaker but additive effect — persistent autonomic recovery
+          across two consecutive nights lowers fatigue probability further.
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:0.75rem">
+      <strong>Physiological coherence check:</strong> the direction of both coefficients
+      is negative — meaning higher RMSSD predicts lower fatigue. This is expected:
+      RMSSD reflects parasympathetic dominance, and higher overnight parasympathetic
+      activity indicates better recovery. The model is not a statistical artefact.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- PIPELINE RELATIONSHIP -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Data pipeline</div>
+    <h3>Built on the same physiological foundation as the ANS Predictor</h3>
+    <p>
+      This predictor does not have its own data collection layer. It uses the same
+      automated pipeline that feeds the ANS Predictor: nightly Polar AccessLink pulls,
+      RR interval processing via <code>neurokit2</code>, feature engineering, and diary alignment.
+    </p>
+    <p>
+      The Sleep Quality Predictor adds a separate modelling layer on top of that foundation —
+      with its own target variable (<code>fatiga</code>), its own feature selection run,
+      its own logistic regression coefficients, and its own LOO-CV evaluation.
+      The pipeline is shared. The clinical question is different.
+    </p>
+    <p>
+      <strong>Stack:</strong> <code>Python</code> · <code>scikit-learn</code> ·
+      <code>neurokit2</code> · <code>Polar Grit X2</code> · <code>GitHub Actions</code> · <code>CSV</code>
+    </p>
+    <div class="pipeline-link">
+      <span class="pipeline-link-text">
+        The data pipeline that produces the nocturnal HRV features used here is described
+        in full on the pipeline page — including ingestion, cleaning, feature engineering
+        and the automated nightly update cycle.
+      </span>
+      <a href="/pipeline.html" class="pipeline-link-cta">See the pipeline →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer reveal">
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026 · <span id="data-timestamp"></span></div>
+    <div class="footer-links">
+      <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="footer-link">View source on GitHub →</a>
+      <a href="/ans-predictor.html" class="footer-link">ANS Predictor →</a>
+      <a href="https://www.kineticaai.com" class="footer-link">kineticaai.com →</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── CANVAS BACKGROUND — slow breathing sine waves ── */
+const c = document.getElementById('sleep-bg');
+if (c) {
+  const ctx = c.getContext('2d');
+  let t = 0;
+  const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+  const draw = () => {
+    ctx.clearRect(0, 0, c.width, c.height);
+    [[0.04, 0.35], [0.025, 0.50], [0.015, 0.65]].forEach(([alpha, yFrac]) => {
+      const y = c.height * yFrac;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(93,138,130,${alpha})`;
+      ctx.lineWidth = 1.0;
+      for (let x = 0; x <= c.width; x += 3) {
+        const wave1 = Math.sin(x * 0.008 + t * 0.6) * 18;
+        const wave2 = Math.sin(x * 0.015 + t * 0.9 + 1.2) * 8;
+        const py    = y - wave1 - wave2;
+        x === 0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py);
+      }
+      ctx.stroke();
+    });
+    t += 0.004;
+    requestAnimationFrame(draw);
+  };
+  resize(); draw();
+  window.addEventListener('resize', resize);
+}
+
+/* ── POPULATE FROM JSON ── */
+function populate(d) {
+  var sq = d.sleep_quality || {};
+  var dw = d.data_window || {};
+  var nDays = d.series ? d.series.length : (dw.n_days || '—');
+  var nTraining = sq.n_training || dw.n_paired || '—';
+  var auc = sq.auc_loo;
+  var ciLo = sq.auc_ci95_lower;
+  var ciHi = sq.auc_ci95_upper;
+  var sens = sq.sensitivity;
+  var spec = sq.specificity;
+  var features = sq.selected_features || [];
+
+  // Hero meta
+  document.getElementById('hero-meta').innerHTML = [
+    nDays + ' nights monitored',
+    nTraining + ' training pairs · ' + (sq.n_positive || '—') + ' high-fatigue days',
+    'Algorithm: Logistic Regression (L2)',
+    'AUC LOO-CV: ' + (auc != null ? auc.toFixed(2) : '—') +
+      (ciLo != null ? ' · CI₉₅ [' + ciLo.toFixed(2) + ', ' + ciHi.toFixed(2) + ']' : ''),
+    '<span class="meta-teal">' + (sens != null ? Math.round(sens*100) + '% sensitivity · ' : '') + 'Updated daily</span>',
+  ].map(l => '<div>' + l + '</div>').join('');
+
+  // Stats row
+  document.getElementById('stats-row').innerHTML = [
+    { val: nDays, label: 'Nights' },
+    { val: nTraining, label: 'Training pairs' },
+    { val: features.length || 2, label: 'Features' },
+    { val: auc != null ? auc.toFixed(2) : '—', label: 'AUC LOO-CV' },
+    { val: ciLo != null ? ciLo.toFixed(2) + '–' + ciHi.toFixed(2) : '—', label: 'CI₉₅' },
+    { val: sens != null ? Math.round(sens*100) + '%' : '—', label: 'Sensitivity' },
+  ].map(i => '<div class="stat-item"><span class="stat-val">' + i.val + '</span><span class="stat-label">' + i.label + '</span></div>').join('');
+
+  // Performance table
+  var metrics = [
+    { name: 'AUC (LOO-CV)', val: auc, fmt: v => v.toFixed(4), bar: v => ((v-0.5)/0.5)*100, note: ciLo != null ? 'CI₉₅ ' + ciLo.toFixed(2) + '–' + ciHi.toFixed(2) : '' },
+    { name: 'Sensitivity', val: sens, fmt: v => (v*100).toFixed(1) + '%', bar: v => v*100, note: sq.n_positive + ' positive days' },
+    { name: 'Specificity', val: spec, fmt: v => (v*100).toFixed(1) + '%', bar: v => v*100, note: sq.n_negative + ' negative days' },
+  ];
+  var html = metrics.map(function(m) {
+    if (m.val == null) return '';
+    return '<div class="perf-row">' +
+      '<span class="perf-name">' + m.name + '</span>' +
+      '<span class="perf-val">' + m.fmt(m.val) + '</span>' +
+      '<div class="perf-bar"><div class="perf-bar-fill" style="width:' + m.bar(m.val).toFixed(1) + '%"></div></div>' +
+      '<span class="perf-note">' + m.note + '</span>' +
+      '</div>';
+  }).join('');
+  document.getElementById('perf-table').innerHTML = html;
+
+  // Timestamp
+  if (d.updated_at) {
+    var ts = new Date(d.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    document.getElementById('data-timestamp').textContent = 'Data: ' + ts;
+  }
+}
+
+/* ── SCROLL REVEAL ── */
+function setupReveal() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(el) {
+      if (el.isIntersecting) {
+        var delay = Number(el.target.dataset.delay) || 0;
+        setTimeout(function() { el.target.classList.add('visible'); }, delay);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(function(el, i) {
+    if (!el.dataset.delay) el.dataset.delay = String(i * 60);
+    obs.observe(el);
+  });
+}
+
+/* ── INIT ── */
+setupReveal();
+fetch('/data/polar_live.json')
+  .then(function(r) { return r.json(); })
+  .then(populate)
+  .catch(function(e) { console.warn('polar_live.json not available:', e); });
+</script>
+
+<!-- Analytics (GoatCounter) -->
+<script data-goatcounter="https://kineticaai.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<!-- Visit notification (ntfy.sh) -->
+<script>
+(function(){
+  try {
+    var d = {
+      p: location.pathname,
+      r: document.referrer || '(direct)',
+      l: navigator.language,
+      t: new Date().toISOString()
+    };
+    fetch('https://ntfy.sh/kineticaai-v-a7f3x9', {
+      method: 'POST',
+      headers: { Title: 'Visit: ' + d.p },
+      body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t
+    }).catch(function(){});
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
