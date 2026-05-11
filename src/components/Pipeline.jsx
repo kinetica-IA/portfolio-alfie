@@ -25,6 +25,19 @@ export default function Pipeline() {
         and safety audits, instead of isolated demos.
       </p>
 
+      <div className="anchor-row">
+        <div className="anchor-stats">
+          <span><strong>7</strong> levels L0→L6</span>
+          <span className="anchor-sep" />
+          <span><strong>243</strong> days</span>
+          <span className="anchor-sep" />
+          <span><strong>70</strong> features</span>
+        </div>
+        <a href="#research" className="anchor-link" style={{ color: 'var(--green)' }}>
+          See pipeline card ↓
+        </a>
+      </div>
+
       <style>{`
         .pipeline-title {
           font-family: var(--sans);
@@ -39,6 +52,44 @@ export default function Pipeline() {
           color: var(--text-sec);
           line-height: 1.75;
           max-width: 600px;
+        }
+        .anchor-row {
+          margin-top: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          max-width: 600px;
+        }
+        .anchor-stats {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+        }
+        .anchor-stats strong {
+          font-weight: 500;
+          color: var(--text);
+          margin-right: 4px;
+        }
+        .anchor-sep {
+          width: 1px;
+          height: 10px;
+          background: var(--border);
+        }
+        .anchor-link {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          text-decoration: none;
+          transition: opacity var(--duration-hover) ease;
+          align-self: flex-start;
+        }
+        .anchor-link:hover { opacity: 0.7; }
+        @media (max-width: 480px) {
+          .anchor-sep { display: none; }
         }
       `}</style>
     </section>

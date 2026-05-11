@@ -66,6 +66,10 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-reveal: 1.6s;
   --duration-hover: 0.3s;
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-fast: 0.4s;
+  --anim-base: 0.7s;
+  --anim-slow: 1.0s;
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -168,5 +172,17 @@ img { max-width: 100%; display: block; }
     --text-section: clamp(1.5rem, 6vw, 2rem);
     --text-subsection: clamp(1.1rem, 3.5vw, 1.25rem);
     --text-body-lg: 1rem;
+  }
+}
+
+/* ── Reduced motion — a11y ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

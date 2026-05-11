@@ -129,6 +129,8 @@ export default function FilmGrain() {
     }
 
     function onClick(e) {
+      const t = e.target
+      if (t && t.closest && t.closest('a, button, input, textarea, select, [role="button"], label')) return
       const cx = e.clientX ?? e.touches?.[0]?.clientX ?? W / 2
       const cy = e.clientY ?? e.touches?.[0]?.clientY ?? H / 2
       strip.active = true
