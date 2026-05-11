@@ -4,50 +4,710 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f0f9f9">
-<title>Pipeline — Kinetica AI</title>
-<meta name="description" content="End-to-end traceable data pipeline: N-of-1 longitudinal ANS predictor from raw Polar wearable data to deployed portfolio model.">
+<title>Data Pipeline — Kinetica AI</title>
+<meta name="description" content="Kinetica's multi-level clinical data pipeline: from raw Polar wearable exports to model-ready physiological data. L0–L6 infrastructure for multiple predictors.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles/pipeline.css">
+<style>
+:root {
+  --bg: #f0f9f9;
+  --text: #4d6e68;
+  --text-h: #34504b;
+  --text-dim: #7a9e97;
+  --border: rgba(144,167,165,0.15);
+  --border-med: rgba(144,167,165,0.28);
+  --surface: #ffffff;
+  --surface2: #e8f4f4;
+  --green: #6b9e7a;
+  --teal: #90a7a5;
+  --sea: #5d8a82;
+  --warm: #c4855a;
+  --gold: #d4a843;
+  --moss: #6b8a6d;
+  --ice: #85a8b8;
+  --clay: #a8796e;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  font-weight: 300;
+  color: var(--text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+a { color: var(--sea); text-decoration: none; transition: color .2s ease; }
+a:hover { color: var(--green); }
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--sea);
+  background: rgba(93,138,130,0.08);
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(144,167,165,0.2); }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+#hrv-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.background-geo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem 6rem; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 3rem; opacity: 0.7; transition: opacity .2s;
+}
+.back-link:hover { opacity: 1; color: var(--text-dim); }
+
+.page-hero { margin-bottom: 3.5rem; }
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--teal); display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;
+}
+.pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(107,158,122,0.7);
+  animation: pulse-glow 2.5s infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { box-shadow: 0 0 4px rgba(107,158,122,0.5); }
+  50% { box-shadow: 0 0 14px rgba(107,158,122,0.9); }
+}
+.page-title {
+  font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 300; letter-spacing: -0.025em;
+  line-height: 1.1; color: var(--text-h); margin-bottom: 1.25rem;
+}
+.page-desc { font-size: 0.9rem; color: var(--text); line-height: 1.8; max-width: 620px; }
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem;
+  padding-top: 1.25rem; border-top: 1px solid var(--border);
+}
+.hero-badge {
+  font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.06em; color: var(--text-h);
+  background: rgba(144,167,165,0.12); padding: 4px 10px;
+}
+
+.section-divider { width: 100%; height: 1px; background: var(--border); margin: 3rem 0; }
+
+.content-section { margin-bottom: 0; }
+.section-eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 0.6rem; opacity: 0.75;
+}
+.section-title {
+  font-size: clamp(1.3rem, 2.8vw, 1.75rem); font-weight: 400; color: var(--text-h);
+  line-height: 1.25; margin-bottom: 1rem;
+}
+.section-body {
+  font-size: 0.875rem; color: var(--text); line-height: 1.8; max-width: 660px;
+  margin-bottom: 1rem;
+}
+.section-body + .section-body { margin-top: 0; }
+
+.level-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.06em; padding: 3px 10px; margin-bottom: 0.75rem;
+}
+.l01-badge { color: var(--warm); background: rgba(196,133,90,0.08); border-left: 2px solid var(--clay); }
+.l2-badge  { color: var(--gold); background: rgba(212,168,67,0.1);  border-left: 2px solid var(--gold); }
+.l34-badge { color: var(--green); background: rgba(107,158,122,0.08); border-left: 2px solid var(--moss); }
+.l56-badge { color: var(--ice);  background: rgba(133,168,184,0.08); border-left: 2px solid var(--sea); }
+
+/* Pipeline level strip */
+.pipeline-map { margin-bottom: 0; }
+.level-strip {
+  display: flex; align-items: stretch; overflow-x: auto; padding-bottom: 8px;
+  scrollbar-width: thin; margin-top: 1.25rem;
+}
+.level-node {
+  flex: 0 0 auto; width: 112px; min-height: 104px;
+  background: var(--surface); padding: 14px 12px;
+  border-left: 2px solid var(--node-color, #90a7a5);
+  display: flex; flex-direction: column; gap: 5px;
+  transition: border-left-width .2s;
+}
+.level-node:hover { border-left-width: 3px; }
+.level-node__chip {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500;
+  color: var(--node-color, #90a7a5); background: var(--node-bg, rgba(144,167,165,0.12));
+  padding: 2px 6px; display: inline-block; align-self: flex-start; line-height: 18px;
+}
+.level-node__name {
+  font-size: 0.72rem; font-weight: 500; color: var(--text-h); line-height: 1.35;
+}
+.level-node__desc {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-dim);
+  margin-top: auto; line-height: 1.4;
+}
+.level-connector {
+  flex: 0 0 20px; align-self: center;
+  display: flex; align-items: center; justify-content: center; opacity: 0.4;
+}
+.level-connector svg { width: 20px; height: 12px; }
+
+/* Source grid L0-L1 */
+.source-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1px; background: var(--border); border: 1px solid var(--border);
+  margin-top: 1.75rem;
+}
+.source-card {
+  background: var(--surface); padding: 1.25rem 1rem;
+  border-left: 2px solid transparent;
+  transition: border-left-color .2s, background .2s;
+}
+.source-card:hover { border-left-color: var(--warm); background: rgba(196,133,90,0.02); }
+.source-label {
+  font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500;
+  color: var(--text-h); letter-spacing: 0.04em; margin-bottom: 0.5rem;
+}
+.source-desc { font-size: 0.78rem; color: var(--text); line-height: 1.65; margin-bottom: 0.6rem; }
+.source-file { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-dim); opacity: 0.75; }
+
+/* Feature list L2 */
+.feature-list {
+  display: flex; flex-direction: column; gap: 1px;
+  background: var(--border); border: 1px solid var(--border); margin-top: 1.75rem;
+}
+.feature-item {
+  background: var(--surface); display: flex; align-items: flex-start; gap: 1.25rem;
+  padding: 1.25rem 1rem; border-left: 2px solid transparent;
+  transition: border-left-color .2s, background .2s;
+}
+.feature-item:hover { border-left-color: var(--gold); background: rgba(212,168,67,0.02); }
+.feature-icon {
+  flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center;
+  justify-content: center; background: rgba(212,168,67,0.1);
+  font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500;
+  color: var(--gold); letter-spacing: 0.04em; text-align: center; line-height: 1.2;
+}
+.feature-body { flex: 1; }
+.feature-title {
+  font-size: 0.85rem; font-weight: 500; color: var(--text-h); margin-bottom: 0.4rem;
+}
+.feature-desc { font-size: 0.78rem; color: var(--text); line-height: 1.65; margin-bottom: 0.5rem; }
+.feature-file { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-dim); opacity: 0.75; }
+
+/* Detail row L3-L4 */
+.detail-row {
+  display: flex; flex-wrap: wrap; gap: 1px;
+  background: var(--border); border: 1px solid var(--border); margin-top: 1.75rem;
+}
+.detail-card { flex: 1 1 140px; background: var(--surface); padding: 1.25rem 1rem; }
+.detail-label {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.4rem;
+}
+.detail-value {
+  font-family: 'DM Mono', monospace; font-size: 1.4rem; font-weight: 400;
+  color: var(--green); line-height: 1; margin-bottom: 0.3rem;
+}
+.detail-sub { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; }
+
+/* Stats row L5 */
+.stats-row {
+  display: flex; flex-wrap: wrap; gap: 1px;
+  background: var(--border); border: 1px solid var(--border); margin-top: 1.75rem;
+}
+.stat-item { flex: 1 1 80px; background: var(--surface); padding: 1.25rem 1rem; text-align: center; }
+.stat-val {
+  font-family: 'DM Mono', monospace; font-size: 1.3rem; font-weight: 400;
+  color: var(--sea); display: block; line-height: 1; margin-bottom: 0.35rem;
+}
+.stat-label {
+  font-family: 'DM Mono', monospace; font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+}
+
+/* Closing */
+.closing-section { padding: 1rem 0; }
+.closing-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--green); padding: 2rem;
+}
+.closing-title {
+  font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--green);
+  margin-bottom: 1rem; opacity: 0.8;
+}
+.closing-text {
+  font-size: 0.875rem; color: var(--text); line-height: 1.8;
+  max-width: 600px; margin-bottom: 1.5rem;
+}
+.closing-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.closing-link {
+  font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500;
+  color: var(--sea); letter-spacing: 0.04em;
+}
+.closing-link:hover { color: var(--green); }
+
+/* Footer */
+.page-footer {
+  padding-top: 2rem; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem; margin-top: 3.5rem;
+}
+.footer-brand { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-dim); }
+.footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+.footer-link { font-family: 'DM Mono', monospace; font-size: 0.65rem; font-weight: 500; color: var(--teal); }
+.footer-link:hover { color: var(--green); }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 640px) {
+  .page-wrap { padding: 2rem 1.25rem 4rem; }
+  .level-node { width: 88px; min-height: 88px; padding: 10px 8px; }
+  .source-grid { grid-template-columns: 1fr; }
+  .detail-row { flex-direction: column; }
+  .feature-item { flex-direction: column; gap: 0.75rem; }
+  .feature-icon { width: 40px; height: 40px; font-size: 0.58rem; }
+}
+</style>
 </head>
 <body>
 
-<header class="site-header">
+<canvas id="hrv-bg" aria-hidden="true"></canvas>
+<svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="160" y="60" width="340" height="340" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.06"/>
+  <rect x="720" y="40" width="280" height="280" rx="40" fill="none" stroke="#6b9e7a" stroke-width="1.2" opacity="0.06"/>
+  <rect x="1100" y="110" width="220" height="220" rx="40" fill="none" stroke="#d4a843" stroke-width="1.2" opacity="0.05"/>
+  <circle cx="420" cy="560" r="160" fill="none" stroke="#5d8a82" stroke-width="1" opacity="0.04"/>
+</svg>
+
+<div class="page-wrap">
+
   <a href="/" class="back-link">← kineticaai.com</a>
-  <span class="brand">Kinetica AI</span>
-</header>
 
-<main>
-
-  <section class="page-header">
-    <span class="eyebrow">Traceable Pipeline</span>
-    <h1>From raw heartbeat to deployed predictor</h1>
-    <p class="subtitle">
-      Seven levels of transformations: GDPR cardiac export → structured features →
-      multi-target LOO-CV model → atomic portfolio publish.
-      Every step reproducible, every drop logged.
+  <!-- 1. HERO -->
+  <header class="page-hero reveal">
+    <div class="eyebrow">
+      <span class="pulse-dot"></span>
+      Clinical data infrastructure
+    </div>
+    <h1 class="page-title">From raw wearable exports<br>to model-ready clinical physiology</h1>
+    <p class="page-desc">
+      Kinetica’s end-to-end pipeline ingests heterogeneous Polar exports, validates schemas,
+      applies physiological quality filters, computes derived HRV and activity features,
+      aligns them on a daily timeline and prepares them for prediction, interpretation
+      and public rendering.
     </p>
-    <p class="meta" id="meta-line">Loading pipeline state…</p>
+    <div class="hero-meta">
+      <span class="hero-badge">L0 – L6 · 7 layers</span>
+      <span class="hero-badge">6 data sources · 8 parsers</span>
+      <span class="hero-badge" id="hb-days">243 days · 71 features</span>
+      <span class="hero-badge">5 independent predictors</span>
+    </div>
+  </header>
+
+  <!-- 2. PIPELINE MAP -->
+  <section class="pipeline-map reveal">
+    <div class="section-eyebrow">Pipeline map · L0 → L6</div>
+    <div class="level-strip">
+
+      <div class="level-node" style="--node-color:#a8796e;--node-bg:rgba(168,121,110,0.1)">
+        <span class="level-node__chip">L0</span>
+        <span class="level-node__name">Raw ingest</span>
+        <span class="level-node__desc">Polar GDPR export· outside repo</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#c4855a;--node-bg:rgba(196,133,90,0.1)">
+        <span class="level-node__chip">L1</span>
+        <span class="level-node__name">Structured extract</span>
+        <span class="level-node__desc">8 parsers · typed DataFrames</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#d4a843;--node-bg:rgba(212,168,67,0.1)">
+        <span class="level-node__chip">L2</span>
+        <span class="level-node__name">Derived features</span>
+        <span class="level-node__desc">HRV · zones · strata</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#6b8a6d;--node-bg:rgba(107,138,109,0.1)">
+        <span class="level-node__chip">L3</span>
+        <span class="level-node__name">Unified daily frame</span>
+        <span class="level-node__desc">243 rows · 71 cols</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#6b9e7a;--node-bg:rgba(107,158,122,0.1)">
+        <span class="level-node__chip">L4</span>
+        <span class="level-node__name">Joint with diary</span>
+        <span class="level-node__desc">61 pairs · lag features</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#5d8a82;--node-bg:rgba(93,138,130,0.1)">
+        <span class="level-node__chip">L5</span>
+        <span class="level-node__name">Model outputs</span>
+        <span class="level-node__desc">5 targets · AUC 0.829</span>
+      </div>
+      <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
+
+      <div class="level-node" style="--node-color:#85a8b8;--node-bg:rgba(133,168,184,0.1)">
+        <span class="level-node__chip">L6</span>
+        <span class="level-node__name">Portfolio render</span>
+        <span class="level-node__desc">polar_live.json · live</span>
+      </div>
+
+    </div>
   </section>
 
-  <section class="overview">
-    <h2 class="eyebrow section-label">Overview</h2>
-    <div class="sankey" id="sankey" aria-label="Pipeline data flow overview"></div>
+  <div class="section-divider"></div>
+
+  <!-- 3. L0-L1 -->
+  <section class="content-section reveal">
+    <span class="level-badge l01-badge">L0 · L1</span>
+    <div class="section-eyebrow">Raw ingest · Structured extract</div>
+    <h2 class="section-title">From heterogeneous Polar exports to typed tables</h2>
+    <p class="section-body">
+      Raw data lives outside the repository. Polar GDPR exports contain personal cardiac data
+      and are never committed. The L0 archive holds 1,025 JSON files (1.1 GB) from eleven
+      distinct data sources, covering the full observation window from August 2025 to April 2026.
+    </p>
+    <p class="section-body">
+      Eight specialized parsers in <code>pipeline/l1_extract/</code> convert these heterogeneous
+      JSON schemas into typed pandas DataFrames with consistent date indexing and Pydantic
+      schema validation. Every dropped row is logged with its reason. Output: a set of
+      dated parquets written to <code>data/processed/L1/</code>.
+    </p>
+
+    <div class="source-grid">
+
+      <div class="source-card">
+        <div class="source-label">247 OHR</div>
+        <div class="source-desc">24/7 optical heart rate monitoring. Wrist-based continuous recording aggregated to daily resting HR and daytime HR load.</div>
+        <div class="source-file">parse_247ohr.py</div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-label">Activity</div>
+        <div class="source-desc">Daily step count, active calories, activity class distribution and total training load from device activity logs.</div>
+        <div class="source-file">parse_activity.py</div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-label">Sleep</div>
+        <div class="source-desc">Sleep architecture: total sleep time, deep, REM and light stage minutes, wake-after-sleep-onset and Polar sleep score.</div>
+        <div class="source-file">parse_sleep.py</div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-label">Nightly recovery</div>
+        <div class="source-desc">Polar nightly recharge score, ANS charge state and HRV readiness index computed from nocturnal RR recordings.</div>
+        <div class="source-file">parse_nightly_recovery.py</div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-label">PPI samples</div>
+        <div class="source-desc">Raw peak-to-peak RR interval time series. Full nocturnal recording. Foundation for all advanced HRV computation in L2.</div>
+        <div class="source-file">parse_ppi_samples.py</div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-label">Orthostatic tests</div>
+        <div class="source-desc">Sparse source: 8 structured lying-to-standing autonomic reactivity tests. HR and HRV response curves per test session.</div>
+        <div class="source-file">parse_orthostatic.py</div>
+      </div>
+
+    </div>
   </section>
 
-  <section class="anatomy">
-    <h2 class="eyebrow section-label">Per-level anatomy</h2>
-    <div class="levels" id="levels"></div>
+  <div class="section-divider"></div>
+
+  <!-- 4. L2 -->
+  <section class="content-section reveal">
+    <span class="level-badge l2-badge">L2</span>
+    <div class="section-eyebrow">Derived features</div>
+    <h2 class="section-title">Advanced HRV, zone distribution and session stratification</h2>
+    <p class="section-body">
+      Three independent feature computers in <code>pipeline/l2_features/</code> transform
+      the L1 typed DataFrames into interpretable physiological signals. Each module is
+      deterministic given the same input and writes its own dated parquet to
+      <code>data/processed/L2/</code>.
+    </p>
+
+    <div class="feature-list">
+
+      <div class="feature-item">
+        <div class="feature-icon">HRV</div>
+        <div class="feature-body">
+          <div class="feature-title">Advanced HRV features</div>
+          <div class="feature-desc">
+            NeuroKit2 computes 9 frequency- and time-domain metrics from raw PPI samples:
+            SDNN, RMSSD, LF power, HF power, LF/HF ratio, SD1, SD2, DFA-&#945;1 and sample entropy.
+            Applied nightly to the full nocturnal RR interval stream. Each night yields
+            a single-row feature vector aligned by calendar date.
+          </div>
+          <div class="feature-file">compute_hrv_features.py · 9 features · 239 nights</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">Z1–Z5</div>
+        <div class="feature-body">
+          <div class="feature-title">Heart rate zone distribution</div>
+          <div class="feature-desc">
+            Training sessions are partitioned into 5 HR zones using age-adjusted maximum HR thresholds.
+            Minutes in each zone are aggregated per training day and expressed both as absolute time
+            and as proportion of total session duration. Rest days receive zero-valued zone columns.
+          </div>
+          <div class="feature-file">compute_zone_distribution.py · 10 columns · 107 training days</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">STR</div>
+        <div class="feature-body">
+          <div class="feature-title">Session stratification</div>
+          <div class="feature-desc">
+            Each training session is classified into an intensity stratum — easy, moderate, hard
+            or very hard — using a composite score from zone distribution, session duration and
+            training load index. Rest days are labelled <code>rest</code>. The stratum column
+            propagates through L3 and serves as a stratifier in L4 lag-feature analysis.
+          </div>
+          <div class="feature-file">compute_session_strata.py · 107 sessions classified</div>
+        </div>
+      </div>
+
+    </div>
   </section>
 
-</main>
+  <div class="section-divider"></div>
 
-<footer class="site-footer">
-  <p>Pipeline state regenerates on every run. Artifacts are deterministic given the same input export.</p>
-  <p>Source: <a href="https://github.com/kinetica-IA/portfolio-alfie" target="_blank" rel="noopener noreferrer">github.com/kinetica-IA/portfolio-alfie</a></p>
-</footer>
+  <!-- 5. L3-L4 -->
+  <section class="content-section reveal">
+    <span class="level-badge l34-badge">L3 · L4</span>
+    <div class="section-eyebrow">Unified daily frame · Joint with diary</div>
+    <h2 class="section-title">One row per day, aligned across all sources</h2>
+    <p class="section-body">
+      <code>l3_unified.py</code> outer-merges all L1 and L2 parquets on calendar date.
+      The result is a unified DataFrame with one row per day across the full observation window.
+      Every date present in any source is preserved; <code>NaN</code> marks absence from a
+      given source — orthostatic tests appear on only 8 days, fitness tests on 11.
+      Sparse sources do not compress the window.
+    </p>
+    <p class="section-body">
+      L4 inner-joins the L3 frame with the subjective symptom diary, reducing to the paired days
+      where both physiological data and a diary entry coexist. Four temporal lag features
+      (t&#8722;1, t&#8722;2, t&#8722;3) are added to the four primary autonomic columns,
+      expanding the feature space for time-lagged prediction. The L4 artifact is the direct
+      input to the L5 model training pipeline.
+    </p>
 
-<script type="module" src="/scripts/pipeline.js"></script>
+    <div class="detail-row">
+      <div class="detail-card">
+        <div class="detail-label">L3 rows</div>
+        <div class="detail-value" id="l3-rows">243</div>
+        <div class="detail-sub">days · outer merge · all sources</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">L3 columns</div>
+        <div class="detail-value" id="l3-cols">71</div>
+        <div class="detail-sub">features · NaN where source absent</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">L4 pairs</div>
+        <div class="detail-value" id="l4-pairs">61</div>
+        <div class="detail-sub">diary-aligned days · inner join</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Lag features</div>
+        <div class="detail-value" id="l4-lags">+24</div>
+        <div class="detail-sub">t&#8722;1 · t&#8722;2 · t&#8722;3 on 4 autonomic cols</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- 6. L5-L6 -->
+  <section class="content-section reveal">
+    <span class="level-badge l56-badge">L5 · L6</span>
+    <div class="section-eyebrow">Model outputs · Portfolio render</div>
+    <h2 class="section-title">Predictor outputs and publish state</h2>
+    <p class="section-body">
+      The L5 predictor layer runs forward feature selection independently per target symptom.
+      Leave-one-out cross-validation is the primary validation strategy — every paired day
+      serves as both training and test exactly once. Bootstrap CI (1000&#215;) quantifies
+      uncertainty per target. The deployment target is autonomic dysfunction,
+      reaching AUC&nbsp;0.829 on N&nbsp;=&nbsp;55 paired days.
+    </p>
+    <p class="section-body">
+      L6 assembles all pipeline outputs into <code>polar_live.json</code> using an atomic
+      tempfile-rename write strategy. The JSON is consumed at runtime by the React portfolio
+      at kineticaai.com — SSR fallback is served first; client-side hydration fills confidence
+      intervals and feature weights after load. A separate <code>pipeline_state.json</code>
+      artifact documents per-level status, metrics and last-run timestamps.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="stat-val" id="l5-targets">5</span>
+        <span class="stat-label">Targets</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val" id="l5-auc">0.829</span>
+        <span class="stat-label">Headline AUC</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val" id="l5-n">55</span>
+        <span class="stat-label">Training pairs</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">LOO-CV</span>
+        <span class="stat-label">Validation</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">1000&#215;</span>
+        <span class="stat-label">Bootstrap CI</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">Atomic</span>
+        <span class="stat-label">Publish write</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- 7. CLOSING -->
+  <section class="closing-section reveal">
+    <div class="closing-block">
+      <div class="closing-title">Multi-predictor infrastructure</div>
+      <p class="closing-text">
+        This pipeline is the common foundation for multiple independent predictors.
+        Each predictor consumes the L4 feature frame but selects its own feature subset,
+        trains its own model and publishes its own output independently. Adding a new
+        predictor requires no changes to L0–L4 — the data infrastructure is shared;
+        the modelling layer is not. Built as infrastructure, not as a one-off preprocessing script.
+      </p>
+      <div class="closing-links">
+        <a href="/ans-predictor.html" class="closing-link">ANS Predictor →</a>
+        <a href="/sleep-quality-predictor.html" class="closing-link">Sleep Quality Predictor →</a>
+        <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" rel="noopener" class="closing-link">View source on GitHub →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page-footer reveal">
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
+    <div class="footer-links">
+      <a href="https://github.com/kinetica-IA/portfolio-alfie" target="_blank" rel="noopener" class="footer-link">portfolio-alfie →</a>
+      <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener" class="footer-link">LinkedIn →</a>
+      <a href="/" class="footer-link">kineticaai.com →</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* HRV canvas background */
+(function() {
+  var c = document.getElementById('hrv-bg');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var t = 0;
+  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    [[0.04, 0.35], [0.025, 0.55], [0.015, 0.72]].forEach(function(pair) {
+      var alpha = pair[0], yFrac = pair[1];
+      var y = c.height * yFrac;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(107,158,122,' + alpha + ')';
+      ctx.lineWidth = 1.2;
+      for (var x = 0; x <= c.width; x += 3) {
+        var spike = Math.exp(-Math.pow(x % 140 - 70, 2) / 100) * 30;
+        var wave = Math.sin(x * 0.012 + t) * 10;
+        var py = y - spike - wave;
+        if (x === 0) ctx.moveTo(x, py); else ctx.lineTo(x, py);
+      }
+      ctx.stroke();
+    });
+    t += 0.006;
+    requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  window.addEventListener('resize', resize);
+})();
+
+/* Scroll reveal */
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        var delay = Number(e.target.dataset.delay) || 0;
+        setTimeout(function() { e.target.classList.add('visible'); }, delay);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(function(el, i) {
+    if (!el.dataset.delay) el.dataset.delay = String(i * 100);
+    obs.observe(el);
+  });
+})();
+
+/* Load pipeline_state.json for live metrics (graceful fallback to static values) */
+fetch('/data/pipeline_state.json')
+  .then(function(r) { return r.json(); })
+  .then(function(state) {
+    var levels = {};
+    (state.levels || []).forEach(function(l) { levels[l.level] = l; });
+    function set(id, val) { var el = document.getElementById(id); if (el && val != null) el.textContent = val; }
+
+    var l3 = levels['L3'];
+    if (l3 && l3.metrics) {
+      set('l3-rows', l3.metrics.rows);
+      set('l3-cols', l3.metrics.columns);
+    }
+    var l4 = levels['L4'];
+    if (l4 && l4.metrics) {
+      set('l4-pairs', l4.metrics.paired_days);
+      if (l4.metrics.lag_features_added) set('l4-lags', '+' + l4.metrics.lag_features_added);
+    }
+    var l5 = levels['L5'];
+    if (l5 && l5.metrics) {
+      set('l5-targets', l5.metrics.targets);
+      if (l5.metrics.headline_auc) set('l5-auc', parseFloat(l5.metrics.headline_auc).toFixed(3));
+      set('l5-n', l5.metrics.headline_n);
+    }
+    var s = state.summary || {};
+    if (s.total_days && s.total_days !== 243) {
+      var hb = document.getElementById('hb-days');
+      if (hb) hb.textContent = s.total_days + ' days · 71 features';
+    }
+  })
+  .catch(function() {});
+</script>
+
+<script data-goatcounter="https://kineticaai.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+(function(){
+  try {
+    var d = { p: location.pathname, r: document.referrer || '(direct)', l: navigator.language, t: new Date().toISOString() };
+    fetch('https://ntfy.sh/kineticaai-v-a7f3x9', { method: 'POST', headers: { Title: 'Visit: ' + d.p }, body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t }).catch(function(){});
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
