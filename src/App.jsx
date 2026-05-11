@@ -24,11 +24,11 @@ export default function App() {
         <Hero />
         <SectionDivider color="var(--green)" colorRgb="107,158,122" />
         <Reveal>
-          <Pipeline data={data} />
+          <Pipeline />
         </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal>
-          <Predictors data={data} loading={loading} />
+          <Predictors />
         </Reveal>
         <SectionDivider color="var(--teal)" colorRgb="144,167,165" />
         <Reveal delay={0.1}>
