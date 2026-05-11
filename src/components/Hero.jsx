@@ -7,7 +7,7 @@ import { useTextDecode } from '../hooks/useTextDecode'
 
 const SUB_STRINGS = [
   'clinical AI systems',
-  'from wearable data to patient insight',
+  'wearable data · symptom tracking · real patients',
   'N-of-1 · open data · reproducible',
 ]
 
@@ -67,14 +67,14 @@ export default function Hero() {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Building AI that works in clinical reality.
+          Building clinical AI from wearable data, symptom tracking and real patient reality.
         </p>
         <p className="hero-credentials" style={{
           opacity: bootStep >= 1 ? 1 : 0,
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(6px)',
           transition: 'opacity 0.6s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}>
-          Biomechanics · Osteopath · clinical AI projects
+          Biomechanics · Osteopath · Clinical AI builder
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
@@ -82,14 +82,20 @@ export default function Hero() {
         }}>
           {subText}
         </p>
+        <p className="hero-microproof" style={{
+          opacity: bootStep >= 2 ? 1 : 0,
+          transition: 'opacity 0.6s var(--ease-out) 0.2s',
+        }}>
+          N-of-1 longitudinal archive · wearable HRV · symptom-linked modelling · clinician-built
+        </p>
       </div>
       <div className="hero-cta" style={{
         opacity: bootStep >= 3 ? 1 : 0,
         transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(8px)',
         transition: 'opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)',
       }}>
-        <a href="#work" className="hero-btn hero-btn--primary">See the work</a>
-        <a href="#contact" className="hero-btn hero-btn--secondary">Get in touch</a>
+        <a href="#pipeline" className="hero-btn hero-btn--primary">Explore the system</a>
+        <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
       </div>
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
         <span className="hero-scroll-line" />
@@ -158,6 +164,14 @@ export default function Hero() {
           letter-spacing: 0.06em;
           margin: 16px auto 0;
           min-height: 1.4em;
+        }
+        .hero-microproof {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          margin: 20px auto 0;
+          opacity: 0.6;
         }
         .hero-cta {
           display: flex;
