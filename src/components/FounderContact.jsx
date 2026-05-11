@@ -94,6 +94,7 @@ export default function FounderContact() {
 
       {/* CTA area */}
       <div className="fc-cta-area" ref={ctaRef}>
+        <a href="#research" className="fc-research-link">See open research →</a>
         <p className="fc-services">
           Clinical AI consulting · Autonomic assessment · AI model evaluation
         </p>
@@ -239,6 +240,14 @@ export default function FounderContact() {
           gap: 20px;
           text-align: center;
         }
+        .fc-research-link {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text-dim);
+          text-decoration: none;
+          transition: color var(--duration-hover) ease;
+        }
+        .fc-research-link:hover { color: var(--teal); }
         .fc-services {
           font-family: var(--mono);
           font-size: var(--text-caption);

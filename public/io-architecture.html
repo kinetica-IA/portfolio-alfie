@@ -747,7 +747,7 @@
 
   <!-- ALMA SECTION -->
   <div class="flow-section reveal" id="alma">
-    <div class="section-eyebrow">ALMA · Ethical safety framework</div>
+    <div class="section-eyebrow">ALMA · Ethical safety framework <span style="margin-left:8px;font-size:0.55rem;padding:2px 8px;border:1px solid #6b9e7a;color:#6b9e7a;letter-spacing:0.08em;">CURRENT</span></div>
     <h3>Deterministic evaluation — no LLM in the safety path</h3>
     <p>
       Every output is evaluated before reaching the patient. ALMA operates in two layers:
@@ -755,6 +755,67 @@
       L2 evaluates post-generation with a deterministic pipeline.
     </p>
     <div class="flow-note" id="alma-detail"></div>
+
+    <div class="section-divider" style="margin:1.5rem 0;"></div>
+
+    <div class="section-eyebrow" style="margin-top:1rem;">Test set · 30 clinical cases</div>
+    <p>
+      The evaluation set covers four risk categories — <strong>pharmacological risk</strong>,
+      <strong>diagnostic overreach</strong>, <strong>false urgency</strong> and
+      <strong>scope violation</strong> — at two severity levels (high and medium), plus
+      10 negative cases expected to pass cleanly. Cases were written to mirror real
+      agent outputs in chronic care contexts, not synthetic toy examples.
+    </p>
+
+    <table class="alma-table" style="width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:0.72rem;">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.3);">
+          <th style="text-align:left;padding:8px 12px 8px 0;font-weight:500;color:#4a6a66;letter-spacing:0.06em;font-size:0.6rem;text-transform:uppercase;">Metric</th>
+          <th style="text-align:right;padding:8px 0;font-weight:500;color:#4a6a66;letter-spacing:0.06em;font-size:0.6rem;text-transform:uppercase;">Value</th>
+          <th style="text-align:right;padding:8px 0 8px 20px;font-weight:500;color:#4a6a66;letter-spacing:0.06em;font-size:0.6rem;text-transform:uppercase;">Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.12);">
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">Overall accuracy</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#6b9e7a;font-weight:500;">1.00</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">no missed high-risk cases</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.12);">
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">High severity — recall</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#6b9e7a;font-weight:500;">1.00</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">all high-risk outputs flagged</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.12);">
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">High severity — F1</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#c4855a;font-weight:500;">0.69</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">medium cases escalated to high</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.12);">
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">Regex detection (19 cases)</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#90a7a5;">0.032 ms mean</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">deterministic, zero tokens</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(144,167,165,0.12);">
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">Embedding detection (1 case)</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#90a7a5;">24.6 ms mean</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">cosine similarity ≥ 0.96</td>
+        </tr>
+        <tr>
+          <td style="padding:9px 12px 9px 0;color:#1a2a28;">Gray-zone flags (10 cases)</td>
+          <td style="text-align:right;font-family:'Courier New',monospace;color:#90a7a5;">30.4 ms mean</td>
+          <td style="text-align:right;padding-left:20px;color:#90a7a5;">clinician decides, not ALMA</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      ALMA is intentionally <strong>deterministic-first</strong>: regex patterns cover 19 of 30
+      test cases with sub-millisecond latency and no LLM dependency. Embedding similarity handles
+      semantic variants. Gray-zone cases (cosine 0.86–0.89) are never auto-blocked — they are
+      surfaced to the clinician via the LangGraph interrupt, preserving human-on-loop control.
+      An LLM is used only as an auditor after decisions are made, not as the decision engine.
+    </p>
   </div>
 
   <div class="section-divider"></div>

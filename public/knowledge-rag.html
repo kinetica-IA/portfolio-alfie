@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0f9f9">
+<title>Clinical Knowledge & RAG — Kinetica AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #f0f9f9;
+    --surface:      #ffffff;
+    --surface2:     #e8f4f4;
+    --accent:       #90a7a5;
+    --accent-dark:  #6b8a88;
+    --accent-ice:   #85a8b8;
+    --accent-green: #6b9e7a;
+    --text:         #1a2a28;
+    --text-muted:   #4a6a66;
+    --text-dim:     #90a7a5;
+    --border:       rgba(144,167,165,0.18);
+    --border-med:   rgba(144,167,165,0.32);
+    --shadow:       0 4px 24px rgba(144,167,165,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  #kb-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .background-geo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .page-wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--accent); text-decoration: none; text-transform: uppercase;
+    margin-bottom: 2.5rem; opacity: 0.7; transition: opacity 0.2s, gap 0.2s;
+  }
+  .back-link:hover { opacity: 1; gap: 0.75rem; }
+
+  .page-hero { margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; }
+  .eyebrow {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-ice);
+    box-shadow: 0 0 8px rgba(133,168,184,0.7);
+    animation: pulse-glow 3s infinite; flex-shrink: 0;
+  }
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 4px rgba(133,168,184,0.5); }
+    50%     { box-shadow: 0 0 14px rgba(133,168,184,0.9); }
+  }
+  .page-title { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1.05; color: var(--text); margin-bottom: 1rem; }
+  .page-title .solid { font-weight: 700; }
+  .page-title em { font-style: italic; color: var(--accent-ice); }
+  .page-desc { font-size: 0.85rem; color: var(--text-muted); max-width: 480px; line-height: 1.75; }
+  .hero-meta { text-align: right; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.08em; color: var(--text-dim); line-height: 2; flex-shrink: 0; }
+  .meta-ice { color: var(--accent-ice); font-weight: 500; }
+
+  .section-divider { width: 100%; height: 1px; background: var(--border); margin: 2.5rem 0; }
+  .section-eyebrow { font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.25rem; opacity: 0.65; }
+
+  .stats-row { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 2.5rem; }
+  .stat-item { flex: 1; background: var(--surface); padding: 1.25rem 1rem; text-align: center; min-width: 80px; animation: fadeUp 0.5s ease both; }
+  .stat-val { font-size: 1.6rem; font-weight: 300; color: var(--accent-ice); letter-spacing: -0.03em; line-height: 1; display: block; margin-bottom: 0.3rem; }
+  .stat-label { font-size: 0.55rem; font-weight: 500; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+
+  .content-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 2rem; margin-bottom: 2.5rem;
+  }
+  .content-section h3 { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+  .content-section p { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.7; }
+  .content-section p:last-child { margin-bottom: 0; }
+  .content-section strong { color: var(--text); font-weight: 500; }
+  code { font-family: 'Courier New', monospace; font-size: 0.72rem; color: var(--accent-dark); background: var(--surface2); padding: 0.1em 0.4em; border-radius: 3px; }
+
+  /* Source grid */
+  .source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  .source-card {
+    background: var(--surface2); border-radius: 8px; padding: 1.25rem;
+    border-left: 2px solid var(--accent-ice);
+  }
+  .source-name { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.03em; margin-bottom: 0.3rem; }
+  .source-chunks { font-family: 'Courier New', monospace; font-size: 0.68rem; color: var(--accent-ice); font-weight: 500; margin-bottom: 0.25rem; }
+  .source-desc { font-size: 0.66rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* Metrics table */
+  .metrics-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.72rem; }
+  .metrics-table thead tr { border-bottom: 1px solid var(--border-med); }
+  .metrics-table th { text-align: left; padding: 8px 12px 8px 0; font-weight: 500; color: var(--text-muted); letter-spacing: 0.06em; font-size: 0.58rem; text-transform: uppercase; }
+  .metrics-table th:not(:first-child) { text-align: right; }
+  .metrics-table td { padding: 9px 12px 9px 0; border-bottom: 1px solid rgba(144,167,165,0.1); color: var(--text); font-size: 0.75rem; }
+  .metrics-table td:not(:first-child) { text-align: right; font-family: 'Courier New', monospace; }
+  .metrics-table tr:last-child td { border-bottom: none; }
+  .val-green { color: var(--accent-green); font-weight: 500; }
+  .val-ice { color: var(--accent-ice); font-weight: 500; }
+  .val-dim { color: var(--text-dim); }
+
+  /* Bar row */
+  .bar-row { height: 3px; background: rgba(144,167,165,0.1); overflow: visible; }
+  .bar-fill { height: 100%; background: var(--accent-ice); transition: width 1s ease; }
+
+  /* Finding block */
+  .finding { border-left: 2px solid var(--accent-ice); padding-left: 20px; margin: 1.5rem 0; max-width: 600px; }
+  .finding-text { font-size: 0.8rem; color: var(--text-muted); line-height: 1.75; }
+
+  /* Footer */
+  .page-footer { padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-brand { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-link { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  .footer-link:hover { opacity: 0.65; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 640px) {
+    .page-wrap { padding: 2rem 1.25rem 4rem; }
+    .stats-row { flex-wrap: wrap; }
+    .stat-item { min-width: 80px; }
+    .page-hero { flex-direction: column; }
+    .hero-meta { text-align: left; }
+    .source-grid { grid-template-columns: 1fr; }
+    .metrics-table td:nth-child(3),
+    .metrics-table th:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="kb-bg" aria-hidden="true"></canvas>
+<svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="140" y="80" width="320" height="320" rx="40" fill="none" stroke="#85a8b8" stroke-width="1.2" opacity="0.05"/>
+  <rect x="700" y="60" width="280" height="280" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.06"/>
+  <rect x="1100" y="140" width="200" height="200" rx="40" fill="none" stroke="#85a8b8" stroke-width="1.2" opacity="0.04"/>
+</svg>
+
+<div class="page-wrap">
+
+  <a href="https://www.kineticaai.com" class="back-link">← kineticaai.com</a>
+
+  <!-- HERO -->
+  <div class="page-hero reveal">
+    <div class="hero-left">
+      <div class="eyebrow">
+        <span class="pulse-dot"></span>
+        Kinetica AI · Clinical Knowledge & RAG · Research
+      </div>
+      <h1 class="page-title">
+        <span class="solid">Clinical Knowledge</span><br>
+        <em>& RAG evaluation</em>
+      </h1>
+      <p class="page-desc">
+        A curated, audited knowledge base backing the IO3 clinical agent. Sources span
+        peer-reviewed literature, physiological data summaries and clinical profile context,
+        all structured for ChromaDB retrieval and evaluated with a dedicated RAG test set.
+      </p>
+    </div>
+    <div class="hero-meta">
+      <div><span class="meta-ice">1,880</span> total chunks</div>
+      <div><span class="meta-ice">2</span> collections</div>
+      <div><span class="meta-ice">0.85</span> retrieval accuracy</div>
+      <div><span class="meta-ice">20</span> test questions</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <span class="stat-val">1,880</span>
+      <span class="stat-label">audited chunks</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">0.85</span>
+      <span class="stat-label">retrieval accuracy</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">20</span>
+      <span class="stat-label">test questions</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">7</span>
+      <span class="stat-label">domains covered</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">0.75</span>
+      <span class="stat-label">target (passed)</span>
+    </div>
+  </div>
+
+  <!-- KNOWLEDGE BASE -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Knowledge base · Chroma audit</div>
+    <h3>Two collections, 1,880 audited chunks</h3>
+    <p>
+      The knowledge base lives in <strong>ChromaDB</strong> and is split into two collections.
+      <code>io3_kb</code> holds 347 chunks of curated clinical literature and profile context,
+      hand-audited for source quality. <code>io3_deltas</code> holds 1,533 chunks from session
+      deltas, summaries and incremental memory updates — the longitudinal layer that grows with
+      each clinical interaction.
+    </p>
+    <p>
+      Every source in <code>io3_kb</code> carries structured metadata: chunk index, source file
+      path and domain category. Zero chunks are missing metadata. Exact duplicates (121) and
+      near-semantic duplicates at 0.95 cosine threshold (29,699 cross-pairs) were catalogued
+      but not removed — the audit distinguishes storage redundancy from retrieval quality.
+    </p>
+
+    <div class="source-grid">
+      <div class="source-card">
+        <div class="source-name">HRV & Autonomic</div>
+        <div class="source-chunks">~16 chunks · 6 sources</div>
+        <div class="source-desc">Morning HRV protocol, autonomic dysfunction in ME/CFS, HRV as fatigue biomarker, multidimensional ANS markers, wearable athletes.</div>
+      </div>
+      <div class="source-card">
+        <div class="source-name">PEM & ME/CFS</div>
+        <div class="source-chunks">~15 chunks · 5 sources</div>
+        <div class="source-desc">PEM clinical definition (IOM/ICC/NICE criteria), autonomic sympathetic activity in CFS, specialist care outcomes, Norwegian cohort study.</div>
+      </div>
+      <div class="source-card">
+        <div class="source-name">Osteopathy / OMT</div>
+        <div class="source-chunks">~12 chunks · 4 sources</div>
+        <div class="source-desc">OMT in chronic pain (biopsychosocial model), neck/low-back vs sham RCT 2024, emergency/acute applications, systematic review overview 2022.</div>
+      </div>
+      <div class="source-card">
+        <div class="source-name">Neurodynamics</div>
+        <div class="source-chunks">~16 chunks · 6 sources</div>
+        <div class="source-desc">Neural mobilisation systematic review + meta-analysis (40 studies), mirror neuron meta-analysis (13 RCTs), action observation in motor learning, AI in musculoskeletal rehab 2025.</div>
+      </div>
+      <div class="source-card">
+        <div class="source-name">Polar & Clinical Data</div>
+        <div class="source-chunks">~79 chunks · 9 sources</div>
+        <div class="source-desc">Predictor summaries, Spearman correlations, case study narrative, HRV feature descriptions and longitudinal Polar export documentation.</div>
+      </div>
+      <div class="source-card">
+        <div class="source-name">Profile & System</div>
+        <div class="source-chunks">~98 chunks · 11 sources</div>
+        <div class="source-desc">Clinical and professional profile, AI certifications, IO3 identity and constructor files, working principles and project context.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- RAG EVALUATION -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">RAG evaluation · 20-question benchmark</div>
+    <h3>Retrieval accuracy — 0.85 overall, target 0.75 passed</h3>
+    <p>
+      A hand-curated test set of 20 questions covers seven clinical and system domains.
+      Each question has an expected answer keyword set; a question is a hit when the top
+      retrieved chunk contains at least the expected keywords. The pipeline uses
+      cosine similarity retrieval via ChromaDB with top-5 chunk recall.
+    </p>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Questions</th>
+          <th>Hits</th>
+          <th>Accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Autonomic (HRV, PEM)</td>
+          <td>8</td>
+          <td>8</td>
+          <td class="val-green">1.00</td>
+        </tr>
+        <tr>
+          <td>Musculoskeletal</td>
+          <td>1</td>
+          <td>1</td>
+          <td class="val-green">1.00</td>
+        </tr>
+        <tr>
+          <td>Neurological</td>
+          <td>2</td>
+          <td>2</td>
+          <td class="val-green">1.00</td>
+        </tr>
+        <tr>
+          <td>Profile</td>
+          <td>5</td>
+          <td>4</td>
+          <td class="val-ice">0.80</td>
+        </tr>
+        <tr>
+          <td>Content (case study)</td>
+          <td>1</td>
+          <td>1</td>
+          <td class="val-green">1.00</td>
+        </tr>
+        <tr>
+          <td>System</td>
+          <td>2</td>
+          <td>1</td>
+          <td class="val-dim">0.50</td>
+        </tr>
+        <tr>
+          <td>Goals</td>
+          <td>1</td>
+          <td>0</td>
+          <td class="val-dim">0.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="finding">
+      <p class="finding-text">
+        The 3 misses share a common pattern: the top-5 chunks surface the right source file
+        but the expected keyword strings (academic background, emigration goals, IO agent
+        capabilities) are not present verbatim in those chunks. Semantic score is high
+        (0.90–0.93) — the chunks are relevant but keyword-level recall fails.
+        This points to a chunking granularity issue, not a retrieval quality issue.
+      </p>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- DESIGN NOTES -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Design notes</div>
+    <h3>Audited, not just indexed</h3>
+    <p>
+      Every document in the clinical literature collection was manually selected from
+      PubMed, PMC or peer-reviewed sources, with source URL, journal and year recorded
+      in the chunk metadata. No web scrape without review, no synthetic summaries.
+      The knowledge base is a clinical tool, not a search index — it is expected to
+      return precise, verifiable passages, not approximate answers.
+    </p>
+    <p>
+      The <code>io3_deltas</code> collection follows a different contract: it is a living
+      memory layer that accumulates session context, is never used as the primary clinical
+      evidence source, and is periodically audited for drift. The two-collection design keeps
+      stable clinical knowledge separate from dynamic session memory.
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer reveal">
+    <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
+    <div class="footer-links">
+      <a href="/io-architecture.html" class="footer-link">IO3 Architecture →</a>
+      <a href="/ans-predictor.html" class="footer-link">ANS Predictor →</a>
+      <a href="https://www.kineticaai.com" class="footer-link">kineticaai.com →</a>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+const c = document.getElementById('kb-bg');
+if (c) {
+  const ctx = c.getContext('2d');
+  let t = 0;
+  const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+  const draw = () => {
+    ctx.clearRect(0, 0, c.width, c.height);
+    [[0.04, 0.35], [0.025, 0.55], [0.015, 0.70]].forEach(([alpha, yFrac]) => {
+      const y = c.height * yFrac;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(133,168,184,${alpha})`;
+      ctx.lineWidth = 1.2;
+      for (let x = 0; x <= c.width; x += 3) {
+        const wave = Math.sin(x * 0.009 + t) * 14 + Math.sin(x * 0.02 + t * 0.6) * 6;
+        const py = y - wave;
+        x === 0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py);
+      }
+      ctx.stroke();
+    });
+    t += 0.005;
+    requestAnimationFrame(draw);
+  };
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+}
+
+// Reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

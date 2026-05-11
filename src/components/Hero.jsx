@@ -88,6 +88,12 @@ export default function Hero() {
         }}>
           N-of-1 longitudinal archive · wearable HRV · symptom-linked modelling · clinician-built
         </p>
+        <p className="hero-map" style={{
+          opacity: bootStep >= 3 ? 1 : 0,
+          transition: 'opacity 0.7s var(--ease-out) 0.1s',
+        }}>
+          Clinical pipeline, symptom predictors, agent architecture and safety layer — all cross-checked against PubMed and real physiological data.
+        </p>
       </div>
       <div className="hero-cta" style={{
         opacity: bootStep >= 3 ? 1 : 0,
@@ -172,6 +178,15 @@ export default function Hero() {
           letter-spacing: 0.04em;
           margin: 20px auto 0;
           opacity: 0.6;
+        }
+        .hero-map {
+          font-size: var(--text-caption);
+          font-weight: 300;
+          color: var(--text-dim);
+          max-width: 480px;
+          margin: 20px auto 0;
+          line-height: 1.7;
+          opacity: 0.75;
         }
         .hero-cta {
           display: flex;
