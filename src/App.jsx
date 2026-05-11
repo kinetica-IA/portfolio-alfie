@@ -36,7 +36,7 @@ export default function App() {
         </Reveal>
         <SectionDivider color="var(--ice)" colorRgb="133,168,184" />
         <Reveal>
-          <OpenResearch data={data} />
+          <OpenResearch />
         </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal delay={0.05}>
