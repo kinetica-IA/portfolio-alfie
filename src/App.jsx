@@ -3,10 +3,11 @@ import { FloatingDecorators } from './components/OrganicSymbols'
 import FilmGrain from './components/FilmGrain'
 import TopBar from './components/TopBar'
 import Hero from './components/Hero'
-import Work from './components/Work'
-import About from './components/About'
-import Research from './components/Research'
-import Contact from './components/Contact'
+import Pipeline from './components/Pipeline'
+import Predictors from './components/Predictors'
+import Frameworks from './components/Frameworks'
+import OpenResearch from './components/OpenResearch'
+import FounderContact from './components/FounderContact'
 import FooterField from './components/FooterField'
 import SectionDivider from './components/SectionDivider'
 import Reveal from './components/Reveal'
@@ -21,21 +22,25 @@ export default function App() {
       <FilmGrain />
       <div className="content-layer">
         <Hero />
+        <SectionDivider color="var(--green)" colorRgb="107,158,122" />
+        <Reveal>
+          <Pipeline data={data} />
+        </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal>
-          <Work data={data} />
+          <Predictors data={data} loading={loading} />
         </Reveal>
         <SectionDivider color="var(--teal)" colorRgb="144,167,165" />
         <Reveal delay={0.1}>
-          <About />
+          <Frameworks />
         </Reveal>
-        <SectionDivider color="var(--green)" colorRgb="107,158,122" />
+        <SectionDivider color="var(--ice)" colorRgb="133,168,184" />
         <Reveal>
-          <Research data={data} loading={loading} />
+          <OpenResearch data={data} />
         </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal delay={0.05}>
-          <Contact />
+          <FounderContact />
         </Reveal>
       </div>
       <FooterField />
