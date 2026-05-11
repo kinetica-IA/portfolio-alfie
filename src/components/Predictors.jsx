@@ -49,6 +49,9 @@ export default function Predictors({ data, loading }) {
         PREDICTORS
       </span>
       <h2 className="predictors-title">One pipeline, multiple predictors</h2>
+      <p className="predictors-subtitle">
+        Once the data is cleaned and structured, different predictors can be built to reflect different clinical findings.
+      </p>
 
       <div className="pred-grid" ref={ref}>
         <PredCard
@@ -75,7 +78,7 @@ export default function Predictors({ data, loading }) {
           secondary="Same data foundation, different outcome, separate clinical finding."
           metrics={loading ? null : sqMetrics}
           ctaText="Explore sleep model"
-          ctaHref="/pipeline.html"
+          ctaHref="/sleep-quality-predictor.html"
           index={1}
           revealed={revealed}
         />
@@ -87,7 +90,15 @@ export default function Predictors({ data, loading }) {
           font-size: var(--text-section);
           font-weight: 400;
           color: var(--text-heading);
-          margin: 16px 0 var(--space-subsection);
+          margin: 16px 0 12px;
+        }
+        .predictors-subtitle {
+          font-size: var(--text-body);
+          font-weight: 300;
+          color: var(--text-dim);
+          line-height: 1.65;
+          max-width: 520px;
+          margin-bottom: var(--space-subsection);
         }
         .pred-grid {
           display: grid;
