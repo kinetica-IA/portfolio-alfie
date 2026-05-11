@@ -3,28 +3,28 @@ import { NetworkSymbol } from './OrganicSymbols'
 
 const STEPS = [
   {
-    label: 'Raw input',
-    detail: 'Wearable RR intervals, sleep outputs and symptom logs',
+    label: 'Raw ingest',
+    detail: 'Heterogeneous Polar GDPR exports. Six distinct data sources. Lives outside the repo as raw personal cardiac data.',
     color: 'var(--teal)',
     rgb: '144,167,165',
   },
   {
-    label: 'Data cleaning',
-    detail: 'Artefact removal, synchronization and consistency checks',
-    color: 'var(--green)',
-    rgb: '107,158,122',
+    label: 'Structured extract',
+    detail: 'Eight Pydantic-validated parsers convert heterogeneous JSONs into typed DataFrames. Every dropped row logged.',
+    color: 'var(--warm)',
+    rgb: '196,133,90',
   },
   {
-    label: 'Feature layer',
-    detail: 'HRV, sleep and symptom-linked variables prepared for analysis',
+    label: 'Derived features',
+    detail: 'Advanced HRV (SDNN, LF/HF, DFA-α1), heart rate zone distribution and training session stratification.',
     color: 'var(--sea)',
     rgb: '93,138,130',
   },
   {
-    label: 'Predictors',
-    detail: 'Structured datasets used by independent predictors',
-    color: 'var(--ice)',
-    rgb: '133,168,184',
+    label: 'Unified data for predictors',
+    detail: 'Daily frame outer-merged across all sources, joined with symptom diary and augmented with temporal lag features.',
+    color: 'var(--green)',
+    rgb: '107,158,122',
   },
 ]
 
@@ -51,10 +51,10 @@ export default function Pipeline({ data }) {
         }}
       >
         <p className="pipeline-copy">
-          Kinetica's pipeline transforms raw wearable physiology into structured,
-          model-ready clinical data. RR intervals, sleep outputs and symptom logs are
-          ingested, cleaned, synchronized, quality-checked and converted into
-          interpretable feature layers that can support multiple predictors.
+          Kinetica's pipeline is a multi-level system that transforms raw wearable exports into
+          validated, model-ready physiological data. It parses heterogeneous sources, applies
+          quality rules, computes advanced HRV and activity features, aligns them on a daily
+          timeline and prepares them for multiple predictors.
         </p>
 
         {/* 4 steps */}
@@ -78,41 +78,41 @@ export default function Pipeline({ data }) {
           ))}
         </div>
 
-        {/* Flow diagram: Raw input → Cleaning → Feature layer → Predictors */}
+        {/* Flow diagram */}
         <div className="pipeline-flow">
           <svg
-            viewBox="0 0 540 56"
+            viewBox="0 0 560 56"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="pipeline-flow-svg"
             aria-hidden="true"
           >
-            {/* Node 1 — Raw input */}
+            {/* Node 1 — Raw ingest */}
             <rect x="0" y="12" width="108" height="32" rx="4" stroke="var(--teal)" strokeWidth="0.8" fill="rgba(144,167,165,0.06)" />
-            <text x="54" y="32" textAnchor="middle" className="flow-label">Raw input</text>
+            <text x="54" y="32" textAnchor="middle" className="flow-label">Raw ingest</text>
             {/* Arrow 1 */}
             <line x1="108" y1="28" x2="138" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
             <polygon points="138,25 144,28 138,31" fill="var(--border-active)" />
-            {/* Node 2 — Cleaning */}
-            <rect x="144" y="12" width="108" height="32" rx="4" stroke="var(--green)" strokeWidth="0.8" fill="rgba(107,158,122,0.06)" />
-            <text x="198" y="32" textAnchor="middle" className="flow-label">Cleaning</text>
+            {/* Node 2 — Structured extract */}
+            <rect x="144" y="12" width="118" height="32" rx="4" stroke="var(--warm)" strokeWidth="0.8" fill="rgba(196,133,90,0.06)" />
+            <text x="203" y="32" textAnchor="middle" className="flow-label" style={{ fill: 'var(--warm)' }}>Structured</text>
             {/* Arrow 2 */}
-            <line x1="252" y1="28" x2="282" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
-            <polygon points="282,25 288,28 282,31" fill="var(--border-active)" />
-            {/* Node 3 — Feature layer */}
-            <rect x="288" y="12" width="108" height="32" rx="4" stroke="var(--sea)" strokeWidth="0.8" fill="rgba(93,138,130,0.06)" />
-            <text x="342" y="32" textAnchor="middle" className="flow-label">Feature layer</text>
+            <line x1="262" y1="28" x2="292" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
+            <polygon points="292,25 298,28 292,31" fill="var(--border-active)" />
+            {/* Node 3 — Derived features */}
+            <rect x="298" y="12" width="118" height="32" rx="4" stroke="var(--sea)" strokeWidth="0.8" fill="rgba(93,138,130,0.06)" />
+            <text x="357" y="32" textAnchor="middle" className="flow-label">Features</text>
             {/* Arrow 3 */}
-            <line x1="396" y1="28" x2="426" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
-            <polygon points="426,25 432,28 426,31" fill="var(--border-active)" />
-            {/* Node 4 — Predictors */}
-            <rect x="432" y="12" width="108" height="32" rx="4" stroke="var(--ice)" strokeWidth="1.2" fill="rgba(133,168,184,0.08)" />
-            <text x="486" y="32" textAnchor="middle" className="flow-label flow-label--final">Predictors</text>
+            <line x1="416" y1="28" x2="446" y2="28" stroke="var(--border-active)" strokeWidth="0.8" />
+            <polygon points="446,25 452,28 446,31" fill="var(--border-active)" />
+            {/* Node 4 — Unified for predictors */}
+            <rect x="452" y="12" width="108" height="32" rx="4" stroke="var(--green)" strokeWidth="1.2" fill="rgba(107,158,122,0.08)" />
+            <text x="506" y="32" textAnchor="middle" className="flow-label flow-label--final">Predictors</text>
           </svg>
         </div>
 
         <p className="pipeline-closing">
-          One physiological foundation, multiple predictive models.
+          Built as infrastructure, not as a one-off preprocessing script.
         </p>
 
         <div className="pipeline-footer">
@@ -120,7 +120,7 @@ export default function Pipeline({ data }) {
             {nDays} nights processed · {nPairs} diary entries aligned
           </p>
           <a href="/pipeline.html" className="pipeline-cta">
-            See the full pipeline →
+            Explore the full pipeline →
           </a>
         </div>
       </div>
@@ -153,7 +153,6 @@ export default function Pipeline({ data }) {
           max-width: 640px;
           margin-bottom: 32px;
         }
-        /* 4 steps */
         .pipeline-steps {
           display: flex;
           flex-direction: column;
@@ -191,14 +190,13 @@ export default function Pipeline({ data }) {
           color: var(--text-dim);
           line-height: 1.5;
         }
-        /* Flow diagram */
         .pipeline-flow {
           margin-bottom: 20px;
           overflow-x: auto;
         }
         .pipeline-flow-svg {
           width: 100%;
-          max-width: 540px;
+          max-width: 560px;
           height: 56px;
         }
         .flow-label {
