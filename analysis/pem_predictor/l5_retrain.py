@@ -21,6 +21,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.stats import spearmanr
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, roc_auc_score
 from sklearn.model_selection import LeaveOneOut
@@ -461,6 +462,49 @@ def _fit_deployment_model(
     }
 
 
+# ── Residual analysis ─────────────────────────────────────────────────────────
+
+def _compute_residuals(df: pd.DataFrame, severity_result: dict) -> dict:
+    """Spearman ρ between severity model residuals and brain_fog/autonomic targets.
+
+    Uses in-sample predictions reconstructed from stored coefficients/scaler.
+    Rows with any NaN in required columns are dropped before correlation.
+    """
+    from datetime import datetime
+
+    feats = severity_result["selected_features"]
+    required_cols = feats + ["severidad_global", "niebla_mental", "disfuncion_autonomica"]
+    subset = df[required_cols].dropna()
+
+    if len(subset) < 5:
+        return {}
+
+    X = subset[feats].to_numpy(dtype=float)
+    y_sev = (subset["severidad_global"] >= 6).to_numpy(dtype=int)
+
+    means = np.array([severity_result["scaler_mean"][f] for f in feats])
+    scales = np.array([severity_result["scaler_scale"][f] for f in feats])
+    X_sc = (X - means) / scales
+
+    coef = np.array([severity_result["coefficients"][f] for f in feats])
+    intercept = severity_result["intercept"]
+    y_pred = 1.0 / (1.0 + np.exp(-(X_sc @ coef + intercept)))
+    residuals = y_sev - y_pred
+
+    bf = (subset["niebla_mental"] >= 5).to_numpy(dtype=int)
+    au = (subset["disfuncion_autonomica"] >= 5).to_numpy(dtype=int)
+
+    rho_bf, p_bf = spearmanr(residuals, bf)
+    rho_au, p_au = spearmanr(residuals, au)
+    n = int(len(residuals))
+
+    return {
+        "generated": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
+        "brain_fog": {"rho": round(float(rho_bf), 3), "p": round(float(p_bf), 4), "n": n},
+        "autonomic_dysfunction": {"rho": round(float(rho_au), 3), "p": round(float(p_au), 4), "n": n},
+    }
+
+
 # ── Main entry point ──────────────────────────────────────────────────────────
 
 def retrain(diary_features_path: Path | None = None) -> dict:
@@ -503,10 +547,13 @@ def retrain(diary_features_path: Path | None = None) -> dict:
     deploy_target = next(t for t in TARGETS if t["name"] == "disfuncion_autonomica")
     deployment = _fit_deployment_model(df, deploy_target, feature_col_names)
 
+    residuals = _compute_residuals(df, results["severity"]) if "severity" in results else {}
+
     return {
         "metadata": _build_metadata(),
         "targets": results,
         "deployment_model": deployment,
+        "residuals": residuals,
     }
 
 

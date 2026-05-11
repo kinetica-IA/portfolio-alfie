@@ -203,7 +203,7 @@ export default function Research({ data, loading }) {
             <div className="fp-footnotes">
               {residuals && (
                 <p className="fp-residuals-note">
-                  Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.547'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.372'}
+                  Residual ρ: brain fog +{residuals.brain_fog?.rho || '0.587'} · autonomic +{residuals.autonomic_dysfunction?.rho || '0.412'}
                 </p>
               )}
               <p className="fp-brain-fog-note">

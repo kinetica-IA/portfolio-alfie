@@ -329,77 +329,118 @@ function aucColor(v) {
 /* ── POPULATE FROM JSON ── */
 function populate(d) {
   const p = d.predictor;
-  const f = d.finding;
-  const nDays = d.series.length;
   const targets = p.targets;
+  const nDays = d.series.length;
+  // Schema v3.1 uses d.headline + d.data_window; older schema used d.finding at top level
+  const headline = d.headline || {};
+  const dw = d.data_window || {};
+  const f = d.finding; // absent in v3.1 portfolio schema
+
+  const bestAuc = headline.value != null ? headline.value : (f && f.auc);
+  const nTraining = dw.n_paired != null ? dw.n_paired : (p.n_training != null ? p.n_training : '—');
+  const nDiary = dw.n_diary_entries != null ? dw.n_diary_entries : (p.n_diary != null ? p.n_diary : '—');
+  const modelVersion = p.version || p.model_version || 'v3';
+  const headlineTargetData = targets && headline.target ? targets[headline.target] : null;
+  const sensitivity = headlineTargetData
+    ? Math.round(headlineTargetData.sensitivity * 100)
+    : (f && f.sensitivity_pct != null ? f.sensitivity_pct : '—');
 
   // Hero meta
   document.getElementById('hero-meta').innerHTML = [
     `${nDays} nights monitored`,
-    `${p.n_training} training pairs · ${p.n_diary} diary entries`,
-    `Model: ${p.model_version} · Logistic Regression`,
-    `Best AUC: ${f.auc} (severity)`,
-    `<span class="meta-green">${f.sensitivity_pct}% sensitivity · Updated daily</span>`,
+    `${nTraining} training pairs · ${nDiary} diary entries`,
+    `Model: ${modelVersion} · Logistic Regression`,
+    `Best AUC: ${bestAuc != null ? bestAuc.toFixed(2) : '—'} (${headline.target || 'autonomic dysfunction'})`,
+    `<span class="meta-green">${sensitivity}% sensitivity · Updated daily</span>`,
   ].map(l => '<div>' + l + '</div>').join('');
 
   // Stats row
   document.getElementById('stats-row').innerHTML = [
     { val: nDays, label: 'Nights' },
-    { val: p.n_training, label: 'Training pairs' },
-    { val: Object.keys(targets).length, label: 'Targets' },
-    { val: f.auc.toFixed(2), label: 'Best AUC' },
-    { val: f.sensitivity_pct + '%', label: 'Sensitivity' },
+    { val: nTraining, label: 'Training pairs' },
+    { val: targets ? Object.keys(targets).length : '—', label: 'Targets' },
+    { val: bestAuc != null ? bestAuc.toFixed(2) : '—', label: 'Best AUC' },
+    { val: sensitivity + '%', label: 'Sensitivity' },
     { val: '48h', label: 'Predictive lag' },
   ].map(i => '<div class="stat-item"><span class="stat-val">' + i.val + '</span><span class="stat-label">' + i.label + '</span></div>').join('');
 
-  // Finding
-  document.getElementById('finding').innerHTML =
-    '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
-    '<p class="finding-text">' + f.description +
-    '. Spearman \u03c1 = ' + f.spearman_rho + ' \u00b7 p = ' + f.p_value +
-    ' \u00b7 AUC = ' + f.auc + ' \u00b7 Sensitivity ' + f.sensitivity_pct +
-    '% \u00b7 N = ' + f.n_pairs + ' paired days.</p></div>';
+  // Finding \u2014 build from d.headline when d.finding is absent (v3.1 portfolio schema)
+  var findingHtml;
+  if (f && f.description) {
+    findingHtml = '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
+      '<p class="finding-text">' + f.description +
+      '. Spearman \u03c1 = ' + f.spearman_rho + ' \u00b7 p = ' + f.p_value +
+      ' \u00b7 AUC = ' + f.auc + ' \u00b7 Sensitivity ' + f.sensitivity_pct +
+      '% \u00b7 N = ' + f.n_pairs + ' paired days.</p></div>';
+  } else if (headline.value != null) {
+    var ci = headline.ci95 || [];
+    findingHtml = '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
+      '<p class="finding-text">5 symptom domains predicted independently from nocturnal wearable data.' +
+      ' Deployment target: autonomic dysfunction.' +
+      ' AUC = ' + headline.value.toFixed(3) +
+      (ci.length === 2 ? ' \u00b7 CI\u2089\u2085 [' + ci[0].toFixed(3) + ', ' + ci[1].toFixed(3) + ']' : '') +
+      ' \u00b7 N = ' + headline.n + ' paired days \u00b7 LOO-CV \u00b7 Bootstrap 1000\u00d7.</p></div>';
+  } else {
+    findingHtml = '';
+  }
+  document.getElementById('finding').innerHTML = findingHtml;
 
-  // Target table
+  // Target table \u2014 support both schemas: auc_loo/auc_ci95_lower/upper (v3.1) and best_auc/best_auc_ci95 (older)
   var html = '';
-  Object.entries(targets).forEach(function(entry, i) {
+  Object.entries(targets).forEach(function(entry) {
     var key = entry[0], t = entry[1];
     var isBF = key === 'niebla_mental';
-    var pct = ((t.best_auc - 0.5) / 0.5) * 100;
+    var auc = t.auc_loo != null ? t.auc_loo : t.best_auc;
+    var ciLo = t.auc_ci95_lower != null ? t.auc_ci95_lower : (t.best_auc_ci95 && t.best_auc_ci95[0]);
+    var ciHi = t.auc_ci95_upper != null ? t.auc_ci95_upper : (t.best_auc_ci95 && t.best_auc_ci95[1]);
+    if (auc == null) return;
+    var pct = ((auc - 0.5) / 0.5) * 100;
     html += '<div class="target-row' + (isBF ? ' target-flagged' : '') + '">' +
       '<span class="target-name">' + (TARGET_LABELS[key] || key) + (isBF ? '<span class="flag">*</span>' : '') + '</span>' +
-      '<span class="target-auc" style="color:' + aucColor(t.best_auc) + '">' + t.best_auc.toFixed(2) + '</span>' +
-      '<div class="target-bar"><div class="target-bar-fill" style="width:' + pct + '%;background:' + aucColor(t.best_auc) + '"></div></div>' +
-      '<span class="target-ci">' + t.best_auc_ci95[0].toFixed(2) + '\u2013' + t.best_auc_ci95[1].toFixed(2) + '</span>' +
+      '<span class="target-auc" style="color:' + aucColor(auc) + '">' + auc.toFixed(2) + '</span>' +
+      '<div class="target-bar"><div class="target-bar-fill" style="width:' + pct + '%;background:' + aucColor(auc) + '"></div></div>' +
+      '<span class="target-ci">' + (ciLo != null ? ciLo.toFixed(2) : '\u2014') + '\u2013' + (ciHi != null ? ciHi.toFixed(2) : '\u2014') + '</span>' +
       '</div>';
   });
   document.getElementById('targets').innerHTML = html;
 
-  // Footnotes
+  // Footnotes \u2014 residuals absent in v3.1 portfolio schema; read class split from target data
   var res = p.residuals || {};
+  var brainFogRho = res.brain_fog ? res.brain_fog.rho : null;
+  var autonomicRho = res.autonomic_dysfunction ? res.autonomic_dysfunction.rho : null;
+  var bfData = targets && targets.niebla_mental;
+  var nPos = bfData ? bfData.n_positive : (p.n_positive != null ? p.n_positive : '\u2014');
+  var nNeg = bfData ? bfData.n_negative : (p.n_negative != null ? p.n_negative : '\u2014');
   document.getElementById('footnotes').innerHTML =
     '<div class="footnotes">' +
-    (res.brain_fog ? 'Residual \u03c1: brain fog +' + (res.brain_fog.rho || '0.547') + ' \u00b7 autonomic +' + ((res.autonomic_dysfunction || {}).rho || '0.372') + '<br>' : '') +
-    '* Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (' + p.n_positive + '/' + p.n_negative + ' split). Reported for transparency.</div>';
+    (brainFogRho != null ? 'Residual \u03c1: brain fog +' + brainFogRho + ' \u00b7 autonomic +' + (autonomicRho || '\u2014') + '<br>' : '') +
+    '* Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (' + nPos + '/' + nNeg + ' split). Reported for transparency.</div>';
 
-  // Model comparison
+  // Model comparison \u2014 absent in v3.1 portfolio schema
   var models = p.models || {};
-  var mhtml = '<table class="model-table"><thead><tr><th>Model</th><th>AUC</th><th>Sensitivity</th><th>Specificity</th><th>Accuracy</th></tr></thead><tbody>';
-  var bestAuc = Math.max.apply(null, Object.values(models).map(function(m) { return m.auc; }));
-  Object.entries(models).forEach(function(entry) {
-    var name = entry[0], m = entry[1];
-    var isBest = m.auc === bestAuc;
-    var label = name.replace(/_/g, ' ');
-    label = label.charAt(0).toUpperCase() + label.slice(1);
-    mhtml += '<tr class="' + (isBest ? 'model-best' : '') + '">' +
-      '<td>' + label + (isBest ? ' \u2713' : '') + '</td>' +
-      '<td>' + m.auc.toFixed(4) + '</td>' +
-      '<td>' + (m.sensitivity * 100).toFixed(1) + '%</td>' +
-      '<td>' + (m.specificity * 100).toFixed(1) + '%</td>' +
-      '<td>' + (m.accuracy * 100).toFixed(1) + '%</td></tr>';
-  });
-  mhtml += '</tbody></table>';
-  mhtml += '<p style="font-size:0.72rem;color:var(--text-dim);margin-top:0.5rem">Confusion matrix (best model): TP=' + p.tp + ' FP=' + p.fp + ' TN=' + p.tn + ' FN=' + p.fn + '</p>';
+  var mhtml;
+  if (Object.keys(models).length > 0) {
+    mhtml = '<table class="model-table"><thead><tr><th>Model</th><th>AUC</th><th>Sensitivity</th><th>Specificity</th><th>Accuracy</th></tr></thead><tbody>';
+    var bestAucVal = Math.max.apply(null, Object.values(models).map(function(m) { return m.auc; }));
+    Object.entries(models).forEach(function(entry) {
+      var name = entry[0], m = entry[1];
+      var isBest = m.auc === bestAucVal;
+      var label = name.replace(/_/g, ' ');
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      mhtml += '<tr class="' + (isBest ? 'model-best' : '') + '">' +
+        '<td>' + label + (isBest ? ' \u2713' : '') + '</td>' +
+        '<td>' + m.auc.toFixed(4) + '</td>' +
+        '<td>' + (m.sensitivity * 100).toFixed(1) + '%</td>' +
+        '<td>' + (m.specificity * 100).toFixed(1) + '%</td>' +
+        '<td>' + (m.accuracy * 100).toFixed(1) + '%</td></tr>';
+    });
+    mhtml += '</tbody></table>';
+    if (p.tp != null) {
+      mhtml += '<p style="font-size:0.72rem;color:var(--text-dim);margin-top:0.5rem">Confusion matrix (best model): TP=' + p.tp + ' FP=' + p.fp + ' TN=' + p.tn + ' FN=' + p.fn + '</p>';
+    }
+  } else {
+    mhtml = '<p style="font-size:0.8rem;color:var(--text-dim)">Per-algorithm comparison not available in current pipeline schema. See <a href="/pipeline.html" style="color:var(--accent-green)">pipeline</a> for full model details.</p>';
+  }
   document.getElementById('model-comparison').innerHTML = mhtml;
 
   // Lag analysis
