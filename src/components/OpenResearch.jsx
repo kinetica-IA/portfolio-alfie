@@ -1,51 +1,104 @@
 import { useReveal } from '../hooks/useReveal'
-import { HelixSymbol, SignalSymbol, CellSymbol } from './OrganicSymbols'
+import { HelixSymbol, SignalSymbol, CellSymbol, PulseSymbol, OrbitSymbol, NetworkSymbol } from './OrganicSymbols'
+
+const GITHUB_REPO = 'https://github.com/kinetica-IA/polar-lyme-predictor'
 
 const CARDS = [
   {
-    badge: 'REPOSITORY',
+    num: '01',
+    badge: 'PIPELINE',
+    badgeColor: 'var(--teal)',
+    badgeRgb: '144,167,165',
+    Symbol: NetworkSymbol,
+    title: 'Pipeline Polar & Symptoms',
+    copy: 'Transforms raw wearable streams and symptom diaries into a clean, longitudinal dataset ready for modelling. Built around Polar exports, advanced HRV features and reproducible nightly jobs.',
+    metric: null,
+    ctaText: 'View pipeline',
+    ctaHref: '/pipeline.html',
+    external: false,
+    comingSoon: false,
+  },
+  {
+    num: '02',
+    badge: 'PREDICTOR',
     badgeColor: 'var(--green)',
     badgeRgb: '107,158,122',
     Symbol: SignalSymbol,
-    copy: 'Open code, model logic and reproducible structure behind the current Kinetica research line.',
-    stats: null,
-    ctaText: 'Open repository',
+    title: 'ANS Predictor',
+    copy: 'Multi-target models that estimate symptom burden from nocturnal HRV and diary-linked physiology. Trained with leave-one-out validation and bootstrap CIs on top of the Polar pipeline.',
+    metric: 'AUC up to 0.84 · idiographic N-of-1 study',
+    ctaText: 'View predictor',
     ctaHref: '/ans-predictor.html',
     external: false,
+    comingSoon: false,
   },
   {
-    badge: 'DATASET',
+    num: '03',
+    badge: 'AGENT',
+    badgeColor: 'var(--sea)',
+    badgeRgb: '93,138,130',
+    Symbol: OrbitSymbol,
+    title: 'IO3 Clinical Agent',
+    copy: 'A LangGraph-based agent that orchestrates Anthropic models, clinical rules and retrieval for guarded reasoning in chronic care. Designed with a single audited loop, human-on-loop control and traceable session logs.',
+    metric: null,
+    ctaText: 'View architecture',
+    ctaHref: '/io-architecture.html',
+    external: false,
+    comingSoon: false,
+  },
+  {
+    num: '04',
+    badge: 'SAFETY',
+    badgeColor: 'var(--warm)',
+    badgeRgb: '196,133,90',
+    Symbol: PulseSymbol,
+    title: 'ALMA Safety & Evaluation',
+    copy: 'Deterministic safety layer that screens agent responses for pharmacological risk, diagnostic overreach, false urgency and scope violations. Evaluated on a 30-case clinical test set with per-severity metrics and millisecond-level latency reports.',
+    metric: null,
+    ctaText: 'See safety layer',
+    ctaHref: '/io-architecture.html#alma',
+    external: false,
+    comingSoon: false,
+  },
+  {
+    num: '05',
+    badge: 'KNOWLEDGE',
     badgeColor: 'var(--ice)',
     badgeRgb: '133,168,184',
     Symbol: HelixSymbol,
-    copy: 'A longitudinal biometric archive combining nightly RR intervals, symptom tracking and processed feature layers.',
-    stats: true,
-    ctaText: 'View dataset',
-    ctaHref: 'https://github.com/kinetica-IA/polar-lyme-predictor',
-    external: true,
+    title: 'Clinical Knowledge & RAG',
+    copy: 'Curated knowledge base with 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested with a 20-question benchmark achieving 0.85 retrieval accuracy overall.',
+    metric: null,
+    ctaText: 'Explore knowledge stack',
+    ctaHref: null,
+    external: false,
+    comingSoon: true,
   },
   {
-    badge: 'APPLICATION',
-    badgeColor: 'var(--sea)',
-    badgeRgb: '93,138,130',
+    num: null,
+    badge: 'REPOSITORY',
+    badgeColor: 'var(--green)',
+    badgeRgb: '107,158,122',
     Symbol: CellSymbol,
-    copy: 'A direct view into the symptom diary used to connect subjective burden with physiological signal over time.',
-    stats: null,
-    ctaText: 'Open diary',
-    ctaHref: '/diary.html',
-    external: false,
+    title: 'Open Research Repository',
+    copy: 'Single public repo that hosts the Polar pipeline, ANS predictor code, notebooks and study materials behind Kinetica\'s current research line. Structured for reproducible runs, not marketing screenshots.',
+    metric: null,
+    ctaText: 'View on GitHub',
+    ctaHref: GITHUB_REPO,
+    external: true,
+    comingSoon: false,
   },
 ]
 
-function ORCard({ card, nDays, index, revealed }) {
+function ORCard({ card, index, revealed }) {
   const { Symbol } = card
   return (
     <div
-      className="or-card"
+      className={`or-card${card.comingSoon ? ' or-card--soon' : ''}`}
       style={{
         '--or-color': card.badgeColor,
         '--or-rgb': card.badgeRgb,
-        opacity: revealed ? 1 : 0,
+        opacity: revealed ? (card.comingSoon ? 0.6 : 1) : 0,
         transform: revealed ? 'translateY(0)' : 'translateY(20px)',
         transition: `opacity 0.8s var(--ease-out) ${index * 150}ms, transform 0.7s var(--ease-out) ${index * 150}ms`,
       }}
@@ -53,31 +106,35 @@ function ORCard({ card, nDays, index, revealed }) {
       <div className="or-card-header">
         <span className="or-badge" style={{ color: card.badgeColor, background: `rgba(${card.badgeRgb},0.08)` }}>
           <span className="or-badge-dot" style={{ background: card.badgeColor }} />
-          {card.badge}
+          {card.num ? `${card.num} — ${card.badge}` : card.badge}
         </span>
         <span className="or-symbol">
           <Symbol color={card.badgeColor} size={40} />
         </span>
       </div>
+      <p className="or-card-title">{card.title}</p>
       <p className="or-card-copy">{card.copy}</p>
-      {card.stats && (
-        <p className="or-card-stats">{nDays !== '—' ? `${nDays} nights` : '—'} · daily updates</p>
+      {card.metric && (
+        <p className="or-card-stats">{card.metric}</p>
       )}
-      <a
-        href={card.ctaHref}
-        className="or-card-cta"
-        style={{ color: card.badgeColor }}
-        {...(card.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      >
-        {card.ctaText} →
-      </a>
+      {card.comingSoon ? (
+        <span className="or-card-soon">Coming soon</span>
+      ) : (
+        <a
+          href={card.ctaHref}
+          className="or-card-cta"
+          style={{ color: card.badgeColor }}
+          {...(card.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          {card.ctaText} →
+        </a>
+      )}
     </div>
   )
 }
 
-export default function OpenResearch({ data }) {
+export default function OpenResearch() {
   const { ref, revealed } = useReveal(0.25)
-  const nDays = data?.data_window?.n_days ?? '—'
 
   return (
     <section className="section open-research" id="research">
@@ -89,7 +146,7 @@ export default function OpenResearch({ data }) {
 
       <div className="or-grid" ref={ref}>
         {CARDS.map((card, i) => (
-          <ORCard key={card.badge} card={card} nDays={nDays} index={i} revealed={revealed} />
+          <ORCard key={card.badge} card={card} index={i} revealed={revealed} />
         ))}
       </div>
 
@@ -123,6 +180,7 @@ export default function OpenResearch({ data }) {
           border-top-color: var(--or-color);
           background: rgba(var(--or-rgb), 0.04);
         }
+        .or-card--soon { cursor: default; }
         .or-card-header {
           display: flex;
           justify-content: space-between;
@@ -157,6 +215,14 @@ export default function OpenResearch({ data }) {
           opacity: 1;
           transform: scale(1.08);
         }
+        .or-card-title {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          font-weight: 500;
+          color: var(--text-heading);
+          letter-spacing: 0.02em;
+          margin-bottom: 10px;
+        }
         .or-card-copy {
           font-size: var(--text-body);
           font-weight: 300;
@@ -181,6 +247,14 @@ export default function OpenResearch({ data }) {
           transition: opacity var(--duration-hover) ease;
         }
         .or-card-cta:hover { opacity: 0.7; }
+        .or-card-soon {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          margin-top: auto;
+          opacity: 0.5;
+        }
       `}</style>
     </section>
   )
