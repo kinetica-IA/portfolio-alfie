@@ -34,12 +34,26 @@ const CARDS = [
   },
   {
     num: '03',
-    badge: 'AGENT',
+    badge: 'PREDICTOR',
     badgeColor: 'var(--sea)',
     badgeRgb: '93,138,130',
+    Symbol: PulseSymbol,
+    title: 'Sleep Quality Predictor',
+    copy: 'Independent predictor focused on sleep quality as its own clinical signal. Uses the same cleaned physiological foundation, targeting how nocturnal structure and autonomic patterns relate to perceived sleep degradation and recovery.',
+    metric: 'Same data foundation, dedicated sleep outcome',
+    ctaText: 'Explore sleep model',
+    ctaHref: '/sleep-quality-predictor.html',
+    external: false,
+    comingSoon: false,
+  },
+  {
+    num: '04',
+    badge: 'AGENT',
+    badgeColor: 'var(--moss)',
+    badgeRgb: '107,138,109',
     Symbol: OrbitSymbol,
     title: 'IO3 Clinical Agent',
-    copy: 'A LangGraph-based agent that orchestrates Anthropic models, clinical rules and retrieval for guarded reasoning in chronic care. Designed with a single audited loop, human-on-loop control and traceable session logs.',
+    copy: 'LangGraph-based agent that orchestrates Anthropic models, clinical rules and retrieval for guarded reasoning in chronic care. Designed with a single audited loop, human-on-loop control and traceable session logs.',
     metric: null,
     ctaText: 'View architecture',
     ctaHref: '/io-architecture.html',
@@ -47,11 +61,11 @@ const CARDS = [
     comingSoon: false,
   },
   {
-    num: '04',
+    num: '05',
     badge: 'SAFETY',
     badgeColor: 'var(--warm)',
     badgeRgb: '196,133,90',
-    Symbol: PulseSymbol,
+    Symbol: CellSymbol,
     title: 'ALMA Safety & Evaluation',
     copy: 'Deterministic safety layer that screens agent responses for pharmacological risk, diagnostic overreach, false urgency and scope violations. Evaluated on a 30-case clinical test set with per-severity metrics and millisecond-level latency reports.',
     metric: null,
@@ -61,7 +75,7 @@ const CARDS = [
     comingSoon: false,
   },
   {
-    num: '05',
+    num: '06',
     badge: 'KNOWLEDGE',
     badgeColor: 'var(--ice)',
     badgeRgb: '133,168,184',
@@ -70,16 +84,16 @@ const CARDS = [
     copy: 'Curated knowledge base with 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested with a 20-question benchmark achieving 0.85 retrieval accuracy overall.',
     metric: null,
     ctaText: 'Explore knowledge stack',
-    ctaHref: null,
+    ctaHref: '/knowledge-rag.html',
     external: false,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
-    num: null,
+    num: '07',
     badge: 'REPOSITORY',
     badgeColor: 'var(--green)',
     badgeRgb: '107,158,122',
-    Symbol: CellSymbol,
+    Symbol: SignalSymbol,
     title: 'Open Research Repository',
     copy: 'Single public repo that hosts the Polar pipeline, ANS predictor code, notebooks and study materials behind Kinetica\'s current research line. Structured for reproducible runs, not marketing screenshots.',
     metric: null,
@@ -100,13 +114,13 @@ function ORCard({ card, index, revealed }) {
         '--or-rgb': card.badgeRgb,
         opacity: revealed ? (card.comingSoon ? 0.6 : 1) : 0,
         transform: revealed ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s var(--ease-out) ${index * 150}ms, transform 0.7s var(--ease-out) ${index * 150}ms`,
+        transition: `opacity 0.8s var(--ease-out) ${index * 120}ms, transform 0.7s var(--ease-out) ${index * 120}ms`,
       }}
     >
       <div className="or-card-header">
         <span className="or-badge" style={{ color: card.badgeColor, background: `rgba(${card.badgeRgb},0.08)` }}>
           <span className="or-badge-dot" style={{ background: card.badgeColor }} />
-          {card.num ? `${card.num} — ${card.badge}` : card.badge}
+          {card.num} — {card.badge}
         </span>
         <span className="or-symbol">
           <Symbol color={card.badgeColor} size={40} />
@@ -144,9 +158,15 @@ export default function OpenResearch() {
       </span>
       <h2 className="or-title">Open research, verifiable systems</h2>
 
+      <p className="or-pubmed">
+        Each project is cross-checked against a curated clinical knowledge base sourced from
+        peer-reviewed papers and PubMed, audited through Chroma and evaluated with a dedicated
+        RAG test set.
+      </p>
+
       <div className="or-grid" ref={ref}>
         {CARDS.map((card, i) => (
-          <ORCard key={card.badge} card={card} index={i} revealed={revealed} />
+          <ORCard key={card.num} card={card} index={i} revealed={revealed} />
         ))}
       </div>
 
@@ -156,7 +176,16 @@ export default function OpenResearch() {
           font-size: var(--text-section);
           font-weight: 400;
           color: var(--text-heading);
-          margin: 16px 0 var(--space-subsection);
+          margin: 16px 0 16px;
+        }
+        .or-pubmed {
+          font-size: var(--text-body);
+          font-weight: 300;
+          color: var(--text-dim);
+          line-height: 1.7;
+          max-width: 580px;
+          margin-bottom: var(--space-subsection);
+          opacity: 0.8;
         }
         .or-grid {
           display: grid;
