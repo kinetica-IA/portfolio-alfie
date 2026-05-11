@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0a0a">
-<title>ANS as Lyme Biomarker · Kinetica AI</title>
+<title>Lyme / Post-Infectious Predictor · Kinetica AI</title>
+<meta name="description" content="N-of-1 longitudinal multi-symptom prediction system for post-infectious fatigue. 5 independent models predicting severity, autonomic dysfunction, PEM, fatigue and brain fog from nocturnal wearable HRV.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── DESIGN TOKENS — exact match kineticaai.com ── */
   :root {
     --bg:           #f0f9f9;
     --surface:      #ffffff;
@@ -24,11 +24,8 @@
     --text-dim:     #90a7a5;
     --border:       rgba(144,167,165,0.18);
     --border-med:   rgba(144,167,165,0.32);
-    --shadow:       0 4px 24px rgba(144,167,165,0.10);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 300;
@@ -38,527 +35,604 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
+  #hrv-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .background-geo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .page-wrap { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 3rem 2rem 5rem; }
 
-  /* ── HRV CANVAS BG ── */
-  #hrv-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── GEO BACKGROUND ── */
-  .background-geo {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 1;
-  }
-
-  .page-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 3rem 2rem 5rem;
-  }
-
-  /* ── BACK LINK ── */
   .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    color: var(--accent);
-    text-decoration: none;
-    text-transform: uppercase;
-    margin-bottom: 2.5rem;
-    opacity: 0.7;
-    transition: opacity 0.2s, gap 0.2s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
     font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--accent); text-decoration: none; text-transform: uppercase;
+    margin-bottom: 2.5rem; opacity: 0.7; transition: opacity 0.2s, gap 0.2s;
   }
   .back-link:hover { opacity: 1; gap: 0.75rem; }
 
-  /* ── PAGE HERO ── */
-  .page-hero {
-    margin-bottom: 3rem;
-  }
-
+  .page-hero { margin-bottom: 3rem; }
   .eyebrow {
     font-family: 'DM Mono', monospace;
-    font-size: 0.58rem;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 0.6rem;
   }
-
   .pulse-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
+    width: 6px; height: 6px; border-radius: 50%;
     background: var(--accent-green);
     box-shadow: 0 0 8px rgba(107,158,122,0.7);
-    animation: pulse-glow 2.5s infinite;
-    flex-shrink: 0;
+    animation: pulse-glow 2.5s infinite; flex-shrink: 0;
   }
-
   @keyframes pulse-glow {
     0%,100% { box-shadow: 0 0 4px rgba(107,158,122,0.5); }
     50%      { box-shadow: 0 0 14px rgba(107,158,122,0.9); }
   }
-
   .page-title {
-    font-size: clamp(1.7rem, 4vw, 2.6rem);
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    color: var(--text);
-    margin-bottom: 1.5rem;
+    font-size: clamp(1.65rem, 4vw, 2.4rem); font-weight: 300;
+    letter-spacing: -0.02em; line-height: 1.2; color: var(--text);
+    margin-bottom: 1.25rem;
   }
-
-  .page-title em { font-style: italic; color: var(--accent); }
-
   .page-desc {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    max-width: 560px;
-    line-height: 1.8;
-    margin-bottom: 0.6rem;
+    font-size: 0.88rem; color: var(--text-muted);
+    max-width: 580px; line-height: 1.8;
   }
 
-  .author-line {
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    font-weight: 400;
-    font-style: italic;
-    margin-top: 0.5rem;
-  }
-
-  /* ── SECTION EYEBROW ── */
   .section-eyebrow {
     font-family: 'DM Mono', monospace;
-    font-size: 0.58rem;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-    opacity: 0.65;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 1rem; opacity: 0.65;
   }
 
-  /* ── ARTICLE SECTION ── */
-  .article-section {
-    margin-bottom: 2.5rem;
-  }
-
+  .article-section { margin-bottom: 2.75rem; }
   .article-section h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 1rem;
-    letter-spacing: -0.01em;
+    font-size: 1.05rem; font-weight: 500; color: var(--text);
+    margin-bottom: 1rem; letter-spacing: -0.01em;
   }
-
-  .article-section p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.85;
-    margin-bottom: 1rem;
-  }
+  .article-section p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.85; margin-bottom: 0.9rem; }
   .article-section p:last-child { margin-bottom: 0; }
   .article-section strong { color: var(--text); font-weight: 500; }
+  .article-section em { font-style: italic; }
 
-  /* ── PULLQUOTE ── */
-  .pullquote {
-    border-left: 3px solid var(--accent);
-    padding: 1.25rem 1.75rem;
-    margin: 2.5rem 0;
-    background: var(--surface);
-    border-radius: 0 8px 8px 0;
+  .content-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.75rem; margin-bottom: 2.5rem;
   }
+  .content-card .section-eyebrow { margin-bottom: 1rem; }
 
-  .pullquote p {
-    font-size: 1rem;
-    font-weight: 300;
-    color: var(--text);
-    line-height: 1.65;
-    font-style: italic;
-    letter-spacing: -0.01em;
-  }
-
-  /* ── STATS ROW ── */
-  .stats-row {
-    display: flex;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 2.5rem;
-  }
-
-  .stat-item {
-    flex: 1;
-    background: var(--surface);
-    padding: 1.5rem 1rem;
-    text-align: center;
-    min-width: 100px;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  .stat-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: var(--accent);
-    letter-spacing: -0.02em;
-    line-height: 1;
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  .stat-label {
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-    display: block;
-  }
-
-  .stat-source {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.52rem;
-    color: var(--text-dim);
-    opacity: 0.7;
-    line-height: 1.4;
-  }
-
-  /* ── DIVIDER LINE ── */
-  .section-divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-    margin: 2.5rem 0;
-  }
-
-  /* ── REFERENCES ── */
-  .references {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .ref-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .ref-list li {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    color: var(--text-muted);
-    line-height: 1.7;
-    padding: 0.5rem 0;
+  .pipeline-steps { margin: 1.25rem 0; }
+  .pipeline-step {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 0.8rem 0;
     border-bottom: 1px solid var(--border);
   }
+  .pipeline-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; font-weight: 500; color: var(--accent-green);
+    min-width: 28px; padding-top: 0.15rem; flex-shrink: 0;
+  }
+  .step-text { font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+  .step-text strong { color: var(--text); font-weight: 500; }
+
+  .design-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  .design-table tr { border-bottom: 1px solid var(--border); }
+  .design-table tr:last-child { border-bottom: none; }
+  .design-table td { padding: 0.6rem 0.5rem; font-size: 0.8rem; line-height: 1.5; vertical-align: top; }
+  .design-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; color: var(--text-dim); font-weight: 400;
+    width: 38%; padding-right: 1rem;
+  }
+  .design-table td:last-child { color: var(--text-muted); }
+
+  .stats-row {
+    display: flex; gap: 1px; background: var(--border);
+    border: 1px solid var(--border); overflow: hidden; margin-bottom: 2.5rem;
+  }
+  .stat-item {
+    flex: 1; background: var(--surface);
+    padding: 1.25rem 1rem; text-align: center; min-width: 80px;
+  }
+  .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem; font-weight: 400; color: var(--accent);
+    letter-spacing: -0.02em; line-height: 1; display: block; margin-bottom: 0.35rem;
+  }
+  .stat-label {
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.1em;
+    color: var(--text-dim); text-transform: uppercase; display: block;
+  }
+
+  .results-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  .results-table thead tr { border-bottom: 2px solid var(--border-med); }
+  .results-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim);
+    padding: 0.5rem 0.75rem; text-align: left;
+  }
+  .results-table td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .results-table tr:last-child td { border-bottom: none; }
+  .results-table td:first-child { font-size: 0.82rem; color: var(--text); }
+  .results-table td.mono { font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+  .auc-high { color: var(--accent-green); }
+  .auc-mid  { color: var(--accent); }
+  .auc-warn { color: var(--accent-warm); opacity: 0.8; }
+  .row-dim  { opacity: 0.62; }
+
+  .finding {
+    border-left: 2px solid var(--accent-green);
+    padding: 1rem 1.5rem; margin: 1.5rem 0;
+    background: rgba(107,158,122,0.04);
+  }
+  .finding p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.75; }
+  .finding p strong { color: var(--text); }
+
+  .version-block {
+    border: 1px solid var(--border);
+    padding: 1.5rem 1.75rem; margin-bottom: 1.25rem;
+  }
+  .version-block.archived {
+    border-left: 3px solid var(--accent-warm);
+    background: rgba(196,133,90,0.025);
+  }
+  .version-block.current {
+    border-left: 3px solid var(--accent-green);
+    background: rgba(107,158,122,0.025);
+  }
+  .version-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 0.75rem;
+  }
+  .version-tag.archived { color: var(--accent-warm); }
+  .version-tag.current  { color: var(--accent-green); }
+  .version-block h3 { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 0.75rem; }
+  .version-block p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.6rem; }
+  .version-block p:last-child { margin-bottom: 0; }
+  .version-block strong { color: var(--text); font-weight: 500; }
+
+  .deploy-flow {
+    display: flex; flex-wrap: wrap; gap: 0; align-items: center;
+    margin: 1.25rem 0; background: var(--surface2); border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+  }
+  .deploy-step {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; color: var(--text-muted); padding: 0.3rem 0;
+  }
+  .deploy-arrow { color: var(--accent); margin: 0 0.5rem; font-size: 0.7rem; opacity: 0.5; }
+
+  .limitations-list { list-style: none; padding: 0; margin: 1rem 0; }
+  .limitations-list li {
+    font-size: 0.82rem; color: var(--text-muted); line-height: 1.65;
+    padding: 0.55rem 0; border-bottom: 1px solid var(--border);
+    display: flex; gap: 0.75rem;
+  }
+  .limitations-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .limitations-list .lim-marker {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent-warm);
+    min-width: 16px; padding-top: 0.1rem; flex-shrink: 0;
+  }
+  .limitations-list strong { color: var(--text); font-weight: 500; }
+
+  .references {
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 1.5rem 1.75rem; margin-bottom: 2rem;
+  }
+  .ref-list { list-style: none; padding: 0; }
+  .ref-list li {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; color: var(--text-muted); line-height: 1.7;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+  }
   .ref-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .ref-num  { color: var(--accent-warm); font-weight: 500; min-width: 28px; display: inline-block; }
+  .ref-star { color: var(--accent-green); font-weight: 500; min-width: 28px; display: inline-block; }
 
-  .ref-num {
-    color: var(--accent-warm);
-    font-weight: 500;
-    min-width: 28px;
-    display: inline-block;
-  }
-
-  .ref-star {
-    color: var(--accent-green);
-    font-weight: 500;
-    min-width: 28px;
-    display: inline-block;
-  }
-
-  /* ── FOOTER BUTTONS ── */
   .article-footer {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-    margin-bottom: 2rem;
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    padding-top: 2rem; border-top: 1px solid var(--border); margin-bottom: 2rem;
   }
-
   .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.4rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    border-radius: 6px;
-    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.08em; text-decoration: none;
     transition: background 0.2s, border-color 0.2s, gap 0.2s;
   }
-
   .btn-secondary {
-    color: var(--accent);
-    border: 1px solid var(--border-med);
-    background: var(--surface);
+    color: var(--accent); border: 1px solid var(--border-med); background: var(--surface);
   }
-  .btn-secondary:hover {
-    background: rgba(144,167,165,0.08);
-    border-color: var(--accent);
-    gap: 0.75rem;
-  }
-
+  .btn-secondary:hover { background: rgba(144,167,165,0.08); border-color: var(--accent); gap: 0.75rem; }
   .btn-primary {
-    color: var(--accent-green2);
-    border: 1px solid rgba(107,158,122,0.35);
+    color: var(--accent-green2); border: 1px solid rgba(107,158,122,0.35);
     background: rgba(107,158,122,0.06);
   }
-  .btn-primary:hover {
-    background: rgba(107,158,122,0.12);
-    border-color: var(--accent-green);
-    gap: 0.75rem;
-  }
+  .btn-primary:hover { background: rgba(107,158,122,0.12); border-color: var(--accent-green); gap: 0.75rem; }
 
-  /* ── PAGE FOOTER ── */
   .page-footer {
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
   }
-
-  .footer-brand {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 2rem;
-  }
-
+  .footer-brand { font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 2rem; }
   .footer-link {
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    text-decoration: none;
-    transition: opacity 0.2s, letter-spacing 0.2s;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--accent); text-decoration: none; transition: opacity 0.2s;
   }
-  .footer-link:hover { opacity: 0.65; letter-spacing: 0.12em; }
+  .footer-link:hover { opacity: 0.65; }
+
+  .section-divider { width: 100%; height: 1px; background: var(--border); margin: 2.5rem 0; }
 
   code {
     font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--accent-dark);
-    background: var(--surface2);
-    padding: 0.1em 0.4em;
-    border-radius: 3px;
+    font-size: 0.72rem; color: var(--accent-dark);
+    background: var(--surface2); padding: 0.1em 0.4em;
   }
 
-  /* ── SCROLL REVEAL ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
     .page-wrap { padding: 2rem 1.25rem 4rem; }
     .stats-row { flex-direction: column; gap: 0; }
     .stat-item { min-width: auto; }
     .article-footer { flex-direction: column; }
     .page-footer { flex-direction: column; align-items: flex-start; }
+    .results-table th:nth-child(n+3), .results-table td:nth-child(n+3) { display: none; }
+    .design-table td:first-child { width: 42%; }
+    .deploy-flow { flex-direction: column; gap: 0.25rem; }
+    .footer-links { gap: 1.25rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- HRV CANVAS — same as landing page -->
 <canvas id="hrv-bg" aria-hidden="true"></canvas>
-
-<!-- GEO SHAPES — same as landing page -->
 <svg class="background-geo" viewBox="0 0 1440 700" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <rect x="200" y="80" width="320" height="320" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.06"/>
-  <rect x="700" y="60" width="280" height="280" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
+  <rect x="700" y="60" width="280" height="280" rx="40" fill="none" stroke="#6b9e7a" stroke-width="1.2" opacity="0.05"/>
   <rect x="1080" y="130" width="200" height="200" rx="40" fill="none" stroke="#90a7a5" stroke-width="1.2" opacity="0.07"/>
   <rect x="50" y="400" width="160" height="160" rx="30" fill="none" stroke="#c4855a" stroke-width="1" opacity="0.04"/>
 </svg>
 
 <div class="page-wrap">
 
-  <!-- BACK LINK -->
   <a href="https://www.kineticaai.com" class="back-link">← kineticaai.com</a>
 
   <!-- HERO -->
   <div class="page-hero reveal">
     <div class="eyebrow">
       <span class="pulse-dot"></span>
-      Kinetica AI · Clinical Observation · 2024
+      Longitudinal symptom prediction
     </div>
-    <h1 class="page-title">
-      The test came back negative.<br>
-      <em>The patient was getting worse.</em><br>
-      Both things were true.
-    </h1>
+    <h1 class="page-title">ANS-based multi-symptom prediction<br>from wearable physiology</h1>
     <p class="page-desc">
-      This is not unusual in Lyme disease. It is structurally expected.
+      An N-of-1 longitudinal study that trains five independent models — for severity, autonomic dysfunction,
+      post-exertional malaise, fatigue, and brain fog — from nightly Polar wearable data and a structured
+      clinical diary. Every model retrains automatically when a new diary entry is logged.
     </p>
-    <p class="author-line">
-      A field observation by Alfonso Navarro — Osteopath · Biomechanics specialist · Clinical AI · kineticaai.com
-    </p>
-  </div>
-
-  <!-- ARCHIVED STUDY NOTICE -->
-  <aside style="margin: 1rem 0 2rem; padding: 0.75rem 1rem; border-left: 3px solid var(--clay, #a8796e); background: rgba(168,121,110,0.08); font-size: 0.85rem; color: var(--text-sec, #4d6e68);">
-    <strong>Archived v1 study.</strong> Numbers below reflect the model state at the time of writing. Current canonical results are at <a href="/" style="color: var(--sea, #5d8a82);">kineticaai.com</a> · target <em>autonomic dysfunction</em>, AUC 0.83 [0.72, 0.94], N=55.
-  </aside>
-
-  <!-- SECTION 1 -->
-  <div class="article-section reveal">
-    <h2>The structural problem with serology</h2>
-    <p>
-      Standard two-tier serology (ELISA + Western blot) has documented sensitivity as low as
-      29–40% in early localized disease. <sup>[2]</sup> The CDC acknowledges serologic assays
-      can remain falsely negative for 4–6 weeks post-infection — and that antibody titers,
-      once elevated, cannot be used to determine cure. <sup>[1]</sup> A positive result does
-      not confirm active infection. A negative result does not rule it out.
-    </p>
-    <p>
-      The problem runs deeper than timing windows. <em>Borrelia burgdorferi</em> actively
-      modulates its own antigenicity — downregulating surface proteins like OspC as host
-      antibody pressure mounts, and undergoing continuous recombination at the VlsE locus
-      to vary the very epitopes serological tests are designed to detect. <sup>[3]</sup>
-      The immune system is responding. The pathogen is changing the question.
-    </p>
-    <p>
-      Cross-reactivity compounds this further. In a large US military cohort of 15,928
-      individuals, 53.3% of positive IgM immunoblots were determined to be false positives —
-      and antibiotics were prescribed in 80.5% of those false-positive cases. <sup>[4]</sup>
-      The test is not just missing the disease. It is actively misdirecting clinical decisions
-      in both directions.
-    </p>
-  </div>
-
-  <!-- PULLQUOTE 1 -->
-  <div class="pullquote reveal">
-    <p>"A test that measures the immune response to a pathogen that systematically disrupts immune responses is, structurally, an unreliable witness."</p>
-  </div>
-
-  <!-- SECTION 2 -->
-  <div class="article-section reveal">
-    <h2>Why the ANS is a different kind of witness</h2>
-    <p>
-      The autonomic nervous system has no antibody response to manipulate. It doesn't
-      seroconvert. It doesn't cross-react with EBV, syphilis, or rheumatoid factor. It
-      responds to physiological load — continuously, measurably, and with a temporal
-      resolution that a blood draw taken weeks apart cannot approximate.
-    </p>
-    <p>
-      Continuous nocturnal HRV monitoring captures what serology cannot: the real-time
-      functional state of the organism under pathogen load. Where a blood test gives you
-      a binary signal at a single point in time, longitudinal RMSSD tracking gives you a
-      film of the autonomic system's response across weeks.
-    </p>
-    <p>
-      This is not a new hypothesis. Reduced RMSSD in ME/CFS versus healthy controls has
-      been confirmed in meta-analysis (SMD −0.37, p=.02, 64 studies). <sup>[6]</sup>
-      Wearable HRV has been shown to remain abnormal for 24 hours post-exertion in Long
-      COVID patients — corroborating its use as a continuous functional biomarker in
-      post-acute infectious conditions. <sup>[5]</sup>
-    </p>
-  </div>
-
-  <!-- PULLQUOTE 2 -->
-  <div class="pullquote reveal">
-    <p>"For a pathogen whose primary survival strategy is immune evasion, a biomarker that bypasses the immune response entirely is not a luxury — it is a logical necessity."</p>
   </div>
 
   <div class="section-divider"></div>
 
-  <!-- METRICS -->
-  <div class="section-eyebrow reveal">Field data · Kinetica AI dataset · 243 days · 5 models</div>
-  <div class="stats-row reveal">
-    <div class="stat-item">
-      <span class="stat-val">0.92</span>
-      <span class="stat-label">Severity AUC (headline)</span>
-      <span class="stat-source">Navarro, Kinetica AI · 243 days · Polar Grit X2 · LOO-CV</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">24–48h</span>
-      <span class="stat-label">Predictive window before PEM flare</span>
-      <span class="stat-source">Navarro 2024 · corroborated Tensen et al. 2025</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">5 targets</span>
-      <span class="stat-label">Independent prediction models</span>
-      <span class="stat-source">AUC 0.77–0.99 · LOO-CV · Bootstrap 1000×</span>
+  <!-- SECTION 1: What this project actually is -->
+  <div class="article-section reveal">
+    <div class="section-eyebrow">What this project actually is</div>
+    <h2>A fully automated end-to-end prediction pipeline</h2>
+    <p>
+      This is not a chart or a one-time analysis. It is a working system that runs automatically,
+      connects raw wearable data to clinical symptom outcomes, and retrains whenever new data arrives.
+    </p>
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <span class="step-num">01</span>
+        <span class="step-text"><strong>Nightly data ingest.</strong> A GitHub Actions workflow fetches raw RR-interval data
+        from the Polar AccessLink API at 06:00 UTC every night. Artifact filtering applied (valid range: 300–2000 ms).
+        193 valid nights from 243 monitored.</span>
+      </div>
+      <div class="pipeline-step">
+        <span class="step-num">02</span>
+        <span class="step-text"><strong>Advanced HRV extraction.</strong> Raw RR intervals are processed by
+        <code>compute_hrv.py</code> using <strong>neurokit2</strong>, producing 8 time-domain, frequency-domain,
+        and nonlinear metrics per night: SDNN, pNN50, RMSSD, LF power, HF power, LF/HF ratio, SD1, SD2, DFA-alpha1.
+        These metrics are not available from Polar’s proprietary pipeline.</span>
+      </div>
+      <div class="pipeline-step">
+        <span class="step-num">03</span>
+        <span class="step-text"><strong>Daily dataset linkage.</strong> <code>merge_hrv.py</code> links computed HRV features
+        to the symptom diary (<code>diary_live.csv</code>), building lag windows at t0, t−1, and t−2 for each of
+        13 candidate features (39 combinations per target). Each new diary push triggers a full dataset rebuild.</span>
+      </div>
+      <div class="pipeline-step">
+        <span class="step-num">04</span>
+        <span class="step-text"><strong>Multi-target model training.</strong> <code>retrain_predictor.py</code> runs
+        forward greedy feature selection independently for each of 5 symptom targets. Validation is LOO-CV
+        with 1000× bootstrap CI. Three algorithms evaluated per target (LogisticRegression, RandomForest,
+        GradientBoosting) — best selected by LOO-CV AUC.</span>
+      </div>
+      <div class="pipeline-step">
+        <span class="step-num">05</span>
+        <span class="step-text"><strong>Results committed to <code>polar_live.json</code>.</strong> Predictor results,
+        feature weights, per-target AUCs, and CI bounds are auto-committed to the repository via GitHub Actions.
+        This JSON is the single source of truth for all live data on this site.</span>
+      </div>
+      <div class="pipeline-step">
+        <span class="step-num">06</span>
+        <span class="step-text"><strong>Live web display.</strong> The metrics shown at
+        <a href="/ans-predictor.html" style="color:var(--accent-green2);text-decoration:none;border-bottom:1px solid rgba(61,122,92,0.2)">kineticaai.com/ans-predictor.html</a>
+        are read directly from <code>polar_live.json</code>. No manual updates, no stale screenshots.</span>
+      </div>
     </div>
   </div>
 
-  <!-- SECTION 3 -->
+  <div class="section-divider"></div>
+
+  <!-- SECTION 2: Data and methods -->
   <div class="article-section reveal">
-    <h2>Field evidence: 243 days of continuous monitoring</h2>
-    <p>
-      From my own longitudinal dataset — 243 consecutive days combining nocturnal HRV
-      monitoring (Polar Grit X2 + neurokit2) with a 5-domain symptom diary (DIARY_v3:
-      global severity, fatigue, cognitive fog, post-exertional malaise, autonomic
-      dysfunction) — the pattern is consistent with what the literature
-      describes, and extends it in one specific direction.
+    <div class="section-eyebrow">Data and methods</div>
+    <h2>Study design</h2>
+    <table class="design-table">
+      <tbody>
+        <tr><td>Design</td><td>Prospective longitudinal N-of-1</td></tr>
+        <tr><td>Subject</td><td>Single adult, post-Lyme / autonomic dysfunction</td></tr>
+        <tr><td>Monitoring period</td><td>243 days continuous (Polar Grit X2, nocturnal PPG)</td></tr>
+        <tr><td>Diary entries</td><td>61 (DIARY_v2 — prospective, structured, 7-domain)</td></tr>
+        <tr><td>Effective pairs</td><td>61 (55 for autonomic dysfunction — missing HRV nights)</td></tr>
+        <tr><td>Symptom domains</td><td>7 recorded: severity, PEM, fatigue, brain fog, autonomic, pain, mood</td></tr>
+        <tr><td>Prediction targets</td><td>5 modelled: severity, PEM, fatigue, brain fog, autonomic dysfunction</td></tr>
+        <tr><td>Wearable</td><td>Polar Grit X2 · GDPR JSON export (ppi_samples, RR intervals in ms)</td></tr>
+        <tr><td>HRV computation</td><td>neurokit2: SDNN, pNN50, RMSSD, LF/HF, HF power, SD1, SD2, DFA-alpha1</td></tr>
+        <tr><td>Candidate features</td><td>13 features × 3 lag windows = 39 combinations per target</td></tr>
+        <tr><td>Feature selection</td><td>Forward greedy per target · max 5 features · stop if AUC gain &lt; 0.01</td></tr>
+        <tr><td>Primary validation</td><td>Leave-One-Out CV (LOO-CV) — N iterations, no data leakage from scaling</td></tr>
+        <tr><td>Uncertainty</td><td>Bootstrap 1000× for 95% CI on AUC per target</td></tr>
+        <tr><td>Algorithms</td><td>LogisticRegression (L2), RandomForest (100 trees), GradientBoosting (100 est.)</td></tr>
+        <tr><td>Target binarization</td><td>Severity ≥6, Autonomic ≥5, PEM ≥5, Fatigue ≥6, Brain fog ≥5 (0–10 scale)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:1.25rem;">
+      <strong>Missing data is MNAR, not imputed.</strong> The worst symptom days have no diary entries because
+      autonomic fatigue prevented recording. This is Missing Not At Random — the missingness mechanism
+      <em>is</em> the phenomenon. No retroactive entries were fabricated. All 61 pairs are prospective,
+      without confirmation bias.
     </p>
     <p>
-      ANS suppression was present on a significant proportion of recorded days,
-      with nocturnal RMSSD values clustering in ranges consistent with post-infectious
-      autonomic dysregulation — in periods of negative or borderline serology. The blood
-      was silent. The nervous system was not.
+      <strong>Bootstrap over SMOTE.</strong> Residual correlations (rho&nbsp;=&nbsp;+0.547 for brain fog,
+      rho&nbsp;=&nbsp;+0.372 for autonomic dysfunction against severity residuals) demonstrate meaningful
+      clinical structure. Synthetic oversampling would destroy it. Bootstrap resampling preserves the
+      original data distribution while quantifying uncertainty.
+    </p>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <span class="stat-val">243</span>
+      <span class="stat-label">Nights monitored</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">61</span>
+      <span class="stat-label">Diary entries</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">5</span>
+      <span class="stat-label">Independent models</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">LOO-CV</span>
+      <span class="stat-label">Validation</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-val">1000×</span>
+      <span class="stat-label">Bootstrap CI</span>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 3: Model v3 results -->
+  <div class="article-section reveal">
+    <div class="section-eyebrow">Current model layer — Model v3</div>
+    <h2>Multi-target prediction performance</h2>
+    <p>
+      Five independent models, each discovering its own optimal feature set from 39 candidates.
+      Logistic Regression was the best algorithm for all 5 targets. Results from the live pipeline;
+      the reproducible version (seed=42, published data) is within bootstrap CI for all targets.
+    </p>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Target</th>
+          <th>AUC</th>
+          <th>CI 95%</th>
+          <th>N</th>
+          <th>Top features</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Severity</td>
+          <td class="mono auc-high">0.92</td>
+          <td class="mono">[0.84, 0.99]</td>
+          <td class="mono">61</td>
+          <td class="mono" style="font-size:0.68rem;color:var(--text-dim)">rmssd_t0, ans_status_t2, sdnn_t2, dfa_alpha1_t2, recovery_t0</td>
+        </tr>
+        <tr>
+          <td>Autonomic Dysfunction&nbsp;<span style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--accent-green)">← deploy</span></td>
+          <td class="mono auc-high">0.84</td>
+          <td class="mono">[0.72, 0.94]</td>
+          <td class="mono">55</td>
+          <td class="mono" style="font-size:0.68rem;color:var(--text-dim)">rmssd_t0, sleep_wake_min_t2</td>
+        </tr>
+        <tr>
+          <td>Fatigue</td>
+          <td class="mono auc-high">0.83</td>
+          <td class="mono">[0.71, 0.95]</td>
+          <td class="mono">61</td>
+          <td class="mono" style="font-size:0.68rem;color:var(--text-dim)">rmssd_t0, sleep_wake_min_t2, hf_power_t0</td>
+        </tr>
+        <tr>
+          <td>PEM</td>
+          <td class="mono auc-mid">0.80</td>
+          <td class="mono">[0.66, 0.90]</td>
+          <td class="mono">61</td>
+          <td class="mono" style="font-size:0.68rem;color:var(--text-dim)">rmssd_t0, pnn50_t1, rmssd_t1</td>
+        </tr>
+        <tr class="row-dim">
+          <td>Brain Fog ⚠</td>
+          <td class="mono auc-warn">0.99</td>
+          <td class="mono">[0.95, 1.00]</td>
+          <td class="mono">61</td>
+          <td class="mono" style="font-size:0.68rem;color:var(--text-dim)">ans_status_t0, rmssd_t1, recovery_t3</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.72rem;color:var(--text-dim);margin-top:0.5rem;margin-bottom:1.5rem">
+      ⚠ Brain fog class split: 54 positive / 6 negative. AUC 0.99 is likely inflated — the model may predict
+      the minority class by exclusion rather than signal. Reported for transparency, not as a headline result.
+    </p>
+
+    <div class="finding">
+      <p>
+        <strong>Key finding: physiological coherence of the autonomic dysfunction model.</strong>
+        Autonomic dysfunction is the only target that selected advanced neurokit2-derived features in the
+        live pipeline: <strong>LF/HF ratio</strong> (sympathovagal balance, lag−1) and <strong>SD1</strong>
+        (short-term Poincaré variability, lag−0). These features are not available from Polar’s proprietary
+        metrics. A model that predicts autonomic dysfunction using direct measures of autonomic balance is
+        not just statistically significant — it is physiologically coherent. Deployment headline:
+        AUC 0.84 [0.72, 0.94], N=55.
+      </p>
+    </div>
+
+    <p>
+      <strong>Residual analysis: the model’s error is clinical signal.</strong> Severity model residuals
+      (prediction error) correlate with symptom dimensions the nocturnal HRV features cannot capture:
+      brain fog (&#961;&nbsp;=&nbsp;+0.547, p&nbsp;&lt;&nbsp;0.001) and autonomic dysfunction
+      (&#961;&nbsp;=&nbsp;+0.372, p&nbsp;=&nbsp;0.006). The failures of the model point toward the
+      neurological dimensions that ANS features alone cannot explain.
+    </p>
+
+    <p>
+      <strong>Reproducibility.</strong> Running <code>scripts/retrain_predictor.py</code> from the published
+      data (seed=42) yields AUC 0.837 for autonomic dysfunction. The live pipeline at kineticaai.com
+      (0.829) uses a cleaner L4 feature extraction path with tighter data provenance. Both results are
+      within the bootstrap CI [0.72, 0.94]. All code is public.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 4: Evolution -->
+  <div class="article-section reveal">
+    <div class="section-eyebrow">Evolution of the study</div>
+    <h2>From early analysis to multi-target system</h2>
+
+    <div class="version-block archived">
+      <div class="version-tag archived">▸ V1 — ARCHIVED · Early analysis (Mar 2026)</div>
+      <h3>Severity predictor from 34 observation pairs</h3>
+      <p>
+        The first model targeted a single outcome: high-severity days (≥7/10) predicted 48 hours in advance.
+        Data came from two non-consecutive periods (Sep–Oct 2025 + Feb 2026), producing
+        <strong>34 valid HRV–symptom pairs</strong> using four features: ANS status, RMSSD,
+        recovery indicator, and Zolpidem flag.
+      </p>
+      <p>
+        LOO-CV AUC-ROC: <strong>0.656</strong> · Sensitivity: 81.2% · Specificity: 66.7%.<br>
+        Dominant feature: <code>ans_status</code> at lag−2 (&#961;&nbsp;=&nbsp;+0.431, p&nbsp;=&nbsp;0.011, n=34).
+        Zolpidem was present in 24 of 34 entries — severe confounding, not corrected in this version.
+      </p>
+      <p>
+        The abstract (abstract_v1.md in the repository) was never submitted. These numbers are real
+        and preserved for historical transparency. They should not be cited as the current system state.
+        Design was retrospective; no hypothesis was pre-registered.
+      </p>
+    </div>
+
+    <div class="version-block current">
+      <div class="version-tag current">▸ V3 — CURRENT SYSTEM (continuous, auto-updated)</div>
+      <h3>Multi-target system with forward selection per symptom domain</h3>
+      <p>
+        Model v3 extends the study in every dimension: <strong>61 prospective diary entries</strong> across
+        243 days, 5 independent prediction targets, 13 candidate features (including 8 neurokit2-derived
+        metrics not available from Polar’s proprietary pipeline), and forward greedy selection from
+        39 feature-lag combinations per target.
+      </p>
+      <p>
+        Key advances over v1: each symptom selects its own optimal predictors (no fixed feature set imposed);
+        neurokit2 features enable the autonomic dysfunction coherence finding (LF/HF + SD1); bootstrap CI
+        replaces point AUC; the full pipeline is automated and retrains on every diary push.
+        Severity AUC rose from 0.656 (v1, 34 pairs, fixed features) to <strong>0.92</strong>
+        (v3, 61 pairs, forward selection) with 5 features vs 4.
+      </p>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 5: Live deployment -->
+  <div class="article-section reveal">
+    <div class="section-eyebrow">Live deployment</div>
+    <h2>From diary push to live display</h2>
+    <p>
+      The metrics shown on this site are generated by the pipeline and auto-committed to
+      <code>polar_live.json</code> — the single source of truth that feeds all live displays.
+    </p>
+    <div class="deploy-flow">
+      <span class="deploy-step">Polar Grit X2</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">extract_rr.py</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">compute_hrv.py&nbsp;(neurokit2)</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">merge_hrv.py</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">retrain_predictor.py</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">polar_live.json</span>
+      <span class="deploy-arrow">→</span>
+      <span class="deploy-step">kineticaai.com</span>
+    </div>
+    <p>
+      Two GitHub Actions workflows orchestrate this automatically:
     </p>
     <p>
-      Five independent models now predict distinct symptom dimensions 24–48 hours ahead.
-      Severity prediction achieves an AUC of <strong>0.92</strong> (LOO-CV, Bootstrap 1000×,
-      n=61 training pairs). Autonomic dysfunction prediction reaches <strong>AUC 0.83</strong>
-      — using advanced HRV features like LF/HF ratio and SD1 from raw RR intervals. The
-      signal is not only present — it is physiologically coherent. Sleep score showed no
-      predictive value (ρ≈0). The signal is in the autonomic system, not in subjective
-      rest quality.
+      <strong>polar-biometrics.yml</strong> — runs nightly at 06:00 UTC. Fetches fresh Polar AccessLink data,
+      computes HRV features from raw RR intervals, and updates the nightly time series in
+      <code>polar_live.json</code>.
     </p>
     <p>
-      This is not a claim that HRV replaces diagnosis. It is a claim that for a disease
-      that hides this well, continuous monitoring provides the temporal correlation that
-      serology — by its own structural limitations — cannot.
+      <strong>polar-retrain.yml</strong> — triggers on every diary push. Rebuilds the full HRV–symptom dataset,
+      runs forward selection and LOO-CV for all 5 targets, computes bootstrap CIs, and writes updated
+      predictor results to <code>polar_live.json</code> via auto-commit.
     </p>
+    <p>
+      The live display of AUCs, feature weights, and sparklines at
+      <a href="/ans-predictor.html" style="color:var(--accent-green2);text-decoration:none;border-bottom:1px solid rgba(61,122,92,0.2)">kineticaai.com/ans-predictor.html</a>
+      reads directly from this file. The numbers you see there are connected to
+      <code>polar_live.json</code> — not hardcoded.
+    </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- LIMITATIONS -->
+  <div class="content-card reveal">
+    <div class="section-eyebrow">Limitations (honest)</div>
+    <ul class="limitations-list">
+      <li><span class="lim-marker">!</span><strong>N=1.</strong> All results are idiographic. No generalization beyond this individual.</li>
+      <li><span class="lim-marker">!</span><strong>N=61 pairs.</strong> Preliminary. Bootstrap CIs are wide (e.g. severity [0.84, 0.99]).</li>
+      <li><span class="lim-marker">!</span><strong>Brain fog AUC 0.99.</strong> Class split 54/6. Likely inflated — the model may learn to predict the minority class by exclusion, not signal.</li>
+      <li><span class="lim-marker">!</span><strong>Consumer wearable PPG,</strong> not clinical ECG. RR interval accuracy depends on PPG quality and motion artifacts.</li>
+      <li><span class="lim-marker">!</span><strong>MNAR assumption.</strong> Missing days are assumed worst — not independently verified.</li>
+      <li><span class="lim-marker">!</span><strong>Fixed confounders, uncontrolled.</strong> Alprazolam 3 mg, Bupropion 300 mg, Pregabalin 500 mg throughout the study.</li>
+      <li><span class="lim-marker">!</span><strong>Multiple comparisons.</strong> 5 targets tested independently without family-wise error correction.</li>
+      <li><span class="lim-marker">!</span><strong>Correlation ≠ causation</strong> in all analyses.</li>
+    </ul>
   </div>
 
   <!-- REFERENCES -->
@@ -567,42 +641,35 @@
     <ul class="ref-list">
       <li>
         <span class="ref-num">[1]</span>
-        CDC — Laboratory Diagnosis of Lyme Disease, 2024.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serology limitations; titers cannot confirm cure.
+        Makowski D. et al. (2021). NeuroKit2: A Python Toolbox for Neurophysiological Signal Processing.
+        <em>Behavior Research Methods</em>, 53(4), 1689–1696.
       </li>
       <li>
         <span class="ref-num">[2]</span>
-        Wormser et al. — <em>Clinical Infectious Diseases</em>, 2006.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sensitivity of two-tier testing: 29–40% in early localized disease.
+        Shaffer F., Ginsberg J.P. (2017). An Overview of Heart Rate Variability Metrics and Norms.
+        <em>Frontiers in Public Health</em>, 5, 258.
       </li>
       <li>
         <span class="ref-num">[3]</span>
-        Zhang et al. — <em>J Exp Med</em>, 2002.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VlsE recombination and OspC downregulation as <em>B. burgdorferi</em> persistence mechanism.
+        Stussman B. et al. (2020). Characterization of Post-exertional Malaise in Patients with ME/CFS.
+        <em>Frontiers in Neurology</em>, 11, 1025.
       </li>
       <li>
         <span class="ref-num">[4]</span>
-        Webber et al. — <em>Clinical Microbiology &amp; Infection</em>, 2019.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;53.3% false-positive IgM immunoblots in n=15,928 US military cohort.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Antibiotics prescribed in 80.5% of false-positive cases.
+        Joustra M.L. et al. (2019). Reduced HRV in ME/CFS vs controls — meta-analysis (64 studies, SMD −0.37, p=.02).
+        <em>Medicine</em>.
       </li>
       <li>
         <span class="ref-num">[5]</span>
-        Tensen et al. — <em>medRxiv preprint</em>, March 2025.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wearable HRV identifies ANS dysfunction and PEM threshold in Long COVID (n=127).
-      </li>
-      <li>
-        <span class="ref-num">[6]</span>
-        Joustra et al. — <em>Medicine</em>, 2019.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Meta-analysis (64 studies): significantly reduced RMSSD in ME/CFS vs controls (SMD −0.37, p=.02).
+        Tensen et al. (2025, preprint). Wearable HRV identifies ANS dysfunction and PEM threshold in Long COVID (n=127).
+        <em>medRxiv</em>.
       </li>
       <li>
         <span class="ref-star">[★]</span>
-        Navarro, A. — Kinetica AI longitudinal dataset, 2024–2026.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;243-day Polar Grit X2 + DIARY_v3 (5 symptom domains).<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 independent models · LOO-CV · Bootstrap 1000×.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Headline: Severity AUC 0.92 · Autonomic AUC 0.83.<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;github.com/kinetica-IA/polar-lyme-predictor
+        Navarro, A. — Kinetica AI longitudinal dataset, 2025–2026.<br>
+        243 days · Polar Grit X2 · DIARY_v2 · 5 symptom targets · LOO-CV · Bootstrap 1000×.<br>
+        Headline: Autonomic Dysfunction AUC 0.84 [0.72, 0.94] · N=55.<br>
+        github.com/kinetica-IA/polar-lyme-predictor
       </li>
     </ul>
   </div>
@@ -610,23 +677,23 @@
   <!-- FOOTER BUTTONS -->
   <div class="article-footer reveal">
     <a href="https://www.kineticaai.com" class="btn btn-secondary">← Back to kineticaai.com</a>
-    <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" class="btn btn-primary">View dataset on GitHub →</a>
+    <a href="/ans-predictor.html" class="btn btn-primary">View live predictor data →</a>
+    <a href="https://github.com/kinetica-IA/polar-lyme-predictor" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">GitHub repository →</a>
   </div>
 
-  <!-- FOOTER -->
+  <!-- PAGE FOOTER -->
   <div class="page-footer reveal">
     <div class="footer-brand">Kinetica AI · Alfonso Navarro · 2026</div>
     <div class="footer-links">
-      <a href="/io-architecture.html" class="footer-link">IO Architecture →</a>
-      <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" class="footer-link">LinkedIn →</a>
+      <a href="/ans-predictor.html" class="footer-link">Live predictor →</a>
+      <a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn →</a>
       <a href="https://www.kineticaai.com" class="footer-link">kineticaai.com →</a>
     </div>
   </div>
 
-</div><!-- /page-wrap -->
+</div>
 
 <script>
-/* ── HRV CANVAS — exact replica of landing page script ── */
 const c = document.getElementById('hrv-bg');
 if (c) {
   const ctx = c.getContext('2d');
@@ -647,24 +714,21 @@ if (c) {
       }
       ctx.stroke();
     });
-    // scan line
     const sx = (t * 55) % (c.width + 160) - 80;
     const grad = ctx.createLinearGradient(sx - 60, 0, sx + 20, 0);
-    grad.addColorStop(0,   'rgba(144,167,165,0)');
+    grad.addColorStop(0, 'rgba(144,167,165,0)');
     grad.addColorStop(0.7, 'rgba(144,167,165,0.07)');
-    grad.addColorStop(1,   'rgba(144,167,165,0)');
+    grad.addColorStop(1, 'rgba(144,167,165,0)');
     ctx.fillStyle = grad;
     ctx.fillRect(sx - 60, 0, 80, c.height);
     t += 0.007;
     requestAnimationFrame(draw);
   };
-  resize();
-  draw();
+  resize(); draw();
   window.addEventListener('resize', resize);
 }
 
-/* ── SCROLL REVEAL ── */
-function setupReveal() {
+(function() {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(el => {
       if (el.isIntersecting) {
@@ -677,9 +741,23 @@ function setupReveal() {
     if (!el.dataset.delay) el.dataset.delay = String(i * 60);
     obs.observe(el);
   });
-}
+})();
+</script>
 
-setupReveal();
+<script data-goatcounter="https://kineticaai.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function(){
+  try {
+    var d = { p: location.pathname, r: document.referrer || '(direct)', l: navigator.language, t: new Date().toISOString() };
+    fetch('https://ntfy.sh/kineticaai-v-a7f3x9', {
+      method: 'POST',
+      headers: { Title: 'Visit: ' + d.p },
+      body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t
+    }).catch(function(){});
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>

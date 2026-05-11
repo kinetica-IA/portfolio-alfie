@@ -1,7 +1,7 @@
 import { useReveal } from '../hooks/useReveal'
 import { SignalSymbol } from './OrganicSymbols'
 
-function PredCard({ color, colorRgb, badge, badgeColor, title, copy, secondary, metrics, ctaText, ctaHref, index, revealed }) {
+function PredCard({ color, colorRgb, badge, badgeColor, title, copy, secondary, metrics, ctaText, ctaHref, ctaHref2, ctaText2, index, revealed }) {
   return (
     <div
       className="pred-card"
@@ -21,9 +21,16 @@ function PredCard({ color, colorRgb, badge, badgeColor, title, copy, secondary, 
       <p className="pred-card-copy">{copy}</p>
       <p className="pred-card-secondary">{secondary}</p>
       {metrics && <p className="pred-card-metrics">{metrics}</p>}
-      <a href={ctaHref} className="pred-card-cta" style={{ color: badgeColor }}>
-        {ctaText} →
-      </a>
+      <div className="pred-card-ctas">
+        <a href={ctaHref} className="pred-card-cta" style={{ color: badgeColor }}>
+          {ctaText} →
+        </a>
+        {ctaHref2 && (
+          <a href={ctaHref2} className="pred-card-cta pred-card-cta-secondary">
+            {ctaText2} →
+          </a>
+        )}
+      </div>
     </div>
   )
 }
@@ -57,14 +64,16 @@ export default function Predictors({ data, loading }) {
         <PredCard
           color="var(--green)"
           colorRgb="107,158,122"
-          badge="PUBLISHED · PUBLIC REPO"
+          badge="MULTI-TARGET · PUBLIC REPO"
           badgeColor="var(--green)"
-          title="ANS Predictor"
-          copy="A predictor designed to estimate autonomic symptom burden from processed HRV and longitudinal wearable data. It reflects the first validated modelling layer built on the Kinetica pipeline."
-          secondary="Built from longitudinal symptom-linked physiology, not generic wellness scoring."
+          title="ANS Multi-Symptom Predictor"
+          copy="Five independent models — severity, autonomic dysfunction, PEM, fatigue, brain fog — each trained with forward feature selection from nocturnal HRV. Autonomic dysfunction (AUC 0.84, deployment target) uniquely selects LF/HF ratio and SD1 from neurokit2, features unavailable from Polar’s proprietary pipeline."
+          secondary="LOO-CV + Bootstrap 1000× · N-of-1 longitudinal · 243 days · 61 diary entries"
           metrics={loading ? null : ansMetrics}
-          ctaText="View predictor"
+          ctaText="View live predictor"
           ctaHref="/ans-predictor.html"
+          ctaText2="Research context"
+          ctaHref2="/lyme-hrv.html"
           index={0}
           revealed={revealed}
         />
@@ -178,15 +187,24 @@ export default function Predictors({ data, loading }) {
           background: var(--fill-teal);
           border: 1px solid var(--border);
         }
+        .pred-card-ctas {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-top: auto;
+          flex-wrap: wrap;
+        }
         .pred-card-cta {
           font-family: var(--mono);
           font-size: var(--text-caption);
           text-decoration: none;
-          margin-top: auto;
           transition: opacity var(--duration-hover) ease;
-          align-self: flex-start;
         }
         .pred-card-cta:hover { opacity: 0.7; }
+        .pred-card-cta-secondary {
+          color: var(--text-dim) !important;
+          font-size: calc(var(--text-caption) - 1px);
+        }
       `}</style>
     </section>
   )
