@@ -12,7 +12,7 @@ import SectionDivider from './components/SectionDivider'
 import Reveal from './components/Reveal'
 
 export default function App() {
-  const { data, loading } = usePolarData()
+  const { data } = usePolarData()
 
   return (
     <>
@@ -31,7 +31,7 @@ export default function App() {
         </Reveal>
         <SectionDivider color="var(--green)" colorRgb="107,158,122" />
         <Reveal>
-          <Research data={data} loading={loading} />
+          <Research data={data} />
         </Reveal>
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
         <Reveal delay={0.05}>

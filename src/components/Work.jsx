@@ -5,50 +5,69 @@ import LivePulse from './LivePulse'
 
 const PILLARS = [
   {
-    num: '01', color: 'var(--warm)',
-    badge: 'LEGACY · PAUSED', badgeClass: 'wk-badge--warm',
-    title: 'IO3 — Context Engine for Clinical AI',
-    archivedNote: 'Archived prototype — not in active development. Architecture and audit trail documented below.',
-    problem: 'Clinical AI that starts every query from scratch is brittle. Clinicians need persistent context — patient profile, clinical rules, evidence base — injected into every model call.',
-    approach: 'Persistent orchestration layer in front of the LLM. Each query is enriched with patient profile, clinical rules, RAG evidence (26 chunks, prototype dataset), and ALMA L1 axioms before any model sees it. The model is interchangeable. IO3 is not.',
-    result: '9-node LangGraph graph with human-on-loop interrupt at every gap. Full reasoning audit trail. Designed for EU AI Act compliance — clinician decides at every uncertainty, never the model alone.',
-    stack: 'LangGraph · Anthropic API · ChromaDB · FastAPI · React',
-    link: '/io-architecture.html',
-    linkText: 'View architecture →',
+    num: '01', color: 'var(--teal)',
+    badge: 'LIVE · AUTOMATED', badgeClass: 'wk-badge--teal',
+    title: 'Data Pipeline — L0 to L5',
+    problem: 'Raw wearable exports are noisy, heterogeneous, and incompatible with clinical analysis. Seven data sources, 1000+ files, no standard schema.',
+    approach: (nDays) =>
+      `${nDays}-day continuous series. L0: GDPR export (Polar). L1: 9 typed parsers, zero drops. L2: neurokit2 advanced HRV on raw RR intervals. L3: unified daily frame (71 columns). L4: joined with symptom diary, 4-lag temporal features. L5: multi-target predictor training. Nightly GitHub Actions, atomic publish.`,
+    result: 'Runs every night at 06:00 UTC without manual intervention. Every layer versioned and auditable. L3 is the canonical artifact — everything downstream is deterministic from it.',
+    stack: 'Python · Pandas · neurokit2 · Pydantic · GitHub Actions',
+    link: '/pipeline.html',
+    linkText: 'View pipeline →',
     external: false,
   },
   {
     num: '02', color: 'var(--green)',
     badge: 'PUBLISHED · PUBLIC REPO', badgeClass: 'wk-badge--green',
-    title: 'ANS Predictor — Wearable Symptom Forecasting',
-    problem: 'Patients with complex chronic conditions can\'t predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.',
+    title: 'ANS Predictor — Multi-Target Symptom Forecasting',
+    problem: "Patients with complex chronic conditions can't predict symptom flares. Crashes arrive without warning, 24–72h after the trigger.",
     approach: (nDays, nPairs) =>
       `N=1 longitudinal study: ${nDays} nights of nocturnal HRV from a consumer wearable. Five independent models, each selecting its own features via forward selection across 13 candidates. Validated on ${nPairs} prospective pairs with LOO-CV.`,
     result: (headline) => {
-      if (!headline) return 'AUC 0.83 (autonomic dysfunction). Headline metric uses nocturnal RMSSD — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.'
+      if (!headline) return 'AUC 0.83 (autonomic dysfunction). Physiologically coherent: the model selects autonomic balance features to predict autonomic dysfunction. All code and data public.'
       const ci = headline.ci95
-      return `AUC ${headline.value.toFixed(2)} (autonomic dysfunction · CI95 ${ci[0].toFixed(2)}–${ci[1].toFixed(2)} · n=${headline.n} paired nights). Headline metric uses ${headline.features.join(' + ')} — physiologically coherent, not previously reported in N-of-1 longitudinal Lyme/ME-CFS literature. All code and data public.`
+      return `AUC ${headline.value.toFixed(2)} (autonomic dysfunction · CI95 ${ci[0].toFixed(2)}–${ci[1].toFixed(2)} · n=${headline.n} paired nights). Physiologically coherent: the model selects autonomic balance features to predict autonomic dysfunction. All code and data public.`
     },
-    stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2 · GitHub Actions',
-    link: '/pipeline.html',
-    linkText: 'View full pipeline →',
+    stack: 'Python · scikit-learn · neurokit2 · Polar Grit X2',
+    link: '/ans-predictor.html',
+    linkText: 'View predictor →',
     external: false,
   },
   {
     num: '03', color: 'var(--sea)',
-    badge: 'FRAMEWORK · IN DEVELOPMENT', badgeClass: 'wk-badge--sea',
-    title: 'ALMA — Ethical Safety Framework (in development)',
-    problem: 'LLMs in clinical contexts need guardrails that are not just prompt tricks. Prompt-based safety fails silently.',
-    approach: 'Two layers. L1: pre-generation injection of 5 axioms (Conciencia, Claridad, Límite, Pragmatismo, Cuidado) into every model call — deterministic, zero runtime overhead. L2: post-generation evaluation, currently being redesigned. Known limitation publicly documented: in current L2, Haiku evaluates its own outputs and RLHF dominates over the axioms.',
-    result: 'L1 operative in production. L2 redesign in progress. Decisions emit APPROVE / REWRITE / SILENCE — clinician always decides. Three structural bugs publicly documented at architecture page. Honest about what works and what does not.',
-    stack: 'Deterministic regex + cosine · intfloat/multilingual-e5-large · Clinical ethics',
-    link: '/io-architecture.html#alma',
-    linkText: 'View ALMA details →',
+    badge: 'PUBLISHED · SAME PIPELINE', badgeClass: 'wk-badge--sea',
+    title: 'Sleep Quality Predictor — Next-Day Fatigue',
+    problem: 'Fatigue severity is difficult to anticipate. If the HRV signal from the preceding night contains predictive information, that changes how patients plan their day.',
+    approach: 'Same L4 dataset as the ANS predictor. Forward selection across 20 candidates — five HRV features at four lags each. Stopped at two features. Both selected the same measure at consecutive nights, suggesting the fatigue signal concentrates within 48 hours.',
+    result: (_headline, sleepQuality) => {
+      if (!sleepQuality) return 'AUC 0.77 · CI95 [0.64, 0.89]. Nocturnal RMSSD at t0 and t1 is sufficient to predict high-fatigue days (fatiga ≥ 6/10). No additional feature improved AUC by the 0.01 stopping threshold.'
+      const auc = sleepQuality.auc_loo?.toFixed(2) ?? '0.77'
+      const lo = sleepQuality.auc_ci95_lower?.toFixed(2) ?? '0.64'
+      const hi = sleepQuality.auc_ci95_upper?.toFixed(2) ?? '0.89'
+      return `AUC ${auc} · CI95 [${lo}, ${hi}]. Nocturnal RMSSD at t0 and t1 is sufficient to predict high-fatigue days (fatiga ≥ 6/10). No additional feature improved AUC by the 0.01 stopping threshold.`
+    },
+    stack: 'Python · scikit-learn · LOO-CV · Bootstrap 1000×',
+    link: '/ans-predictor.html',
+    linkText: 'View predictor →',
+    external: false,
+  },
+  {
+    num: '04', color: 'var(--warm)',
+    badge: 'ARCHIVED · PROTOTYPE', badgeClass: 'wk-badge--warm',
+    title: 'IO3 + ALMA — Clinical Reasoning Architecture',
+    archivedNote: 'Archived prototype. Not in active development. Documented for transparency.',
+    problem: 'LLMs in clinical contexts need persistent context and ethical guardrails. Both require architectural decisions, not prompt engineering.',
+    approach: 'IO3: 9-node LangGraph graph that injects patient profile, clinical rules, and RAG evidence before any model call. ALMA: two-layer ethical framework — deterministic axiom injection pre-generation (L1) plus post-generation evaluation (L2, currently being redesigned).',
+    result: 'Human-on-loop interrupt at every uncertainty gap. EU AI Act compliance by design. L1 operative; L2 redesign in progress. Three structural bugs in L2 publicly documented.',
+    stack: 'LangGraph · Anthropic API · ChromaDB · FastAPI · React',
+    link: '/io-architecture.html',
+    linkText: 'View architecture →',
     external: false,
   },
 ]
 
-function PillarCard({ item, nDays, nPairs, headline, staggerIdx }) {
+function PillarCard({ item, nDays, nPairs, headline, sleepQuality, staggerIdx }) {
   const { ref, revealed } = useReveal(0.25)
   const numDisplay = useTextDecode(item.num, {
     duration: 600, delay: 0, loop: false, isActive: revealed,
@@ -58,7 +77,7 @@ function PillarCard({ item, nDays, nPairs, headline, staggerIdx }) {
     ? item.approach(nDays, nPairs)
     : item.approach
   const resultText = typeof item.result === 'function'
-    ? item.result(headline)
+    ? item.result(headline, sleepQuality)
     : item.result
 
   return (
@@ -127,7 +146,8 @@ function WkDivider({ revealed, delay }) {
 
 export default function Work({ data }) {
   const nPairs = data?.data_window?.n_paired || 61
-  const nDays = data?.series?.length || 207
+  const nDays = data?.series?.length || 243
+  const sleepQuality = data?.sleep_quality
   const { ref: sectionRef, revealed: sectionRevealed } = useReveal(0.1)
 
   return (
@@ -136,12 +156,19 @@ export default function Work({ data }) {
         <NetworkSymbol color="var(--warm)" size={44} />
         THE WORK
       </span>
-      <h2 className="wk-title">Three pillars of clinical AI</h2>
+      <h2 className="wk-title">From raw data to clinical predictor</h2>
 
       {PILLARS.map((item, i) => (
         <div key={item.num}>
           {i > 0 && <WkDivider revealed={sectionRevealed} delay={i * 200} />}
-          <PillarCard item={item} nDays={nDays} nPairs={nPairs} headline={data?.headline} staggerIdx={i} />
+          <PillarCard
+            item={item}
+            nDays={nDays}
+            nPairs={nPairs}
+            headline={data?.headline}
+            sleepQuality={sleepQuality}
+            staggerIdx={i}
+          />
         </div>
       ))}
 
@@ -198,8 +225,9 @@ export default function Work({ data }) {
           padding: 3px 8px;
         }
         .wk-badge--green { color: var(--green); background: rgba(107,158,122,0.10); }
-        .wk-badge--warm { color: var(--warm); background: rgba(196,133,90,0.10); }
-        .wk-badge--sea { color: var(--sea); background: rgba(93,138,130,0.10); }
+        .wk-badge--warm  { color: var(--warm);  background: rgba(196,133,90,0.10);  }
+        .wk-badge--sea   { color: var(--sea);   background: rgba(93,138,130,0.10);  }
+        .wk-badge--teal  { color: var(--teal);  background: rgba(144,167,165,0.12); }
         .wk-item-title {
           font-family: var(--sans);
           font-size: var(--text-subsection);
