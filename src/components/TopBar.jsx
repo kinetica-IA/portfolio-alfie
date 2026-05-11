@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 const NAV = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
+  { label: 'System', href: '#pipeline' },
+  { label: 'Predictors', href: '#predictors' },
+  { label: 'Frameworks', href: '#frameworks' },
   { label: 'Research', href: '#research' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'About', href: '#about' },
 ]
 
 export default function TopBar() {
