@@ -25,6 +25,17 @@ export default function Frameworks() {
         against clinical boundaries before anything reaches the clinician.
       </p>
 
+      <div className="anchor-row">
+        <div className="anchor-stats">
+          <span><strong>IO3</strong> LangGraph agent</span>
+          <span className="anchor-sep" />
+          <span><strong>ALMA</strong> 30-case eval</span>
+        </div>
+        <a href="#research" className="anchor-link" style={{ color: 'var(--teal)' }}>
+          See framework cards ↓
+        </a>
+      </div>
+
       <style>{`
         .frameworks-title {
           font-family: var(--sans);
@@ -39,6 +50,44 @@ export default function Frameworks() {
           color: var(--text-sec);
           line-height: 1.75;
           max-width: 600px;
+        }
+        .anchor-row {
+          margin-top: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          max-width: 600px;
+        }
+        .anchor-stats {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+        }
+        .anchor-stats strong {
+          font-weight: 500;
+          color: var(--text);
+          margin-right: 4px;
+        }
+        .anchor-sep {
+          width: 1px;
+          height: 10px;
+          background: var(--border);
+        }
+        .anchor-link {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          text-decoration: none;
+          transition: opacity var(--duration-hover) ease;
+          align-self: flex-start;
+        }
+        .anchor-link:hover { opacity: 0.7; }
+        @media (max-width: 480px) {
+          .anchor-sep { display: none; }
         }
       `}</style>
     </section>

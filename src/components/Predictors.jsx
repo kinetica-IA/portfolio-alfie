@@ -10,7 +10,7 @@ export default function Predictors() {
         <SignalSymbol color="var(--sea)" size={44} />
         PREDICTORS
       </span>
-      <h2 className="predictors-title">Predictors</h2>
+      <h2 className="predictors-title">Idiographic models</h2>
 
       <p
         className="predictors-narrative"
@@ -24,6 +24,19 @@ export default function Predictors() {
         and prospective symptom tracking. Different models target autonomic burden, overall severity
         and sleep, but all share the same cleaned pipeline and validation logic.
       </p>
+
+      <div className="anchor-row">
+        <div className="anchor-stats">
+          <span><strong>0.83</strong> autonomic</span>
+          <span className="anchor-sep" />
+          <span><strong>0.84</strong> severity</span>
+          <span className="anchor-sep" />
+          <span><strong>0.77</strong> sleep</span>
+        </div>
+        <a href="#research" className="anchor-link" style={{ color: 'var(--sea)' }}>
+          See predictor cards ↓
+        </a>
+      </div>
 
       <style>{`
         .predictors-title {
@@ -39,6 +52,44 @@ export default function Predictors() {
           color: var(--text-sec);
           line-height: 1.75;
           max-width: 600px;
+        }
+        .anchor-row {
+          margin-top: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          max-width: 600px;
+        }
+        .anchor-stats {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+        }
+        .anchor-stats strong {
+          font-weight: 500;
+          color: var(--text);
+          margin-right: 4px;
+        }
+        .anchor-sep {
+          width: 1px;
+          height: 10px;
+          background: var(--border);
+        }
+        .anchor-link {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          text-decoration: none;
+          transition: opacity var(--duration-hover) ease;
+          align-self: flex-start;
+        }
+        .anchor-link:hover { opacity: 0.7; }
+        @media (max-width: 480px) {
+          .anchor-sep { display: none; }
         }
       `}</style>
     </section>

@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTextDecode } from '../hooks/useTextDecode'
-
 // ════════════════════════════════════════════════════════════════════
-// HERO COMPONENT — clean, no canvas animation
+// HERO COMPONENT — breathing background + real numbers
 // ════════════════════════════════════════════════════════════════════
 
 const SUB_STRINGS = [
@@ -69,31 +68,25 @@ export default function Hero() {
         }}>
           Building clinical AI from wearable data, symptom tracking and real patient reality.
         </p>
-        <p className="hero-credentials" style={{
-          opacity: bootStep >= 1 ? 1 : 0,
-          transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(6px)',
-          transition: 'opacity 0.6s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
-        }}>
-          Biomechanics · Osteopath · Clinical AI builder
-        </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
           transition: 'opacity 0.6s var(--ease-out)',
         }}>
           {subText}
         </p>
-        <p className="hero-microproof" style={{
-          opacity: bootStep >= 2 ? 1 : 0,
-          transition: 'opacity 0.6s var(--ease-out) 0.2s',
-        }}>
-          N-of-1 longitudinal archive · wearable HRV · symptom-linked modelling · clinician-built
-        </p>
-        <p className="hero-map" style={{
+        <div className="hero-stats" style={{
           opacity: bootStep >= 3 ? 1 : 0,
-          transition: 'opacity 0.7s var(--ease-out) 0.1s',
+          transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
+          transition: 'opacity var(--anim-base) var(--ease-out) 0.15s, transform var(--anim-base) var(--ease-out) 0.15s',
         }}>
-          Clinical pipeline, symptom predictors, agent architecture and safety layer — all cross-checked against PubMed and real physiological data.
-        </p>
+          <span className="hero-stat"><strong>0.83</strong> AUC autonomic</span>
+          <span className="hero-stat-sep" />
+          <span className="hero-stat"><strong>256</strong> nights</span>
+          <span className="hero-stat-sep" />
+          <span className="hero-stat"><strong>61</strong> paired episodes</span>
+          <span className="hero-stat-sep" />
+          <span className="hero-stat hero-stat--muted">N-of-1 · open data</span>
+        </div>
       </div>
       <div className="hero-cta" style={{
         opacity: bootStep >= 3 ? 1 : 0,
@@ -156,13 +149,6 @@ export default function Hero() {
           margin: 0 auto;
           line-height: 1.7;
         }
-        .hero-credentials {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text-dim);
-          letter-spacing: 0.04em;
-          margin: 12px auto 0;
-        }
         .hero-sub {
           font-family: var(--mono);
           font-size: var(--text-caption);
@@ -171,22 +157,38 @@ export default function Hero() {
           margin: 16px auto 0;
           min-height: 1.4em;
         }
-        .hero-microproof {
+        .hero-stats {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          flex-wrap: wrap;
+          margin: 28px auto 36px;
+          max-width: 540px;
+        }
+        .hero-stat {
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
-          margin: 20px auto 0;
-          opacity: 0.6;
         }
-        .hero-map {
-          font-size: var(--text-caption);
-          font-weight: 300;
+        .hero-stat strong {
+          font-weight: 500;
+          color: var(--green);
+          margin-right: 4px;
+        }
+        .hero-stat--muted {
           color: var(--text-dim);
-          max-width: 480px;
-          margin: 20px auto 0;
-          line-height: 1.7;
-          opacity: 0.75;
+          opacity: 0.7;
+        }
+        .hero-stat-sep {
+          width: 1px;
+          height: 10px;
+          background: var(--border);
+        }
+        @media (max-width: 480px) {
+          .hero-stats { gap: 10px; margin: 22px auto 28px; }
+          .hero-stat-sep { display: none; }
         }
         .hero-cta {
           display: flex;
