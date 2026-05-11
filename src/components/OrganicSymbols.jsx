@@ -88,8 +88,8 @@ function SymbolWrap({ canvasRef, hovRef, wrapRef, className }) {
 function drawPulse(ctx, S, c, t, hov) {
   const cx = S / 2, cy = S / 2
   const breathe = 1 + Math.sin(t * 0.8) * 0.05
-  const alpha = hov ? 0.42 : 0.2
-  const lw = hov ? 0.65 : 0.4
+  const alpha = hov ? 0.75 : 0.55
+  const lw = hov ? 0.85 : 0.65
 
   // ECG wave path
   const amp = S * 0.25 * breathe
@@ -155,18 +155,18 @@ function drawOrbit(ctx, S, c, t, hov) {
   const cx = S / 2, cy = S / 2
   const breathe = 1 + Math.sin(t * 0.7) * 0.04
   const R = S * 0.34 * breathe
-  const alpha = hov ? 0.38 : 0.16
+  const alpha = hov ? 0.75 : 0.55
 
   // Orbit ring
   ctx.beginPath()
   ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
-  ctx.lineWidth = hov ? 0.6 : 0.35
+  ctx.lineWidth = hov ? 0.85 : 0.65
   ctx.arc(cx, cy, R, 0, Math.PI * 2)
   ctx.stroke()
 
   // Inner whisper ring
   ctx.beginPath()
-  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.4})`
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.32 : 0.18})`
   ctx.lineWidth = 0.25
   ctx.arc(cx, cy, R * 0.45, 0, Math.PI * 2)
   ctx.stroke()
@@ -213,14 +213,14 @@ export function OrbitSymbol({ color = 'var(--teal)', size = 44, className = '' }
 function drawSignal(ctx, S, c, t, hov) {
   const cy = S / 2
   const breathe = 1 + Math.sin(t * 0.9) * 0.06
-  const alpha = hov ? 0.40 : 0.18
+  const alpha = hov ? 0.75 : 0.55
   const amp = S * 0.22 * breathe
   const pad = S * 0.08
 
   // Flowing sine wave
   ctx.beginPath()
   ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`
-  ctx.lineWidth = hov ? 0.6 : 0.38
+  ctx.lineWidth = hov ? 0.85 : 0.65
   ctx.lineCap = 'round'
 
   for (let x = pad; x <= S - pad; x += 1) {
@@ -232,7 +232,7 @@ function drawSignal(ctx, S, c, t, hov) {
 
   // Second harmonic wave — lighter
   ctx.beginPath()
-  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.5})`
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.40 : 0.25})`
   ctx.lineWidth = 0.25
   for (let x = pad; x <= S - pad; x += 1) {
     const norm = (x - pad) / (S - 2 * pad)
@@ -266,8 +266,8 @@ export function SignalSymbol({ color = 'var(--green)', size = 44, className = ''
 
 function drawCell(ctx, S, c, t, hov) {
   const cx = S / 2, cy = S / 2
-  const alpha = hov ? 0.38 : 0.16
-  const lw = hov ? 0.6 : 0.38
+  const alpha = hov ? 0.75 : 0.55
+  const lw = hov ? 0.85 : 0.65
 
   // Morphing membrane
   ctx.beginPath()
@@ -288,7 +288,7 @@ function drawCell(ctx, S, c, t, hov) {
 
   // Inner membrane
   ctx.beginPath()
-  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.4})`
+  ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${hov ? 0.32 : 0.18})`
   ctx.lineWidth = 0.25
   for (let i = 0; i <= steps; i++) {
     const a = (i / steps) * Math.PI * 2
@@ -334,8 +334,8 @@ export function CellSymbol({ color = 'var(--warm)', size = 44, className = '' })
 /* ── 5. NetworkSymbol — 3 nodes + thin edges + traveling packet ── */
 
 function drawNetwork(ctx, S, c, t, hov) {
-  const alpha = hov ? 0.38 : 0.16
-  const lw = hov ? 0.55 : 0.35
+  const alpha = hov ? 0.75 : 0.55
+  const lw = hov ? 0.80 : 0.60
 
   // 3 node positions — gently drifting
   const nodes = [
@@ -401,8 +401,8 @@ export function NetworkSymbol({ color = 'var(--ice)', size = 44, className = '' 
 /* ── 6. HelixSymbol — two thin twisting strands + rungs ──── */
 
 function drawHelix(ctx, S, c, t, hov) {
-  const alpha = hov ? 0.38 : 0.17
-  const lw = hov ? 0.6 : 0.38
+  const alpha = hov ? 0.75 : 0.55
+  const lw = hov ? 0.85 : 0.65
   const pad = S * 0.1
   const h = S - 2 * pad
   const cx = S / 2
@@ -434,7 +434,7 @@ function drawHelix(ctx, S, c, t, hov) {
     const x1 = cx + Math.sin(phase) * amp * (1 + Math.sin(t * 0.6) * 0.05)
     const x2 = cx - Math.sin(phase) * amp * (1 + Math.sin(t * 0.6) * 0.05)
     const depth = Math.cos(phase)
-    const rungAlpha = alpha * (0.3 + Math.abs(depth) * 0.5)
+    const rungAlpha = (hov ? 0.70 : 0.48) * (0.3 + Math.abs(depth) * 0.5)
 
     ctx.beginPath()
     ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${rungAlpha})`

@@ -29,7 +29,7 @@ const COOL_COLORS = [
 ]
 
 // ── Config ──────────────────────────────────────────────────────────
-const RAY_COUNT        = 200
+const RAY_COUNT        = 120
 const CONE_HALF_ANGLE  = 0.4363
 const CONE_VARIATION   = 0.5236
 const MIN_RAY_LENGTH   = 0.25
