@@ -28,6 +28,7 @@ estructura_portfolio_alfie.txt
 
 # large intermediate data
 data/hrv_rr_nightly.csv
+data/polar_live.full.json
 
 # pipeline generated outputs (committed selectively in step 3)
 data/raw/
