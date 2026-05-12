@@ -53,7 +53,7 @@ export default function FounderContact() {
       <div className="fc-timeline">
         <div className="tl-line" style={{
           width: revealed ? '100%' : '0%',
-          transition: 'width 1.0s var(--ease-out) 0.3s',
+          transition: 'width var(--anim-slow) var(--ease-out) 0.3s',
         }} />
         <div className="tl-items">
           {TIMELINE.map((t, i) => (

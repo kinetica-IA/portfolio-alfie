@@ -114,7 +114,7 @@ function ORCard({ card, index, revealed }) {
         '--or-rgb': card.badgeRgb,
         opacity: revealed ? (card.comingSoon ? 0.6 : 1) : 0,
         transform: revealed ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s var(--ease-out) ${index * 120}ms, transform 0.7s var(--ease-out) ${index * 120}ms`,
+        transition: `opacity 0.8s var(--ease-out) ${index * 120}ms, transform var(--anim-base) var(--ease-out) ${index * 120}ms`,
       }}
     >
       <div className="or-card-header">
