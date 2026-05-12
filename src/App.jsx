@@ -1,6 +1,4 @@
 import { usePolarData } from './hooks/usePolarData'
-import { FloatingDecorators } from './components/OrganicSymbols'
-import FilmGrain from './components/FilmGrain'
 import TopBar from './components/TopBar'
 import Hero from './components/Hero'
 import LivePulse from './components/LivePulse'
@@ -18,8 +16,6 @@ export default function App() {
   return (
     <>
       <TopBar />
-      <FloatingDecorators />
-      <FilmGrain />
       <div className="content-layer">
         <Hero />
         {data && <LivePulse data={data} />}
