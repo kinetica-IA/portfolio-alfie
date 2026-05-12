@@ -9,7 +9,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@firecms/neat": "^0.8.0",
+    "@paper-design/shaders-react": "0.0.76",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
