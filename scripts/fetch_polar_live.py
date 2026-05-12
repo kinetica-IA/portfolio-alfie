@@ -21,8 +21,10 @@ import httpx
 
 API_BASE  = "https://www.polaraccesslink.com/v3"
 LIVE_JSON = Path("public/data/polar_live.json")
+FULL_JSON = Path("data/polar_live.full.json")
 
-MAX_SERIES_DAYS = 365
+MAX_SERIES_DAYS    = 365   # full archive retention
+PUBLISHED_SERIES_DAYS = 90  # window served in public/
 
 
 # ── API helpers ───────────────────────────────────────────────────────────────
@@ -164,11 +166,17 @@ def main():
     data["latest"]     = row
     data["series"]     = upsert_series(data.get("series", []), row)
 
-    LIVE_JSON.parent.mkdir(parents=True, exist_ok=True)
-    LIVE_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+    # Write full archive outside public/
+    FULL_JSON.parent.mkdir(parents=True, exist_ok=True)
+    FULL_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False))
 
-    print(f"  Written: {LIVE_JSON}  ({LIVE_JSON.stat().st_size:,} bytes)")
-    print(f"  Series length: {len(data['series'])} days")
+    # Trim series to last PUBLISHED_SERIES_DAYS before serving
+    published = {**data, "series": data["series"][-PUBLISHED_SERIES_DAYS:]}
+    LIVE_JSON.parent.mkdir(parents=True, exist_ok=True)
+    LIVE_JSON.write_text(json.dumps(published, indent=2, ensure_ascii=False))
+
+    print(f"  Full archive: {FULL_JSON}  ({FULL_JSON.stat().st_size:,} bytes, {len(data['series'])} days)")
+    print(f"  Published:    {LIVE_JSON}  ({LIVE_JSON.stat().st_size:,} bytes, {len(published['series'])} days)")
     print("Done.")
 
 
