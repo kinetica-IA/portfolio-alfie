@@ -6,9 +6,4 @@ export default defineConfig({
   site: 'https://www.kineticaai.com',
   integrations: [react(), sitemap()],
   outDir: 'dist',
-  vite: {
-    ssr: {
-      noExternal: ['@firecms/neat'],
-    },
-  },
 })

@@ -4,7 +4,6 @@ export default function FooterField() {
       <div className="footer-content">
         <span className="footer-brand">KINETICA AI</span>
         <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
-        <a href="https://neat.firecms.co" target="_blank" rel="noopener noreferrer" className="footer-neat">Background by NEAT</a>
       </div>
 
       <style>{`
@@ -39,15 +38,6 @@ export default function FooterField() {
           color: var(--text-dim);
           letter-spacing: 0.04em;
         }
-        .footer-neat {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          letter-spacing: 0.04em;
-          text-decoration: none;
-          opacity: 0.6;
-        }
-        .footer-neat:hover { opacity: 1; }
       `}</style>
     </footer>
   )
