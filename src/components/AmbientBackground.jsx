@@ -26,19 +26,19 @@ export default function AmbientBackground() {
     >
       <GrainGradient
         colors={[
-          '#cce3e6',
-          '#c4dde2',
-          '#c8e1e3',
-          '#c2dbe0',
-          '#cae2e4',
-          '#c6dfe2',
+          '#a8cdd8',
+          '#88b9b4',
+          '#b2d4d8',
+          '#93bfba',
+          '#9dc6c1',
+          '#a0caca',
         ]}
-        colorBack="#d8ecec"
-        softness={0.92}
-        intensity={0.38}
-        noise={0.72}
+        colorBack="#d5e9e9"
+        softness={0.95}
+        intensity={0.62}
+        noise={0.82}
         shape="blob"
-        speed={reducedMotion ? 0 : 0.1}
+        speed={reducedMotion ? 0 : 0.12}
         style={{ width: '100%', height: '100%' }}
       />
     </div>
