@@ -34,8 +34,9 @@ export default function AmbientBackground() {
           '#a0caca',
         ]}
         colorBack="#d5e9e9"
+        scale={0.25}
         softness={0.95}
-        intensity={0.62}
+        intensity={0.55}
         noise={0.82}
         shape="blob"
         speed={reducedMotion ? 0 : 0.12}
