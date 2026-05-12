@@ -3,12 +3,14 @@
    Visual language matches Work.jsx in the main React app.
    ═══════════════════════════════════════════════════════════ */
 
+@import url('/styles/tokens.css');
+
 /* ── Reset / base ───────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
-  background: #f0f9f9;
+  background: var(--bg);
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -17,20 +19,20 @@ html {
 body {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 300;
-  color: #4d6e68;
+  color: var(--text-sec);
   min-height: 100dvh;
   overflow-x: hidden;
 }
 
 a {
-  color: #5d8a82;
+  color: var(--sea);
   text-decoration: none;
   transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-a:hover { color: #6b9e7a; }
+a:hover { color: var(--green); }
 
 :focus-visible {
-  outline: 2px solid #90a7a5;
+  outline: 2px solid var(--teal);
   outline-offset: 3px;
 }
 
@@ -58,23 +60,23 @@ main {
 .back-link {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.8125rem;
-  color: #7a9e97;
+  color: var(--text-dim);
   letter-spacing: 0.04em;
 }
-.back-link:hover { color: #5d8a82; }
+.back-link:hover { color: var(--sea); }
 
 .brand {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.8125rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #7a9e97;
+  color: var(--text-dim);
 }
 
 /* ── Page header ────────────────────────────────────────── */
 .page-header {
   padding: clamp(32px, 5vh, 56px) 0 clamp(40px, 5vh, 56px);
-  border-bottom: 1px solid rgba(144, 167, 165, 0.15);
+  border-bottom: 1px solid var(--border);
   margin-bottom: clamp(40px, 5vh, 56px);
 }
 
@@ -82,7 +84,7 @@ main {
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 400;
-  color: #34504b;
+  color: var(--text-heading);
   line-height: 1.3;
   margin: 10px 0 16px;
 }
@@ -90,7 +92,7 @@ main {
 .subtitle {
   font-size: 1rem;
   font-weight: 300;
-  color: #4d6e68;
+  color: var(--text-sec);
   line-height: 1.7;
   max-width: 580px;
   margin-bottom: 20px;
@@ -99,7 +101,7 @@ main {
 .meta {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.8125rem;
-  color: #7a9e97;
+  color: var(--text-dim);
 }
 
 /* ── Eyebrow labels ─────────────────────────────────────── */
@@ -109,7 +111,7 @@ main {
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #7a9e97;
+  color: var(--text-dim);
   display: block;
 }
 
@@ -138,7 +140,7 @@ main {
   width: 96px;
   min-height: 112px;
   background: #ffffff;
-  border-left: 2px solid var(--level-color, #90a7a5);
+  border-left: 2px solid var(--level-color, var(--teal));
   padding: 12px 10px;
   display: flex;
   flex-direction: column;
@@ -156,8 +158,8 @@ main {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #34504b;
-  background: var(--chip-bg, rgba(144, 167, 165, 0.15));
+  color: var(--text-heading);
+  background: var(--chip-bg, var(--border));
   padding: 2px 6px;
   display: inline-block;
   align-self: flex-start;
@@ -167,14 +169,14 @@ main {
 .sankey-node__name {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #34504b;
+  color: var(--text-heading);
   line-height: 1.3;
 }
 
 .sankey-node__metric {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.6875rem;
-  color: #7a9e97;
+  color: var(--text-dim);
   margin-top: auto;
 }
 
@@ -195,7 +197,7 @@ main {
 /* ── Level card ─────────────────────────────────────────── */
 .level-card {
   background: #ffffff;
-  border-left: 3px solid var(--level-color, #90a7a5);
+  border-left: 3px solid var(--level-color, var(--teal));
   padding: 24px 28px;
   margin-bottom: 20px;
   transition: border-left-width 200ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -212,8 +214,8 @@ main {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #34504b;
-  background: var(--chip-bg, rgba(144, 167, 165, 0.15));
+  color: var(--text-heading);
+  background: var(--chip-bg, var(--border));
   padding: 0 8px;
   display: inline-block;
   line-height: 24px;
@@ -224,14 +226,14 @@ main {
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.1rem, 2vw, 1.35rem);
   font-weight: 500;
-  color: #34504b;
+  color: var(--text-heading);
   margin-bottom: 10px;
 }
 
 .level-card__description {
   font-size: 0.9375rem;
   font-weight: 300;
-  color: #4d6e68;
+  color: var(--text-sec);
   line-height: 1.7;
   max-width: 600px;
   margin-bottom: 16px;
@@ -255,7 +257,7 @@ main {
 .level-card__metrics .key {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.75rem;
-  color: #7a9e97;
+  color: var(--text-dim);
   letter-spacing: 0.04em;
 }
 
@@ -263,7 +265,7 @@ main {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #34504b;
+  color: var(--text-heading);
 }
 
 /* ── Status badge ───────────────────────────────────────── */
@@ -277,18 +279,18 @@ main {
 }
 
 .level-card__status--operational {
-  color: #6b9e7a;
-  background: rgba(107, 158, 122, 0.10);
+  color: var(--green);
+  background: var(--fill-green);
 }
 
 .level-card__status--in_development {
-  color: #bfa87a;
+  color: var(--sand);
   background: rgba(191, 168, 122, 0.15);
 }
 
 .level-card__status--deprecated {
-  color: #a8796e;
-  background: rgba(168, 121, 110, 0.10);
+  color: var(--clay);
+  background: var(--fill-clay);
 }
 
 /* ── Footer ─────────────────────────────────────────────── */
@@ -296,7 +298,7 @@ main {
   max-width: 880px;
   margin: 0 auto;
   padding: 32px 24px 48px;
-  border-top: 1px solid rgba(144, 167, 165, 0.15);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -305,7 +307,7 @@ main {
 .site-footer p {
   font-family: 'DM Mono', 'SF Mono', monospace;
   font-size: 0.75rem;
-  color: #7a9e97;
+  color: var(--text-dim);
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
