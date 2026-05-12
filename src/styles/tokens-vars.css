@@ -1,0 +1,86 @@
+/* ═══════════════════════════════════════════════════════════
+   KINETICA AI — Design Tokens (variables + reduced-motion only)
+   Safe to embed in static HTML pages — no element resets.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Background */
+  --bg: #f0f9f9;
+
+  /* Semantic palette */
+  --teal: #90a7a5;
+  --green: #6b9e7a;
+  --warm: #c4855a;
+
+  /* Text hierarchy */
+  --text: #3d5c57;
+  --text-heading: #34504b;
+  --text-sec: #4d6e68;
+  --text-dim: #7a9e97;
+  --text-metric: #34504b;
+
+  /* Extended */
+  --slate: #6a8690;
+  --sea: #5d8a82;
+  --moss: #6b8a6d;
+  --ice: #85a8b8;
+  --clay: #a8796e;
+  --sand: #bfa87a;
+  --gold: #d4a843;
+
+  /* Semantic fills */
+  --fill-teal: rgba(144, 167, 165, 0.10);
+  --fill-green: rgba(107, 158, 122, 0.10);
+  --fill-warm: rgba(196, 133, 90, 0.10);
+  --fill-sea: rgba(93, 138, 130, 0.10);
+  --fill-ice: rgba(133, 168, 184, 0.10);
+  --fill-clay: rgba(168, 121, 110, 0.10);
+  --fill-sand: rgba(191, 168, 122, 0.10);
+  --fill-moss: rgba(107, 138, 109, 0.10);
+  --fill-active: rgba(144, 167, 165, 0.15);
+
+  /* Structural */
+  --border: rgba(144, 167, 165, 0.15);
+  --border-active: rgba(144, 167, 165, 0.30);
+  --shadow: rgba(26, 42, 40, 0.06);
+
+  /* Typography scale */
+  --text-hero: clamp(3.5rem, 6vw, 4.5rem);
+  --text-section: clamp(2rem, 3.5vw, 2.5rem);
+  --text-subsection: clamp(1.25rem, 2vw, 1.5rem);
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-caption: 0.8125rem;
+  --text-eyebrow: 0.9375rem;
+
+  /* Spacing scale */
+  --space-section: clamp(48px, 6vh, 72px);
+  --space-subsection: 32px;
+  --space-element: 20px;
+  --space-tight: 10px;
+
+  /* Fonts */
+  --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 1.6s;
+  --duration-hover: 0.3s;
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-fast: 0.4s;
+  --anim-base: 0.7s;
+  --anim-slow: 1.0s;
+}
+
+/* ── Reduced motion — a11y ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
