@@ -34,11 +34,11 @@ export default function AmbientBackground() {
           '#a0caca',
         ]}
         colorBack="#d5e9e9"
-        scale={0.25}
+        scale={0.55}
         softness={0.95}
-        intensity={0.55}
+        intensity={0.5}
         noise={0.82}
-        shape="blob"
+        shape="dots"
         speed={reducedMotion ? 0 : 0.12}
         style={{ width: '100%', height: '100%' }}
       />
