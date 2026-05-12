@@ -17,7 +17,7 @@ export default function Frameworks() {
         style={{
           opacity: revealed ? 1 : 0,
           transform: revealed ? 'translateY(0)' : 'translateY(16px)',
-          transition: 'opacity 0.9s var(--ease-out), transform 0.7s var(--ease-out)',
+          transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
         IO3 and ALMA capture how the agent reasons and where it must stop. IO3 handles context,
