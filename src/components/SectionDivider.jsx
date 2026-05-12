@@ -21,7 +21,7 @@ export default function SectionDivider({ color = 'var(--teal)', colorRgb = '144,
         '--div-rgb': colorRgb,
         opacity: revealed ? 1 : 0,
         transform: revealed ? 'scale(1)' : 'scale(0)',
-        transition: 'opacity 0.4s var(--ease-out) 0.3s, transform 0.4s var(--ease-out) 0.3s',
+        transition: 'opacity var(--anim-fast) var(--ease-out) 0.3s, transform var(--anim-fast) var(--ease-out) 0.3s',
       }} />
       <span className="sec-div-line sec-div-line--right" style={{
         transform: revealed ? 'scaleX(1)' : 'scaleX(0)',
