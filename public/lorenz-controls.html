@@ -252,7 +252,7 @@ button.active { background: #2e2e50; border-color: #555; color: #e8c074; }
   </div>
 
   <div class="section">
-    <h3>Fondo &amp; Grano</h3>
+    <h3>Fondo</h3>
     <div class="ctrl">
       <label>Color fondo</label>
       <input type="color" id="bg-color" value="#f8f5ee" style="margin-top:4px">
@@ -261,15 +261,6 @@ button.active { background: #2e2e50; border-color: #555; color: #e8c074; }
       <label>Opacidad canvas <span class="val" id="v-cop">0.88</span></label>
       <input type="range" id="s-cop" min="0.05" max="1" step="0.01" value="0.88">
     </div>
-    <div class="ctrl">
-      <label>Grano opacidad <span class="val" id="v-gop">0.055</span></label>
-      <input type="range" id="s-gop" min="0" max="0.4" step="0.005" value="0.055">
-    </div>
-    <div class="ctrl">
-      <label>Grano densidad <span class="val" id="v-gdens">0.35</span></label>
-      <input type="range" id="s-gdens" min="0" max="1" step="0.01" value="0.35">
-    </div>
-    <button id="btn-grain" style="width:100%;margin-top:6px">↻ Regenerar grano</button>
   </div>
 
   <div class="section">
@@ -301,7 +292,6 @@ const DEF = {
   scaleX: 0.46, scaleZ: 0.46, centerZ: 25,
   rotY: 0, tiltX: 0,
   canvasOpacity: 0.88,
-  grainOpacity: 0.055, grainDensity: 0.35,
   bgColor: '#f8f5ee',
 }
 
@@ -333,7 +323,7 @@ let pos = INIT.map(d => ({ ...d }))
 
 const canvas = document.getElementById('canvas')
 const ctx    = canvas.getContext('2d', { alpha: false })
-let w = 0, h = 0, grainCvs = null, paused = false
+let w = 0, h = 0, paused = false
 
 function hexRgb(hex) {
   return [
@@ -341,23 +331,6 @@ function hexRgb(hex) {
     parseInt(hex.slice(3,5), 16),
     parseInt(hex.slice(5,7), 16),
   ]
-}
-
-function buildGrain() {
-  grainCvs = document.createElement('canvas')
-  grainCvs.width  = w
-  grainCvs.height = h
-  const gc  = grainCvs.getContext('2d')
-  const img = gc.createImageData(w, h)
-  const d = cfg.grainDensity
-  for (let i = 0; i < img.data.length; i += 4) {
-    if (Math.random() < d) {
-      const v = Math.random() * 255 | 0
-      img.data[i] = img.data[i+1] = img.data[i+2] = v
-      img.data[i+3] = Math.random() * 40 | 0
-    }
-  }
-  gc.putImageData(img, 0, 0)
 }
 
 function fillBg() {
@@ -370,7 +343,6 @@ function resize() {
   w = canvas.width  = canvas.offsetWidth
   h = canvas.height = canvas.offsetHeight
   fillBg()
-  buildGrain()
 }
 
 window.addEventListener('resize', resize)
@@ -432,12 +404,6 @@ function tick() {
       ctx.fill()
     }
   })
-
-  if (grainCvs && cfg.grainOpacity > 0) {
-    ctx.globalAlpha = cfg.grainOpacity
-    ctx.drawImage(grainCvs, 0, 0)
-    ctx.globalAlpha = 1
-  }
 }
 
 function bindSlider(sliderId, valId, cfgKey, fmt, onChange) {
@@ -450,10 +416,10 @@ function bindSlider(sliderId, valId, cfgKey, fmt, onChange) {
   })
 }
 
-const f1  = v => v.toFixed(1)
-const f2  = v => v.toFixed(2)
-const f3  = v => v.toFixed(3)
-const f4  = v => v.toFixed(4)
+const f1   = v => v.toFixed(1)
+const f2   = v => v.toFixed(2)
+const f3   = v => v.toFixed(3)
+const f4   = v => v.toFixed(4)
 const fdeg = v => Math.round(v) + '°'
 
 bindSlider('s-sigma', 'v-sigma', 'sigma', f1)
@@ -468,14 +434,10 @@ bindSlider('s-cz',    'v-cz',   'centerZ', f1)
 bindSlider('s-rot',   'v-rot',  'rotY',  fdeg)
 bindSlider('s-tilt',  'v-tilt', 'tiltX', fdeg)
 bindSlider('s-cop',   'v-cop',  'canvasOpacity', f2, v => { canvas.style.opacity = v })
-bindSlider('s-gop',   'v-gop',  'grainOpacity', f3)
-bindSlider('s-gdens', 'v-gdens','grainDensity',  f2, () => buildGrain())
 
 document.getElementById('bg-color').addEventListener('input', e => {
   cfg.bgColor = e.target.value
 })
-
-document.getElementById('btn-grain').addEventListener('click', buildGrain)
 
 const pUI = document.getElementById('particles-ui')
 pts.forEach((pt, i) => {
@@ -483,10 +445,10 @@ pts.forEach((pt, i) => {
   row.className = 'pt-row'
   row.innerHTML = `
     <span class="fib">${FIB[i]}</span>
-    <input type="color" value="${pt.color}" title="Color partícula ${i+1}">
-    <input type="range" min="0.1" max="5" step="0.05" value="${pt.steps}" title="Velocidad">
-    <input type="range" min="0.2" max="5" step="0.05" value="${pt.dotR}"  title="Radio punto">
-    <input type="checkbox" checked title="Activa">
+    <input type="color" value="${pt.color}">
+    <input type="range" min="0.1" max="5" step="0.05" value="${pt.steps}">
+    <input type="range" min="0.2" max="5" step="0.05" value="${pt.dotR}">
+    <input type="checkbox" checked>
   `
   pUI.appendChild(row)
   const [cEl, stEl, drEl, onEl] = row.querySelectorAll('input')
