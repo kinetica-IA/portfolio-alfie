@@ -190,6 +190,11 @@
       scored across 5 dimensions using a standardized diary (DSQ-PEM adapted).
     </p>
     <p>
+      The autonomic pattern targeted by this predictor is consistent with
+      dysautonomia documented in post-infectious syndromes.
+      <a href="#references" style="color:var(--accent-green)">→ Scientific basis</a>
+    </p>
+    <p>
       <strong>Feature selection:</strong> Forward selection per target — each symptom model
       independently selects its own best features from the 13 candidates across 3 lag windows
       (t0, t-1, t-2). No shared feature set imposed.
@@ -262,6 +267,62 @@
       <strong>Stack:</strong> <code>Python</code> · <code>scikit-learn</code> · <code>neurokit2</code> ·
       <code>Polar Grit X2</code> · <code>GitHub Actions</code> · <code>CSV</code>
     </p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- REFERENCES -->
+  <div id="references" class="content-section reveal">
+    <div class="section-eyebrow">References</div>
+    <h3>Scientific basis</h3>
+    <p>
+      The ANS Predictor is grounded in three lines of published evidence:
+      autonomic dysfunction as a measurable feature of post-infectious syndromes,
+      HRV as a predictive signal for symptom burden, and the statistical case
+      for individual-level modelling over population averages.
+    </p>
+
+    <div style="margin-top:1.5rem">
+
+      <p style="margin-bottom:0.25rem"><strong>[1] Evidence of altered cardiac autonomic regulation in myalgic encephalomyelitis/chronic fatigue syndrome: A systematic review and meta-analysis</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Nelson MJ et al. · Medicine · 2019 ·
+        <a href="https://doi.org/10.1097/MD.0000000000017600" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.1097/MD.0000000000017600</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        64-study meta-analysis confirming reduced HF-HRV and elevated LF/HF ratio at rest in ME/CFS — the autonomic phenotype this predictor targets.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[2] Similar Patterns of Dysautonomia in Myalgic Encephalomyelitis/Chronic Fatigue and Post-COVID-19 Syndromes</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Ryabkova VA et al. · Pathophysiology · 2024 ·
+        <a href="https://doi.org/10.3390/pathophysiology31010001" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3390/pathophysiology31010001</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        HRV-based diagnostic prediction models for ME/CFS developed and validated; close correlation of HRV parameters with fatigue but not with depression/anxiety — consistent with Kinetica's symptom-specific model structure.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[3] Benefit of the N-of-1 Approach Versus Aggregate Analysis in Tracking Individual Trajectories</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Behrouzi T et al. · JMIR Formative Research · 2026 ·
+        <a href="https://doi.org/10.2196/86203" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.2196/86203</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Wearable HRV study showing aggregate models capture only 4.76% of individual HRV inflection patterns — direct methodological justification for Kinetica's idiographic design.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[4] Heart rate variability in cardiovascular disease diagnosis, prognosis and management</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Wang BX et al. · Frontiers in Cardiovascular Medicine · 2026 ·
+        <a href="https://doi.org/10.3389/fcvm.2025.1680783" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3389/fcvm.2025.1680783</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:0">
+        Current review acknowledging wearable + ML expansion of HRV utility while flagging measurement standardisation as an open challenge — addressed in Kinetica's published Polar pipeline.
+      </p>
+
+    </div>
+
+    <div class="footnotes" style="margin-top:1.25rem">All references retrieved from PubMed. DOI links open the original publications.</div>
   </div>
 
   <!-- FOOTER -->
@@ -365,28 +426,28 @@ function populate(d) {
     { val: '48h', label: 'Predictive lag' },
   ].map(i => '<div class="stat-item"><span class="stat-val">' + i.val + '</span><span class="stat-label">' + i.label + '</span></div>').join('');
 
-  // Finding \u2014 build from d.headline when d.finding is absent (v3.1 portfolio schema)
+  // Finding — build from d.headline when d.finding is absent (v3.1 portfolio schema)
   var findingHtml;
   if (f && f.description) {
     findingHtml = '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
       '<p class="finding-text">' + f.description +
-      '. Spearman \u03c1 = ' + f.spearman_rho + ' \u00b7 p = ' + f.p_value +
-      ' \u00b7 AUC = ' + f.auc + ' \u00b7 Sensitivity ' + f.sensitivity_pct +
-      '% \u00b7 N = ' + f.n_pairs + ' paired days.</p></div>';
+      '. Spearman ρ = ' + f.spearman_rho + ' · p = ' + f.p_value +
+      ' · AUC = ' + f.auc + ' · Sensitivity ' + f.sensitivity_pct +
+      '% · N = ' + f.n_pairs + ' paired days.</p></div>';
   } else if (headline.value != null) {
     var ci = headline.ci95 || [];
     findingHtml = '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
       '<p class="finding-text">5 symptom domains predicted independently from nocturnal wearable data.' +
       ' Deployment target: autonomic dysfunction.' +
       ' AUC = ' + headline.value.toFixed(3) +
-      (ci.length === 2 ? ' \u00b7 CI\u2089\u2085 [' + ci[0].toFixed(3) + ', ' + ci[1].toFixed(3) + ']' : '') +
-      ' \u00b7 N = ' + headline.n + ' paired days \u00b7 LOO-CV \u00b7 Bootstrap 1000\u00d7.</p></div>';
+      (ci.length === 2 ? ' · CI₉₅ [' + ci[0].toFixed(3) + ', ' + ci[1].toFixed(3) + ']' : '') +
+      ' · N = ' + headline.n + ' paired days · LOO-CV · Bootstrap 1000×.</p></div>';
   } else {
     findingHtml = '';
   }
   document.getElementById('finding').innerHTML = findingHtml;
 
-  // Target table \u2014 support both schemas: auc_loo/auc_ci95_lower/upper (v3.1) and best_auc/best_auc_ci95 (older)
+  // Target table — support both schemas: auc_loo/auc_ci95_lower/upper (v3.1) and best_auc/best_auc_ci95 (older)
   var html = '';
   Object.entries(targets).forEach(function(entry) {
     var key = entry[0], t = entry[1];
@@ -400,24 +461,24 @@ function populate(d) {
       '<span class="target-name">' + (TARGET_LABELS[key] || key) + (isBF ? '<span class="flag">*</span>' : '') + '</span>' +
       '<span class="target-auc" style="color:' + aucColor(auc) + '">' + auc.toFixed(2) + '</span>' +
       '<div class="target-bar"><div class="target-bar-fill" style="width:' + pct + '%;background:' + aucColor(auc) + '"></div></div>' +
-      '<span class="target-ci">' + (ciLo != null ? ciLo.toFixed(2) : '\u2014') + '\u2013' + (ciHi != null ? ciHi.toFixed(2) : '\u2014') + '</span>' +
+      '<span class="target-ci">' + (ciLo != null ? ciLo.toFixed(2) : '—') + '–' + (ciHi != null ? ciHi.toFixed(2) : '—') + '</span>' +
       '</div>';
   });
   document.getElementById('targets').innerHTML = html;
 
-  // Footnotes \u2014 residuals absent in v3.1 portfolio schema; read class split from target data
+  // Footnotes — residuals absent in v3.1 portfolio schema; read class split from target data
   var res = p.residuals || {};
   var brainFogRho = res.brain_fog ? res.brain_fog.rho : null;
   var autonomicRho = res.autonomic_dysfunction ? res.autonomic_dysfunction.rho : null;
   var bfData = targets && targets.niebla_mental;
-  var nPos = bfData ? bfData.n_positive : (p.n_positive != null ? p.n_positive : '\u2014');
-  var nNeg = bfData ? bfData.n_negative : (p.n_negative != null ? p.n_negative : '\u2014');
+  var nPos = bfData ? bfData.n_positive : (p.n_positive != null ? p.n_positive : '—');
+  var nNeg = bfData ? bfData.n_negative : (p.n_negative != null ? p.n_negative : '—');
   document.getElementById('footnotes').innerHTML =
     '<div class="footnotes">' +
-    (brainFogRho != null ? 'Residual \u03c1: brain fog +' + brainFogRho + ' \u00b7 autonomic +' + (autonomicRho || '\u2014') + '<br>' : '') +
+    (brainFogRho != null ? 'Residual ρ: brain fog +' + brainFogRho + ' · autonomic +' + (autonomicRho || '—') + '<br>' : '') +
     '* Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (' + nPos + '/' + nNeg + ' split). Reported for transparency.</div>';
 
-  // Model comparison \u2014 absent in v3.1 portfolio schema
+  // Model comparison — absent in v3.1 portfolio schema
   var models = p.models || {};
   var mhtml;
   if (Object.keys(models).length > 0) {
@@ -429,7 +490,7 @@ function populate(d) {
       var label = name.replace(/_/g, ' ');
       label = label.charAt(0).toUpperCase() + label.slice(1);
       mhtml += '<tr class="' + (isBest ? 'model-best' : '') + '">' +
-        '<td>' + label + (isBest ? ' \u2713' : '') + '</td>' +
+        '<td>' + label + (isBest ? ' ✓' : '') + '</td>' +
         '<td>' + m.auc.toFixed(4) + '</td>' +
         '<td>' + (m.sensitivity * 100).toFixed(1) + '%</td>' +
         '<td>' + (m.specificity * 100).toFixed(1) + '%</td>' +
@@ -457,7 +518,7 @@ function populate(d) {
       var sig = v.p < 0.05;
       lhtml += '<div class="lag-card' + (sig ? ' significant' : '') + '">' +
         '<div class="lag-label">' + (lagLabels[key] || key) + ' · Lag ' + lag + '</div>' +
-        '<div class="lag-val">\u03c1 = ' + v.rho.toFixed(3) + ' · p = ' + v.p.toFixed(4) + ' · n = ' + v.n + '</div>' +
+        '<div class="lag-val">ρ = ' + v.rho.toFixed(3) + ' · p = ' + v.p.toFixed(4) + ' · n = ' + v.n + '</div>' +
         (sig ? '<div class="lag-sig">Significant (p < 0.05)</div>' : '') +
         '</div>';
     });
