@@ -271,6 +271,314 @@
 
   <div class="section-divider"></div>
 
+  <!-- VIZ 1 — ROC CURVES -->
+  <div id="roc-curves" class="content-section reveal">
+    <div class="section-eyebrow">ROC curves</div>
+    <h3>Per-target receiver operating characteristic</h3>
+    <p>
+      One curve per target, drawn from leave-one-out cross-validation predicted probabilities.
+      The diagonal is the random-classifier reference. The dot marks the operating point at
+      Youden’s J optimal threshold. AUC and 95% bootstrap CI shown on each plot.
+    </p>
+    <div class="viz-grid" id="viz-roc-grid" role="group" aria-label="ROC curves, one per target"></div>
+    <div class="footnotes" id="viz-roc-note">
+      Brain Fog (niebla_mental) AUC ≈ 0.99 is likely <strong>inflated</strong>: the class split is
+      55 positive vs 6 negative (n=61). With this imbalance a constant-class predictor already
+      scores ≈ 0.90. Interpret the curve as suggestive only — not as evidence of a generalisable model.
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- VIZ 2 — FOREST PLOT -->
+  <div id="forest-plot" class="content-section reveal">
+    <div class="section-eyebrow">Forest plot</div>
+    <h3>AUC with 95% bootstrap confidence intervals</h3>
+    <p>
+      Each row is one target. The point is the LOO-CV AUC; whiskers span the
+      95% bootstrap CI (1,000 resamples, seed = 42). Targets are sorted by AUC,
+      best on top. The dashed line at 0.5 is random; the dotted line at 0.7 is a
+      conventional “acceptable” floor for binary clinical classifiers.
+    </p>
+    <div id="viz-forest" role="group" aria-label="Forest plot of AUC values with 95% confidence intervals"></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- VIZ 3 — CONFUSION MATRICES -->
+  <div id="confusion-matrices" class="content-section reveal">
+    <div class="section-eyebrow">Confusion matrices</div>
+    <h3>Decisions at Youden-optimal threshold</h3>
+    <p>
+      2×2 contingency of predicted vs observed class at each target’s
+      Youden-optimal threshold. Counts and within-class percentages shown.
+      True positives and true negatives are tinted with the design-system
+      teal accent; false positives and false negatives with the warm accent.
+    </p>
+    <div class="viz-grid" id="viz-cm-grid" role="group" aria-label="Confusion matrices, one per target"></div>
+  </div>
+
+  <style>
+    .viz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .viz-card {
+      background: var(--fill-teal, rgba(144,167,165,0.05));
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 0.95rem 0.7rem;
+    }
+    .viz-card h4 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.02em;
+      margin: 0 0 0.15rem;
+    }
+    .viz-card .viz-sub {
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+    .viz-card svg { display: block; width: 100%; height: auto; }
+    .viz-flag {
+      color: var(--accent-warm); font-weight: 500; font-size: 0.6rem;
+      letter-spacing: 0.04em; margin-left: 0.3rem;
+    }
+    #viz-forest { margin-top: 0.75rem; }
+    #viz-forest svg { width: 100%; height: auto; display: block; }
+    .cm-table { width: 100%; border-collapse: separate; border-spacing: 4px; margin-top: 0.4rem; }
+    .cm-table th, .cm-table td {
+      padding: 0.5rem 0.4rem; text-align: center; border-radius: 6px;
+      font-family: 'Courier New', monospace; font-size: 0.72rem;
+    }
+    .cm-table th {
+      background: transparent; color: var(--text-dim);
+      font-size: 0.55rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .cm-cell { color: var(--text); position: relative; }
+    .cm-correct { background: rgba(144,167,165,0.18); border: 1px solid rgba(144,167,165,0.35); }
+    .cm-wrong   { background: rgba(196,133,90,0.14);  border: 1px solid rgba(196,133,90,0.32); }
+    .cm-count   { font-size: 0.95rem; font-weight: 500; color: var(--text); display: block; line-height: 1.1; }
+    .cm-pct     { font-size: 0.58rem; color: var(--text-dim); display: block; margin-top: 2px; }
+    @media (max-width: 640px) {
+      .viz-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script>
+    const VIZ_DATA = {"metadata":{"generated_at":"2026-05-15 15:53 UTC","validation":"LOO-CV (logistic regression, L2 C=0.5, class_weight=balanced)","bootstrap":"1000 iterations, seed=42","threshold":"Youden's J (max TPR - FPR on ROC curve)","random_seed":42,"n_diary":61,"n_polar_days":255},"targets":{"severity":{"n_training":61,"n_positive":35,"n_negative":26,"auc_loo":0.9209,"auc_ci95_lower":0.8442,"auc_ci95_upper":0.9868,"roc":[{"fpr":0,"tpr":0,"thr":null},{"fpr":0,"tpr":0.028571,"thr":0.975525},{"fpr":0,"tpr":0.771429,"thr":0.620554},{"fpr":0.038462,"tpr":0.771429,"thr":0.607177},{"fpr":0.038462,"tpr":0.8,"thr":0.604127},{"fpr":0.076923,"tpr":0.8,"thr":0.595141},{"fpr":0.076923,"tpr":0.828571,"thr":0.585275},{"fpr":0.115385,"tpr":0.828571,"thr":0.584922},{"fpr":0.115385,"tpr":0.857143,"thr":0.561741},{"fpr":0.153846,"tpr":0.857143,"thr":0.544983},{"fpr":0.153846,"tpr":0.885714,"thr":0.543694},{"fpr":0.346154,"tpr":0.885714,"thr":0.468769},{"fpr":0.346154,"tpr":0.914286,"thr":0.464517},{"fpr":0.423077,"tpr":0.914286,"thr":0.416716},{"fpr":0.423077,"tpr":0.942857,"thr":0.416501},{"fpr":0.692308,"tpr":0.942857,"thr":0.148828},{"fpr":0.692308,"tpr":0.971429,"thr":0.115931},{"fpr":0.923077,"tpr":0.971429,"thr":0.036818},{"fpr":0.923077,"tpr":1,"thr":0.029835},{"fpr":1,"tpr":1,"thr":0.015309}],"operating_point":{"threshold":0.620554,"sensitivity":0.771429,"specificity":1,"fpr":0,"tpr":0.771429},"confusion_matrix":{"tp":27,"fp":0,"tn":26,"fn":8}},"pem":{"n_training":61,"n_positive":41,"n_negative":20,"auc_loo":0.7951,"auc_ci95_lower":0.6646,"auc_ci95_upper":0.9035,"roc":[{"fpr":0,"tpr":0,"thr":null},{"fpr":0,"tpr":0.02439,"thr":0.950064},{"fpr":0,"tpr":0.219512,"thr":0.81132},{"fpr":0.05,"tpr":0.219512,"thr":0.799653},{"fpr":0.05,"tpr":0.365854,"thr":0.741536},{"fpr":0.1,"tpr":0.365854,"thr":0.720317},{"fpr":0.1,"tpr":0.414634,"thr":0.694456},{"fpr":0.15,"tpr":0.414634,"thr":0.680559},{"fpr":0.15,"tpr":0.682927,"thr":0.523683},{"fpr":0.2,"tpr":0.682927,"thr":0.52314},{"fpr":0.2,"tpr":0.731707,"thr":0.482418},{"fpr":0.3,"tpr":0.731707,"thr":0.461755},{"fpr":0.3,"tpr":0.780488,"thr":0.44461},{"fpr":0.35,"tpr":0.780488,"thr":0.435462},{"fpr":0.35,"tpr":0.878049,"thr":0.401478},{"fpr":0.65,"tpr":0.878049,"thr":0.341726},{"fpr":0.65,"tpr":0.95122,"thr":0.299016},{"fpr":0.95,"tpr":0.95122,"thr":0.155366},{"fpr":0.95,"tpr":1,"thr":0.08265},{"fpr":1,"tpr":1,"thr":0.079494}],"operating_point":{"threshold":0.523683,"sensitivity":0.682927,"specificity":0.85,"fpr":0.15,"tpr":0.682927},"confusion_matrix":{"tp":28,"fp":3,"tn":17,"fn":13}},"fatiga":{"n_training":61,"n_positive":37,"n_negative":24,"auc_loo":0.83,"auc_ci95_lower":0.7051,"auc_ci95_upper":0.9464,"roc":[{"fpr":0,"tpr":0,"thr":null},{"fpr":0,"tpr":0.027027,"thr":0.985201},{"fpr":0,"tpr":0.108108,"thr":0.942983},{"fpr":0.041667,"tpr":0.108108,"thr":0.923321},{"fpr":0.041667,"tpr":0.243243,"thr":0.830579},{"fpr":0.083333,"tpr":0.243243,"thr":0.815305},{"fpr":0.083333,"tpr":0.27027,"thr":0.813165},{"fpr":0.125,"tpr":0.27027,"thr":0.772169},{"fpr":0.125,"tpr":0.675676,"thr":0.54212},{"fpr":0.208333,"tpr":0.675676,"thr":0.532574},{"fpr":0.208333,"tpr":0.756757,"thr":0.496168},{"fpr":0.25,"tpr":0.756757,"thr":0.488597},{"fpr":0.25,"tpr":0.891892,"thr":0.443435},{"fpr":0.291667,"tpr":0.891892,"thr":0.442679},{"fpr":0.291667,"tpr":0.945946,"thr":0.414396},{"fpr":0.708333,"tpr":0.945946,"thr":0.26055},{"fpr":0.708333,"tpr":0.972973,"thr":0.217982},{"fpr":0.958333,"tpr":0.972973,"thr":0.093478},{"fpr":0.958333,"tpr":1,"thr":0.093178},{"fpr":1,"tpr":1,"thr":0.089752}],"operating_point":{"threshold":0.414396,"sensitivity":0.945946,"specificity":0.708333,"fpr":0.291667,"tpr":0.945946},"confusion_matrix":{"tp":35,"fp":7,"tn":17,"fn":2}},"niebla_mental":{"n_training":61,"n_positive":55,"n_negative":6,"auc_loo":0.9879,"auc_ci95_lower":0.95,"auc_ci95_upper":1,"roc":[{"fpr":0,"tpr":0,"thr":null},{"fpr":0,"tpr":0.018182,"thr":0.997237},{"fpr":0,"tpr":0.6,"thr":0.864018},{"fpr":0,"tpr":0.636364,"thr":0.85782},{"fpr":0,"tpr":0.927273,"thr":0.448249},{"fpr":0.166667,"tpr":0.927273,"thr":0.424987},{"fpr":0.166667,"tpr":1,"thr":0.262899},{"fpr":1,"tpr":1,"thr":0.073084}],"operating_point":{"threshold":0.448249,"sensitivity":0.927273,"specificity":1,"fpr":0,"tpr":0.927273},"confusion_matrix":{"tp":51,"fp":0,"tn":6,"fn":4}},"disfuncion_autonomica":{"n_training":55,"n_positive":32,"n_negative":23,"auc_loo":0.837,"auc_ci95_lower":0.7151,"auc_ci95_upper":0.9427,"roc":[{"fpr":0,"tpr":0,"thr":null},{"fpr":0,"tpr":0.03125,"thr":0.94678},{"fpr":0,"tpr":0.09375,"thr":0.893399},{"fpr":0.043478,"tpr":0.09375,"thr":0.891739},{"fpr":0.043478,"tpr":0.40625,"thr":0.700777},{"fpr":0.086957,"tpr":0.40625,"thr":0.683247},{"fpr":0.086957,"tpr":0.5625,"thr":0.605174},{"fpr":0.086957,"tpr":0.625,"thr":0.605069},{"fpr":0.086957,"tpr":0.65625,"thr":0.592345},{"fpr":0.086957,"tpr":0.71875,"thr":0.575137},{"fpr":0.173913,"tpr":0.71875,"thr":0.572853},{"fpr":0.26087,"tpr":0.71875,"thr":0.553197},{"fpr":0.26087,"tpr":0.875,"thr":0.483805},{"fpr":0.304348,"tpr":0.875,"thr":0.482234},{"fpr":0.304348,"tpr":0.90625,"thr":0.443732},{"fpr":0.521739,"tpr":0.90625,"thr":0.28974},{"fpr":0.521739,"tpr":0.9375,"thr":0.282196},{"fpr":0.782609,"tpr":0.9375,"thr":0.210741},{"fpr":0.782609,"tpr":0.96875,"thr":0.20485},{"fpr":1,"tpr":0.96875,"thr":0.083762},{"fpr":1,"tpr":1,"thr":0.029307}],"operating_point":{"threshold":0.575137,"sensitivity":0.71875,"specificity":0.913043,"fpr":0.086957,"tpr":0.71875},"confusion_matrix":{"tp":23,"fp":2,"tn":21,"fn":9}}}};
+
+    const VIZ_LABELS = {
+      severity: 'Severity',
+      disfuncion_autonomica: 'Autonomic Dysfunction',
+      pem: 'Post-Exertional Malaise',
+      fatiga: 'Fatigue',
+      niebla_mental: 'Brain Fog'
+    };
+
+    function renderROC() {
+      const grid = document.getElementById('viz-roc-grid');
+      if (!grid) return;
+      const W = 260, H = 220, M = { l: 38, r: 14, t: 14, b: 32 };
+      const iw = W - M.l - M.r, ih = H - M.t - M.b;
+      const x = v => M.l + v * iw;
+      const y = v => M.t + (1 - v) * ih;
+
+      const order = ['severity','disfuncion_autonomica','fatiga','pem','niebla_mental'];
+      const html = order.map(key => {
+        const t = VIZ_DATA.targets[key]; if (!t) return '';
+        const isBF = key === 'niebla_mental';
+        const path = t.roc.map((p,i) =>
+          (i === 0 ? 'M' : 'L') + x(p.fpr).toFixed(2) + ',' + y(p.tpr).toFixed(2)
+        ).join(' ');
+        const op = t.operating_point;
+        const aucTxt = t.auc_loo.toFixed(3);
+        const ciTxt = '[' + t.auc_ci95_lower.toFixed(2) + ', ' + t.auc_ci95_upper.toFixed(2) + ']';
+        const ariaDesc =
+          'ROC curve for ' + VIZ_LABELS[key] +
+          '. Area under curve ' + aucTxt + ', 95% confidence interval ' + ciTxt + '.' +
+          ' n=' + t.n_training + ', ' + t.n_positive + ' positive, ' + t.n_negative + ' negative.' +
+          ' Operating point at sensitivity ' + (op.sensitivity*100).toFixed(0) + '% and specificity ' +
+          (op.specificity*100).toFixed(0) + '%.';
+        return (
+          '<div class="viz-card">' +
+          '  <h4>' + VIZ_LABELS[key] + (isBF ? '<span class="viz-flag">⚠ class-imbalance flag</span>' : '') + '</h4>' +
+          '  <div class="viz-sub">n=' + t.n_training + ' · pos=' + t.n_positive + ' · neg=' + t.n_negative + '</div>' +
+          '  <svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="ROC curve for ' + VIZ_LABELS[key] + '">' +
+          '    <title>ROC — ' + VIZ_LABELS[key] + '</title>' +
+          '    <desc>' + ariaDesc + '</desc>' +
+          '    <rect x="' + M.l + '" y="' + M.t + '" width="' + iw + '" height="' + ih +
+          '" fill="none" stroke="var(--border)" stroke-width="1"/>' +
+          [0.25, 0.5, 0.75].map(g =>
+            '<line x1="' + x(g) + '" x2="' + x(g) + '" y1="' + M.t + '" y2="' + (M.t+ih) +
+            '" stroke="var(--border)" stroke-dasharray="2 4"/>' +
+            '<line y1="' + y(g) + '" y2="' + y(g) + '" x1="' + M.l + '" x2="' + (M.l+iw) +
+            '" stroke="var(--border)" stroke-dasharray="2 4"/>'
+          ).join('') +
+          '    <line x1="' + x(0) + '" y1="' + y(0) + '" x2="' + x(1) + '" y2="' + y(1) +
+          '" stroke="var(--text-dim)" stroke-dasharray="3 3" stroke-width="1"/>' +
+          '    <path d="' + path + '" fill="none" stroke="var(--green)" stroke-width="2"' +
+          ' stroke-linejoin="round" stroke-linecap="round"/>' +
+          '    <circle cx="' + x(op.fpr) + '" cy="' + y(op.tpr) + '" r="4"' +
+          ' fill="var(--warm)" stroke="var(--bg)" stroke-width="1.5"/>' +
+          '    <text x="' + (M.l + iw/2) + '" y="' + (H - 6) + '" text-anchor="middle"' +
+          ' font-size="9" fill="var(--text-dim)" font-family="Courier New, monospace">False Positive Rate</text>' +
+          '    <text x="10" y="' + (M.t + ih/2) + '" text-anchor="middle"' +
+          ' font-size="9" fill="var(--text-dim)" font-family="Courier New, monospace"' +
+          ' transform="rotate(-90 10 ' + (M.t + ih/2) + ')">True Positive Rate</text>' +
+          '    <text x="' + M.l + '" y="' + (M.t+ih+12) + '" font-size="8" fill="var(--text-dim)" text-anchor="middle">0</text>' +
+          '    <text x="' + (M.l+iw) + '" y="' + (M.t+ih+12) + '" font-size="8" fill="var(--text-dim)" text-anchor="middle">1</text>' +
+          '    <text x="' + (M.l-4) + '" y="' + (M.t+ih+3) + '" font-size="8" fill="var(--text-dim)" text-anchor="end">0</text>' +
+          '    <text x="' + (M.l-4) + '" y="' + (M.t+4) + '" font-size="8" fill="var(--text-dim)" text-anchor="end">1</text>' +
+          '    <text x="' + (M.l+iw-6) + '" y="' + (M.t+ih-22) + '" text-anchor="end"' +
+          ' font-size="10" font-weight="600" fill="var(--text)" font-family="Courier New, monospace">' +
+          'AUC ' + aucTxt + '</text>' +
+          '    <text x="' + (M.l+iw-6) + '" y="' + (M.t+ih-10) + '" text-anchor="end"' +
+          ' font-size="8" fill="var(--text-dim)" font-family="Courier New, monospace">CI₅ ' + ciTxt + '</text>' +
+          '  </svg>' +
+          '</div>'
+        );
+      }).join('');
+      grid.innerHTML = html;
+    }
+
+    function renderForest() {
+      const wrap = document.getElementById('viz-forest');
+      if (!wrap) return;
+      const items = Object.entries(VIZ_DATA.targets)
+        .map(([k, t]) => ({
+          key: k, label: VIZ_LABELS[k] || k,
+          auc: t.auc_loo, lo: t.auc_ci95_lower, hi: t.auc_ci95_upper,
+          n: t.n_training, pos: t.n_positive, neg: t.n_negative,
+          imbalance: k === 'niebla_mental'
+        }))
+        .sort((a, b) => b.auc - a.auc);
+
+      const W = 720, rowH = 50, padTop = 32, padBot = 26;
+      const labelW = 200, annotW = 150;
+      const H = padTop + items.length * rowH + padBot;
+      const x0 = labelW + 10, x1 = W - annotW - 10;
+      const iw = x1 - x0;
+      const xMin = 0.4, xMax = 1.0;
+      const xs = v => x0 + ((v - xMin) / (xMax - xMin)) * iw;
+
+      let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img"' +
+        ' aria-label="Forest plot of AUC with 95% bootstrap confidence intervals for 5 targets."' +
+        ' preserveAspectRatio="xMinYMid meet">';
+      svg += '<title>AUC forest plot</title>' +
+        '<desc>Per-target LOO-CV AUC with 95% bootstrap confidence intervals, sorted by AUC descending. ' +
+        items.map(it =>
+          it.label + ' AUC ' + it.auc.toFixed(2) +
+          ' CI ' + it.lo.toFixed(2) + ' to ' + it.hi.toFixed(2) +
+          ' (n=' + it.n + ')'
+        ).join('; ') + '.</desc>';
+
+      [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].forEach(v => {
+        const xv = xs(v);
+        svg += '<line x1="' + xv + '" x2="' + xv + '" y1="' + padTop + '" y2="' + (H - padBot) +
+          '" stroke="var(--border)" stroke-dasharray="2 3"/>';
+        svg += '<text x="' + xv + '" y="' + (H - padBot + 14) + '" text-anchor="middle"' +
+          ' font-size="9" fill="var(--text-dim)" font-family="Courier New, monospace">' +
+          v.toFixed(1) + '</text>';
+      });
+      svg += '<line x1="' + xs(0.5) + '" x2="' + xs(0.5) + '" y1="' + padTop +
+        '" y2="' + (H - padBot) + '" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="4 3"/>';
+      svg += '<text x="' + xs(0.5) + '" y="' + (padTop - 6) + '" text-anchor="middle"' +
+        ' font-size="9" fill="var(--text-dim)" font-family="Courier New, monospace">random 0.5</text>';
+      svg += '<line x1="' + xs(0.7) + '" x2="' + xs(0.7) + '" y1="' + padTop +
+        '" y2="' + (H - padBot) + '" stroke="var(--sea)" stroke-width="1" stroke-dasharray="2 2"/>';
+      svg += '<text x="' + xs(0.7) + '" y="' + (padTop - 6) + '" text-anchor="middle"' +
+        ' font-size="9" fill="var(--sea)" font-family="Courier New, monospace">acceptable 0.7</text>';
+
+      items.forEach((it, i) => {
+        const cy = padTop + i * rowH + rowH / 2;
+        svg += '<text x="' + (labelW) + '" y="' + (cy + 4) + '" text-anchor="end"' +
+          ' font-size="11" fill="var(--text)" font-family="Montserrat, sans-serif" font-weight="500">' +
+          it.label + (it.imbalance ? ' ⚠' : '') + '</text>';
+        svg += '<line x1="' + xs(it.lo) + '" x2="' + xs(it.hi) + '" y1="' + cy + '" y2="' + cy +
+          '" stroke="var(--green)" stroke-width="2"/>';
+        svg += '<line x1="' + xs(it.lo) + '" x2="' + xs(it.lo) + '" y1="' + (cy - 6) + '" y2="' + (cy + 6) +
+          '" stroke="var(--green)" stroke-width="2"/>';
+        svg += '<line x1="' + xs(it.hi) + '" x2="' + xs(it.hi) + '" y1="' + (cy - 6) + '" y2="' + (cy + 6) +
+          '" stroke="var(--green)" stroke-width="2"/>';
+        svg += '<circle cx="' + xs(it.auc) + '" cy="' + cy + '" r="5" fill="var(--green)" stroke="var(--bg)" stroke-width="1.5"/>';
+        const annot = 'AUC ' + it.auc.toFixed(2) + ' · [' + it.lo.toFixed(2) + ', ' + it.hi.toFixed(2) + ']';
+        const sub   = 'n=' + it.n + ' (' + it.pos + '+/' + it.neg + '−)';
+        svg += '<text x="' + (x1 + 10) + '" y="' + (cy - 2) + '"' +
+          ' font-size="10" fill="var(--text)" font-family="Courier New, monospace">' + annot + '</text>';
+        svg += '<text x="' + (x1 + 10) + '" y="' + (cy + 12) + '"' +
+          ' font-size="9" fill="var(--text-dim)" font-family="Courier New, monospace">' + sub + '</text>';
+      });
+
+      svg += '<text x="' + (x0 + iw/2) + '" y="' + (H - 4) + '" text-anchor="middle"' +
+        ' font-size="10" fill="var(--text-dim)" font-family="Courier New, monospace">AUC (LOO-CV)</text>';
+      svg += '</svg>';
+      wrap.innerHTML = svg;
+    }
+
+    function renderCM() {
+      const grid = document.getElementById('viz-cm-grid');
+      if (!grid) return;
+      const order = ['severity','disfuncion_autonomica','fatiga','pem','niebla_mental'];
+      const html = order.map(key => {
+        const t = VIZ_DATA.targets[key]; if (!t) return '';
+        const cm = t.confusion_matrix;
+        const op = t.operating_point;
+        const totPos = cm.tp + cm.fn;
+        const totNeg = cm.tn + cm.fp;
+        const pct = (n, d) => d > 0 ? Math.round(n / d * 100) + '%' : '—';
+        const isBF = key === 'niebla_mental';
+        const ariaDesc =
+          'Confusion matrix for ' + VIZ_LABELS[key] + ' at Youden-optimal threshold ' +
+          op.threshold.toFixed(3) + '. True positives ' + cm.tp + ', false negatives ' + cm.fn +
+          ', false positives ' + cm.fp + ', true negatives ' + cm.tn + '.';
+        return (
+          '<div class="viz-card">' +
+          '  <h4>' + VIZ_LABELS[key] + (isBF ? '<span class="viz-flag">⚠</span>' : '') + '</h4>' +
+          '  <div class="viz-sub">threshold* = ' + op.threshold.toFixed(3) +
+                ' · sens ' + (op.sensitivity*100).toFixed(0) + '%' +
+                ' · spec ' + (op.specificity*100).toFixed(0) + '%</div>' +
+          '  <table class="cm-table" role="img" aria-label="' + ariaDesc + '">' +
+          '    <thead><tr><th></th><th>Pred +</th><th>Pred −</th></tr></thead>' +
+          '    <tbody>' +
+          '      <tr>' +
+          '        <th>Actual +</th>' +
+          '        <td class="cm-cell cm-correct"><span class="cm-count">' + cm.tp + '</span>' +
+          '          <span class="cm-pct">TP · ' + pct(cm.tp, totPos) + '</span></td>' +
+          '        <td class="cm-cell cm-wrong"><span class="cm-count">' + cm.fn + '</span>' +
+          '          <span class="cm-pct">FN · ' + pct(cm.fn, totPos) + '</span></td>' +
+          '      </tr>' +
+          '      <tr>' +
+          '        <th>Actual −</th>' +
+          '        <td class="cm-cell cm-wrong"><span class="cm-count">' + cm.fp + '</span>' +
+          '          <span class="cm-pct">FP · ' + pct(cm.fp, totNeg) + '</span></td>' +
+          '        <td class="cm-cell cm-correct"><span class="cm-count">' + cm.tn + '</span>' +
+          '          <span class="cm-pct">TN · ' + pct(cm.tn, totNeg) + '</span></td>' +
+          '      </tr>' +
+          '    </tbody>' +
+          '  </table>' +
+          '</div>'
+        );
+      }).join('');
+      grid.innerHTML = html;
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { renderROC(); renderForest(); renderCM(); });
+    } else {
+      renderROC(); renderForest(); renderCM();
+    }
+  </script>
+
+  <div class="section-divider"></div>
+
   <!-- REFERENCES -->
   <div id="references" class="content-section reveal">
     <div class="section-eyebrow">References</div>
@@ -299,7 +607,7 @@
         <a href="https://doi.org/10.3390/pathophysiology31010001" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3390/pathophysiology31010001</a>
       </p>
       <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
-        HRV-based diagnostic prediction models for ME/CFS developed and validated; close correlation of HRV parameters with fatigue but not with depression/anxiety — consistent with Kinetica's symptom-specific model structure.
+        HRV-based diagnostic prediction models for ME/CFS developed and validated; close correlation of HRV parameters with fatigue but not with depression/anxiety — consistent with Kinetica’s symptom-specific model structure.
       </p>
 
       <p style="margin-bottom:0.25rem"><strong>[3] Benefit of the N-of-1 Approach Versus Aggregate Analysis in Tracking Individual Trajectories</strong></p>
@@ -308,7 +616,7 @@
         <a href="https://doi.org/10.2196/86203" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.2196/86203</a>
       </p>
       <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
-        Wearable HRV study showing aggregate models capture only 4.76% of individual HRV inflection patterns — direct methodological justification for Kinetica's idiographic design.
+        Wearable HRV study showing aggregate models capture only 4.76% of individual HRV inflection patterns — direct methodological justification for Kinetica’s idiographic design.
       </p>
 
       <p style="margin-bottom:0.25rem"><strong>[4] Heart rate variability in cardiovascular disease diagnosis, prognosis and management</strong></p>
@@ -317,7 +625,7 @@
         <a href="https://doi.org/10.3389/fcvm.2025.1680783" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3389/fcvm.2025.1680783</a>
       </p>
       <p style="font-style:italic;font-size:0.75rem;margin-bottom:0">
-        Current review acknowledging wearable + ML expansion of HRV utility while flagging measurement standardisation as an open challenge — addressed in Kinetica's published Polar pipeline.
+        Current review acknowledging wearable + ML expansion of HRV utility while flagging measurement standardisation as an open challenge — addressed in Kinetica’s published Polar pipeline.
       </p>
 
     </div>
@@ -338,7 +646,6 @@
 </div>
 
 <script>
-/* ── HRV CANVAS ── */
 const c = document.getElementById('hrv-bg');
 if (c) {
   const ctx = c.getContext('2d');
@@ -373,7 +680,6 @@ if (c) {
   window.addEventListener('resize', resize);
 }
 
-/* ── TARGET LABELS ── */
 const TARGET_LABELS = {
   severity: 'Severity',
   disfuncion_autonomica: 'Autonomic Dysfunction',
@@ -388,15 +694,13 @@ function aucColor(v) {
   return 'var(--accent-warm)';
 }
 
-/* ── POPULATE FROM JSON ── */
 function populate(d) {
   const p = d.predictor;
   const targets = p.targets;
   const nDays = d.series.length;
-  // Schema v3.1 uses d.headline + d.data_window; older schema used d.finding at top level
   const headline = d.headline || {};
   const dw = d.data_window || {};
-  const f = d.finding; // absent in v3.1 portfolio schema
+  const f = d.finding;
 
   const bestAuc = headline.value != null ? headline.value : (f && f.auc);
   const nTraining = dw.n_paired != null ? dw.n_paired : (p.n_training != null ? p.n_training : '—');
@@ -407,7 +711,6 @@ function populate(d) {
     ? Math.round(headlineTargetData.sensitivity * 100)
     : (f && f.sensitivity_pct != null ? f.sensitivity_pct : '—');
 
-  // Hero meta
   document.getElementById('hero-meta').innerHTML = [
     `${nDays} nights monitored`,
     `${nTraining} training pairs · ${nDiary} diary entries`,
@@ -416,7 +719,6 @@ function populate(d) {
     `<span class="meta-green">${sensitivity}% sensitivity · Updated daily</span>`,
   ].map(l => '<div>' + l + '</div>').join('');
 
-  // Stats row
   document.getElementById('stats-row').innerHTML = [
     { val: nDays, label: 'Nights' },
     { val: nTraining, label: 'Training pairs' },
@@ -426,7 +728,6 @@ function populate(d) {
     { val: '48h', label: 'Predictive lag' },
   ].map(i => '<div class="stat-item"><span class="stat-val">' + i.val + '</span><span class="stat-label">' + i.label + '</span></div>').join('');
 
-  // Finding — build from d.headline when d.finding is absent (v3.1 portfolio schema)
   var findingHtml;
   if (f && f.description) {
     findingHtml = '<div class="finding"><div class="section-eyebrow" style="margin-bottom:0.75rem">KEY FINDING</div>' +
@@ -440,14 +741,13 @@ function populate(d) {
       '<p class="finding-text">5 symptom domains predicted independently from nocturnal wearable data.' +
       ' Deployment target: autonomic dysfunction.' +
       ' AUC = ' + headline.value.toFixed(3) +
-      (ci.length === 2 ? ' · CI₉₅ [' + ci[0].toFixed(3) + ', ' + ci[1].toFixed(3) + ']' : '') +
+      (ci.length === 2 ? ' · CI₅ [' + ci[0].toFixed(3) + ', ' + ci[1].toFixed(3) + ']' : '') +
       ' · N = ' + headline.n + ' paired days · LOO-CV · Bootstrap 1000×.</p></div>';
   } else {
     findingHtml = '';
   }
   document.getElementById('finding').innerHTML = findingHtml;
 
-  // Target table — support both schemas: auc_loo/auc_ci95_lower/upper (v3.1) and best_auc/best_auc_ci95 (older)
   var html = '';
   Object.entries(targets).forEach(function(entry) {
     var key = entry[0], t = entry[1];
@@ -466,7 +766,6 @@ function populate(d) {
   });
   document.getElementById('targets').innerHTML = html;
 
-  // Footnotes — residuals absent in v3.1 portfolio schema; read class split from target data
   var res = p.residuals || {};
   var brainFogRho = res.brain_fog ? res.brain_fog.rho : null;
   var autonomicRho = res.autonomic_dysfunction ? res.autonomic_dysfunction.rho : null;
@@ -478,7 +777,6 @@ function populate(d) {
     (brainFogRho != null ? 'Residual ρ: brain fog +' + brainFogRho + ' · autonomic +' + (autonomicRho || '—') + '<br>' : '') +
     '* Brain Fog AUC (0.99) is likely inflated due to extreme class imbalance (' + nPos + '/' + nNeg + ' split). Reported for transparency.</div>';
 
-  // Model comparison — absent in v3.1 portfolio schema
   var models = p.models || {};
   var mhtml;
   if (Object.keys(models).length > 0) {
@@ -505,7 +803,6 @@ function populate(d) {
   }
   document.getElementById('model-comparison').innerHTML = mhtml;
 
-  // Lag analysis
   var la = p.lag_analysis || {};
   var lagKeys = ['ans_status', 'hrv_rmssd_night', 'sleep_wake_min', 'sleep_interruptions'];
   var lagLabels = { ans_status: 'ANS Status', hrv_rmssd_night: 'RMSSD (night)', sleep_wake_min: 'Wake minutes', sleep_interruptions: 'Sleep interruptions' };
@@ -526,12 +823,10 @@ function populate(d) {
   lhtml += '</div>';
   document.getElementById('lag-analysis').innerHTML = lhtml;
 
-  // Timestamp
   var ts = new Date(d.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   document.getElementById('data-timestamp').textContent = 'Data: ' + ts;
 }
 
-/* ── SCROLL REVEAL ── */
 function setupReveal() {
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(el) {
@@ -547,7 +842,6 @@ function setupReveal() {
   });
 }
 
-/* ── INIT ── */
 setupReveal();
 fetch('/data/polar_live.json')
   .then(function(r) { return r.json(); })
