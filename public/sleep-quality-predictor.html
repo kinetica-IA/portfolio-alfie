@@ -202,6 +202,11 @@
       HRV are not just correlates of fatigue; they are part of the physiological pathway.
     </p>
     <p>
+      This relationship is independently documented in published literature on
+      post-infectious syndromes and wearable physiological monitoring.
+      <a href="#references" style="color:var(--accent-green)">[→ Scientific basis]</a>
+    </p>
+    <p>
       This predictor was built to isolate that pathway. It uses <strong>nocturnal RMSSD</strong>
       — measured from raw RR intervals during sleep — as the primary physiological window,
       and predicts whether the following diary day will be a high-fatigue day
@@ -342,6 +347,63 @@
       </span>
       <a href="/pipeline.html" class="pipeline-link-cta">See the pipeline →</a>
     </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- REFERENCES -->
+  <div id="references" class="content-section reveal">
+    <div class="section-eyebrow">References</div>
+    <h3>Scientific basis</h3>
+    <p>
+      The Sleep Quality Predictor rests on three lines of published evidence:
+      the predictive value of HRV features for sleep quality assessed by
+      machine learning, nocturnal RMSSD as a marker of parasympathetic recovery,
+      and the case for individual-level wearable modelling when aggregate
+      patterns fail to generalise.
+    </p>
+
+    <div style="margin-top:1.5rem">
+
+      <p style="margin-bottom:0.25rem"><strong>[1] Predicting Sleep Quality through Biofeedback: A Machine Learning Approach Using Heart Rate Variability and Skin Temperature</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Di Credico A et al. · Clocks &amp; Sleep · 2024 ·
+        <a href="https://doi.org/10.3390/clockssleep6030023" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3390/clockssleep6030023</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        SVM on wearable HRV achieves 83.4% classification accuracy for sleep quality (PSQI) — the same predictive direction as Kinetica's RMSSD-based model, with Kinetica's AUC 0.77 being conservative given its unimodal, single-subject design.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[2] Detailed evaluation of sleep apnea using heart rate variability: a machine learning and statistical method using ECG data</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Attar ET · Frontiers in Neurology · 2025 ·
+        <a href="https://doi.org/10.3389/fneur.2025.1636983" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3389/fneur.2025.1636983</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Nonlinear HRV features (SampEn) and parasympathetic indices (HF, RMSSD) show the strongest discriminatory power for sleep state classification — consistent with Kinetica's feature selection converging on RMSSD as the sole predictor.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[3] Benefit of the N-of-1 Approach Versus Aggregate Analysis in Tracking Individual Trajectories</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Behrouzi T et al. · JMIR Formative Research · 2026 ·
+        <a href="https://doi.org/10.2196/86203" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.2196/86203</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        In a 256-participant wearable study tracking HRV and fatigue, aggregate models failed to match individual HRV trajectories in 95.24% of cases — methodological support for Kinetica's N-of-1 design targeting fatigue as primary outcome.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[4] Similar Patterns of Dysautonomia in Myalgic Encephalomyelitis/Chronic Fatigue and Post-COVID-19 Syndromes</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Ryabkova VA et al. · Pathophysiology · 2024 ·
+        <a href="https://doi.org/10.3390/pathophysiology31010001" target="_blank" rel="noopener noreferrer" style="color:var(--accent-green)">https://doi.org/10.3390/pathophysiology31010001</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:0">
+        HRV parameters correlate closely with fatigue in ME/CFS and post-COVID patients but not with depression/anxiety scores — supporting the clinical hypothesis that nocturnal autonomic recovery is a fatigue-specific signal, not a general distress marker.
+      </p>
+
+    </div>
+
+    <div class="footnotes" style="margin-top:1.25rem">All references retrieved from PubMed. DOI links open the original publications.</div>
   </div>
 
   <!-- FOOTER -->
