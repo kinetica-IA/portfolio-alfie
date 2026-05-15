@@ -717,6 +717,12 @@
       clinical rules from <code>config/clinical_rules.yaml</code>.
       The LLM receives a fully enriched prompt every time, without being asked.
     </p>
+    <p>
+      Both the RAG orchestration layer and the ALMA verification
+      mechanism are independently corroborated by published research
+      on clinical AI systems.
+      <a href="#references" style="color: var(--sea, #5d8a82)">[→ Scientific basis]</a>
+    </p>
     <p id="alma-philosophy"></p>
     <p id="models-philosophy"></p>
   </div>
@@ -824,6 +830,88 @@
     <div class="section-eyebrow">Stack</div>
     <h3>Dependencies and infrastructure</h3>
     <div class="flow-note" id="stack-detail" style="border-top:none;padding-top:0"></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- REFERENCES -->
+  <div id="references" class="flow-section reveal">
+    <div class="section-eyebrow">References</div>
+    <h3>Scientific basis</h3>
+    <p>
+      IO and ALMA are grounded in two bodies of published evidence:
+      research on retrieval-augmented generation in clinical settings,
+      and empirical studies on why a post-response safety layer is not
+      optional when LLMs operate in healthcare contexts.
+    </p>
+
+    <div class="section-eyebrow" style="margin-top:1.75rem;">IO — Agentic RAG architecture</div>
+
+    <div style="margin-top:0.75rem">
+
+      <p style="margin-bottom:0.25rem"><strong>[1] Agentic Retrieval-Augmented Generation: A Survey on Agentic RAG</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Singh A et al. · arXiv · 2025 ·
+        <a href="https://hf.co/papers/2501.09136" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://hf.co/papers/2501.09136</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Systematic survey of agentic RAG architectures — autonomous agents with dynamic retrieval, planning, and tool use — covering healthcare as a primary application domain. IO's LangGraph + ChromaDB + intent-classification loop is an instance of this architectural pattern.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[2] Comparative Evaluation of Advanced Chunking for Retrieval-Augmented Generation in Large Language Models for Clinical Decision Support</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Gomez-Cabello CA et al. · Bioengineering · 2025 ·
+        <a href="https://doi.org/10.3390/bioengineering12111194" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://doi.org/10.3390/bioengineering12111194</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Adaptive chunking in clinical RAG pipelines raises accuracy from 50% to 87% vs fixed-length baselines — evidence that the knowledge segmentation strategy inside IO's ChromaDB layer (1,880 audited chunks) is a first-order safety variable, not an implementation detail.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[3] Cardia-AI: Passive Cardiac Event Monitoring Using Smartwatch Sensors and Predictive Analysis via Large Language Models</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Momin EA &amp; Mansoor H · Cureus · 2025 ·
+        <a href="https://doi.org/10.7759/cureus.95083" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://doi.org/10.7759/cureus.95083</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:0">
+        Published proof-of-concept of the same architectural pattern as IO: wearable sensor stream + longitudinal health record + domain-tuned LLM with guardrails + explicit escalation guidance. Validates feasibility; IO extends the pattern with local-first deployment and autonomous multi-cycle reasoning.
+      </p>
+
+    </div>
+
+    <div class="section-eyebrow" style="margin-top:2rem;">ALMA — Post-response safety verification</div>
+
+    <div style="margin-top:0.75rem">
+
+      <p style="margin-bottom:0.25rem"><strong>[4] LLMs Can Do Medical Harm: Stress-Testing Clinical Decisions Under Social Pressure</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Omar M et al. · medRxiv · 2025 ·
+        <a href="https://doi.org/10.1101/2025.11.25.25340972" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://doi.org/10.1101/2025.11.25.25340972</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Across 10 million clinical scenarios, LLMs produced harmful outputs in 11.7% of cases; social-pressure framing increased this to 16.6%. A brief safety reminder reduced harm but did not eliminate it. ALMA exists because this residual harm rate is unacceptable in chronic care — and because prompt-level mitigations alone are insufficient.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[5] MATRIX: Multi-Agent Simulation Framework for Safe Interactions and Contextual Clinical Conversational Evaluation</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Lim E et al. · arXiv · 2025 ·
+        <a href="https://hf.co/papers/2508.19163" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://hf.co/papers/2508.19163</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:1.5rem">
+        Safety-oriented taxonomy for clinical dialogue evaluation combining safety engineering methodology, an LLM-based evaluator, and a simulated patient agent — the closest published framework to ALMA's 30-case evaluation set and per-severity metrics. ALMA differs in being a deterministic pre-publish gate rather than a post-hoc benchmark.
+      </p>
+
+      <p style="margin-bottom:0.25rem"><strong>[6] A Field Guide to Deploying AI Agents in Clinical Practice</strong></p>
+      <p style="color:var(--text-dim);font-size:0.72rem;margin-bottom:0.25rem">
+        Gallifant J et al. · arXiv · 2025 ·
+        <a href="https://hf.co/papers/2509.26153" target="_blank" rel="noopener noreferrer" style="color:var(--sea, #5d8a82)">https://hf.co/papers/2509.26153</a>
+      </p>
+      <p style="font-style:italic;font-size:0.75rem;margin-bottom:0">
+        Sociotechnical framework for clinical AI agent deployment covering governance, system drift, and integration with EHR workflows. IO's roadmap (versioned milestones, audit logs, human-on-loop design) directly implements the deployment posture this paper recommends.
+      </p>
+
+    </div>
+
+    <div style="margin-top:1.25rem;font-size:0.65rem;color:var(--text-dim);">PubMed references include DOI links to original publications. arXiv references link to the Hugging Face Papers index.</div>
   </div>
 
   <!-- FOOTER -->
