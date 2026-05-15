@@ -48,6 +48,20 @@ const CARDS = [
   },
   {
     num: '04',
+    badge: 'ANALYSIS',
+    badgeColor: '#bfa87a',
+    badgeRgb: '191,168,122',
+    Symbol: SignalSymbol,
+    title: 'Cross-Predictor Convergence',
+    copy: 'Independent analysis of where ANS and Sleep models agree. Both independently selected nocturnal RMSSD as their top feature for fatigue prediction — this page shows feature overlap, AUC comparison on shared days, and day-level probability agreement.',
+    metric: 'r=0.66 · 79% agreement · 1 shared feature · n=42 shared days',
+    ctaText: 'Explore convergence',
+    ctaHref: '/convergence-analysis.html',
+    external: false,
+    comingSoon: false,
+  },
+  {
+    num: '06',
     badge: 'AGENT',
     badgeColor: 'var(--moss)',
     badgeRgb: '107,138,109',
@@ -61,7 +75,7 @@ const CARDS = [
     comingSoon: false,
   },
   {
-    num: '05',
+    num: '07',
     badge: 'SAFETY',
     badgeColor: 'var(--warm)',
     badgeRgb: '196,133,90',
@@ -75,7 +89,7 @@ const CARDS = [
     comingSoon: false,
   },
   {
-    num: '06',
+    num: '08',
     badge: 'KNOWLEDGE',
     badgeColor: 'var(--ice)',
     badgeRgb: '133,168,184',
@@ -89,7 +103,7 @@ const CARDS = [
     comingSoon: false,
   },
   {
-    num: '07',
+    num: '09',
     badge: 'REPOSITORY',
     badgeColor: 'var(--green)',
     badgeRgb: '107,158,122',
