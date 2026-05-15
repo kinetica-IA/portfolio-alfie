@@ -409,7 +409,7 @@
       margin: 0.5rem 0 0.9rem; padding: 0.5rem 0.75rem;
       background: var(--fill-teal, rgba(144,167,165,0.05));
       border: 1px solid var(--border); border-radius: 8px;
-      font-size: 0.66rem; color: var(--text-muted); align-items: center;
+      font-size: 0.75rem; color: var(--text-muted); align-items: center;
     }
     .viz-legend .lg-item { display: inline-flex; align-items: center; gap: 0.4rem; }
     .viz-legend .lg-swatch {
@@ -417,7 +417,7 @@
     }
     .viz-legend .lg-hyper {
       font-family: 'Courier New', monospace;
-      font-size: 0.58rem; color: var(--text-dim);
+      font-size: 0.68rem; color: var(--text-dim);
     }
 
     /* ── ROC AUC lines under each card ── */
@@ -469,13 +469,13 @@
       background: var(--fill-teal, rgba(144,167,165,0.05));
     }
     .cm-card .cm-model {
-      font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em;
+      font-size: 0.76rem; font-weight: 600; letter-spacing: 0.1em;
       text-transform: uppercase; display: inline-flex; align-items: center;
       gap: 0.4rem; margin-bottom: 0.2rem;
     }
     .cm-card .cm-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
     .cm-card .cm-sub {
-      font-family: 'Courier New', monospace; font-size: 0.58rem;
+      font-family: 'Courier New', monospace; font-size: 0.7rem;
       color: var(--text-dim); margin-bottom: 0.55rem; line-height: 1.5;
     }
     .cm-table {
@@ -494,10 +494,17 @@
     .cm-cell { color: var(--text); position: relative; }
     .cm-correct { background: rgba(144,167,165,0.18); border: 1px solid rgba(144,167,165,0.35); }
     .cm-wrong   { background: rgba(196,133,90,0.14);  border: 1px solid rgba(196,133,90,0.32); }
-    .cm-count   { font-size: 0.95rem; font-weight: 500; color: var(--text); display: block; line-height: 1.1; }
-    .cm-label   { font-size: 0.5rem; color: var(--text-dim); display: block; margin-top: 3px;
+    .cm-count   { font-size: 1.15rem; font-weight: 500; color: var(--text); display: block; line-height: 1.1; }
+    .cm-label   { font-size: 0.68rem; color: var(--text-dim); display: block; margin-top: 3px;
                   letter-spacing: 0.06em; text-transform: uppercase; }
-    .cm-pct     { font-size: 0.58rem; color: var(--text-dim); display: block; margin-top: 1px; }
+    .cm-pct     { font-size: 0.68rem; color: var(--text-dim); display: block; margin-top: 1px; }
+    .cm-metrics {
+      display: flex; flex-wrap: wrap; gap: 0.3rem 0.75rem;
+      margin-top: 0.6rem; padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.68rem; color: var(--text-dim);
+    }
+    .cm-metrics strong { color: var(--text); font-weight: 500; margin-left: 2px; }
 
     /* ── Model details bars ── */
     .md-row {
@@ -510,17 +517,17 @@
       background: var(--fill-teal, rgba(144,167,165,0.05));
     }
     .md-card .md-model {
-      font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em;
+      font-size: 0.76rem; font-weight: 600; letter-spacing: 0.1em;
       text-transform: uppercase; display: inline-flex; align-items: center;
       gap: 0.4rem; margin-bottom: 0.15rem;
     }
     .md-card .md-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
     .md-card .md-sub {
-      font-family: 'Courier New', monospace; font-size: 0.58rem;
+      font-family: 'Courier New', monospace; font-size: 0.7rem;
       color: var(--text-dim); margin-bottom: 0.6rem; line-height: 1.5;
     }
     .md-card .md-axis {
-      font-family: 'Courier New', monospace; font-size: 0.55rem;
+      font-family: 'Courier New', monospace; font-size: 0.66rem;
       color: var(--text-dim); margin-top: 0.4rem; text-align: right;
     }
     .md-bar-row {
@@ -528,7 +535,7 @@
       align-items: center; gap: 0.5rem; margin: 0.3rem 0;
     }
     .md-bar-name {
-      font-family: 'Courier New', monospace; font-size: 0.62rem;
+      font-family: 'Courier New', monospace; font-size: 0.72rem;
       color: var(--text); white-space: nowrap; overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -546,7 +553,7 @@
       border-radius: 2px;
     }
     .md-bar-val {
-      font-family: 'Courier New', monospace; font-size: 0.62rem;
+      font-family: 'Courier New', monospace; font-size: 0.72rem;
       color: var(--text-muted); text-align: right;
     }
 
@@ -571,10 +578,10 @@
       random_forest:       'RF',
       gradient_boosting:   'GBM'
     };
-    /* CSS-var-backed colors per spec */
+    /* LR=blue, RF=green, GBM=orange — clearly distinct */
     const MODEL_COLOR = {
-      logistic_regression: 'var(--green)',
-      random_forest:       'var(--sea)',
+      logistic_regression: '#5b82b5',
+      random_forest:       'var(--green)',
       gradient_boosting:   'var(--warm)'
     };
 
@@ -590,12 +597,24 @@
     function hyperString(mk, hp) {
       if (!hp) return '';
       if (mk === 'logistic_regression')
-        return 'C=' + hp.C + ' · class_weight=' + (hp.class_weight || 'none');
+        return 'C=' + hp.C + ' · max_iter=' + hp.max_iter + ' · solver=lbfgs · class_weight=' + (hp.class_weight || 'none');
       if (mk === 'random_forest')
-        return 'n_estimators=' + hp.n_estimators + ' · class_weight=' + (hp.class_weight || 'none');
+        return 'n_estimators=' + hp.n_estimators + ' · max_features=sqrt · class_weight=' + (hp.class_weight || 'none');
       if (mk === 'gradient_boosting')
-        return 'n_estimators=' + hp.n_estimators + ' · lr=' + hp.learning_rate + ' · depth=' + hp.max_depth;
+        return 'n_estimators=' + hp.n_estimators + ' · lr=' + hp.learning_rate + ' · max_depth=' + hp.max_depth + ' · subsample=1.0';
       return '';
+    }
+
+    function computeMetrics(tp, fp, tn, fn) {
+      const sens = (tp + fn) > 0 ? tp / (tp + fn) : 0;
+      const spec = (tn + fp) > 0 ? tn / (tn + fp) : 0;
+      const ppv  = (tp + fp) > 0 ? tp / (tp + fp) : 0;
+      const npv  = (tn + fn) > 0 ? tn / (tn + fn) : 0;
+      const f1   = (2*tp + fp + fn) > 0 ? 2*tp / (2*tp + fp + fn) : 0;
+      const denom = Math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn));
+      const mcc  = denom > 0 ? (tp*tn - fp*fn) / denom : 0;
+      const bal  = (sens + spec) / 2;
+      return { f1, mcc, ppv, npv, bal };
     }
 
     function renderLegend(containerId) {
@@ -712,7 +731,7 @@
         .filter(Boolean)
         .sort((a, b) => b.best - a.best);
 
-      const groupH = 78;  // height per target (3 bars)
+      const groupH = 94;  // height per target (3 bars)
       const W = 760, padTop = 40, padBot = 28;
       const labelW = 200, annotW = 160;
       const H = padTop + items.length * groupH + padBot;
@@ -747,7 +766,7 @@
 
       items.forEach((it, i) => {
         const groupY = padTop + i * groupH;
-        const rowSpan = 20;
+        const rowSpan = 26;
         /* target label */
         svg += '<text x="' + (labelW) + '" y="' + (groupY + 24) + '" text-anchor="end"' +
           ' font-size="11" fill="var(--text)" font-family="Montserrat, sans-serif" font-weight="500">' +
@@ -865,6 +884,16 @@
             '        <td class="cm-cell cm-correct"><span class="cm-count">' + tn + '</span>' +
             '          <span class="cm-label">True Negative</span><span class="cm-pct">' + pct(tn, totNeg) + '</span></td></tr>' +
             '    </tbody></table>' +
+            (function() {
+              var mx = computeMetrics(tp, fp, tn, fn);
+              return '<div class="cm-metrics">' +
+                '<span>F1 <strong>' + mx.f1.toFixed(2) + '</strong></span>' +
+                '<span>MCC <strong>' + mx.mcc.toFixed(2) + '</strong></span>' +
+                '<span>PPV <strong>' + mx.ppv.toFixed(2) + '</strong></span>' +
+                '<span>NPV <strong>' + mx.npv.toFixed(2) + '</strong></span>' +
+                '<span>Bal.Acc <strong>' + mx.bal.toFixed(2) + '</strong></span>' +
+              '</div>';
+            })() +
             '</div>'
           );
         }).join('');
@@ -954,6 +983,61 @@
       renderAllViz();
     }
   </script>
+  <div class="section-divider"></div>
+
+  <!-- GLOSSARY -->
+  <div class="content-section reveal">
+    <div class="section-eyebrow">Metric glossary</div>
+    <button class="glossary-toggle" aria-expanded="false" onclick="this.setAttribute('aria-expanded',this.getAttribute('aria-expanded')==='true'?'false':'true');document.getElementById('glossary-body').classList.toggle('glossary-open')">
+      What do these metrics mean? <span class="glossary-arrow">▶</span>
+    </button>
+    <div id="glossary-body" class="glossary-body">
+      <div class="glossary-grid">
+        <div class="glossary-item"><span class="glossary-term">AUC-ROC</span><span class="glossary-def">Probability that the model ranks a random symptomatic day above a random asymptomatic one. 1.0 = perfect, 0.5 = coin flip.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Sensitivity (Recall)</span><span class="glossary-def">Of all truly bad days, how many did the model catch? High sensitivity → few missed flares.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Specificity</span><span class="glossary-def">Of all truly good days, how many did the model correctly leave unflagged? High specificity → few false alarms.</span></div>
+        <div class="glossary-item"><span class="glossary-term">PPV (Precision)</span><span class="glossary-def">Of the days the model flags as bad, how many actually are? Answers: "when the alarm fires, can I trust it?"</span></div>
+        <div class="glossary-item"><span class="glossary-term">NPV</span><span class="glossary-def">Of the days the model clears as good, how many actually are? Answers: "when no alarm, am I safe?"</span></div>
+        <div class="glossary-item"><span class="glossary-term">F1-score</span><span class="glossary-def">Harmonic mean of precision and sensitivity (0–1). Standard ML summary statistic when classes are unequal.</span></div>
+        <div class="glossary-item"><span class="glossary-term">MCC</span><span class="glossary-def">Matthews Correlation Coefficient (−1 to +1). The most robust single number for imbalanced binary classification. +1 = perfect, 0 = random.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Balanced Accuracy</span><span class="glossary-def">(Sensitivity + Specificity) / 2. More honest than raw accuracy when one class is more frequent.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Youden's J threshold</span><span class="glossary-def">Decision threshold that maximises Sensitivity + Specificity − 1. Used for all confusion matrices here.</span></div>
+        <div class="glossary-item"><span class="glossary-term">LOO-CV</span><span class="glossary-def">Leave-one-out cross-validation. Every sample is predicted once by a model that never saw it during training.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Bootstrap CI 95%</span><span class="glossary-def">Confidence interval estimated by resampling the dataset 1,000 times. Captures uncertainty from the small N.</span></div>
+        <div class="glossary-item"><span class="glossary-term">Forward selection</span><span class="glossary-def">Greedy feature search: add the single feature that most improves AUC at each step. Stops when gain &lt; 0.01.</span></div>
+      </div>
+    </div>
+  </div>
+  <style>
+    .glossary-toggle {
+      font-family: inherit; font-size: 0.78rem; font-weight: 500;
+      color: var(--accent); background: none; border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.5rem 0.85rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .glossary-toggle:hover { background: rgba(144,167,165,0.08); }
+    .glossary-toggle[aria-expanded="true"] .glossary-arrow { transform: rotate(90deg); }
+    .glossary-arrow { transition: transform 0.2s; display: inline-block; font-size: 0.6rem; }
+    .glossary-body { display: none; margin-top: 1rem; }
+    .glossary-body.glossary-open { display: block; }
+    .glossary-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+    .glossary-item {
+      background: var(--surface2); border-radius: 8px; padding: 0.75rem 0.9rem;
+      border-left: 2px solid var(--border-med);
+    }
+    .glossary-term {
+      display: block; font-size: 0.72rem; font-weight: 600; color: var(--text);
+      margin-bottom: 0.25rem; letter-spacing: 0.02em;
+    }
+    .glossary-def {
+      display: block; font-size: 0.7rem; color: var(--text-muted); line-height: 1.55;
+    }
+  </style>
+
   <div class="section-divider"></div>
 
   <!-- REFERENCES -->
