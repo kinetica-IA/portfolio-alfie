@@ -26,7 +26,7 @@ const CARDS = [
     Symbol: SignalSymbol,
     title: 'ANS Predictor',
     copy: 'Multi-target models that estimate symptom burden from nocturnal HRV and diary-linked physiology. Trained with leave-one-out validation and bootstrap CIs on top of the Polar pipeline.',
-    metric: 'AUC 0.83 autonomic · 0.84 severity · n=55 · N-of-1',
+    metric: 'AUC 0.84 autonomic · 0.92 severity · n=61 · N-of-1',
     ctaText: 'View predictor',
     ctaHref: '/ans-predictor.html',
     external: false,
