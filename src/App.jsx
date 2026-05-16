@@ -17,7 +17,7 @@ export default function App() {
     <>
       <TopBar />
       <div className="content-layer">
-        <Hero />
+        <Hero nightsCount={data?.series?.length} />
         {data && <LivePulse data={data} />}
         <SectionDivider color="var(--green)" colorRgb="107,158,122" />
         <Pipeline />

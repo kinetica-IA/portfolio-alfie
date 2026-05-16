@@ -27,9 +27,9 @@ export default function Predictors() {
 
       <div className="anchor-row">
         <div className="anchor-stats">
-          <span><strong>0.83</strong> autonomic</span>
+          <span><strong>0.84</strong> autonomic</span>
           <span className="anchor-sep" />
-          <span><strong>0.84</strong> severity</span>
+          <span><strong>0.92</strong> severity</span>
           <span className="anchor-sep" />
           <span><strong>0.77</strong> sleep</span>
         </div>

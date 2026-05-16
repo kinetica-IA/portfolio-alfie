@@ -10,7 +10,7 @@ const SUB_STRINGS = [
   'N-of-1 · open data · reproducible',
 ]
 
-export default function Hero() {
+export default function Hero({ nightsCount }) {
   const heroRef = useRef(null)
   const brandRef = useRef(null)
 
@@ -79,9 +79,9 @@ export default function Hero() {
           transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
           transition: 'opacity var(--anim-base) var(--ease-out) 0.15s, transform var(--anim-base) var(--ease-out) 0.15s',
         }}>
-          <span className="hero-stat"><strong>0.83</strong> AUC autonomic</span>
+          <span className="hero-stat"><strong>0.84</strong> AUC autonomic</span>
           <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>256</strong> nights</span>
+          <span className="hero-stat"><strong>{nightsCount ?? 256}</strong> nights</span>
           <span className="hero-stat-sep" />
           <span className="hero-stat"><strong>61</strong> paired episodes</span>
           <span className="hero-stat-sep" />
