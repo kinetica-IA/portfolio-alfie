@@ -4,19 +4,18 @@ import { useWordStagger } from '../hooks/useWordStagger'
 import { CellSymbol } from './OrganicSymbols'
 
 const TIMELINE = [
-  { year: '2006', label: 'Physics, Universidad de Granada', color: 'var(--ice)', rgb: '133,168,184' },
-  { year: '2010', label: 'Osteopathy & biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
+  { year: '2006', label: 'Physics studies (first cycle), UGR', color: 'var(--ice)', rgb: '133,168,184' },
+  { year: '2010', label: 'Trained in osteopathy (INESEM/UAB) & biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
   { year: '2014', label: 'Private clinical practice', color: 'var(--teal)', rgb: '144,167,165' },
-  { year: '2020', label: 'COVID acute care + Post-Lyme', color: 'var(--clay)', rgb: '168,121,110' },
-  { year: '2024', label: 'Clinical AI builder', color: 'var(--warm)', rgb: '196,133,90' },
+  { year: '2020', label: 'Acute COVID care (2+ years)', color: 'var(--clay)', rgb: '168,121,110' },
+  { year: '2024', label: 'Started building clinical AI', color: 'var(--warm)', rgb: '196,133,90' },
   { year: '2025', label: 'Kinetica AI', color: 'var(--green)', rgb: '107,158,122', pulse: true },
 ]
 
 const BADGES = [
-  { text: 'Universidad de Granada', borderColor: 'var(--ice)' },
   { text: '10+ years clinical', borderColor: 'var(--teal)' },
   { text: 'Open-source · MIT', borderColor: 'var(--warm)' },
-  { text: 'Madrid · Remote', borderColor: 'var(--sea)' },
+  { text: 'Málaga · Remote', borderColor: 'var(--sea)' },
 ]
 
 export default function FounderContact() {
@@ -43,10 +42,10 @@ export default function FounderContact() {
           transition: 'opacity 0.9s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}
       >
-        Kinetica AI is developed by Alfonso Navarro, a biomechanist and osteopath
-        building clinical AI systems from real physiological uncertainty, not abstract
-        benchmarks. The work combines wearable monitoring, longitudinal symptom data
-        and architecture design for interpretable health-focused models.
+        Kinetica AI is developed by Alfonso Navarro, a clinical biomechanist trained
+        in osteopathy, building clinical AI systems from real physiological uncertainty,
+        not abstract benchmarks. The work combines wearable monitoring, longitudinal
+        symptom data and architecture design for interpretable health-focused models.
       </p>
 
       {/* Timeline stepper */}
@@ -96,7 +95,7 @@ export default function FounderContact() {
       <div className="fc-cta-area" ref={ctaRef}>
         <a href="#research" className="fc-research-link">See open research →</a>
         <p className="fc-services">
-          Clinical AI consulting · Autonomic assessment · AI model evaluation
+          Clinical AI consulting · Research-grade HRV analysis · AI model evaluation
         </p>
         <div
           className="fc-status"
