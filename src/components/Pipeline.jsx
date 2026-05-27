@@ -20,9 +20,10 @@ export default function Pipeline() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        Kinetica connects physiological data, symptom diaries and agentic workflows into a single
-        clinical AI stack. The same longitudinal archive feeds symptom predictors, agent reasoning
-        and safety audits, instead of isolated demos.
+        One longitudinal archive, every layer of the system. Nightly Polar exports, prospective
+        symptom diaries and HRV features land in the same versioned pipeline, then feed symptom
+        predictors, agent reasoning and safety audits. No demos in disguise — the same data
+        moves through every model.
       </p>
 
       <div className="anchor-row">

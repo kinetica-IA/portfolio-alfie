@@ -3,7 +3,7 @@ export default function FooterField() {
     <footer className="footer-field">
       <div className="footer-content">
         <span className="footer-brand">KINETICA AI</span>
-        <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro. All systems nominal.</span>
+        <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro · Built in the open, engineered for reproducibility.</span>
       </div>
 
       <style>{`

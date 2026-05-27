@@ -11,7 +11,7 @@ const CARDS = [
     badgeRgb: '144,167,165',
     Symbol: NetworkSymbol,
     title: 'Pipeline Polar & Symptoms',
-    copy: 'Transforms raw wearable streams and symptom diaries into a clean, longitudinal dataset ready for modelling. Built around Polar exports, advanced HRV features and reproducible nightly jobs.',
+    copy: 'Polar exports and prospective symptom diaries flow into a clean longitudinal dataset, ready for modelling. Advanced HRV features, deterministic nightly jobs, every level versioned L0→L6.',
     metric: null,
     ctaText: 'View pipeline',
     ctaHref: '/pipeline.html',
@@ -25,7 +25,7 @@ const CARDS = [
     badgeRgb: '107,158,122',
     Symbol: SignalSymbol,
     title: 'ANS Predictor',
-    copy: 'Research prototype. Multi-target models that estimate symptom burden from nocturnal HRV and diary-linked physiology. Trained with leave-one-out validation and bootstrap CIs on top of the Polar pipeline.',
+    copy: 'Research prototype. Multi-target models estimate symptom burden from nocturnal HRV and diary-linked physiology. Leave-one-out validation, bootstrap CIs, all built on the same Polar pipeline.',
     metric: 'AUC 0.84 autonomic · 0.92 severity · n=61 · N-of-1',
     ctaText: 'View predictor',
     ctaHref: '/ans-predictor.html',
@@ -39,7 +39,7 @@ const CARDS = [
     badgeRgb: '93,138,130',
     Symbol: PulseSymbol,
     title: 'Sleep Quality Predictor',
-    copy: 'Research prototype. Independent predictor focused on sleep quality as its own clinical signal. Uses the same cleaned physiological foundation, targeting how nocturnal structure and autonomic patterns relate to perceived sleep degradation and recovery.',
+    copy: 'Research prototype. Sleep quality treated as its own clinical signal, not a byproduct. Same cleaned physiology, focused on how nocturnal structure and autonomic patterns track perceived sleep degradation and recovery.',
     metric: 'AUC 0.77 sleep quality · same physiological foundation',
     ctaText: 'Explore sleep model',
     ctaHref: '/sleep-quality-predictor.html',
@@ -53,7 +53,7 @@ const CARDS = [
     badgeRgb: '191,168,122',
     Symbol: SignalSymbol,
     title: 'Cross-Predictor Convergence',
-    copy: 'Independent analysis of where ANS and Sleep models agree. Both independently selected nocturnal RMSSD as their top feature for fatigue prediction — this page shows feature overlap, AUC comparison on shared days, and day-level probability agreement.',
+    copy: 'Where two independent models agree. ANS and Sleep each selected nocturnal RMSSD as their top fatigue feature, on their own. This page shows feature overlap, AUC on shared days and day-level probability agreement.',
     metric: 'r=0.66 · 79% agreement · 1 shared feature · n=42 shared days',
     ctaText: 'Explore convergence',
     ctaHref: '/convergence-analysis.html',
@@ -67,7 +67,7 @@ const CARDS = [
     badgeRgb: '107,138,109',
     Symbol: OrbitSymbol,
     title: 'IO3 Clinical Agent',
-    copy: 'LangGraph-based agent that orchestrates Anthropic models, clinical rules and retrieval for guarded reasoning in chronic care. Designed with a single audited loop, human-on-loop control and traceable session logs.',
+    copy: 'Research prototype. LangGraph agent that orchestrates Anthropic models, clinical rules and retrieval for guarded chronic-care reasoning. One audited loop, human-on-loop control, traceable session logs.',
     metric: null,
     ctaText: 'View architecture',
     ctaHref: '/io-architecture.html',
@@ -81,7 +81,7 @@ const CARDS = [
     badgeRgb: '196,133,90',
     Symbol: CellSymbol,
     title: 'ALMA Safety & Evaluation',
-    copy: 'Deterministic safety layer that screens agent responses for pharmacological risk, diagnostic overreach, false urgency and scope violations. Evaluated on a 30-case clinical test set with per-severity metrics and millisecond-level latency reports.',
+    copy: 'Research prototype. Deterministic safety layer screening agent responses for pharmacological risk, diagnostic overreach, false urgency and scope violations. Evaluated on a 30-case clinical test set with per-severity metrics and millisecond-level latency.',
     metric: null,
     ctaText: 'See safety layer',
     ctaHref: '/io-architecture.html#alma',
@@ -95,7 +95,7 @@ const CARDS = [
     badgeRgb: '133,168,184',
     Symbol: HelixSymbol,
     title: 'Clinical Knowledge & RAG',
-    copy: 'Curated knowledge base with 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested with a 20-question benchmark achieving 0.85 retrieval accuracy overall.',
+    copy: 'Curated knowledge base — 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested on a 20-question benchmark with 0.85 retrieval accuracy overall.',
     metric: null,
     ctaText: 'Explore knowledge stack',
     ctaHref: '/knowledge-rag.html',
@@ -109,7 +109,7 @@ const CARDS = [
     badgeRgb: '107,158,122',
     Symbol: SignalSymbol,
     title: 'Open Research Repository',
-    copy: 'Single public repo that hosts the Polar pipeline, ANS predictor code, notebooks and study materials behind Kinetica\'s current research line. Structured for reproducible runs, not marketing screenshots.',
+    copy: 'Public repo hosting the Polar pipeline, predictor code, notebooks and study materials behind Kinetica\'s current research line. Structured for reproducible runs, not marketing screenshots.',
     metric: null,
     ctaText: 'View on GitHub',
     ctaHref: GITHUB_REPO,
@@ -173,9 +173,9 @@ export default function OpenResearch() {
       <h2 className="or-title">Open research, verifiable systems</h2>
 
       <p className="or-pubmed">
-        Each project is cross-checked against a curated clinical knowledge base sourced from
-        peer-reviewed papers and PubMed, audited through Chroma and evaluated with a dedicated
-        RAG test set.
+        Every project is grounded against a curated clinical knowledge base — peer-reviewed
+        sources, PubMed, audited through Chroma, evaluated on a dedicated RAG test set.
+        Open code. Reproducible runs.
       </p>
 
       <div className="or-grid" ref={ref}>
