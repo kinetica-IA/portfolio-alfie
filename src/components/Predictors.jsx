@@ -20,9 +20,10 @@ export default function Predictors() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        Predictors in Kinetica are idiographic: they focus on one real patient, with wearable HRV
-        and prospective symptom tracking. Different models target autonomic burden, overall severity
-        and sleep, but all share the same cleaned pipeline and validation logic.
+        Idiographic by design — one patient, deep longitudinal data, three clinical targets.
+        Autonomic burden, overall severity and sleep each get their own model, all trained
+        on the same cleaned physiology with leave-one-out validation and bootstrap confidence
+        intervals.
       </p>
 
       <div className="anchor-row">
