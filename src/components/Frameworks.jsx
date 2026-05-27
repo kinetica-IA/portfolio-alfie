@@ -20,9 +20,10 @@ export default function Frameworks() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        IO3 and ALMA capture how the agent reasons and where it must stop. IO3 handles context,
-        tools and multi-step thought; ALMA sits alongside it as a safety lens, scoring responses
-        against clinical boundaries before anything reaches the clinician.
+        Two research prototypes for guarded clinical reasoning. IO3 is the agent loop —
+        context, tools, multi-step thought, audited end-to-end. ALMA sits next to it as a
+        safety layer, scoring every response against clinical boundaries before anything
+        is shown to a clinician.
       </p>
 
       <div className="anchor-row">

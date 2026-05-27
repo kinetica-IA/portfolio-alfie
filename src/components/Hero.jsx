@@ -5,9 +5,7 @@ import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
 
 const SUB_STRINGS = [
-  'clinical AI systems',
-  'wearable data · symptom tracking · real patients',
-  'N-of-1 · open data · reproducible',
+  'End-to-end · open data · reproducible',
 ]
 
 export default function Hero({ nightsCount }) {
@@ -66,7 +64,7 @@ export default function Hero({ nightsCount }) {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Building clinical AI from wearable data, symptom tracking and real patient reality.
+          Clinical AI built end-to-end: data pipeline, idiographic predictors, a guarded agent and a deterministic safety layer — validated on real longitudinal physiology, not abstract benchmarks.
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
@@ -79,13 +77,13 @@ export default function Hero({ nightsCount }) {
           transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
           transition: 'opacity var(--anim-base) var(--ease-out) 0.15s, transform var(--anim-base) var(--ease-out) 0.15s',
         }}>
-          <span className="hero-stat"><strong>0.84</strong> AUC autonomic</span>
+          <span className="hero-stat"><strong>243</strong>-day archive</span>
           <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>{nightsCount ?? 256}</strong> nights</span>
+          <span className="hero-stat"><strong>3</strong> idiographic predictors</span>
           <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>61</strong> paired episodes</span>
+          <span className="hero-stat"><strong>IO3+ALMA</strong> guarded agent</span>
           <span className="hero-stat-sep" />
-          <span className="hero-stat hero-stat--muted">N-of-1 · open data</span>
+          <span className="hero-stat"><strong>1,880</strong>-chunk RAG</span>
         </div>
       </div>
       <div className="hero-cta" style={{
