@@ -4,16 +4,16 @@ import { useWordStagger } from '../hooks/useWordStagger'
 import { CellSymbol } from './OrganicSymbols'
 
 const TIMELINE = [
-  { year: '2006', label: 'Physics studies (first cycle), UGR', color: 'var(--ice)', rgb: '133,168,184' },
-  { year: '2010', label: 'Trained in osteopathy (INESEM/UAB) & biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
-  { year: '2014', label: 'Private clinical practice', color: 'var(--teal)', rgb: '144,167,165' },
-  { year: '2020', label: 'Acute COVID care (2+ years)', color: 'var(--clay)', rgb: '168,121,110' },
-  { year: '2024', label: 'Started building clinical AI', color: 'var(--warm)', rgb: '196,133,90' },
+  { year: '2004', label: 'Physics (first cycle), Univ. Granada', color: 'var(--ice)', rgb: '133,168,184' },
+  { year: '2010', label: 'Postgrad biomechanics (UGR), osteopathy (UAB)', color: 'var(--sea)', rgb: '93,138,130' },
+  { year: '2016', label: 'Independent practice — Pyrenees, sport, complex cases', color: 'var(--teal)', rgb: '144,167,165' },
+  { year: '2022', label: 'Acute COVID hospital care, Vielha (2 years)', color: 'var(--clay)', rgb: '168,121,110' },
+  { year: '2024', label: 'Building clinical AI from own physiology', color: 'var(--warm)', rgb: '196,133,90' },
   { year: '2025', label: 'Kinetica AI', color: 'var(--green)', rgb: '107,158,122', pulse: true },
 ]
 
 const BADGES = [
-  { text: '10+ years clinical', borderColor: 'var(--teal)' },
+  { text: '15+ years clinical', borderColor: 'var(--teal)' },
   { text: 'Open-source · MIT', borderColor: 'var(--warm)' },
   { text: 'Málaga · Remote', borderColor: 'var(--sea)' },
 ]
@@ -22,7 +22,7 @@ export default function FounderContact() {
   const { ref, revealed } = useReveal(0.25)
   const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.25)
 
-  const headingWords = useWordStagger('Built from clinic, biomechanics and AI experimentation')
+  const headingWords = useWordStagger('From physics, biomechanics and clinic — engineered into clinical AI')
 
   return (
     <section className="section founder-contact" id="about" ref={ref}>
@@ -42,10 +42,13 @@ export default function FounderContact() {
           transition: 'opacity 0.9s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}
       >
-        Kinetica AI is developed by Alfonso Navarro, a clinical biomechanist trained
-        in osteopathy, building clinical AI systems from real physiological uncertainty,
-        not abstract benchmarks. The work combines wearable monitoring, longitudinal
-        symptom data and architecture design for interpretable health-focused models.
+        Kinetica AI is built by Alfonso Navarro — physics-trained at Universidad de Granada,
+        postgraduate in biomechanics and kinesiology, trained in osteopathy at UAB, with
+        eighteen years of clinical work in the Pyrenees treating complex musculoskeletal
+        and neuromechanical cases, high-performance athletes and mountain-sport injuries.
+        He is also the patient. The system is engineered from real physiological
+        uncertainty, not benchmark chasing: wearable monitoring, longitudinal symptom
+        data and interpretable architectures for clinical AI.
       </p>
 
       {/* Timeline stepper */}
