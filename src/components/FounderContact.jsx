@@ -4,25 +4,47 @@ import { useWordStagger } from '../hooks/useWordStagger'
 import { CellSymbol } from './OrganicSymbols'
 
 const TIMELINE = [
-  { year: '2004', label: 'Physics (first cycle), Univ. Granada', color: 'var(--ice)', rgb: '133,168,184' },
-  { year: '2010', label: 'Postgrad biomechanics (UGR), osteopathy (UAB)', color: 'var(--sea)', rgb: '93,138,130' },
-  { year: '2016', label: 'Independent practice — Pyrenees, sport, complex cases', color: 'var(--teal)', rgb: '144,167,165' },
-  { year: '2022', label: 'Acute COVID hospital care, Vielha (2 years)', color: 'var(--clay)', rgb: '168,121,110' },
+  { year: '1998', label: 'Physics, Univ. Granada', color: 'var(--ice)', rgb: '133,168,184' },
+  { year: '2002', label: 'Optometry training', color: 'var(--ice)', rgb: '133,168,184' },
+  { year: '2008', label: 'Postgraduate in biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
+  { year: '2016', label: 'Independent clinical practice, Pyrenees', color: 'var(--teal)', rgb: '144,167,165' },
+  { year: '2020', label: 'Acute COVID hospital care, Vielha (2 years)', color: 'var(--clay)', rgb: '168,121,110' },
   { year: '2024', label: 'Building clinical AI from own physiology', color: 'var(--warm)', rgb: '196,133,90' },
   { year: '2025', label: 'Kinetica AI', color: 'var(--green)', rgb: '107,158,122', pulse: true },
 ]
 
 const BADGES = [
-  { text: '15+ years clinical', borderColor: 'var(--teal)' },
+  { text: '10 years clinical', borderColor: 'var(--teal)' },
   { text: 'Open-source · MIT', borderColor: 'var(--warm)' },
   { text: 'Málaga · Remote', borderColor: 'var(--sea)' },
+]
+
+const CREDENTIALS = [
+  {
+    title: 'AI Engineering',
+    issuer: 'IBM',
+    year: '2025',
+    href: 'https://coursera.org/verify/professional-cert/JF2GSC5966NA',
+  },
+  {
+    title: 'AI Agents & Agentic AI Architecture in Python',
+    issuer: 'Vanderbilt University',
+    year: '2025',
+    href: 'https://coursera.org/verify/T1BWK1P3CEWP',
+  },
+  {
+    title: 'Computational Neuroscience',
+    issuer: 'University of Washington',
+    year: '2025',
+    href: 'https://coursera.org/verify/YNQB7TYP4N8G',
+  },
 ]
 
 export default function FounderContact() {
   const { ref, revealed } = useReveal(0.25)
   const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.25)
 
-  const headingWords = useWordStagger('From physics, biomechanics and clinic — engineered into clinical AI')
+  const headingWords = useWordStagger('Engineered from physics, biomechanics and ten years of clinic')
 
   return (
     <section className="section founder-contact" id="about" ref={ref}>
@@ -42,13 +64,14 @@ export default function FounderContact() {
           transition: 'opacity 0.9s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}
       >
-        Kinetica AI is built by Alfonso Navarro — physics-trained at Universidad de Granada,
-        postgraduate in biomechanics and kinesiology, trained in osteopathy at UAB, with
-        eighteen years of clinical work in the Pyrenees treating complex musculoskeletal
-        and neuromechanical cases, high-performance athletes and mountain-sport injuries.
-        He is also the patient. The system is engineered from real physiological
-        uncertainty, not benchmark chasing: wearable monitoring, longitudinal symptom
-        data and interpretable architectures for clinical AI.
+        Kinetica AI is built by Alfonso Navarro. Physics at Universidad de Granada, with
+        postgraduate work in biomechanics. Trained in osteopathy at UAB. Ten years of
+        independent clinical practice in the Pyrenees: complex musculoskeletal and
+        neuromechanical cases, high-performance athletes, mountain-sport injuries. Two
+        years of acute COVID hospital care in Vielha during the pandemic. He is also the
+        patient. The system is engineered from real physiological uncertainty, not
+        benchmark chasing. Wearable monitoring, longitudinal symptom data and
+        interpretable architectures for clinical AI.
       </p>
 
       {/* Timeline stepper */}
@@ -74,6 +97,34 @@ export default function FounderContact() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Credentials */}
+      <div className="fc-credentials">
+        <span className="fc-cred-label">CREDENTIALS</span>
+        <ul className="fc-cred-list">
+          {CREDENTIALS.map((c, i) => (
+            <li
+              key={c.href}
+              className="fc-cred-item"
+              style={{
+                opacity: revealed ? 1 : 0,
+                transform: revealed ? 'translateY(0)' : 'translateY(6px)',
+                transition: `opacity 0.7s var(--ease-out) ${i * 120 + 500}ms, transform 0.6s var(--ease-out) ${i * 120 + 500}ms`,
+              }}
+            >
+              <a
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fc-cred-link"
+              >
+                <span className="fc-cred-title">{c.title}</span>
+                <span className="fc-cred-meta">{c.issuer} · {c.year}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Badges */}
@@ -217,6 +268,69 @@ export default function FounderContact() {
         }
         @media (max-width: 420px) {
           .tl-item { flex: 0 0 100%; }
+        }
+        /* Credentials */
+        .fc-credentials {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          max-width: 560px;
+        }
+        .fc-cred-label {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          letter-spacing: 0.12em;
+          color: var(--text-dim);
+          opacity: 0.7;
+        }
+        .fc-cred-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+        }
+        .fc-cred-item {
+          border-top: 1px solid var(--border);
+        }
+        .fc-cred-item:last-child {
+          border-bottom: 1px solid var(--border);
+        }
+        .fc-cred-link {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 16px;
+          padding: 12px 0;
+          text-decoration: none;
+          color: inherit;
+          transition: background var(--duration-hover) ease, padding-left var(--duration-hover) ease;
+        }
+        .fc-cred-link:hover {
+          padding-left: 8px;
+          background: linear-gradient(90deg, rgba(107,158,122,0.05), transparent 60%);
+        }
+        .fc-cred-title {
+          font-family: var(--mono);
+          font-size: var(--text-caption);
+          color: var(--text);
+          letter-spacing: 0.02em;
+        }
+        .fc-cred-link:hover .fc-cred-title { color: var(--green); }
+        .fc-cred-meta {
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        @media (max-width: 540px) {
+          .fc-cred-link {
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-start;
+          }
         }
         /* Badges */
         .fc-badges {
