@@ -95,7 +95,7 @@ const CARDS = [
     badgeRgb: '133,168,184',
     Symbol: HelixSymbol,
     title: 'Clinical Knowledge & RAG',
-    copy: 'Curated knowledge base — 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested on a 20-question benchmark with 0.85 retrieval accuracy overall.',
+    copy: 'Curated knowledge base of 1,880 audited chunks across HRV, PEM, osteopathy, neurodynamics and portfolio content. RAG pipelines are tested on a 20-question benchmark with 0.85 retrieval accuracy overall.',
     metric: null,
     ctaText: 'Explore knowledge stack',
     ctaHref: '/knowledge-rag.html',
@@ -134,7 +134,7 @@ function ORCard({ card, index, revealed }) {
       <div className="or-card-header">
         <span className="or-badge" style={{ color: card.badgeColor, background: `rgba(${card.badgeRgb},0.08)` }}>
           <span className="or-badge-dot" style={{ background: card.badgeColor }} />
-          {card.num} — {card.badge}
+          {card.num} · {card.badge}
         </span>
         <span className="or-symbol">
           <Symbol color={card.badgeColor} size={40} />
@@ -173,9 +173,8 @@ export default function OpenResearch() {
       <h2 className="or-title">Open research, verifiable systems</h2>
 
       <p className="or-pubmed">
-        Every project is grounded against a curated clinical knowledge base — peer-reviewed
-        sources, PubMed, audited through Chroma, evaluated on a dedicated RAG test set.
-        Open code. Reproducible runs.
+        Every piece of the system is public. Each card below opens to code and a
+        reproducible run, with claims anchored in peer-reviewed sources.
       </p>
 
       <div className="or-grid" ref={ref}>

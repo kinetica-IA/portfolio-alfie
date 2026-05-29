@@ -20,22 +20,10 @@ export default function Frameworks() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        Two research prototypes for guarded clinical reasoning. IO3 is the agent loop —
-        context, tools, multi-step thought, audited end-to-end. ALMA sits next to it as a
-        safety layer, scoring every response against clinical boundaries before anything
-        is shown to a clinician.
+        Clinical reasoning, guarded by design. An agent loop handles context, tools and
+        multi-step thought, audited end to end. A deterministic safety layer scores every
+        response against clinical boundaries before it reaches a clinician.
       </p>
-
-      <div className="anchor-row">
-        <div className="anchor-stats">
-          <span><strong>IO3</strong> LangGraph agent</span>
-          <span className="anchor-sep" />
-          <span><strong>ALMA</strong> 30-case eval</span>
-        </div>
-        <a href="#research" className="anchor-link" style={{ color: 'var(--teal)' }}>
-          See framework cards ↓
-        </a>
-      </div>
 
       <style>{`
         .frameworks-title {
