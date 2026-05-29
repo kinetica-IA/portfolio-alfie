@@ -20,24 +20,11 @@ export default function Pipeline() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        One longitudinal archive, every layer of the system. Nightly Polar exports, prospective
-        symptom diaries and HRV features land in the same versioned pipeline, then feed symptom
-        predictors, agent reasoning and safety audits. No demos in disguise — the same data
-        moves through every model.
+        Wearable physiology and prospective symptom diaries land in one versioned,
+        longitudinal pipeline. The same archive feeds every downstream model, from
+        predictors to agent reasoning and safety audits. Devices and features may change
+        over time; the contract with the data does not.
       </p>
-
-      <div className="anchor-row">
-        <div className="anchor-stats">
-          <span><strong>7</strong> levels L0→L6</span>
-          <span className="anchor-sep" />
-          <span><strong>243</strong> days</span>
-          <span className="anchor-sep" />
-          <span><strong>70</strong> features</span>
-        </div>
-        <a href="#research" className="anchor-link" style={{ color: 'var(--green)' }}>
-          See pipeline card ↓
-        </a>
-      </div>
 
       <style>{`
         .pipeline-title {

@@ -20,24 +20,10 @@ export default function Predictors() {
           transition: 'opacity 0.9s var(--ease-out), transform var(--anim-base) var(--ease-out)',
         }}
       >
-        Idiographic by design — one patient, deep longitudinal data, three clinical targets.
-        Autonomic burden, overall severity and sleep each get their own model, all trained
-        on the same cleaned physiology with leave-one-out validation and bootstrap confidence
-        intervals.
+        Models trained on one patient's deep, longitudinal physiology, not on cohorts.
+        Each one targets a different clinical signal. The same scaffold accepts new
+        targets, new sensors, new validation methods.
       </p>
-
-      <div className="anchor-row">
-        <div className="anchor-stats">
-          <span><strong>0.84</strong> autonomic</span>
-          <span className="anchor-sep" />
-          <span><strong>0.92</strong> severity</span>
-          <span className="anchor-sep" />
-          <span><strong>0.77</strong> sleep</span>
-        </div>
-        <a href="#research" className="anchor-link" style={{ color: 'var(--sea)' }}>
-          See predictor cards ↓
-        </a>
-      </div>
 
       <style>{`
         .predictors-title {
