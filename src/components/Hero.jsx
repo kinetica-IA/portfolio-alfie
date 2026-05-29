@@ -6,9 +6,12 @@ import { useTextDecode } from '../hooks/useTextDecode'
 
 const SUB_STRINGS = [
   'End-to-end · open data · reproducible',
+  'pipeline · predictors · agent · safety layer',
+  'audited reasoning · idiographic models · open code',
+  'N-of-1 longitudinal · interpretable by design',
 ]
 
-export default function Hero({ nightsCount }) {
+export default function Hero({ nightsCount, children }) {
   const heroRef = useRef(null)
   const brandRef = useRef(null)
 
@@ -64,7 +67,7 @@ export default function Hero({ nightsCount }) {
           transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
         }}>
-          Clinical AI built end-to-end: data pipeline, idiographic predictors, a guarded agent and a deterministic safety layer — validated on real longitudinal physiology, not abstract benchmarks.
+          End-to-end clinical AI, engineered on real longitudinal physiology. Not abstract benchmarks.
         </p>
         <p className="hero-sub" style={{
           opacity: bootStep >= 2 ? 1 : 0,
@@ -72,18 +75,14 @@ export default function Hero({ nightsCount }) {
         }}>
           {subText}
         </p>
-        <div className="hero-stats" style={{
-          opacity: bootStep >= 3 ? 1 : 0,
-          transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
-          transition: 'opacity var(--anim-base) var(--ease-out) 0.15s, transform var(--anim-base) var(--ease-out) 0.15s',
-        }}>
-          <span className="hero-stat"><strong>243</strong>-day archive</span>
-          <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>3</strong> idiographic predictors</span>
-          <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>IO3+ALMA</strong> guarded agent</span>
-          <span className="hero-stat-sep" />
-          <span className="hero-stat"><strong>1,880</strong>-chunk RAG</span>
+        <div className={`hero-stats ${bootStep >= 3 ? 'hero-stats--in' : ''}`}>
+          <span className="hero-stat" style={{ '--i': 0 }}><strong>243</strong>-day archive</span>
+          <span className="hero-stat-sep" style={{ '--i': 0 }} />
+          <span className="hero-stat" style={{ '--i': 1 }}><strong>3</strong> idiographic predictors</span>
+          <span className="hero-stat-sep" style={{ '--i': 1 }} />
+          <span className="hero-stat" style={{ '--i': 2 }}><strong>LangGraph</strong> guarded agent</span>
+          <span className="hero-stat-sep" style={{ '--i': 2 }} />
+          <span className="hero-stat" style={{ '--i': 3 }}><strong>Curated</strong> RAG</span>
         </div>
       </div>
       <div className="hero-cta" style={{
@@ -94,6 +93,15 @@ export default function Hero({ nightsCount }) {
         <a href="#pipeline" className="hero-btn hero-btn--primary">Explore the system</a>
         <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
       </div>
+      {children && (
+        <div className="hero-live" style={{
+          opacity: bootStep >= 3 ? 1 : 0,
+          transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
+          transition: 'opacity 0.8s var(--ease-out) 0.5s, transform 0.8s var(--ease-out) 0.5s',
+        }}>
+          {children}
+        </div>
+      )}
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
         <span className="hero-scroll-line" />
       </div>
@@ -164,6 +172,20 @@ export default function Hero({ nightsCount }) {
           margin: 28px auto 36px;
           max-width: 540px;
         }
+        .hero-stat,
+        .hero-stat-sep {
+          opacity: 0;
+          transform: translateY(6px);
+          transition:
+            opacity 0.6s var(--ease-out) calc(0.15s + var(--i, 0) * 110ms),
+            transform 0.6s var(--ease-out) calc(0.15s + var(--i, 0) * 110ms);
+        }
+        .hero-stats--in .hero-stat,
+        .hero-stats--in .hero-stat-sep {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .hero-stats--in .hero-stat-sep { opacity: 0.6; }
         .hero-stat {
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
@@ -174,10 +196,19 @@ export default function Hero({ nightsCount }) {
           font-weight: 500;
           color: var(--green);
           margin-right: 4px;
+          display: inline-block;
         }
-        .hero-stat--muted {
-          color: var(--text-dim);
-          opacity: 0.7;
+        .hero-stats--in .hero-stat strong {
+          animation: heroStatPulse 0.9s var(--ease-out) calc(0.4s + var(--i, 0) * 110ms) both;
+        }
+        @keyframes heroStatPulse {
+          0%   { color: var(--text-heading); transform: scale(0.96); }
+          55%  { color: var(--green); transform: scale(1.06); }
+          100% { color: var(--green); transform: scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-stat, .hero-stat-sep { transition: opacity 0.2s linear; transform: none; }
+          .hero-stats--in .hero-stat strong { animation: none; }
         }
         .hero-stat-sep {
           width: 1px;
@@ -224,6 +255,15 @@ export default function Hero({ nightsCount }) {
           .hero-cta { flex-direction: column; align-items: center; gap: 12px; }
           .hero-btn { width: 100%; text-align: center; }
         }
+        .hero-live {
+          margin-top: 56px;
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+        @media (max-width: 480px) { .hero-live { margin-top: 40px; } }
         .hero-scroll {
           position: absolute;
           bottom: 40px;
