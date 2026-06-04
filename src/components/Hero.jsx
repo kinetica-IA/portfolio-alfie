@@ -1,17 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
-// HERO COMPONENT — breathing background + real numbers
+// HERO COMPONENT — one promise, two CTAs, one live signal.
 // ════════════════════════════════════════════════════════════════════
 
-const SUB_STRINGS = [
-  'End-to-end · open data · reproducible',
-  'pipeline · predictors · agent · safety layer',
-  'audited reasoning · idiographic models · open code',
-  'N-of-1 longitudinal · interpretable by design',
-]
-
-export default function Hero({ nightsCount, children }) {
+export default function Hero({ children }) {
   const heroRef = useRef(null)
   const brandRef = useRef(null)
 
@@ -30,25 +23,6 @@ export default function Hero({ nightsCount, children }) {
     ]
     return () => bootTimers.current.forEach(clearTimeout)
   }, [])
-
-  const [subIndex, setSubIndex] = useState(0)
-  const subTimer = useRef(null)
-
-  useEffect(() => {
-    if (bootStep < 2) return
-    const cycle = () => {
-      subTimer.current = setTimeout(() => {
-        setSubIndex(i => (i + 1) % SUB_STRINGS.length)
-        cycle()
-      }, 6000)
-    }
-    cycle()
-    return () => clearTimeout(subTimer.current)
-  }, [bootStep])
-
-  const subText = useTextDecode(SUB_STRINGS[subIndex], {
-    duration: 1200, delay: 0, loop: false, isActive: bootStep >= 2,
-  })
 
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -73,24 +47,15 @@ export default function Hero({ nightsCount, children }) {
           opacity: bootStep >= 2 ? 1 : 0,
           transition: 'opacity 0.6s var(--ease-out)',
         }}>
-          {subText}
+          Pipeline · predictors · guarded agent · safety layer
         </p>
-        <div className={`hero-stats ${bootStep >= 3 ? 'hero-stats--in' : ''}`}>
-          <span className="hero-stat" style={{ '--i': 0 }}><strong>243</strong>-day archive</span>
-          <span className="hero-stat-sep" style={{ '--i': 0 }} />
-          <span className="hero-stat" style={{ '--i': 1 }}><strong>3</strong> idiographic predictors</span>
-          <span className="hero-stat-sep" style={{ '--i': 1 }} />
-          <span className="hero-stat" style={{ '--i': 2 }}><strong>LangGraph</strong> guarded agent</span>
-          <span className="hero-stat-sep" style={{ '--i': 2 }} />
-          <span className="hero-stat" style={{ '--i': 3 }}><strong>Curated</strong> RAG</span>
-        </div>
       </div>
       <div className="hero-cta" style={{
         opacity: bootStep >= 3 ? 1 : 0,
         transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(8px)',
         transition: 'opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)',
       }}>
-        <a href="#pipeline" className="hero-btn hero-btn--primary">Explore the system</a>
+        <a href="#system" className="hero-btn hero-btn--primary">Explore the system</a>
         <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
       </div>
       {children && (
@@ -163,61 +128,9 @@ export default function Hero({ nightsCount, children }) {
           margin: 16px auto 0;
           min-height: 1.4em;
         }
-        .hero-stats {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 16px;
-          flex-wrap: wrap;
-          margin: 28px auto 36px;
-          max-width: 540px;
-        }
-        .hero-stat,
-        .hero-stat-sep {
-          opacity: 0;
-          transform: translateY(6px);
-          transition:
-            opacity 0.6s var(--ease-out) calc(0.15s + var(--i, 0) * 110ms),
-            transform 0.6s var(--ease-out) calc(0.15s + var(--i, 0) * 110ms);
-        }
-        .hero-stats--in .hero-stat,
-        .hero-stats--in .hero-stat-sep {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .hero-stats--in .hero-stat-sep { opacity: 0.6; }
-        .hero-stat {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          letter-spacing: 0.04em;
-        }
-        .hero-stat strong {
-          font-weight: 500;
-          color: var(--green);
-          margin-right: 4px;
-          display: inline-block;
-        }
-        .hero-stats--in .hero-stat strong {
-          animation: heroStatPulse 0.9s var(--ease-out) calc(0.4s + var(--i, 0) * 110ms) both;
-        }
-        @keyframes heroStatPulse {
-          0%   { color: var(--text-heading); transform: scale(0.96); }
-          55%  { color: var(--green); transform: scale(1.06); }
-          100% { color: var(--green); transform: scale(1); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .hero-stat, .hero-stat-sep { transition: opacity 0.2s linear; transform: none; }
-          .hero-stats--in .hero-stat strong { animation: none; }
-        }
-        .hero-stat-sep {
-          width: 1px;
-          height: 10px;
-          background: var(--border);
-        }
+        .hero-sub { margin-bottom: 36px; }
         @media (max-width: 480px) {
-          .hero-stats { gap: 10px; margin: 22px auto 28px; }
-          .hero-stat-sep { display: none; }
+          .hero-sub { margin-bottom: 28px; }
         }
         .hero-cta {
           display: flex;
