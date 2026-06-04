@@ -2,9 +2,8 @@ import { usePolarData } from './hooks/usePolarData'
 import TopBar from './components/TopBar'
 import Hero from './components/Hero'
 import LivePulse from './components/LivePulse'
-import Pipeline from './components/Pipeline'
-import Predictors from './components/Predictors'
-import Frameworks from './components/Frameworks'
+import Pillars from './components/Pillars'
+import Evidence from './components/Evidence'
 import OpenResearch from './components/OpenResearch'
 import FounderContact from './components/FounderContact'
 import FooterField from './components/FooterField'
@@ -17,15 +16,13 @@ export default function App() {
     <>
       <TopBar />
       <div className="content-layer">
-        <Hero nightsCount={data?.series?.length}>
+        <Hero>
           {data && <LivePulse data={data} />}
         </Hero>
         <SectionDivider color="var(--green)" colorRgb="107,158,122" />
-        <Pipeline />
+        <Pillars />
         <SectionDivider color="var(--sea)" colorRgb="93,138,130" />
-        <Predictors />
-        <SectionDivider color="var(--teal)" colorRgb="144,167,165" />
-        <Frameworks />
+        <Evidence />
         <SectionDivider color="var(--ice)" colorRgb="133,168,184" />
         <OpenResearch />
         <SectionDivider color="var(--clay)" colorRgb="168,121,110" />
