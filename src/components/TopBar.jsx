@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 
 const NAV = [
-  { label: 'System', href: '#pipeline' },
-  { label: 'Predictors', href: '#predictors' },
-  { label: 'Frameworks', href: '#frameworks' },
+  { label: 'System', href: '#system' },
+  { label: 'Evidence', href: '#evidence' },
   { label: 'Research', href: '#research' },
   { label: 'About', href: '#about' },
 ]
