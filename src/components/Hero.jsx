@@ -1,27 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
-import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
-// HERO COMPONENT — one promise, two CTAs, one live signal.
+// HERO — value-first. The promise is the headline; the live signal
+// is the proof. Wordmark lives in the topbar.
 // ════════════════════════════════════════════════════════════════════
 
 export default function Hero({ children }) {
   const heroRef = useRef(null)
-  const brandRef = useRef(null)
 
-  const brand = useTextDecode('KINETICA AI', {
-    duration: 1800, delay: 500, loop: false, isActive: true,
-  })
-
-  const [bootStep, setBootStep] = useState(0)
-  const bootTimers = useRef([])
-
+  const [shown, setShown] = useState(false)
   useEffect(() => {
-    bootTimers.current = [
-      setTimeout(() => setBootStep(1), 2200),
-      setTimeout(() => setBootStep(2), 2800),
-      setTimeout(() => setBootStep(3), 3400),
-    ]
-    return () => bootTimers.current.forEach(clearTimeout)
+    const t = setTimeout(() => setShown(true), 120)
+    return () => clearTimeout(t)
   }, [])
 
   const [scrolled, setScrolled] = useState(false)
@@ -31,112 +20,104 @@ export default function Hero({ children }) {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  const rise = (i) => ({
+    opacity: shown ? 1 : 0,
+    transform: shown ? 'translateY(0)' : 'translateY(14px)',
+    transition: `opacity 0.8s var(--ease-out) ${i * 140}ms, transform 0.8s var(--ease-out) ${i * 140}ms`,
+  })
+
   return (
     <section className="hero section" ref={heroRef}>
       <div className="hero-content">
-        <h1 className="hero-brand" ref={brandRef}>{brand}</h1>
-        <div className="hero-rule" />
-        <p className="hero-tagline" style={{
-          opacity: bootStep >= 1 ? 1 : 0,
-          transform: bootStep >= 1 ? 'translateY(0)' : 'translateY(10px)',
-          transition: 'opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out)',
-        }}>
-          End-to-end clinical AI, engineered on real longitudinal physiology. Not abstract benchmarks.
+        <span className="hero-eyebrow" style={rise(0)}>
+          N-of-1 · longitudinal · open research
+        </span>
+
+        <h1 className="hero-headline" style={rise(1)}>
+          <strong className="hero-num">243 days</strong> of one body,
+          turned into <em>auditable</em> clinical AI.
+        </h1>
+
+        <p className="hero-sub" style={rise(2)}>
+          Pipeline · predictors · guarded agent · safety layer. End to end, open, reproducible.
         </p>
-        <p className="hero-sub" style={{
-          opacity: bootStep >= 2 ? 1 : 0,
-          transition: 'opacity 0.6s var(--ease-out)',
-        }}>
-          Pipeline · predictors · guarded agent · safety layer
-        </p>
-      </div>
-      <div className="hero-cta" style={{
-        opacity: bootStep >= 3 ? 1 : 0,
-        transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(8px)',
-        transition: 'opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out)',
-      }}>
-        <a href="#system" className="hero-btn hero-btn--primary">Explore the system</a>
-        <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
-      </div>
-      {children && (
-        <div className="hero-live" style={{
-          opacity: bootStep >= 3 ? 1 : 0,
-          transform: bootStep >= 3 ? 'translateY(0)' : 'translateY(6px)',
-          transition: 'opacity 0.8s var(--ease-out) 0.5s, transform 0.8s var(--ease-out) 0.5s',
-        }}>
-          {children}
+
+        <div className="hero-cta" style={rise(3)}>
+          <a href="#system" className="hero-btn hero-btn--primary">Explore the system</a>
+          <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
         </div>
-      )}
+
+        {children && (
+          <div className="hero-live" style={rise(4)}>
+            {children}
+          </div>
+        )}
+      </div>
+
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
         <span className="hero-scroll-line" />
       </div>
 
       <style>{`
         .hero {
-          min-height: 100dvh;
+          min-height: 88vh;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
-          text-align: center;
-          padding: 40px 24px;
+          text-align: left;
+          padding: 96px 0 48px;
           position: relative;
           overflow: hidden;
         }
         .hero-content {
-          margin-bottom: 56px;
           position: relative;
           z-index: 1;
+          width: 100%;
         }
-        .hero-brand {
-          font-family: var(--sans);
-          font-size: var(--text-hero);
+        .hero-eyebrow {
+          display: inline-block;
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
           font-weight: 500;
-          letter-spacing: 0.18em;
-          color: var(--text-heading);
-          margin-bottom: 0;
-          white-space: nowrap;
-          text-shadow: 0 1px 3px rgba(36, 64, 60, 0.06);
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          margin-bottom: 24px;
         }
-        @media (max-width: 480px) {
-          .hero-brand {
-            font-size: clamp(2rem, 10vw, 3.5rem);
-            letter-spacing: 0.1em;
-          }
-        }
-        .hero-rule {
-          width: 48px;
-          height: 2px;
-          background: linear-gradient(90deg, var(--teal), var(--sea));
-          margin: 28px auto;
-          opacity: 0.6;
-        }
-        .hero-tagline {
+        .hero-headline {
           font-family: var(--sans);
-          font-size: var(--text-body-lg);
-          font-weight: 300;
-          color: var(--text-sec);
-          max-width: 440px;
-          margin: 0 auto;
-          line-height: 1.7;
+          font-size: clamp(2.25rem, 4.6vw, 3.5rem);
+          font-weight: 500;
+          line-height: 1.18;
+          letter-spacing: -0.01em;
+          color: var(--text-heading);
+          max-width: 760px;
+          text-shadow: 0 1px 3px rgba(36, 64, 60, 0.05);
+        }
+        .hero-num {
+          font-weight: 600;
+          color: var(--green);
+          white-space: nowrap;
+        }
+        .hero-headline em {
+          font-style: normal;
+          color: var(--text-heading);
         }
         .hero-sub {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--teal);
-          letter-spacing: 0.06em;
-          margin: 16px auto 0;
-          min-height: 1.4em;
-        }
-        .hero-sub { margin-bottom: 36px; }
-        @media (max-width: 480px) {
-          .hero-sub { margin-bottom: 28px; }
+          color: var(--text-dim);
+          letter-spacing: 0.04em;
+          line-height: 1.7;
+          max-width: 560px;
+          margin: 28px 0 0;
         }
         .hero-cta {
           display: flex;
-          gap: 20px;
+          gap: 16px;
           flex-wrap: wrap;
-          justify-content: center;
+          margin-top: 36px;
           position: relative;
           z-index: 1;
         }
@@ -165,21 +146,21 @@ export default function Hero({ children }) {
           color: var(--text);
         }
         @media (max-width: 480px) {
-          .hero-cta { flex-direction: column; align-items: center; gap: 12px; }
+          .hero-cta { flex-direction: column; align-items: stretch; gap: 12px; }
           .hero-btn { width: 100%; text-align: center; }
         }
         .hero-live {
-          margin-top: 56px;
+          margin-top: 40px;
           position: relative;
           z-index: 1;
           width: 100%;
           display: flex;
-          justify-content: center;
+          justify-content: flex-start;
         }
-        @media (max-width: 480px) { .hero-live { margin-top: 40px; } }
         .hero-scroll {
           position: absolute;
-          bottom: 40px;
+          bottom: 36px;
+          left: 0;
           opacity: 0.30;
           transition: opacity 1.2s var(--ease-out);
           z-index: 1;
@@ -190,6 +171,9 @@ export default function Hero({ children }) {
           width: 1px;
           height: 32px;
           background: linear-gradient(to bottom, var(--teal), transparent);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-content > * { transition: opacity 0.2s linear !important; transform: none !important; }
         }
       `}</style>
     </section>

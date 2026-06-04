@@ -41,6 +41,9 @@ export default function LivePulse({ data }) {
   const SPARK_H = 18
   const { path: sparkPath, last: sparkLast } = miniSparkline(series, 'hrv_rmssd_night', SPARK_W, SPARK_H)
 
+  const rmssdSeries = series.filter(d => d.hrv_rmssd_night != null)
+  const lastRmssd = rmssdSeries.length ? Math.round(rmssdSeries[rmssdSeries.length - 1].hrv_rmssd_night) : null
+
   return (
     <div
       className="live-ribbon"
@@ -129,19 +132,23 @@ export default function LivePulse({ data }) {
           </svg>
         </>
       )}
-      <span className="lr-sep">·</span>
-      <span className="lr-text">
-        <strong>{series.length}</strong> nights
-      </span>
+      {lastRmssd != null && (
+        <>
+          <span className="lr-sep">·</span>
+          <span className="lr-text">
+            RMSSD <strong>{lastRmssd}</strong> ms last night
+          </span>
+        </>
+      )}
 
       <style>{`
         .live-ribbon {
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           gap: 12px;
           flex-wrap: wrap;
-          margin: 16px auto 28px;
+          margin: 0;
           font-family: var(--mono);
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
