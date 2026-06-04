@@ -56,23 +56,27 @@ export default function FounderContact() {
         {headingWords.words.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
       </h2>
 
-      <p
-        className="fc-bio"
+      <div
+        className="fc-bio-group"
         style={{
           opacity: revealed ? 1 : 0,
           transform: revealed ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.9s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}
       >
-        Kinetica AI is built by Alfonso Navarro. Physics at Universidad de Granada, with
-        postgraduate work in biomechanics. Trained in osteopathy at UAB. Ten years of
-        independent clinical practice in the Pyrenees: complex musculoskeletal and
-        neuromechanical cases, high-performance athletes, mountain-sport injuries. Two
-        years of acute COVID hospital care in Vielha during the pandemic. He is also the
-        patient. The system is engineered from real physiological uncertainty, not
-        benchmark chasing. Wearable monitoring, longitudinal symptom data and
-        interpretable architectures for clinical AI.
-      </p>
+        <p className="fc-bio">
+          Kinetica AI is built by Alfonso Navarro. Physics at Universidad de Granada, with
+          postgraduate work in biomechanics. Trained in osteopathy at UAB. Ten years of
+          independent clinical practice in the Pyrenees: complex musculoskeletal and
+          neuromechanical cases, high-performance athletes, mountain-sport injuries. Two
+          years of acute COVID hospital care in Vielha during the pandemic.
+        </p>
+        <p className="fc-bio">
+          He is also the patient. The system is engineered from real physiological
+          uncertainty, not benchmark chasing — wearable monitoring, longitudinal symptom
+          data and interpretable architectures for clinical AI.
+        </p>
+      </div>
 
       {/* Timeline stepper */}
       <div className="fc-timeline">
@@ -201,6 +205,11 @@ export default function FounderContact() {
           flex-wrap: wrap;
           gap: 0;
           max-width: 560px;
+        }
+        .fc-bio-group {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
         }
         .fc-bio {
           font-size: var(--text-body);
