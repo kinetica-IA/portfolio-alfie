@@ -23,7 +23,7 @@ const FEATURED = [
     Symbol: SignalSymbol,
     title: 'ANS Predictor',
     copy: 'Multi-target models estimate symptom burden from nocturnal HRV and diary-linked physiology, on the same Polar pipeline.',
-    metric: 'AUC 0.84 autonomic · 0.92 severity · n=61',
+    metric: 'AUC 0.829 autonomic · 0.837 severity · n=61',
     ctaText: 'View predictor',
     ctaHref: '/ans-predictor.html',
   },
