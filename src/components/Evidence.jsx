@@ -13,7 +13,7 @@ const RESULTS = [
     color: 'var(--green)',
   },
   {
-    value: '0.84 / 0.92',
+    value: '0.829 / 0.837',
     unit: 'AUC',
     caption: 'Autonomic burden and symptom severity, leave-one-out, N-of-1. Bootstrap confidence intervals.',
     color: 'var(--sea)',
