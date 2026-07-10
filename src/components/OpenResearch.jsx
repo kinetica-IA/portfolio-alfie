@@ -54,22 +54,6 @@ const FEATURED = [
 // ── Index: the architecture and infrastructure, as a tidy list ──────
 const INDEX = [
   {
-    badge: 'AGENT',
-    color: 'var(--moss)',
-    title: 'IO3 Clinical Agent',
-    copy: 'A LangGraph agent orchestrating models, clinical rules and retrieval for guarded chronic-care reasoning.',
-    ctaHref: '/io-architecture.html',
-    external: false,
-  },
-  {
-    badge: 'SAFETY',
-    color: 'var(--warm)',
-    title: 'ALMA Safety & Evaluation',
-    copy: 'A deterministic safety layer screening responses for pharmacological risk, diagnostic overreach and scope violations.',
-    ctaHref: '/io-architecture.html#alma',
-    external: false,
-  },
-  {
     badge: 'KNOWLEDGE',
     color: 'var(--ice)',
     title: 'Clinical Knowledge & RAG',
