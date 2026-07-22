@@ -69,7 +69,6 @@ Navigate to `kineticaai.com/diary` from any device (phone, tablet).
 
 - Enter your GitHub Personal Access Token once (stored in browser, `repo` scope)
 - Score fatigue, PEM, brain fog, autonomic dysfunction, pain (0–10 sliders)
-- Toggle baseline flag
 - Hit **Save** → form reads `diary_live.csv`, upserts today's row, writes back → retrain fires in ~1 min
 
 Token setup: [github.com/settings/tokens/new?scopes=repo](https://github.com/settings/tokens/new?scopes=repo&description=DSQ-Diary)
@@ -128,7 +127,7 @@ Writes: polar_live.json["predictor"] (multi-target v3)  →  git push
 ```
 
 ### `diary_live.csv` columns
-`date · schema_version · severidad_global · fatiga · pem · niebla_mental · disfuncion_autonomica · dolor · redacted · nota`
+`date · schema_version · severidad_global · fatiga · pem · niebla_mental · disfuncion_autonomica · dolor · nota`
 
 ---
 

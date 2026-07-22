@@ -38,7 +38,7 @@ DIARY_CSV     = PORTFOLIO_DIR / "data" / "diary_live.csv"
 POLAR_JSON    = PORTFOLIO_DIR / "public" / "data" / "polar_live.json"
 
 DIARY_COLS = ["date", "schema_version", "severidad_global", "fatiga", "pem",
-              "niebla_mental", "disfuncion_autonomica", "dolor", "redacted", "nota"]
+              "niebla_mental", "disfuncion_autonomica", "dolor", "nota"]
 
 MODEL_SENSITIVITY = 0.7188
 MODEL_N           = 54
@@ -179,7 +179,7 @@ def show_history(rows: dict, n: int = 14):
     """Print last n diary entries."""
     recent = sorted(rows.items(), key=lambda x: x[0], reverse=True)[:n]
     print(f"\n{bold('Últimas entradas del diario:')}")
-    print(f"  {'Fecha':<12} {'Sev':>4} {'Fati':>4} {'PEM':>4} {'Nieb':>4} {'Auto':>4} {'Dol':>4} {'Zlp':>4}")
+    print(f"  {'Fecha':<12} {'Sev':>4} {'Fati':>4} {'PEM':>4} {'Nieb':>4} {'Auto':>4} {'Dol':>4}")
     print("  " + "─" * 52)
     for d, r in reversed(recent):
         sev = r.get("severidad_global","")
@@ -188,13 +188,12 @@ def show_history(rows: dict, n: int = 14):
         nie = r.get("niebla_mental","")
         aut = r.get("disfuncion_autonomica","")
         dol = r.get("dolor","")
-        zlp = r.get("redacted","")
         sev_f = float(sev) if sev != "" else None
         color = red if sev_f and sev_f >= 7 else (yellow if sev_f and sev_f >= 4 else green)
         sev_s = color(f"{float(sev):4.1f}") if sev != "" else "   —"
         print(f"  {d:<12} {sev_s}  {float(fat):4.1f}  {float(pem) if pem else '—':>4}  "
               f"{float(nie) if nie else '—':>4}  {float(aut) if aut else '—':>4}  "
-              f"{float(dol) if dol else '—':>4}  {zlp or '—':>4}"
+              f"{float(dol) if dol else '—':>4}"
               if all([fat, pem]) else
               f"  {d:<12} {sev_s}  (datos parciales)")
 
@@ -262,10 +261,6 @@ def main():
     sev_global = round(sum(sev_components) / len(sev_components), 1)
     print(f"\n  {bold('Severidad global calculada:')} {(red if sev_global>=7 else yellow if sev_global>=4 else green)(str(sev_global))} / 10")
 
-    zlp = 0.0
-    if yes_no("\n¿Registro adicional de la noche anterior?"):
-        zlp = 1.0
-
     nota = input("\n  Nota breve (opcional, Enter para omitir): ").strip()
 
     row = {
@@ -277,7 +272,6 @@ def main():
         "niebla_mental":      niebla,
         "disfuncion_autonomica": auto if auto is not None else "",
         "dolor":              dolor if dolor is not None else "",
-        "redacted":           zlp,
         "nota":               nota,
     }
 

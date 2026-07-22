@@ -208,18 +208,6 @@
       margin-top: 0.2rem;
     }
 
-    /* ── baseline toggle ── */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .toggle-label {
-      font-size: 0.88rem;
-      font-weight: 500;
-    }
-    .toggle-sub { font-size: 0.73rem; color: var(--muted); }
     .toggle {
       position: relative;
       width: 48px;
@@ -926,7 +914,7 @@
 
       let html = `<table class="hist-table">
         <thead><tr>
-          <th>Date</th><th>Sev</th><th>Fati</th><th>PEM</th><th>Fog</th><th>Auto</th><th>Pain</th><th>Zlp</th>
+          <th>Date</th><th>Sev</th><th>Fati</th><th>PEM</th><th>Fog</th><th>Auto</th><th>Pain</th>
         </tr></thead><tbody>`;
       for (const r of recent) {
         const sev = r.severidad_global || '—';
@@ -938,7 +926,6 @@
           <td>${r.niebla_mental||'—'}</td>
           <td>${r.disfuncion_autonomica||'—'}</td>
           <td>${r.dolor||'—'}</td>
-          <td>${r.redacted||'—'}</td>
         </tr>`;
       }
       html += '</tbody></table>';
