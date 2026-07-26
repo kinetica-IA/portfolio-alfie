@@ -80,11 +80,12 @@
       "name": "Model outputs",
       "color_hex": "#5d8a82",
       "status": "operational",
-      "description": "Multi-target predictor. Forward selection per target, LOO-CV, bootstrap CI95×1000. Headline locked to autonomic dysfunction (deployment target).",
+      "description": "Multi-target predictor. Forward selection per target, bootstrap CI95×1000. Headline is a self-reported autonomic symptom score; the published AUC is the leakage-safe figure with selection nested inside each fold, with the optimistic LOO value alongside it. The 48h-ahead deployment model was withdrawn by the audit.",
       "metrics": {
         "targets": 5,
         "headline_target": "disfuncion_autonomica",
-        "headline_auc": 0.829,
+        "headline_auc": 0.795,
+        "headline_auc_loo": 0.829,
         "headline_n": 55
       },
       "versioned": true,
@@ -109,7 +110,7 @@
     "total_days": 243,
     "diary_pairs": 61,
     "model_targets": 5,
-    "headline_auc": 0.829,
+    "headline_auc": 0.795,
     "data_start": "2025-08-25",
     "data_end": "2026-04-27"
   }

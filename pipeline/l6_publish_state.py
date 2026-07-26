@@ -33,6 +33,13 @@ from pipeline.config import (
 
 SCHEMA_VERSION = "v1.0"
 
+# The model artifact only carries auc_loo, which the leakage audit showed is
+# optimistic by 0.034 for the headline target: selection ran on the full dataset
+# and was then cross-validated, reusing the held-out day. This is the audited
+# leakage-safe figure (selection nested inside each fold), frozen until re-audit.
+# See public/predictor-audit.html.
+AUDITED_HEADLINE_AUC = 0.795
+
 
 # ── Pydantic schema ────────────────────────────────────────────────────────────
 
@@ -121,10 +128,18 @@ _LEVELS_DEFINITION = [
         "name": "Model outputs",
         "color_hex": "#5d8a82",
         "description": (
-            "Multi-target predictor. Forward selection per target, LOO-CV, bootstrap CI95×1000. "
-            "Headline locked to autonomic dysfunction (deployment target)."
+            "Multi-target predictor. Forward selection per target, bootstrap CI95×1000. "
+            "Headline is a self-reported autonomic symptom score; the published AUC is the "
+            "leakage-safe figure with selection nested inside each fold, with the optimistic "
+            "LOO value alongside it. The 48h-ahead deployment model was withdrawn by the audit."
         ),
-        "metrics_keys": ["targets", "headline_target", "headline_auc", "headline_n"],
+        "metrics_keys": [
+            "targets",
+            "headline_target",
+            "headline_auc",
+            "headline_auc_loo",
+            "headline_n",
+        ],
         "versioned": True,
     },
     {
@@ -272,14 +287,16 @@ def _gather_l5() -> tuple[dict[str, int | float | str], str | None]:
         return {
             "targets": len(targets),
             "headline_target": headline_target,
-            "headline_auc": round(float(headline.get("auc_loo", 0)), 3),
+            "headline_auc": AUDITED_HEADLINE_AUC,
+            "headline_auc_loo": round(float(headline.get("auc_loo", 0)), 3),
             "headline_n": int(headline.get("n_training", 0)),
         }, _iso_mtime(path)
     except Exception:
         return {
             "targets": 5,
             "headline_target": "disfuncion_autonomica",
-            "headline_auc": 0.829,
+            "headline_auc": AUDITED_HEADLINE_AUC,
+            "headline_auc_loo": 0.829,
             "headline_n": 55,
         }, None
 
@@ -363,7 +380,7 @@ def build_state() -> PipelineState:
             "total_days": l3_metrics.get("rows", 243),
             "diary_pairs": l5_metrics.get("paired_days", 61),
             "model_targets": l5_model.get("targets", 5),
-            "headline_auc": l5_model.get("headline_auc", 0.829),
+            "headline_auc": l5_model.get("headline_auc", AUDITED_HEADLINE_AUC),
             "data_start": str(l3_metrics.get("date_start", "2025-08-25")),
             "data_end": str(l3_metrics.get("date_end", "2026-04-27")),
             "series_live_count": series_live_count,
