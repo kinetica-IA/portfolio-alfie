@@ -53,7 +53,8 @@ data/processed/L5/*
 __pycache__/
 *.pyc
 
-# Local audit dumps
+# Local audit dumps — these carry commercial strategy and this repo is public
 PORTFOLIO_AUDIT_DUMP.md
+AUDIT-*.md
 dist/
 data/backups/
