@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0f9f9">
+<title>Predictor Audit — Leakage &amp; Confound — Kinetica AI</title>
+<meta name="description" content="Non-destructive leakage and confound audit of the ANS symptom predictor. Leakage-safe AUC, permutation nulls, activity adjustment and the claims that had to be corrected.">
+<link rel="canonical" href="https://www.kineticaai.com/predictor-audit.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/tokens-vars.css">
+<style>
+  :root {
+    --bg:           #f0f9f9;
+    --surface:      #ffffff;
+    --surface2:     #e8f4f4;
+    --accent:       #4d6e68;
+    --accent-teal:  #5d8a82;
+    --accent-warm:  #c4855a;
+    --text:         #3d5c57;
+    --text-muted:   #4d6e68;
+    --text-dim:     #7a9e97;
+    --border:       rgba(144,167,165,0.18);
+    --border-med:   rgba(144,167,165,0.32);
+    --green:        #6b9e7a;
+    --warm:         #c4855a;
+    --red:          #b5654d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .page-wrap { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--accent); text-decoration: none; text-transform: uppercase;
+    margin-bottom: 2.5rem; transition: gap 0.2s;
+  }
+  .back-link:hover { gap: 0.75rem; }
+  .eyebrow {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.22em;
+    color: var(--accent-warm); text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .page-title { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 300; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 1rem; }
+  .page-title .solid { font-weight: 700; }
+  .page-desc { font-size: 0.85rem; color: var(--text-muted); max-width: 560px; line-height: 1.75; margin-bottom: 2rem; }
+  .meta-line { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 3rem; }
+
+  .stats-row { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .stat-item { flex: 1; background: var(--surface); padding: 1.25rem 1rem; text-align: center; min-width: 110px; }
+  .stat-val { font-size: 1.6rem; font-weight: 300; color: var(--accent-warm); letter-spacing: -0.03em; line-height: 1; display: block; margin-bottom: 0.3rem; }
+  .stat-label { font-size: 0.55rem; font-weight: 500; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+
+  .content-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+  .content-section h2 { font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem; letter-spacing: -0.01em; }
+  .content-section h3 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; margin: 1.5rem 0 0.6rem; color: var(--accent); }
+  .content-section p { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.75; }
+  .content-section li { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.7; margin-left: 1.1rem; }
+  code { font-family: 'Courier New', monospace; font-size: 0.72rem; background: var(--surface2); padding: 0.1rem 0.3rem; border-radius: 3px; }
+
+  .callout { border-left: 3px solid var(--warm); background: var(--surface2); padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem; }
+  .callout p { margin-bottom: 0.5rem; font-size: 0.76rem; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .tbl-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+  th { text-align: left; font-weight: 600; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border-med); white-space: nowrap; }
+  td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-muted); font-family: 'Courier New', monospace; }
+  td.name { font-family: 'Montserrat', sans-serif; font-weight: 400; color: var(--text); }
+  tr.headline td { background: rgba(196,133,90,0.06); }
+  .num-good { color: var(--green); font-weight: 500; }
+  .num-bad { color: var(--red); font-weight: 500; }
+
+  .footer-note { font-size: 0.65rem; color: var(--text-dim); line-height: 1.8; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <a class="back-link" href="/">← Kinetica AI</a>
+
+  <div class="eyebrow">Audit · non-destructive · v1.0</div>
+  <h1 class="page-title">What the headline number <span class="solid">looked like</span> after an honest re-validation.</h1>
+  <p class="page-desc">
+    The symptom predictor was re-run under validation regimes designed to break it: blocked
+    cross-validation with an embargo, feature selection nested inside every training fold,
+    prior-day activity forced into the model, and a permutation null. This page reports what
+    survived and what did not. Production code and canonical data were read-only throughout.
+  </p>
+  <p class="meta-line">Audit date 2026-06-08 · model v3.1 · single subject (N-of-1) · owner Alfonso Navarro</p>
+
+  <div class="stats-row">
+    <div class="stat-item"><span class="stat-val">0.795</span><span class="stat-label">Leakage-safe AUC</span></div>
+    <div class="stat-item"><span class="stat-val">0.829</span><span class="stat-label">Reported LOO AUC</span></div>
+    <div class="stat-item"><span class="stat-val">+0.034</span><span class="stat-label">Optimism gap</span></div>
+    <div class="stat-item"><span class="stat-val">0.003</span><span class="stat-label">Permutation p</span></div>
+    <div class="stat-item"><span class="stat-val">0.61</span><span class="stat-label">48h model, honest</span></div>
+  </div>
+
+  <div class="content-section">
+    <h2>Bottom line</h2>
+    <div class="callout">
+      <p><strong>The signal is real but weaker than first reported.</strong> Lower nightly RMSSD does
+      track higher self-reported autonomic symptom burden, and that association survives a
+      permutation null (p = 0.003) and adjustment for prior-day activity load.</p>
+      <p><strong>The optimism came from feature selection, not from time.</strong> Nesting the forward
+      selection inside each training fold drops the headline from 0.829 to 0.795. Temporal leakage
+      is negligible here because the target has ≈0 autocorrelation across diary days.</p>
+      <p><strong>The 48-hour-ahead deployment model does not hold up.</strong> Restricted to lag ≥ 2
+      and validated honestly it lands at ≈0.61 with a permutation p of 0.095 — indistinguishable
+      from chance at any usable threshold. It should not be presented as a forecasting product.</p>
+      <p><strong>Wording had to change.</strong> The target is the diary field
+      <code>disfuncion_autonomica ≥ 5</code> — a self-report, not a measured autonomic
+      dysfunction. Describing it as "autonomic dysfunction predicted from HRV" overstates the construct.</p>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <h2>ROC-AUC by validation regime</h2>
+    <p>PR-AUC (average precision) in parentheses; compare to the base rate. All AUCs come from
+    pooled out-of-fold predictions, not mean-of-fold AUCs.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model / target</th><th>n (pos/neg)</th><th>base</th><th>LOO</th>
+            <th>fwd-chain</th><th>blocked+embargo</th><th>nested-select</th>
+            <th>activity-adj</th><th>perm p</th><th>gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="headline">
+            <td class="name">Autonomic symptom burden (headline, all lags)</td>
+            <td>55 (32/23)</td><td>0.58</td><td>0.829 (0.86)</td><td>0.824 (0.85)</td>
+            <td>0.823 (0.86)</td><td class="num-good">0.795 (0.84)</td><td>0.806</td>
+            <td class="num-good">0.003</td><td>+0.034</td>
+          </tr>
+          <tr>
+            <td class="name">Same target, 48h deployment (lag ≥ 2)</td>
+            <td>55 (32/23)</td><td>0.58</td><td>0.688 (0.77)</td><td>0.618 (0.69)</td>
+            <td>0.702 (0.79)</td><td class="num-bad">0.614 (0.70)</td><td>0.659</td>
+            <td class="num-bad">0.095</td><td>+0.074</td>
+          </tr>
+          <tr>
+            <td class="name">Severity</td>
+            <td>61 (35/26)</td><td>0.57</td><td>0.837 (0.85)</td><td>0.790 (0.83)</td>
+            <td>0.828 (0.85)</td><td class="num-good">0.810 (0.81)</td><td>0.764</td>
+            <td class="num-good">0.002</td><td>+0.028</td>
+          </tr>
+          <tr>
+            <td class="name">PEM</td>
+            <td>61 (41/20)</td><td>0.67</td><td>0.799 (0.91)</td><td>0.746 (0.88)</td>
+            <td>0.807 (0.91)</td><td>0.769 (0.89)</td><td>0.787</td>
+            <td class="num-good">0.009</td><td>+0.029</td>
+          </tr>
+          <tr>
+            <td class="name">Fatigue</td>
+            <td>61 (37/24)</td><td>0.61</td><td>0.770 (0.79)</td><td>0.711 (0.76)</td>
+            <td>0.762 (0.79)</td><td class="num-bad">0.618 (0.70)</td><td>0.747</td>
+            <td>0.017</td><td>+0.152</td>
+          </tr>
+          <tr>
+            <td class="name">Brain fog</td>
+            <td>61 (55/6)</td><td>0.90</td><td>0.988 (1.00)</td><td>0.963 (1.00)</td>
+            <td>0.982 (1.00)</td><td>0.921 (0.99)</td><td>0.979</td>
+            <td>0.009</td><td>+0.067</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.68rem">
+      <strong>fwd-chain</strong> — expanding window, train on past, predict next.
+      <strong>blocked+embargo</strong> — five contiguous calendar blocks, training days within
+      3 days (≥ max lag) of any test day purged.
+      <strong>nested-select</strong> — forward selection re-run inside each training fold; this is
+      the honest number.
+      <strong>activity-adj</strong> — blocked+embargo with prior-day <code>met_minutes</code> forced in.
+      Brain fog has only 6 negatives, so its PR-AUC ≈ prevalence: the high AUC is mostly class imbalance.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>What each test was trying to break</h2>
+
+    <h3>Reproduction (step 0)</h3>
+    <p>Forward selection + LOO reproduced the production numbers to ±0.0000 on every target, so
+    every delta below is attributable to the validation change and not to harness drift.</p>
+
+    <h3>Temporal leakage (step 1)</h3>
+    <p>LOO 0.829 versus blocked-embargo 0.823 — a gap of +0.005. The diary target has essentially
+    no autocorrelation across diary days (lag-1 ACF −0.03), so leaving one day out does not leak
+    through its temporal neighbours. The HRV features themselves do persist day to day
+    (lag-1 ≈ 0.22), but a sparse, non-autocorrelated target blunts that into negligible CV leakage.</p>
+
+    <h3>Feature-selection leakage (step 2)</h3>
+    <p>This is where the optimism lives. Selecting features on the full dataset and then
+    cross-validating reuses the held-out day twice. Nesting selection inside each fold costs the
+    headline 0.034 AUC — and costs the fatigue model 0.152, which is the single largest correction
+    in the audit. <code>hrv_rmssd_night_t0</code> is the one feature stable across folds
+    (selected in 4 of 5 for the headline, 5 of 5 for severity, PEM and fatigue).</p>
+
+    <h3>Activity confound (step 3)</h3>
+    <p>The obvious alternative explanation is that HRV is a proxy for how much the subject moved
+    the day before. Forcing prior-day <code>met_minutes</code> into the model leaves the HRV
+    coefficients essentially unchanged (<code>hrv_rmssd_night_t0</code> −1.22 → −1.27) and costs
+    only 0.018 AUC. For this target the HRV signal is not an activity artifact.</p>
+
+    <h3>Permutation null (step 4)</h3>
+    <p>Target labels shuffled, full nested pipeline re-run. Observed nested AUC 0.772 against a
+    null mean of 0.495 and a 95th percentile of 0.663 → p = 0.003. The deployment model fails this
+    test (p = 0.095), which is the clearest single reason not to ship it.</p>
+  </div>
+
+  <div class="content-section">
+    <h2>Claims corrected as a result</h2>
+    <ul>
+      <li>"Predicts autonomic dysfunction" → predicts a <em>self-reported</em> autonomic symptom
+      score crossing a threshold. The construct is a diary field, not a measurement.</li>
+      <li>Headline AUC reported as the leakage-safe nested figure, with the optimistic LOO value
+      shown alongside rather than instead of it.</li>
+      <li>The 48-hour-ahead framing is withdrawn from the results narrative. The honest number is
+      0.614 with p = 0.095.</li>
+      <li>Brain fog is reported with its base rate and PR-AUC attached, because AUC alone is
+      misleading at a 55/6 class split.</li>
+    </ul>
+  </div>
+
+  <p class="footer-note">
+    Exploratory, single-subject (N-of-1), PPG-derived features from a consumer wearable.
+    Hypothesis-generating, not diagnostic. No clinical claim is made or implied.
+    Every figure on this page comes from the audit harness under <code>analysis/audit/</code>;
+    the audit was non-destructive and did not modify production code or canonical data.
+  </p>
+</div>
+</body>
+</html>
