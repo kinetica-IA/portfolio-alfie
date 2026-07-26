@@ -23,7 +23,7 @@ const FEATURED = [
     Symbol: SignalSymbol,
     title: 'ANS Predictor',
     copy: 'Multi-target models estimate symptom burden from nocturnal HRV and diary-linked physiology, on the same Polar pipeline.',
-    metric: 'AUC 0.829 autonomic · 0.837 severity · n=61',
+    metric: 'AUC 0.795 autonomic (n=55) · 0.810 severity (n=61) · leakage-safe',
     ctaText: 'View predictor',
     ctaHref: '/ans-predictor.html',
   },
@@ -34,7 +34,7 @@ const FEATURED = [
     Symbol: PulseSymbol,
     title: 'Sleep Quality Predictor',
     copy: 'Sleep quality treated as its own clinical signal — how nocturnal structure and autonomic patterns track perceived degradation and recovery.',
-    metric: 'AUC 0.77 · same physiological foundation',
+    metric: 'AUC 0.74 · CI₉₅ [0.57, 0.88] · same physiological foundation',
     ctaText: 'Explore sleep model',
     ctaHref: '/sleep-quality-predictor.html',
   },
@@ -44,28 +44,40 @@ const FEATURED = [
     rgb: '191,168,122',
     Symbol: SignalSymbol,
     title: 'Cross-Predictor Convergence',
-    copy: 'Where two independent models agree: ANS and Sleep each selected nocturnal RMSSD as their top fatigue feature, on their own.',
-    metric: 'r=0.66 · 79% day-level agreement · n=42',
+    copy: 'Two feature sets over the same subject agree in part — but the sleep model carries only RMSSD terms, so the shared feature explains much of that agreement. A result about feature redundancy, not independent corroboration.',
+    metric: 'r=0.66 · 79% agreement, κ=0.46 · n=42',
     ctaText: 'Explore convergence',
     ctaHref: '/convergence-analysis.html',
+  },
+  {
+    badge: 'AUDIT',
+    color: 'var(--warm)',
+    rgb: '196,133,90',
+    Symbol: SignalSymbol,
+    wide: true,
+    title: 'Predictor Leakage Audit',
+    copy: 'The predictor re-run under regimes designed to break it: selection nested inside every fold, blocked CV with an embargo, prior-day activity forced in, and a permutation null. It cost the headline 0.034 AUC and retired the 48-hour forecasting claim entirely.',
+    metric: '0.795 leakage-safe vs 0.829 LOO · permutation p=0.003 · 48h model withdrawn at 0.614, p=0.095',
+    ctaText: 'Read the audit',
+    ctaHref: '/predictor-audit.html',
   },
 ]
 
 // ── Index: the architecture and infrastructure, as a tidy list ──────
 const INDEX = [
   {
-    badge: 'AGENT',
+    badge: 'ARCHIVED',
     color: 'var(--moss)',
     title: 'IO3 Clinical Agent',
-    copy: 'A LangGraph agent orchestrating models, clinical rules and retrieval for guarded chronic-care reasoning.',
+    copy: 'A LangGraph agent orchestrating models, clinical rules and retrieval for guarded chronic-care reasoning. Archived — kept published for the architecture, not running.',
     ctaHref: '/io-architecture.html',
     external: false,
   },
   {
-    badge: 'SAFETY',
+    badge: 'ARCHIVED',
     color: 'var(--warm)',
     title: 'ALMA Safety & Evaluation',
-    copy: 'A deterministic safety layer screening responses for pharmacological risk, diagnostic overreach and scope violations.',
+    copy: 'A deterministic safety layer screening responses for pharmacological risk, diagnostic overreach and scope violations. Archived alongside IO3.',
     ctaHref: '/io-architecture.html#alma',
     external: false,
   },
@@ -73,7 +85,7 @@ const INDEX = [
     badge: 'KNOWLEDGE',
     color: 'var(--ice)',
     title: 'Clinical Knowledge & RAG',
-    copy: 'A curated base of 1,880 audited chunks across HRV, PEM, osteopathy and neurodynamics, benchmarked at 0.85 retrieval accuracy.',
+    copy: 'A curated base across HRV, PEM, osteopathy and neurodynamics. Retrieval scored 0.85 on a 20-question smoke test — Wilson 95% interval [0.64, 0.95], too small to call a benchmark.',
     ctaHref: '/knowledge-rag.html',
     external: false,
   },
@@ -91,7 +103,7 @@ function FeaturedCard({ card, index, revealed }) {
   const { Symbol } = card
   return (
     <div
-      className="or-card"
+      className={card.wide ? 'or-card or-card-wide' : 'or-card'}
       style={{
         '--or-color': card.color,
         '--or-rgb': card.rgb,
@@ -197,6 +209,8 @@ export default function OpenResearch() {
           grid-template-columns: repeat(2, 1fr);
           gap: 20px;
         }
+        /* The audit spans the full row — it is the closing claim, not a peer */
+        .or-card-wide { grid-column: 1 / -1; }
         @media (max-width: 640px) {
           .or-grid { grid-template-columns: 1fr; }
         }

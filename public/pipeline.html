@@ -360,7 +360,7 @@ code {
       <div class="level-node" style="--node-color:#5d8a82;--node-bg:rgba(93,138,130,0.1)">
         <span class="level-node__chip">L5</span>
         <span class="level-node__name">Model outputs</span>
-        <span class="level-node__desc">5 targets · AUC 0.829</span>
+        <span class="level-node__desc">5 targets · AUC 0.795 leakage-safe</span>
       </div>
       <div class="level-connector"><svg viewBox="0 0 20 12"><line x1="0" y1="6" x2="15" y2="6" stroke="rgba(144,167,165,0.6)" stroke-width="1"/><polygon points="15,3 20,6 15,9" fill="rgba(144,167,165,0.6)"/></svg></div>
 
@@ -550,8 +550,11 @@ code {
       The L5 predictor layer runs forward feature selection independently per target symptom.
       Leave-one-out cross-validation is the primary validation strategy — every paired day
       serves as both training and test exactly once. Bootstrap CI (1000&#215;) quantifies
-      uncertainty per target. The deployment target is autonomic dysfunction,
-      reaching AUC&nbsp;0.829 on N&nbsp;=&nbsp;55 paired days.
+      uncertainty per target. The headline target is a self-reported autonomic symptom score,
+      reaching AUC&nbsp;0.795 on N&nbsp;=&nbsp;55 paired days once feature selection is nested
+      inside each fold; the LOO figure of 0.829 that this layer reports is optimistic by
+      0.034 for that reason. See the
+      <a href="/predictor-audit.html">predictor audit</a> for the full breakdown.
     </p>
     <p class="section-body">
       L6 assembles all pipeline outputs into <code>polar_live.json</code> using an atomic
@@ -567,8 +570,8 @@ code {
         <span class="stat-label">Targets</span>
       </div>
       <div class="stat-item">
-        <span class="stat-val" id="l5-auc">0.829</span>
-        <span class="stat-label">Headline AUC</span>
+        <span class="stat-val" id="l5-auc">0.795</span>
+        <span class="stat-label">Headline AUC, leakage-safe</span>
       </div>
       <div class="stat-item">
         <span class="stat-val" id="l5-n">55</span>

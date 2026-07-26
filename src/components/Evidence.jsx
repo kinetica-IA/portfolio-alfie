@@ -13,15 +13,15 @@ const RESULTS = [
     color: 'var(--green)',
   },
   {
-    value: '0.829 / 0.837',
-    unit: 'AUC',
-    caption: 'Autonomic burden and symptom severity, leave-one-out, N-of-1. Bootstrap confidence intervals.',
+    value: '0.795 / 0.810',
+    unit: 'AUC, leakage-safe',
+    caption: 'Autonomic symptom burden and severity, with feature selection nested inside every fold. The optimistic leave-one-out figures were 0.829 / 0.837; both survive a permutation null (p = 0.003 / 0.002).',
     color: 'var(--sea)',
   },
   {
     value: '0.85',
-    unit: 'retrieval acc.',
-    caption: 'Curated clinical RAG over 1,880 audited chunks, scored on a 20-question benchmark.',
+    unit: 'retrieval acc. · n=20',
+    caption: 'Curated clinical RAG, scored on a 20-question smoke test — not a benchmark. At n=20 the Wilson 95% interval runs [0.64, 0.95].',
     color: 'var(--ice)',
   },
 ]
@@ -32,7 +32,7 @@ export default function Evidence() {
   return (
     <section className="section evidence" id="evidence" ref={ref}>
       <span className="eyebrow" style={{ color: 'var(--sea)' }}>EVIDENCE</span>
-      <h2 className="ev-title">Results that hold up to inspection</h2>
+      <h2 className="ev-title">Results, with the audit that corrected them</h2>
 
       <div className="ev-grid">
         {RESULTS.map((r, i) => (
