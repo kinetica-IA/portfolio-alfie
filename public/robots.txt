@@ -5,7 +5,4 @@ Allow: /
 Disallow: /assets/Optimizacion-ARM64.pdf
 Disallow: /assets/IA-y-Empatia.pdf
 
-# Bloquear datos internos
-Disallow: /data/
-
 Sitemap: https://www.kineticaai.com/sitemap-index.xml
