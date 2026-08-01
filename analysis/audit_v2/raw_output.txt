@@ -1,0 +1,153 @@
+
+==============================================================================
+A. ARTEFACT AVAILABILITY
+==============================================================================
+  data/processed/L1: EMPTY (only .gitkeep)
+  data/processed/L2: EMPTY (only .gitkeep)
+  data/processed/L3: EMPTY (only .gitkeep)
+  data/processed/L4: EMPTY (only .gitkeep)
+  data/processed/L5: EMPTY (only .gitkeep)
+  data/diary_live.csv: 61 rows, cols=['date', 'schema_version', 'severidad_global', 'fatiga', 'pem', 'niebla_mental', 'disfuncion_autonomica', 'dolor', 'nota']
+  polar_live.json series: 90 rows 2026-05-02 → 2026-07-30, cols=['date', 'recovery_sublevel', 'recovery_heart_rate', 'sleep_score', 'sleep_wake_min', 'active_calories']
+  diary ∩ series dates: 0
+  data/hrv_features.csv exists: False
+  data/hrv_rr_nightly.csv exists: False
+  data/polar_live.full.json exists: False
+
+==============================================================================
+C3. DIARY MISSINGNESS OVER CALENDAR TIME
+==============================================================================
+  diary first=2025-09-02 last=2026-04-02 span=213 calendar days, n_entries=61
+  coverage = 61/213 = 0.286
+  stated observation window (docs/polar_live) = 2025-08-25 → 2026-04-27 (243 d)
+  diary entries fall inside 243-day window: 61
+  days of the 243-day window with NO diary entry: 182
+  gaps: max=32d  median=1.0d  mean=3.53d
+  runs of absence > 5 days: 10
+    2025-09-23 → 2025-09-30: 6 consecutive days absent
+    2025-10-08 → 2025-10-21: 12 consecutive days absent
+    2025-10-24 → 2025-11-01: 7 consecutive days absent
+    2025-11-04 → 2025-11-21: 16 consecutive days absent
+    2025-11-21 → 2025-12-06: 14 consecutive days absent
+    2025-12-11 → 2025-12-30: 18 consecutive days absent
+    2025-12-30 → 2026-01-14: 14 consecutive days absent
+    2026-01-14 → 2026-01-23: 8 consecutive days absent
+    2026-01-23 → 2026-02-01: 8 consecutive days absent
+    2026-03-01 → 2026-04-02: 31 consecutive days absent
+  total days inside absence-runs>5: 134
+
+  monthly entry counts:
+    2025-09: 16
+    2025-10: 6
+    2025-11: 4
+    2025-12: 3
+    2026-01: 2
+    2026-02: 28
+    2026-03: 1
+    2026-04: 1
+
+  per-column non-null counts:
+    fatiga: 61/61 non-null
+    pem: 61/61 non-null
+    niebla_mental: 61/61 non-null
+    disfuncion_autonomica: 55/61 non-null
+    dolor: 55/61 non-null
+    severidad_global: 61/61 non-null
+
+==============================================================================
+C5. THRESHOLD SENSITIVITY — CLASS COUNTS AND ORDINAL DISTRIBUTION
+==============================================================================
+  disfuncion_autonomica: n=55 (rows with value), 6 missing
+  min=0.0 max=9.0 mean=4.673 median=5.0 sd=2.446
+  value distribution:
+    0.0: 5
+    1.0: 4
+    2.5: 1
+    3.0: 4
+    4.0: 8
+    4.5: 1
+    5.0: 10
+    5.5: 2
+    6.0: 9
+    6.5: 1
+    7.0: 2
+    7.5: 1
+    8.0: 3
+    8.5: 2
+    9.0: 2
+
+  threshold  n_pos  n_neg  base_rate  minority_n  >=15?
+         3     45     10      0.818          10  NO
+         4     41     14      0.745          14  NO
+         5     32     23      0.582          23  yes
+         6     20     35      0.364          20  yes
+         7     10     45      0.182          10  NO
+
+  rows with disfuncion_autonomica exactly == 5.0: 10
+  rows in (4,5) exclusive: 1
+  fraction of positives at thr=5 that sit exactly on 5.0: 10 / 32
+
+==============================================================================
+C6. TEMPORAL DRIFT AND AUTOCORRELATION OF THE TARGET
+==============================================================================
+  raw target vs day-index: slope=-0.00127/day  r=-0.0358  r2=0.0013  p=0.7951  n=55
+  implied drift over the 212-day span: -0.270 points
+  lag-1 ACF, raw target (consecutive DIARY ENTRIES, not calendar days): 0.1465 (n_pairs=54)
+  lag-1 ACF, linearly detrended:                                       0.1472
+  lag-1 ACF restricted to adjacent calendar days (n_pairs=38): raw=0.3751  detrended=0.3801
+  lag-1 ACF after 14-day rolling-mean removal: 0.2314
+
+  drift in every diary dimension (slope per day, r, p):
+    fatiga                   slope=+0.00030  r=+0.0087  p=0.9471  n=61
+    pem                      slope=-0.00248  r=-0.0806  p=0.5367  n=61
+    niebla_mental            slope=+0.00342  r=+0.1131  p=0.3853  n=61
+    disfuncion_autonomica    slope=-0.00127  r=-0.0358  p=0.7951  n=55
+    dolor                    slope=-0.00161  r=-0.0493  p=0.7209  n=55
+    severidad_global         slope=+0.00252  r=+0.0799  p=0.5407  n=61
+
+==============================================================================
+C9. ALGEBRAIC COUPLING — severidad_global VS ITS COMPONENTS
+==============================================================================
+  Formula per scripts/log_diary.py:260-261 —
+    sev_components = [fatiga, pem, niebla] + [auto if present] + [dolor if present]
+    severidad_global = round(mean(sev_components), 1)
+
+  rows checked: 61 (skipped 0 for missing components)
+  |recomputed − stored| : max=5.1000  mean=0.5082
+  exact matches (dev <= 0.05): 28/61 = 0.4590
+  rows deviating > 0.05: 33
+  schema_version counts: {'DIARY_v1': 10, 'DIARY_v2': 25, 'DIARY_v3': 26}
+
+  Spearman rho between severidad_global and each of its own components:
+    severidad_global ~ fatiga                   rho=+0.9135  p=1.011e-24  n=61
+    severidad_global ~ pem                      rho=+0.7197  p=6.312e-11  n=61
+    severidad_global ~ niebla_mental            rho=+0.8377  p=3.909e-17  n=61
+    severidad_global ~ disfuncion_autonomica    rho=+0.7246  p=4.008e-10  n=55
+    severidad_global ~ dolor                    rho=+0.7559  p=2.526e-11  n=55
+
+  Cross-target Spearman (all diary-internal, no device involved):
+    fatiga                   ~ pem                      rho=+0.6868  p=9.866e-10  n=61
+    fatiga                   ~ niebla_mental            rho=+0.8949  p=2.458e-22  n=61
+    fatiga                   ~ disfuncion_autonomica    rho=+0.6411  p=1.343e-07  n=55
+    fatiga                   ~ dolor                    rho=+0.6874  p=6.751e-09  n=55
+    pem                      ~ niebla_mental            rho=+0.6549  p=1.033e-08  n=61
+    pem                      ~ disfuncion_autonomica    rho=+0.7445  p=7.218e-11  n=55
+    pem                      ~ dolor                    rho=+0.7309  p=2.376e-10  n=55
+    niebla_mental            ~ disfuncion_autonomica    rho=+0.6199  p=4.493e-07  n=55
+    niebla_mental            ~ dolor                    rho=+0.7170  p=7.410e-10  n=55
+    disfuncion_autonomica    ~ dolor                    rho=+0.7514  p=3.875e-11  n=55
+
+==============================================================================
+C8. PUBLISHED MODEL BLOCK IDENTITY (polar_live.json)
+==============================================================================
+  predictor.targets.fatiga == sleep_quality (deep equality): True
+  keys compared: ['auc_ci95_lower', 'auc_ci95_upper', 'auc_loo', 'coefficients', 'intercept', 'n_negative', 'n_positive', 'n_training', 'scaler_mean', 'scaler_scale', 'selected_features', 'sensitivity', 'specificity', 'target_name']
+  fatiga block: features=['hrv_rmssd_night_t0', 'hrv_rmssd_night_t1'] auc=0.7703 n=61
+  sleep_quality block: features=['hrv_rmssd_night_t0', 'hrv_rmssd_night_t1'] auc=0.7703 n=61
+  headline: {'metric': 'AUC', 'value': 0.829, 'target': 'disfuncion_autonomica', 'n': 55, 'ci95': [0.715, 0.936], 'features': ['hrv_rmssd_night_t0', 'recovery_sublevel_t3']}
+  data_window: {'start': '2025-08-25', 'end': '2026-04-27', 'n_days': 243, 'n_diary_entries': 61, 'n_paired': 61, 'n_training_sessions': 107}
+  pipeline_run_id: 1102e14  updated_at: 2026-07-31T06:00:00Z
+
+==============================================================================
+DONE
+==============================================================================
