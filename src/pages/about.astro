@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro'
+import AboutBio from '../components/AboutBio.jsx'
+import { getEntry, render } from 'astro:content'
+
+const entry = await getEntry('pages', 'about')
+const { Content } = await render(entry)
+---
+<Layout>
+  <section class="section about-page">
+    <span class="eyebrow" style="color: var(--sea)">SOBRE MÍ</span>
+    <h1 class="about-title">{entry.data.title}</h1>
+    <div class="about-prose">
+      <Content />
+    </div>
+    <AboutBio client:load />
+  </section>
+
+  <style>
+    .about-page {
+      display: flex;
+      flex-direction: column;
+    }
+    .about-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 var(--space-subsection);
+    }
+    .about-prose {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.75;
+      max-width: 640px;
+    }
+    .about-prose :global(p) {
+      margin: 0 0 18px;
+    }
+  </style>
+</Layout>
