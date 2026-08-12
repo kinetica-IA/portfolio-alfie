@@ -1,12 +1,39 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
-// HERO — value-first. The promise is the headline; the live signal
-// is the proof. Wordmark lives in the topbar.
+// HERO — wordmark + alternating slogan, boot-sequence entrance.
 // ════════════════════════════════════════════════════════════════════
 
-export default function Hero({ children }) {
-  const heroRef = useRef(null)
+const SUBTITLES = ['Recupera tu movimiento', 'Del síntoma al mecanismo']
+const CYCLE_MS = 4000
+const DECODE_MS = 1000
 
+const MAILTO_HREF = 'mailto:alfon.atman@gmail.com?subject=Consulta%20osteopat%C3%ADa&body=Describe%20tu%20problema%20con%20tus%20palabras.'
+
+function useAlternating(strings, cycleMs) {
+  const [index, setIndex] = useState(0)
+  const [reducedMotion, setReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mq.matches)
+    const onChange = (e) => setReducedMotion(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  useEffect(() => {
+    if (reducedMotion) return
+    const id = setInterval(() => {
+      setIndex(i => (i + 1) % strings.length)
+    }, cycleMs)
+    return () => clearInterval(id)
+  }, [reducedMotion, strings.length, cycleMs])
+
+  return { current: strings[index], reducedMotion }
+}
+
+export default function Hero() {
   const [shown, setShown] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setShown(true), 120)
@@ -20,6 +47,9 @@ export default function Hero({ children }) {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  const { current, reducedMotion } = useAlternating(SUBTITLES, CYCLE_MS)
+  const tagline = useTextDecode(current, { isActive: !reducedMotion, duration: DECODE_MS })
+
   const rise = (i) => ({
     opacity: shown ? 1 : 0,
     transform: shown ? 'translateY(0)' : 'translateY(14px)',
@@ -27,31 +57,18 @@ export default function Hero({ children }) {
   })
 
   return (
-    <section className="hero section" ref={heroRef}>
+    <section className="hero section">
       <div className="hero-content">
-        <span className="hero-eyebrow" style={rise(0)}>
-          N-of-1 · longitudinal · open research
-        </span>
+        <h1 className="hero-brand" style={rise(0)}>KINETICAAI</h1>
 
-        <h1 className="hero-headline" style={rise(1)}>
-          <strong className="hero-num">243 days</strong> of one body,
-          turned into <em>auditable</em> clinical AI.
-        </h1>
-
-        <p className="hero-sub" style={rise(2)}>
-          Pipeline · predictors · guarded agent · safety layer. End to end, open, reproducible.
+        <p className="hero-tagline" style={rise(1)} aria-live="polite">
+          {reducedMotion ? SUBTITLES[0] : tagline}
         </p>
 
-        <div className="hero-cta" style={rise(3)}>
-          <a href="#system" className="hero-btn hero-btn--primary">Explore the system</a>
-          <a href="#research" className="hero-btn hero-btn--secondary">View open research</a>
+        <div className="hero-cta" style={rise(2)}>
+          <a href={MAILTO_HREF} className="hero-btn hero-btn--primary">Cuéntame tu caso, sin compromiso</a>
+          <a href="/informes" className="hero-btn hero-btn--secondary">Ver informes</a>
         </div>
-
-        {children && (
-          <div className="hero-live" style={rise(4)}>
-            {children}
-          </div>
-        )}
       </div>
 
       <div className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}>
@@ -75,43 +92,23 @@ export default function Hero({ children }) {
           z-index: 1;
           width: 100%;
         }
-        .hero-eyebrow {
-          display: inline-block;
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          font-weight: 500;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--text-dim);
-          margin-bottom: 24px;
-        }
-        .hero-headline {
+        .hero-brand {
           font-family: var(--sans);
-          font-size: clamp(2.25rem, 4.6vw, 3.5rem);
+          font-size: var(--text-hero);
           font-weight: 500;
-          line-height: 1.18;
           letter-spacing: -0.01em;
           color: var(--text-heading);
-          max-width: 760px;
           text-shadow: 0 1px 3px rgba(36, 64, 60, 0.05);
         }
-        .hero-num {
-          font-weight: 600;
-          color: var(--green);
-          white-space: nowrap;
-        }
-        .hero-headline em {
-          font-style: normal;
-          color: var(--text-heading);
-        }
-        .hero-sub {
+        .hero-tagline {
           font-family: var(--mono);
-          font-size: var(--text-caption);
+          font-size: var(--text-body-lg);
           color: var(--text-dim);
           letter-spacing: 0.04em;
           line-height: 1.7;
           max-width: 560px;
-          margin: 28px 0 0;
+          margin: 20px 0 0;
+          min-height: 1.7em;
         }
         .hero-cta {
           display: flex;
@@ -148,14 +145,6 @@ export default function Hero({ children }) {
         @media (max-width: 480px) {
           .hero-cta { flex-direction: column; align-items: stretch; gap: 12px; }
           .hero-btn { width: 100%; text-align: center; }
-        }
-        .hero-live {
-          margin-top: 40px;
-          position: relative;
-          z-index: 1;
-          width: 100%;
-          display: flex;
-          justify-content: flex-start;
         }
         .hero-scroll {
           position: absolute;

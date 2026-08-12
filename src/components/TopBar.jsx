@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 const NAV = [
-  { label: 'System', href: '#system' },
-  { label: 'Evidence', href: '#evidence' },
-  { label: 'Research', href: '#research' },
-  { label: 'About', href: '#about' },
+  { label: 'Inicio', href: '/' },
+  { label: 'Sobre mí', href: '/about' },
+  { label: 'Informes', href: '/informes' },
+  { label: 'Lab', href: '/lab' },
+  { label: 'Contacto', href: '/#contacto' },
 ]
 
 export default function TopBar() {
@@ -22,12 +23,6 @@ export default function TopBar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const handleNav = (e, href) => {
-    e.preventDefault()
-    const el = document.querySelector(href)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <header
       className="topbar"
@@ -35,13 +30,13 @@ export default function TopBar() {
         transform: visible ? 'translateY(0)' : 'translateY(-100%)',
       }}
     >
-      <a href="#" className="topbar-brand" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
-        KINETICA AI
+      <a href="/" className="topbar-brand">
+        KINETICAAI
       </a>
 
       <nav className="topbar-nav">
         {NAV.map(n => (
-          <a key={n.href} href={n.href} className="topbar-link" onClick={e => handleNav(e, n.href)}>
+          <a key={n.href} href={n.href} className="topbar-link">
             {n.label}
           </a>
         ))}
