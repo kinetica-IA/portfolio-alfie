@@ -121,6 +121,18 @@ This requires introducing Astro routing beyond the single `index.astro` (e.g. `s
 - **Two additional workflows exist that are entirely predictor-infrastructure** and are not mentioned in the brief's "preserve CI/CD" scope in the same way `deploy.yml` is — see §9 for the explicit question this raises:
   - `.github/workflows/polar-biometrics.yml` — daily cron, fetches Polar HRV data, writes `public/data/polar_live.json` + `pipeline_state.json`, commits to `main`
   - `.github/workflows/polar-retrain.yml` — triggered on push to `data/diary_live.csv`, retrains the predictor, commits `polar_live.json`
+- **Second deploy integration discovered post-audit, via PR #18's automated checks**: Netlify auto-builds a deploy preview for every PR (no `netlify.toml` in the repo — its project config lives entirely in Netlify's own dashboard, connected through their GitHub App, invisible to a static repo scan). This wasn't visible from the repository alone and is now flagged as an open question in §9 — specifically whether Netlify is preview-only or also serves production traffic alongside/instead of GitHub Pages.
+- **Measured Lighthouse baseline** (from Netlify's automatic deploy-preview audit of the current `/` route, this PR, 2026-08-12 — first real data point against the Phase 4 gate, not something I ran manually):
+
+  | Metric | Score | Phase 4 threshold | Status |
+  |---|---|---|---|
+  | Performance | 68 | ≥ 90 | ❌ below gate |
+  | Accessibility | 96 | ≥ 95 | ✅ passes |
+  | Best Practices | 100 | ≥ 95 | ✅ passes |
+  | SEO | 100 | ≥ 90 | ✅ passes |
+  | PWA | 60 | *(not gated by the brief)* | — |
+
+  This is a *desktop* Netlify default audit, not the brief's mobile-specific Lighthouse run, so it's directional rather than the actual Phase 4 gate check — but it's a useful early signal that **Performance is the metric most likely to need real work**, independent of content changes. Worth keeping in mind through Phases 2–3 (e.g. the canvas-based ambient backgrounds, Google Fonts round-trip, and Cloudflare/GoatCounter/ntfy.sh third-party scripts are all plausible contributors) rather than treating it as a Phase-4-only concern.
 
 ---
 
@@ -245,6 +257,8 @@ Per the brief's own instruction ("Any deviation from the brief is proposed as a 
 10. **`@paper-design/shaders-react` dependency** — declared in `package.json` but not referenced anywhere in `src/` via grep. Appears to be pre-existing unused cruft, unrelated to the clinical pivot. Not touching it as part of this audit, flagging only for awareness; happy to remove it in Phase 1 as routine cleanup if you'd like.
 
 11. **`/diary.html` security note** (unrelated to the pivot itself, but surfaced during the audit): the page takes a GitHub Personal Access Token as browser input and stores/uses it client-side to write directly to the repo. Since this page is being deleted entirely per the brief, this resolves itself — noting only so it's not mistaken for an oversight.
+
+12. **Netlify deploy integration** (discovered via this PR's own automated checks, after the rest of the audit was written — not visible from a static repo scan since there's no `netlify.toml`). The repo/GitHub org is connected to a Netlify project that auto-builds a deploy preview — and runs a desktop Lighthouse audit — on every PR. `CNAME` + `deploy.yml` point at GitHub Pages for `www.kineticaai.com`, which strongly suggests Netlify is preview-only, but I can't confirm that from inside the repo since its config lives entirely in Netlify's dashboard. **Is Netlify preview-only, or does it also serve production traffic?** If it's more than previews, Phase 4's verification needs to account for it explicitly rather than assuming GitHub Pages is the only target.
 
 ---
 
