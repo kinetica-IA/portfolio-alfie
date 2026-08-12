@@ -15,15 +15,14 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- SEO -->
-    <title>Kinetica AI · Clinical AI Systems</title>
-    <meta name="description" content="N-of-1 longitudinal study predicting autonomic symptoms from wearable HRV. Clinical AI engineered by a clinical biomechanist, physics-trained, trained in osteopathy." />
+    <title>Kinetica AI</title>
+    <meta name="description" content="En construcción — nueva versión clínica en preparación." />
     <meta name="author" content="Alfonso Navarro" />
-    <meta name="keywords" content="Clinical AI, Kinetica AI, HRV, autonomic nervous system, post-Lyme, wearable monitoring, biomechanics, osteopathy, N-of-1, longitudinal, interpretable models" />
     <link rel="canonical" href="https://www.kineticaai.com" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Kinetica AI · Clinical AI Systems" />
-    <meta property="og:description" content="N-of-1 longitudinal study predicting autonomic symptoms from wearable HRV. Clinical AI engineered by a clinical biomechanist, physics-trained, trained in osteopathy." />
+    <meta property="og:title" content="Kinetica AI" />
+    <meta property="og:description" content="En construcción — nueva versión clínica en preparación." />
     <meta property="og:image" content="https://www.kineticaai.com/og-image.jpg" />
     <meta property="og:url" content="https://www.kineticaai.com" />
     <meta property="og:type" content="website" />
@@ -32,53 +31,9 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "name": "Kinetica AI",
-          "url": "https://www.kineticaai.com",
-          "description": "Clinical AI systems for wearable autonomic monitoring and multi-symptom prediction.",
-          "founder": {
-            "@type": "Person",
-            "@id": "#alfonso-navarro"
-          },
-          "sameAs": [
-            "https://www.linkedin.com/in/navarro-kinetica-ai",
-            "https://github.com/kinetica-IA"
-          ]
-        },
-        {
-          "@type": "Person",
-          "@id": "#alfonso-navarro",
-          "name": "Alfonso Navarro",
-          "jobTitle": "Clinical biomechanist, trained in osteopathy, building clinical AI",
-          "url": "https://www.kineticaai.com",
-          "sameAs": [
-            "https://www.linkedin.com/in/navarro-kinetica-ai",
-            "https://github.com/kinetica-IA"
-          ],
-          "knowsAbout": ["Biomechanics", "Osteopathy", "Heart Rate Variability", "Autonomic Nervous System", "Clinical AI", "Longitudinal monitoring", "Interpretable models"]
-        },
-        {
-          "@type": "SoftwareApplication",
-          "name": "polar-lyme-predictor",
-          "url": "https://github.com/kinetica-IA/polar-lyme-predictor",
-          "applicationCategory": "HealthApplication",
-          "description": "Multi-symptom clinical prediction from wearable HRV data. Open-source, N-of-1 longitudinal design.",
-          "operatingSystem": "Cross-platform",
-          "author": { "@type": "Person", "@id": "#alfonso-navarro" }
-        },
-        {
-          "@type": "Dataset",
-          "name": "Kinetica Biometric Archive",
-          "description": "200+ nights of RR interval data, daily symptom diary, and processed HRV features from a single post-Lyme patient.",
-          "url": "https://github.com/kinetica-IA/polar-lyme-predictor",
-          "license": "https://opensource.org/licenses/MIT",
-          "creator": { "@type": "Person", "@id": "#alfonso-navarro" },
-          "temporalCoverage": "2025-09/2026",
-          "variableMeasured": ["Heart Rate Variability", "RMSSD", "Sleep Score", "Symptom Severity"]
-        }
-      ]
+      "@type": "Organization",
+      "name": "Kinetica AI",
+      "url": "https://www.kineticaai.com"
     }
     </script>
 
@@ -97,24 +52,5 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
     <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
     <script data-goatcounter="https://kineticaai.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
-
-    <!-- Visit notification (ntfy.sh — fire-and-forget) -->
-    <script>
-    (function(){
-      try {
-        var d = {
-          p: location.pathname,
-          r: document.referrer || '(direct)',
-          l: navigator.language,
-          t: new Date().toISOString()
-        };
-        fetch('https://ntfy.sh/kineticaai-v-a7f3x9', {
-          method: 'POST',
-          headers: { Title: 'Visit: ' + d.p },
-          body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t
-        }).catch(function(){});
-      } catch(e) {}
-    })();
-    </script>
   </body>
 </html>
