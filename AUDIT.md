@@ -134,6 +134,8 @@ This requires introducing Astro routing beyond the single `index.astro` (e.g. `s
 
   This is a *desktop* Netlify default audit, not the brief's mobile-specific Lighthouse run, so it's directional rather than the actual Phase 4 gate check — but it's a useful early signal that **Performance is the metric most likely to need real work**, independent of content changes. Worth keeping in mind through Phases 2–3 (e.g. the canvas-based ambient backgrounds, Google Fonts round-trip, and Cloudflare/GoatCounter/ntfy.sh third-party scripts are all plausible contributors) rather than treating it as a Phase-4-only concern.
 
+  **Post-Phase-1 re-measurement** (same Netlify desktop audit, after the purge commits landed): Performance **68 → 75**, Accessibility/Best Practices/SEO/PWA unchanged (96/100/100/60). Unlike the 68→70 shift on the docs-only audit-addendum commit — noise, since that commit never touched site code — this 7-point jump lines up with an actual code change (deleting ~19k lines, the ntfy.sh script, and several dead components/scripts), so it's a real signal, not variance. Performance is still below the ≥90 gate, but the purge alone bought back roughly a third of the gap.
+
 ---
 
 ## 6. Kill list
