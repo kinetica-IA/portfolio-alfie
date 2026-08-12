@@ -2,10 +2,13 @@
 // src/layouts/Layout.astro
 import GrainHoverBackground from '../components/GrainHoverBackground.jsx'
 import { FloatingDecorators } from '../components/OrganicSymbols.jsx'
+import TopBar from '../components/TopBar.jsx'
+import FooterField from '../components/FooterField.jsx'
 import ClientRouter from 'astro/components/ClientRouter.astro'
+import '../styles/tokens.css'
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
@@ -47,10 +50,30 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
   <body>
     <GrainHoverBackground client:only="react" transition:persist="ambient-bg" />
     <FloatingDecorators client:load transition:persist="floating-deco" />
-    <slot />
+    <TopBar client:load transition:persist="topbar" />
+    <div class="content-layer">
+      <slot />
+    </div>
+    <FooterField />
 
     <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
     <script data-goatcounter="https://kineticaai.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
+
+    <style>
+      .content-layer {
+        position: relative;
+        z-index: 1;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 48px;
+      }
+      @media (max-width: 768px) {
+        .content-layer { padding: 0 20px; }
+      }
+      @media (max-width: 420px) {
+        .content-layer { padding: 0 16px; }
+      }
+    </style>
   </body>
 </html>
