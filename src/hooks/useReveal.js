@@ -2,7 +2,10 @@ import { useRef, useState, useEffect } from 'react'
 
 export function useReveal(threshold = 0.25) {
   const ref = useRef(null)
-  const [revealed, setRevealed] = useState(() => typeof window === 'undefined')
+  // Initial state must match between server and client render, or React
+  // throws a hydration mismatch on every mount that uses this hook. The
+  // IntersectionObserver effect below (client-only) does the revealing.
+  const [revealed, setRevealed] = useState(false)
 
   useEffect(() => {
     const obs = new IntersectionObserver(
