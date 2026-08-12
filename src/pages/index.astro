@@ -2,9 +2,20 @@
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro'
 import App from '../App.jsx'
-import '../styles/tokens.css'
+import { getCollection } from 'astro:content'
+
+const informesEntries = await getCollection('informes')
+const labEntries = await getCollection('lab')
+
+const informes = informesEntries
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
+
+const lab = labEntries
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
 ---
 
 <Layout>
-  <App client:load />
+  <App client:load informes={informes} lab={lab} />
 </Layout>

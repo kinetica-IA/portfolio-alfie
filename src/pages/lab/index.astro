@@ -1,0 +1,83 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+const KIND_LABEL = {
+  'n-of-1': 'N-DE-1',
+  'essay': 'ENSAYO',
+  'coursera-derived': 'FORMACIÓN',
+}
+
+const entries = (await getCollection('lab'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+---
+<Layout>
+  <section class="section lab-page">
+    <span class="eyebrow" style="color: var(--teal)">LAB</span>
+    <h1 class="lab-title">Cuaderno de trabajo</h1>
+    <div class="lab-grid">
+      {entries.map(entry => (
+        <a href={`/lab/${entry.data.slug}`} class="lab-card">
+          <span class="lab-card-kind">{KIND_LABEL[entry.data.kind] ?? entry.data.kind}</span>
+          <span class="lab-card-title">{entry.data.title}</span>
+          <span class="lab-card-summary">{entry.data.summary}</span>
+          <span class="lab-card-cta">Leer más →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .lab-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 var(--space-subsection);
+    }
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .lab-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--teal);
+      padding: 24px;
+      text-decoration: none;
+      transition: border-color var(--duration-hover) ease, background var(--duration-hover) ease;
+    }
+    .lab-card:hover {
+      border-color: var(--border-active);
+      border-top-color: var(--teal);
+      background: var(--fill-teal);
+    }
+    .lab-card-kind {
+      font-family: var(--mono);
+      font-size: var(--text-eyebrow);
+      letter-spacing: 0.08em;
+      color: var(--teal);
+    }
+    .lab-card-title {
+      font-family: var(--sans);
+      font-size: var(--text-subsection);
+      font-weight: 400;
+      color: var(--text-heading);
+    }
+    .lab-card-summary {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+    .lab-card-cta {
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--teal);
+      margin-top: auto;
+    }
+  </style>
+</Layout>
