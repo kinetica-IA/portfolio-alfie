@@ -6,6 +6,12 @@ import TopBar from '../components/TopBar.jsx'
 import FooterField from '../components/FooterField.jsx'
 import ClientRouter from 'astro/components/ClientRouter.astro'
 import '../styles/tokens.css'
+
+interface Props {
+  title?: string
+}
+
+const { title } = Astro.props
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -18,7 +24,7 @@ import '../styles/tokens.css'
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- SEO -->
-    <title>Kinetica AI — Osteopatía y biomecánica</title>
+    <title>{title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'}</title>
     <meta name="description" content="Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km." />
     <meta name="author" content="Alfonso Navarro" />
     <link rel="canonical" href="https://www.kineticaai.com" />

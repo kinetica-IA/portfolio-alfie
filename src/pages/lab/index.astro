@@ -12,7 +12,7 @@ const entries = (await getCollection('lab'))
   .filter(e => !e.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 ---
-<Layout>
+<Layout title="Lab">
   <section class="section lab-page">
     <span class="eyebrow" style="color: var(--teal)">LAB</span>
     <h1 class="lab-title">Cuaderno de trabajo</h1>

@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
-<Layout>
+<Layout title={entry.data.title}>
   <article class="section informe-page">
     <span class="eyebrow" style="color: var(--green)">INFORME</span>
     <h1 class="informe-title">{entry.data.title}</h1>

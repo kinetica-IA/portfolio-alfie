@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content'
 const entries = (await getCollection('informes'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 ---
-<Layout>
+<Layout title="Informes">
   <section class="section informes-page">
     <span class="eyebrow" style="color: var(--green)">INFORMES</span>
     <h1 class="informes-title">Casos clínicos</h1>
