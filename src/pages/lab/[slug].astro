@@ -9,7 +9,7 @@ const KIND_LABEL = {
 }
 
 export async function getStaticPaths() {
-  const entries = await getCollection('lab')
+  const entries = (await getCollection('lab')).filter(e => !e.data.draft && !e.data.external_route)
   return entries.map(entry => ({
     params: { slug: entry.data.slug },
     props: { entry },

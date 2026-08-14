@@ -12,6 +12,7 @@ const informes = informesEntries
   .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
 
 const lab = labEntries
+  .filter(e => !e.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
 ---

@@ -9,6 +9,7 @@ const KIND_LABEL = {
 }
 
 const entries = (await getCollection('lab'))
+  .filter(e => !e.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 ---
 <Layout>
@@ -17,7 +18,10 @@ const entries = (await getCollection('lab'))
     <h1 class="lab-title">Cuaderno de trabajo</h1>
     <div class="lab-grid">
       {entries.map(entry => (
-        <a href={`/lab/${entry.data.slug}`} class="lab-card">
+        <a
+          href={entry.data.external_route ?? `/lab/${entry.data.slug}`}
+          class:list={['lab-card', { 'lab-card-featured': !!entry.data.external_route }]}
+        >
           <span class="lab-card-kind">{KIND_LABEL[entry.data.kind] ?? entry.data.kind}</span>
           <span class="lab-card-title">{entry.data.title}</span>
           <span class="lab-card-summary">{entry.data.summary}</span>
@@ -55,6 +59,17 @@ const entries = (await getCollection('lab'))
       border-top-color: var(--teal);
       background: var(--fill-teal);
     }
+    .lab-card-featured {
+      grid-column: 1 / -1;
+      border-top-color: var(--warm);
+      background: var(--fill-warm);
+    }
+    .lab-card-featured:hover {
+      border-top-color: var(--warm);
+      background: var(--fill-warm);
+    }
+    .lab-card-featured .lab-card-kind { color: var(--warm); }
+    .lab-card-featured .lab-card-cta { color: var(--warm); }
     .lab-card-kind {
       font-family: var(--mono);
       font-size: var(--text-eyebrow);

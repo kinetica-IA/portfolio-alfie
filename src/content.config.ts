@@ -21,6 +21,8 @@ const lab = defineCollection({
     summary: z.string().max(200),
     kind: z.enum(['n-of-1', 'essay', 'coursera-derived']),
     date: z.date(),
+    external_route: z.string().optional(),
+    draft: z.boolean().default(false),
   }),
 })
 
