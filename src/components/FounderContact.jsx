@@ -27,7 +27,7 @@ export default function FounderContact() {
         </div>
         <div className="fc-btns">
           <a href={MAILTO_HREF} className="fc-btn fc-btn--primary">
-            Escríbeme tu caso
+            Cuéntame tu caso, sin compromiso
           </a>
           <a
             href="https://www.linkedin.com/in/navarro-kinetica-ai"
