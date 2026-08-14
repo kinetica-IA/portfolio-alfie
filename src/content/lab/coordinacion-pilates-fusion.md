@@ -3,7 +3,7 @@ title: Coordinación clínica — Pilates Reformer tras fusión lumbar
 slug: coordinacion-pilates-fusion
 summary: Cuando un paciente con fusión lumbar decide entrenar Pilates Reformer, la coordinación entre el osteópata y el especialista de sala evita cargar el segmento adyacente. Notas metodológicas.
 pubmed_refs:
-  - doi: "10.23736/S0390-5616.22.05803-1"
+  - doi: "10.23736/S0390-5616.22.05891-X"
     title: "Lumbar adjacent segment degeneration after spinal fusion surgery: a systematic review and meta-analysis"
   - doi: "10.1177/2309499019842378"
     title: "Adjacent segment disease after posterior lumbar instrumentation surgery for degenerative disease: Incidence and risk factors"
@@ -23,7 +23,7 @@ Esta nota no describe un caso concreto. Recoge las directrices que suelo enviar 
 
 Una fusión vertebral fija dos vértebras rígidamente. Ese segmento deja de moverse. La demanda de movimiento que antes se repartía a lo largo de varios niveles se concentra ahora en los segmentos que quedan libres, especialmente en el inmediatamente superior a la fusión.
 
-La consecuencia se conoce como enfermedad del segmento adyacente. Una revisión sistemática con meta-análisis reporta prevalencia clínica del 5% al 30% de pacientes tras fusión espinal, y prevalencia radiológica hasta del 40% ([Fanning et al., 2022](https://doi.org/10.23736/S0390-5616.22.05803-1); [Bagheri et al., 2019](https://doi.org/10.1177/2309499019842378)). Estudios biomecánicos sobre modelos musculoesqueléticos validados muestran alteraciones marcadas en cargas de cizalla y momentos pasivos en los segmentos adyacentes tras fusión, con incrementos que pueden superar el 100% respecto al estado preoperatorio ([Fanavoll et al., 2021](https://doi.org/10.1038/s41598-021-97288-2)).
+La consecuencia se conoce como enfermedad del segmento adyacente. Una revisión sistemática con meta-análisis reporta prevalencia clínica del 5% al 30% de pacientes tras fusión espinal, y prevalencia radiológica hasta del 40% ([Cannizzaro et al., 2022](https://doi.org/10.23736/S0390-5616.22.05891-X); [Bagheri et al., 2019](https://doi.org/10.1177/2309499019842378)). Estudios biomecánicos sobre modelos musculoesqueléticos validados muestran alteraciones marcadas en cargas de cizalla y momentos pasivos en los segmentos adyacentes tras fusión, con incrementos que pueden superar el 100% respecto al estado preoperatorio ([Ebrahimkhani et al., 2021](https://doi.org/10.1038/s41598-021-97288-2)).
 
 En términos operativos: cada vez que un paciente fusionado en L5-S1 hace una flexión lumbar activa, el disco L4-L5 recibe la totalidad de la fuerza de cizalla que antes se repartía entre dos niveles. Repetido durante semanas, con una progresión de carga habitual en sala de Pilates, el segmento adyacente entra en sobrecarga acelerada.
 
