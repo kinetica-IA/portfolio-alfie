@@ -9,9 +9,21 @@ import '../styles/tokens.css'
 
 interface Props {
   title?: string
+  description?: string
 }
 
-const { title } = Astro.props
+const DEFAULT_DESCRIPTION = 'Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km.'
+
+function truncate(text: string, max = 160) {
+  if (text.length <= max) return text
+  const cut = text.slice(0, max)
+  const lastSpace = cut.lastIndexOf(' ')
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd() + '…'
+}
+
+const { title, description } = Astro.props
+const pageTitle = title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'
+const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTION
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -24,14 +36,14 @@ const { title } = Astro.props
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- SEO -->
-    <title>{title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'}</title>
-    <meta name="description" content="Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km." />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
     <meta name="author" content="Alfonso Navarro" />
     <link rel="canonical" href="https://www.kineticaai.com" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Kinetica AI — Osteopatía y biomecánica" />
-    <meta property="og:description" content="Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km." />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content="https://www.kineticaai.com/og-image.jpg" />
     <meta property="og:url" content="https://www.kineticaai.com" />
     <meta property="og:type" content="website" />
