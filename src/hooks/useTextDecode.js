@@ -32,10 +32,10 @@ export function useTextDecode(
     delay = 0,
   } = {}
 ) {
-  const [displayed, setDisplayed] = useState(() => {
-    if (typeof window === 'undefined') return text
-    return scramble(text)
-  })
+  // Initial state must match between server and client render, or React
+  // throws a hydration mismatch on every mount. Scrambling only happens
+  // once the effect below runs post-hydration (client-only).
+  const [displayed, setDisplayed] = useState(text)
   const timersRef = useRef([])
 
   useEffect(() => {

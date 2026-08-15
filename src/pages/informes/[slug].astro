@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { getCollection, render } from 'astro:content'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('informes')
+  return entries.map(entry => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+---
+<Layout title={entry.data.title} description={entry.data.summary}>
+  <article class="section informe-page">
+    <span class="eyebrow" style="color: var(--green)">INFORME</span>
+    <h1 class="informe-title">{entry.data.title}</h1>
+    {entry.data.patient_register && (
+      <p class="informe-note">Registro pensado para pacientes, sin tecnicismos innecesarios.</p>
+    )}
+    <div class="informe-prose">
+      <Content />
+    </div>
+    {entry.data.pubmed_refs.length > 0 && (
+      <div class="informe-refs">
+        <span class="informe-refs-label">REFERENCIAS</span>
+        <ul>
+          {entry.data.pubmed_refs.map(ref => (
+            <li><a href={`https://doi.org/${ref.doi}`} target="_blank" rel="noopener noreferrer">{ref.title}</a></li>
+          ))}
+        </ul>
+      </div>
+    )}
+    <a href="/informes" class="informe-back">← Volver a informes</a>
+  </article>
+
+  <style>
+    .informe-page {
+      display: flex;
+      flex-direction: column;
+      max-width: 680px;
+    }
+    .informe-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 12px;
+    }
+    .informe-note {
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--text-dim);
+      margin-bottom: var(--space-element);
+    }
+    .informe-prose {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.75;
+    }
+    .informe-prose :global(p) {
+      margin: 0 0 18px;
+    }
+    .informe-refs {
+      margin-top: var(--space-subsection);
+      padding-top: var(--space-element);
+      border-top: 1px solid var(--border);
+    }
+    .informe-refs-label {
+      font-family: var(--mono);
+      font-size: var(--text-eyebrow);
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+    }
+    .informe-refs ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+    .informe-refs li {
+      font-size: var(--text-caption);
+      margin-bottom: 6px;
+    }
+    .informe-back {
+      margin-top: var(--space-subsection);
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--text-dim);
+    }
+    .informe-back:hover { color: var(--green); }
+  </style>
+</Layout>

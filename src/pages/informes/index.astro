@@ -1,0 +1,70 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+const entries = (await getCollection('informes'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+---
+<Layout title="Informes">
+  <section class="section informes-page">
+    <span class="eyebrow" style="color: var(--green)">INFORMES</span>
+    <h1 class="informes-title">Casos clínicos</h1>
+    <div class="informes-grid">
+      {entries.map(entry => (
+        <a href={`/informes/${entry.data.slug}`} class="informe-card">
+          <span class="informe-card-title">{entry.data.title}</span>
+          <span class="informe-card-summary">{entry.data.summary}</span>
+          <span class="informe-card-cta">Leer más →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .informes-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 var(--space-subsection);
+    }
+    .informes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .informe-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--green);
+      padding: 24px;
+      text-decoration: none;
+      transition: border-color var(--duration-hover) ease, background var(--duration-hover) ease;
+    }
+    .informe-card:hover {
+      border-color: var(--border-active);
+      border-top-color: var(--green);
+      background: var(--fill-green);
+    }
+    .informe-card-title {
+      font-family: var(--sans);
+      font-size: var(--text-subsection);
+      font-weight: 400;
+      color: var(--text-heading);
+    }
+    .informe-card-summary {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+    .informe-card-cta {
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--green);
+      margin-top: auto;
+    }
+  </style>
+</Layout>

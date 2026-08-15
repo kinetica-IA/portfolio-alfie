@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+<Layout title="Página no encontrada">
+  <section class="section notfound-page">
+    <span class="eyebrow" style="color: var(--clay)">404</span>
+    <h1 class="notfound-title">Página no encontrada</h1>
+    <p class="notfound-message">
+      Esta página no existe o ha sido movida. La versión actual del sitio se ha reorganizado en agosto de 2026.
+    </p>
+    <div class="notfound-links">
+      <a href="/" class="notfound-link">Inicio</a>
+      <a href="/informes" class="notfound-link">Informes</a>
+      <a href="/about" class="notfound-link">Sobre mí</a>
+    </div>
+  </section>
+
+  <style>
+    .notfound-page {
+      display: flex;
+      flex-direction: column;
+      max-width: 560px;
+    }
+    .notfound-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 var(--space-element);
+    }
+    .notfound-message {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.75;
+      margin-bottom: var(--space-subsection);
+    }
+    .notfound-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .notfound-link {
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color var(--duration-hover) ease, border-color var(--duration-hover) ease;
+    }
+    .notfound-link:hover {
+      color: var(--green);
+      border-color: var(--green);
+    }
+  </style>
+</Layout>

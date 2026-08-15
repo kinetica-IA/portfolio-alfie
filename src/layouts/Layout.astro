@@ -2,10 +2,31 @@
 // src/layouts/Layout.astro
 import GrainHoverBackground from '../components/GrainHoverBackground.jsx'
 import { FloatingDecorators } from '../components/OrganicSymbols.jsx'
+import TopBar from '../components/TopBar.jsx'
+import FooterField from '../components/FooterField.jsx'
 import ClientRouter from 'astro/components/ClientRouter.astro'
+import '../styles/tokens.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const DEFAULT_DESCRIPTION = 'Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km.'
+
+function truncate(text: string, max = 160) {
+  if (text.length <= max) return text
+  const cut = text.slice(0, max)
+  const lastSpace = cut.lastIndexOf(' ')
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd() + '…'
+}
+
+const { title, description } = Astro.props
+const pageTitle = title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'
+const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTION
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
@@ -15,15 +36,14 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- SEO -->
-    <title>Kinetica AI · Clinical AI Systems</title>
-    <meta name="description" content="N-of-1 longitudinal study predicting autonomic symptoms from wearable HRV. Clinical AI engineered by a clinical biomechanist, physics-trained, trained in osteopathy." />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
     <meta name="author" content="Alfonso Navarro" />
-    <meta name="keywords" content="Clinical AI, Kinetica AI, HRV, autonomic nervous system, post-Lyme, wearable monitoring, biomechanics, osteopathy, N-of-1, longitudinal, interpretable models" />
     <link rel="canonical" href="https://www.kineticaai.com" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Kinetica AI · Clinical AI Systems" />
-    <meta property="og:description" content="N-of-1 longitudinal study predicting autonomic symptoms from wearable HRV. Clinical AI engineered by a clinical biomechanist, physics-trained, trained in osteopathy." />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content="https://www.kineticaai.com/og-image.jpg" />
     <meta property="og:url" content="https://www.kineticaai.com" />
     <meta property="og:type" content="website" />
@@ -32,89 +52,64 @@ import ClientRouter from 'astro/components/ClientRouter.astro'
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "name": "Kinetica AI",
-          "url": "https://www.kineticaai.com",
-          "description": "Clinical AI systems for wearable autonomic monitoring and multi-symptom prediction.",
-          "founder": {
-            "@type": "Person",
-            "@id": "#alfonso-navarro"
-          },
-          "sameAs": [
-            "https://www.linkedin.com/in/navarro-kinetica-ai",
-            "https://github.com/kinetica-IA"
-          ]
-        },
-        {
-          "@type": "Person",
-          "@id": "#alfonso-navarro",
-          "name": "Alfonso Navarro",
-          "jobTitle": "Clinical biomechanist, trained in osteopathy, building clinical AI",
-          "url": "https://www.kineticaai.com",
-          "sameAs": [
-            "https://www.linkedin.com/in/navarro-kinetica-ai",
-            "https://github.com/kinetica-IA"
-          ],
-          "knowsAbout": ["Biomechanics", "Osteopathy", "Heart Rate Variability", "Autonomic Nervous System", "Clinical AI", "Longitudinal monitoring", "Interpretable models"]
-        },
-        {
-          "@type": "SoftwareApplication",
-          "name": "polar-lyme-predictor",
-          "url": "https://github.com/kinetica-IA/polar-lyme-predictor",
-          "applicationCategory": "HealthApplication",
-          "description": "Multi-symptom clinical prediction from wearable HRV data. Open-source, N-of-1 longitudinal design.",
-          "operatingSystem": "Cross-platform",
-          "author": { "@type": "Person", "@id": "#alfonso-navarro" }
-        },
-        {
-          "@type": "Dataset",
-          "name": "Kinetica Biometric Archive",
-          "description": "200+ nights of RR interval data, daily symptom diary, and processed HRV features from a single post-Lyme patient.",
-          "url": "https://github.com/kinetica-IA/polar-lyme-predictor",
-          "license": "https://opensource.org/licenses/MIT",
-          "creator": { "@type": "Person", "@id": "#alfonso-navarro" },
-          "temporalCoverage": "2025-09/2026",
-          "variableMeasured": ["Heart Rate Variability", "RMSSD", "Sleep Score", "Symptom Severity"]
+      "@type": "MedicalBusiness",
+      "name": "Kinetica AI",
+      "url": "https://www.kineticaai.com",
+      "email": "alfon.atman@gmail.com",
+      "medicalSpecialty": "PhysicalTherapy",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Alameda",
+        "addressRegion": "Málaga",
+        "addressCountry": "ES"
+      },
+      "founder": {
+        "@type": "Person",
+        "name": "Alfonso Navarro",
+        "jobTitle": "Osteópata D.O.",
+        "identifier": {
+          "@type": "PropertyValue",
+          "propertyID": "RPPS",
+          "value": "10010607702"
         }
-      ]
+      }
     }
     </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "165f6fd632de46bb905ef551de19e2d1"}'></script><!-- End Cloudflare Web Analytics -->
   </head>
   <body>
     <GrainHoverBackground client:only="react" transition:persist="ambient-bg" />
     <FloatingDecorators client:load transition:persist="floating-deco" />
-    <slot />
+    <TopBar client:load transition:persist="topbar" />
+    <main class="content-layer">
+      <slot />
+    </main>
+    <FooterField />
 
     <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
     <script data-goatcounter="https://kineticaai.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 
-    <!-- Visit notification (ntfy.sh — fire-and-forget) -->
-    <script>
-    (function(){
-      try {
-        var d = {
-          p: location.pathname,
-          r: document.referrer || '(direct)',
-          l: navigator.language,
-          t: new Date().toISOString()
-        };
-        fetch('https://ntfy.sh/kineticaai-v-a7f3x9', {
-          method: 'POST',
-          headers: { Title: 'Visit: ' + d.p },
-          body: d.p + ' | ' + d.r + ' | ' + d.l + ' | ' + d.t
-        }).catch(function(){});
-      } catch(e) {}
-    })();
-    </script>
+    <style>
+      .content-layer {
+        position: relative;
+        z-index: 1;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 48px;
+      }
+      @media (max-width: 768px) {
+        .content-layer { padding: 0 20px; }
+      }
+      @media (max-width: 420px) {
+        .content-layer { padding: 0 16px; }
+      }
+    </style>
   </body>
 </html>

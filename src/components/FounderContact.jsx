@@ -1,180 +1,33 @@
 import { useReveal } from '../hooks/useReveal'
-import { useTextDecode } from '../hooks/useTextDecode'
-import { useWordStagger } from '../hooks/useWordStagger'
 import { CellSymbol } from './OrganicSymbols'
 
-const TIMELINE = [
-  { year: '1998', label: 'Physics, Univ. Granada', color: 'var(--ice)', rgb: '133,168,184' },
-  { year: '2002', label: 'Optometry training', color: 'var(--ice)', rgb: '133,168,184' },
-  { year: '2008', label: 'Postgraduate in biomechanics', color: 'var(--sea)', rgb: '93,138,130' },
-  { year: '2016', label: 'Independent clinical practice, Pyrenees', color: 'var(--teal)', rgb: '144,167,165' },
-  { year: '2020', label: 'Acute COVID hospital care, Vielha (2 years)', color: 'var(--clay)', rgb: '168,121,110' },
-  { year: '2024', label: 'Building clinical AI from own physiology', color: 'var(--warm)', rgb: '196,133,90' },
-  { year: '2025', label: 'Kinetica AI', color: 'var(--green)', rgb: '107,158,122', pulse: true },
-]
-
-const BADGES = [
-  { text: '10 years clinical', borderColor: 'var(--teal)' },
-  { text: 'Open-source · MIT', borderColor: 'var(--warm)' },
-  { text: 'Málaga · Remote', borderColor: 'var(--sea)' },
-]
-
-const CREDENTIALS = [
-  {
-    title: 'AI Engineering',
-    issuer: 'IBM',
-    year: '2025',
-    href: 'https://coursera.org/verify/professional-cert/JF2GSC5966NA',
-  },
-  {
-    title: 'AI Agents & Agentic AI Architecture in Python',
-    issuer: 'Vanderbilt University',
-    year: '2025',
-    href: 'https://coursera.org/verify/T1BWK1P3CEWP',
-  },
-  {
-    title: 'Computational Neuroscience',
-    issuer: 'University of Washington',
-    year: '2025',
-    href: 'https://coursera.org/verify/YNQB7TYP4N8G',
-  },
-]
+const MAILTO_HREF = 'mailto:alfon.atman@gmail.com?subject=Consulta%20osteopat%C3%ADa&body=Describe%20tu%20problema%20con%20tus%20palabras.'
 
 export default function FounderContact() {
-  const { ref, revealed } = useReveal(0.25)
   const { ref: ctaRef, revealed: ctaRevealed } = useReveal(0.25)
 
-  const headingWords = useWordStagger('Engineered from physics, biomechanics and ten years of clinic')
-
   return (
-    <section className="section founder-contact" id="about" ref={ref}>
+    <section className="section founder-contact" id="contacto" ref={ctaRef}>
       <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
         <CellSymbol color="var(--clay)" size={44} />
-        ABOUT
+        CONTACTO
       </span>
-      <h2 className="fc-heading" ref={headingWords.ref}>
-        {headingWords.words.map((w, i) => <span key={i} style={w.style}>{w.text}</span>)}
-      </h2>
 
       <div
-        className="fc-bio-group"
+        className="fc-cta-area"
         style={{
-          opacity: revealed ? 1 : 0,
-          transform: revealed ? 'translateY(0)' : 'translateY(10px)',
+          opacity: ctaRevealed ? 1 : 0,
+          transform: ctaRevealed ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.9s var(--ease-out) 0.2s, transform 0.6s var(--ease-out) 0.2s',
         }}
       >
-        <p className="fc-bio">
-          Kinetica AI is built by Alfonso Navarro. Physics at Universidad de Granada, with
-          postgraduate work in biomechanics. Trained in osteopathy at UAB. Ten years of
-          independent clinical practice in the Pyrenees: complex musculoskeletal and
-          neuromechanical cases, high-performance athletes, mountain-sport injuries. Two
-          years of acute COVID hospital care in Vielha during the pandemic.
-        </p>
-        <p className="fc-bio">
-          He is also the patient. The system is engineered from real physiological
-          uncertainty, not benchmark chasing — wearable monitoring, longitudinal symptom
-          data and interpretable architectures for clinical AI.
-        </p>
-      </div>
-
-      {/* Timeline stepper */}
-      <div className="fc-timeline">
-        <div className="tl-line" style={{
-          width: revealed ? '100%' : '0%',
-          transition: 'width var(--anim-slow) var(--ease-out) 0.3s',
-        }} />
-        <div className="tl-items">
-          {TIMELINE.map((t, i) => (
-            <div
-              key={t.year}
-              className="tl-item"
-              style={{
-                opacity: revealed ? 1 : 0,
-                transform: revealed ? 'translateY(0)' : 'translateY(10px)',
-                transition: `opacity 0.9s var(--ease-out) ${i * 150 + 300}ms, transform 0.6s var(--ease-out) ${i * 150 + 300}ms`,
-              }}
-            >
-              <span className={`tl-node ${t.pulse ? 'tl-node--pulse' : ''}`} style={{ background: t.color }} />
-              <span className="tl-year">{t.year}</span>
-              <span className="tl-label">{t.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Credentials */}
-      <div className="fc-credentials">
-        <span className="fc-cred-label">CREDENTIALS</span>
-        <ul className="fc-cred-list">
-          {CREDENTIALS.map((c, i) => (
-            <li
-              key={c.href}
-              className="fc-cred-item"
-              style={{
-                opacity: revealed ? 1 : 0,
-                transform: revealed ? 'translateY(0)' : 'translateY(6px)',
-                transition: `opacity 0.7s var(--ease-out) ${i * 120 + 500}ms, transform 0.6s var(--ease-out) ${i * 120 + 500}ms`,
-              }}
-            >
-              <a
-                href={c.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fc-cred-link"
-              >
-                <span className="fc-cred-title">{c.title}</span>
-                <span className="fc-cred-meta">{c.issuer} · {c.year}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Badges */}
-      <div className="fc-badges">
-        {BADGES.map((b, i) => (
-          <span
-            key={b.text}
-            className="fc-badge"
-            style={{
-              borderLeft: `2px solid ${b.borderColor}`,
-              opacity: revealed ? 1 : 0,
-              transform: revealed ? 'translateY(0)' : 'translateY(8px)',
-              transition: `opacity 0.8s var(--ease-out) ${i * 220}ms, transform 0.5s var(--ease-out) ${i * 220}ms`,
-            }}
-          >
-            {b.text}
-          </span>
-        ))}
-      </div>
-
-      {/* CTA area */}
-      <div className="fc-cta-area" ref={ctaRef}>
-        <a href="#research" className="fc-research-link">See open research →</a>
-        <p className="fc-services">
-          Clinical AI consulting · Research-grade HRV analysis · AI model evaluation
-        </p>
-        <div
-          className="fc-status"
-          style={{
-            opacity: ctaRevealed ? 1 : 0,
-            transition: 'opacity 0.6s var(--ease-out) 0.2s',
-          }}
-        >
+        <div className="fc-status">
           <span className="fc-status-led" />
-          <span className="fc-status-text">Available for projects</span>
+          <span className="fc-status-text">Consulta abierta</span>
         </div>
-        <div
-          className="fc-btns"
-          style={{
-            opacity: ctaRevealed ? 1 : 0,
-            transform: ctaRevealed ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'opacity 0.6s var(--ease-out) 0.35s, transform 0.5s var(--ease-out) 0.35s',
-          }}
-        >
-          <a href="mailto:alfon.atman@gmail.com" className="fc-btn fc-btn--primary">
-            Discuss a clinical AI project
+        <div className="fc-btns">
+          <a href={MAILTO_HREF} className="fc-btn fc-btn--primary">
+            Cuéntame tu caso, sin compromiso
           </a>
           <a
             href="https://www.linkedin.com/in/navarro-kinetica-ai"
@@ -182,7 +35,7 @@ export default function FounderContact() {
             rel="noopener noreferrer"
             className="fc-btn fc-btn--secondary"
           >
-            Connect on LinkedIn
+            Conectar en LinkedIn
           </a>
         </div>
       </div>
@@ -191,172 +44,9 @@ export default function FounderContact() {
         .founder-contact {
           display: flex;
           flex-direction: column;
-          gap: 40px;
+          gap: 32px;
           padding-bottom: 40px;
         }
-        .fc-heading {
-          font-family: var(--sans);
-          font-size: var(--text-section);
-          font-weight: 400;
-          color: var(--text-heading);
-          line-height: 1.3;
-          margin: 16px 0 0;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0;
-          max-width: 560px;
-        }
-        .fc-bio-group {
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-        }
-        .fc-bio {
-          font-size: var(--text-body);
-          font-weight: 300;
-          color: var(--text-sec);
-          line-height: 1.75;
-          max-width: 540px;
-        }
-        /* Timeline */
-        .fc-timeline {
-          position: relative;
-          padding-top: 12px;
-        }
-        .fc-timeline .tl-line {
-          position: absolute;
-          top: 14px;
-          left: 0;
-          height: 1px;
-          background: var(--border);
-        }
-        .tl-items {
-          display: flex;
-          gap: 0;
-          justify-content: space-between;
-        }
-        .tl-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 6px;
-          flex: 1;
-          min-width: 0;
-        }
-        .tl-node {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          transition: transform var(--duration-hover) var(--ease-out);
-          z-index: 1;
-        }
-        .tl-item:hover .tl-node { transform: scale(1.4); }
-        .tl-node--pulse { animation: tlPulse 2s ease-in-out infinite; }
-        @keyframes tlPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(107,158,122, 0.4); }
-          50% { box-shadow: 0 0 0 6px rgba(107,158,122, 0); }
-        }
-        .tl-year {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          font-weight: 500;
-          color: var(--text);
-        }
-        .tl-label {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          text-align: center;
-          line-height: 1.3;
-        }
-        @media (max-width: 768px) {
-          .tl-items { flex-wrap: wrap; gap: 16px; }
-          .tl-item { flex: 0 0 calc(50% - 8px); align-items: flex-start; }
-          .fc-timeline .tl-line { display: none; }
-        }
-        @media (max-width: 420px) {
-          .tl-item { flex: 0 0 100%; }
-        }
-        /* Credentials */
-        .fc-credentials {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          max-width: 560px;
-        }
-        .fc-cred-label {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          letter-spacing: 0.12em;
-          color: var(--text-dim);
-          opacity: 0.7;
-        }
-        .fc-cred-list {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-        }
-        .fc-cred-item {
-          border-top: 1px solid var(--border);
-        }
-        .fc-cred-item:last-child {
-          border-bottom: 1px solid var(--border);
-        }
-        .fc-cred-link {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          gap: 16px;
-          padding: 12px 0;
-          text-decoration: none;
-          color: inherit;
-          transition: background var(--duration-hover) ease, padding-left var(--duration-hover) ease;
-        }
-        .fc-cred-link:hover {
-          padding-left: 8px;
-          background: linear-gradient(90deg, rgba(107,158,122,0.05), transparent 60%);
-        }
-        .fc-cred-title {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text);
-          letter-spacing: 0.02em;
-        }
-        .fc-cred-link:hover .fc-cred-title { color: var(--green); }
-        .fc-cred-meta {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          letter-spacing: 0.04em;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
-        @media (max-width: 540px) {
-          .fc-cred-link {
-            flex-direction: column;
-            gap: 4px;
-            align-items: flex-start;
-          }
-        }
-        /* Badges */
-        .fc-badges {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-        .fc-badge {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          background: var(--fill-teal);
-          border: 1px solid var(--border);
-          padding: 6px 14px;
-          transition: border-color var(--duration-hover) ease;
-        }
-        .fc-badge:hover { border-color: var(--border-active); }
         /* CTA area */
         .fc-cta-area {
           display: flex;
@@ -364,19 +54,6 @@ export default function FounderContact() {
           align-items: center;
           gap: 20px;
           text-align: center;
-        }
-        .fc-research-link {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text-dim);
-          text-decoration: none;
-          transition: color var(--duration-hover) ease;
-        }
-        .fc-research-link:hover { color: var(--teal); }
-        .fc-services {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text-dim);
         }
         .fc-status {
           display: flex;
