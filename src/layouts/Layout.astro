@@ -87,9 +87,9 @@ const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTIO
     <GrainHoverBackground client:only="react" transition:persist="ambient-bg" />
     <FloatingDecorators client:load transition:persist="floating-deco" />
     <TopBar client:load transition:persist="topbar" />
-    <div class="content-layer">
+    <main class="content-layer">
       <slot />
-    </div>
+    </main>
     <FooterField />
 
     <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
