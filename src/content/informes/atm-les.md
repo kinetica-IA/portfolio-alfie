@@ -17,34 +17,48 @@ patient_register: true
 date: 2026-08-12
 ---
 
-La articulación temporomandibular (ATM) es la que abre y cierra la mandíbula. Duele, cruje, se bloquea, chasquea, o produce cefaleas que se irradian a la sien y al oído. En pacientes con lupus eritematoso sistémico, síndrome de Sjögren, artritis reumatoide o esclerosis sistémica, la ATM se ve afectada de manera recurrente y raramente se correlaciona con patologias del sistema inmune.
+## Qué es
 
-Una revisión sistemática publicada en 2023 con 56 estudios estimó prevalencia de disfunción temporomandibular entre el 18% y el 85% en pacientes con lupus, y hasta el 93% en esclerosis sistémica ([Hysa et al., 2023](https://doi.org/10.1016/j.semarthrit.2023.152215)). Un estudio observacional con 55 pacientes de lupus encontró que el 95,8% referían síntomas orales o de la ATM, con restricción significativa de la protrusión mandibular y de la lateralidad izquierda respecto a controles sanos ([Crincoli et al., 2020](https://doi.org/10.7150/ijms.38914)).
+La articulación temporomandibular es la que abre y cierra la mandíbula. Cuando se altera, duele, cruje, chasquea, se bloquea, o genera cefaleas que se irradian a la sien y al oído.
 
-El problema es que muchas veces la afectación no se busca. El reumatólogo trata la enfermedad de fondo, el dentista trata la boca, y la ATM queda en un hueco entre disciplinas. Cuando el dolor mandibular aparece, se atribuye al estrés, al bruxismo o a la propia enfermedad, sin explorarlo de forma específica.
+En lupus eritematoso sistémico, síndrome de Sjögren, artritis reumatoide o esclerosis sistémica se afecta con frecuencia.
 
-## Cómo evaluar.
+Una revisión sistemática de 2023 con 56 estudios estimó una prevalencia de disfunción temporomandibular entre el 18% y el 85% en pacientes con lupus, y hasta el 93% en esclerosis sistémica ([Hysa et al., 2023](https://doi.org/10.1016/j.semarthrit.2023.152215)).
 
-La evaluación clínica busca tres cosas: qué movimientos están restringidos, qué estructuras generan el dolor, y qué compensaciones se han instalado en cuello, hombros y patrón respiratorio.
+Un estudio observacional con 55 pacientes de lupus encontró que el 95,8% referían síntomas orales o de la ATM, con restricción significativa de la protrusión mandibular y de la lateralidad izquierda respecto a controles sanos ([Crincoli et al., 2020](https://doi.org/10.7150/ijms.38914)).
 
-En consulta se ha de evaluar:
+<!-- MEDIA: clip Complete Anatomy ≤20s.
+     Sugerencia: ATM en apertura, con maseteros y pterigoideos visibles.
+     Pie obligatorio: "Image courtesy of Complete Anatomy". -->
 
-- Apertura máxima, protrusión y lateralidades activas y pasivas.
-- Palpación de músculos maseteros, temporales, pterigoideos y suboccipitales.
-- Movilidad cervical, especialmente C0-C1-C2, que comparte inervación trigeminal con la ATM.
+Es una afectación que solo aparece si se explora de forma específica, y la exploración específica de la ATM no forma parte de la rutina de seguimiento de estas enfermedades. Por eso el dolor mandibular suele atribuirse al estrés o al bruxismo sin valorarlo aparte.
+
+## Qué evalúo
+
+Tres cosas: qué movimientos están restringidos, qué estructuras generan el dolor, y qué compensaciones se han instalado en cuello, hombros y respiración.
+
+- Apertura máxima, protrusión y lateralidades, activas y pasivas.
+- Palpación de maseteros, temporales, pterigoideos y suboccipitales.
+- Movilidad cervical alta, sobre todo C0-C1-C2, que comparte inervación trigeminal con la ATM.
 - Patrón respiratorio y posición lingual en reposo.
-- Coordinación con lo que ya sabe tu reumatólogo, tu odontólogo o tu médico de referencia.
+- Lo que ya sabe tu reumatólogo, tu odontólogo o tu médico de referencia.
 
-Cuando el caso lo requiere y hay hallazgos que sugieren afectación estructural (crujidos, bloqueos, historial de traumatismo), derivar para pruebas de imagen. Un estudio de 2026 mostró que la ecografía detecta anomalías de ATM en el 57% de pacientes con lupus, frente al 39% que se detectan por examen clínico ([Soroureddin et al., 2026](https://doi.org/10.1097/MD.0000000000049215)) — la clínica no lo ve todo.
+Si hay hallazgos que sugieren afectación estructural (crujidos, bloqueos, antecedente de traumatismo), derivo para imagen. Un estudio de 2026 mostró que la ecografía detecta anomalías de ATM en el 57% de pacientes con lupus, frente al 39% detectado por examen clínico ([Soroureddin et al., 2026](https://doi.org/10.1097/MD.0000000000049215)). La clínica no lo ve todo.
 
-## Qué hace el trabajo osteopático
+## Qué aporta el trabajo osteopático
 
-El trabajo manual no cura la enfermedad autoinmune. Lo que puede hacer es reducir el dolor miofascial, recuperar amplitud de movimiento, y trabajar las compensaciones cervicales y respiratorias que agravan el cuadro.
+No trata la enfermedad autoinmune. Lo que puede hacer es reducir el dolor miofascial, recuperar amplitud de movimiento, y trabajar las compensaciones cervicales y respiratorias que acompañan al cuadro.
 
-Un meta-análisis de 2025 con 14 ensayos controlados y 825 pacientes con disfunción temporomandibular concluyó que la manipulación combinada con ejercicio terapéutico aplicada a la región cervical mejora significativamente la intensidad del dolor y el umbral de presión muscular ([Qu et al., 2025](https://doi.org/10.1016/j.jormas.2025.102530)). Una revisión sistemática específica sobre técnica de energía muscular (MET) en 553 pacientes mostró efectos significativos en apertura bucal máxima, intensidad del dolor y desviación lateral ([Agarwal et al., 2025](https://doi.org/10.1016/j.ctcp.2025.102002)).
+Un meta-análisis de 2025 con 14 ensayos controlados y 825 pacientes con disfunción temporomandibular concluyó que la manipulación combinada con ejercicio terapéutico aplicada a la región cervical mejora la intensidad del dolor y el umbral de presión muscular ([Qu et al., 2025](https://doi.org/10.1016/j.jormas.2025.102530)).
 
-En consulta el trabajo se estructura por objetivos: reducir el espasmo miofascial de la musculatura masticatoria, restaurar el juego articular en los tres planos, liberar la región cervical alta, y educar en respiración nasal diurna y postura lingual. No hay dos tratamientos iguales; cada plan sale de lo que la evaluación encuentra.
+Una revisión sistemática sobre técnica de energía muscular en 553 pacientes mostró efectos en apertura bucal máxima, intensidad del dolor y desviación lateral ([Agarwal et al., 2025](https://doi.org/10.1016/j.ctcp.2025.102002)).
 
-## Cuándo derivar
+En consulta trabajo por objetivos: reducir el espasmo de la musculatura masticatoria, restaurar el juego articular en los tres planos, liberar la región cervical alta, y enseñarte respiración nasal diurna y postura lingual.
 
- Si aparece crepitación fuerte, bloqueo mandibular, cambios de oclusión reciente, o el cuadro se comporta como un brote sistémico, la primera parada es tu médico de referencia. Cuando el trabajo articular necesita ir acompañado de una férula de descarga o de una revisión oclusal, coordinar  con el odontólogo o reamatologo ofrece una atención integral ahorrando tiempo, pruebas diagnosticas y guia el protocolo de actuacion desde el promer momento. El trabajo osteopático prepara al paciente para una posible intervención quirúrgica y su posterior rehabilitación. 
+## Cuándo te derivo
+
+Ante crepitación fuerte, bloqueo mandibular, cambios recientes de oclusión, o si el cuadro se comporta como un brote sistémico, la primera parada es tu médico de referencia.
+
+Cuando el trabajo articular necesita ir acompañado de una férula de descarga o de una revisión oclusal, coordino con tu odontólogo o tu reumatólogo. Compartir la misma imagen del caso ahorra tiempo y pruebas.
+
+Si hay una intervención quirúrgica en el horizonte, el trabajo manual puede acompañar la preparación previa y la rehabilitación posterior.

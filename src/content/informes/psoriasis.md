@@ -17,45 +17,53 @@ patient_register: true
 date: 2026-08-12
 ---
 
-## Por qué llega esta consulta
+## El estrés como factor biológico
 
-La psoriasis es una enfermedad inflamatoria crónica de origen inmunológico que se manifiesta principalmente en la piel, pero cuyo control depende también de factores que muchas veces no se abordan en la consulta dermatológica. Uno de los más consistentes es el estrés. La mayoría de pacientes lo reconocen intuitivamente: los brotes aparecen tras períodos de tensión mantenida, duelo, sobrecarga laboral o falta de sueño.
+La psoriasis es una enfermedad inflamatoria crónica de origen inmunológico. Su control depende del tratamiento dermatológico y también de factores que lo acompañan. Uno de los más consistentes es el estrés.
 
-No es una impresión subjetiva. Un estudio publicado en 2021 con 126 pacientes de psoriasis en placas mostró que el 69% identificaban el estrés como desencadenante de sus brotes, y que sus niveles de cortisol salivar eran significativamente más bajos que los de los controles sanos ([Gisondi et al., 2021](https://doi.org/10.3390/jpm11111069)). En 2023, otro trabajo con 45 pacientes confirmó una alteración del eje hipotálamo-hipofisario-suprarrenal (HPA): cortisol bajo, ACTH alta, IL-17 elevada, con correlación positiva entre estas alteraciones y la severidad clínica medida por el índice PASI ([Rajasekharan et al., 2023](https://doi.org/10.1016/j.jpsychores.2023.111350)).
+La mayoría de pacientes lo reconoce por experiencia propia: los brotes aparecen tras períodos de tensión mantenida, duelo, sobrecarga o falta de sueño.
 
-Una revisión reciente sintetiza el mecanismo: el estrés psicológico crónico desregula el eje HPA y modifica la señalización del cortisol, lo que alimenta un bucle de inflamación neurogénica que activa dendríticas, células T y queratinocitos, sosteniendo la lesión cutánea ([Singh & Taliyan, 2025](https://doi.org/10.1016/j.ajpath.2025.11.005)). Es decir: el estrés no es un factor psicológico secundario, es un modulador biológico directo del cuadro.
+No es una impresión subjetiva. Un estudio de 2021 con 126 pacientes de psoriasis en placas encontró que el 69% identificaban el estrés como desencadenante, con niveles de cortisol salivar significativamente más bajos que los de controles sanos ([Gisondi et al., 2021](https://doi.org/10.3390/jpm11111069)).
+
+En 2023, otro trabajo con 45 pacientes confirmó alteración del eje hipotálamo-hipofisario-suprarrenal: cortisol bajo, ACTH alta, IL-17 elevada, con correlación entre estas alteraciones y la severidad medida por PASI ([Rajasekharan et al., 2023](https://doi.org/10.1016/j.jpsychores.2023.111350)).
+
+Una revisión reciente sintetiza el mecanismo. El estrés psicológico crónico desregula el eje HPA y modifica la señalización del cortisol, alimentando un bucle de inflamación neurogénica que activa dendríticas, células T y queratinocitos ([Singh & Taliyan, 2025](https://doi.org/10.1016/j.ajpath.2025.11.005)).
+
+El estrés no es un factor psicológico secundario. Es un modulador biológico del cuadro.
+
+<!-- MEDIA: clip Complete Anatomy ≤20s.
+     Sugerencia: recorrido del nervio vago y su relación con el diafragma.
+     Pie obligatorio: "Image courtesy of Complete Anatomy". -->
 
 ## Qué no hace este trabajo
 
 No cura la psoriasis. No sustituye al dermatólogo. No modifica tu tratamiento farmacológico. No promete que las placas desaparezcan.
 
-Lo que sí puede hacer el trabajo manual y respiratorio es actuar sobre el eje autonómico y sobre la carga miofascial que acompaña al estrés sostenido, con el objetivo de reducir uno de los desencadenantes conocidos de brote. Es un complemento, no un reemplazo.
+Lo que sí puede hacer el trabajo manual y respiratorio es actuar sobre el eje autonómico y sobre la carga miofascial que acompaña al estrés sostenido, con el objetivo de reducir uno de los desencadenantes conocidos de brote.
 
-## Cómo lo evalúo
+Es un complemento del tratamiento que ya llevas.
 
-En la primera sesión valoro:
+## Qué evalúo
 
-- Historia clínica con foco en cronología de brotes y su relación con eventos vitales o períodos de sobrecarga.
+- Cronología de los brotes y su relación con eventos vitales o períodos de sobrecarga.
 - Patrón respiratorio en reposo: frecuencia, profundidad, uso de accesorios cervicales, apnea funcional.
-- Cadena miofascial dorsal, cervical y diafragmática — zonas donde el estrés sostenido genera tensión palpable.
-- Coordinación con lo que ya sabe tu dermatólogo o reumatólogo (en caso de artritis psoriásica).
+- Cadena miofascial dorsal, cervical y diafragmática.
+- Lo que ya sabe tu dermatólogo o tu reumatólogo, si hay artritis psoriásica.
 
-Una revisión narrativa de 2024 clasifica el estrés psicológico entre los factores de riesgo clásicos y bien establecidos para el brote de psoriasis, junto a infecciones, fármacos, alteraciones metabólicas y hábitos de vida ([Potestio et al., 2024](https://doi.org/10.2147/PTT.S323281)). El trabajo osteopático no aborda los otros factores; solo actúa sobre la respuesta autonómica al estrés.
+Una revisión narrativa de 2024 sitúa el estrés psicológico entre los factores de riesgo bien establecidos para el brote, junto a infecciones, fármacos, alteraciones metabólicas y hábitos de vida ([Potestio et al., 2024](https://doi.org/10.2147/PTT.S323281)). Este trabajo actúa sobre la respuesta autonómica al estrés, no sobre los demás factores.
 
-## Qué hace el trabajo manual + respiración
+## Trabajo manual y respiración
 
-Dos ejes complementarios:
+Dos ejes que van juntos.
 
-Trabajo manual sobre columna dorsal, diafragma y cadena cervical, con el objetivo de liberar restricciones que sostienen un patrón respiratorio superficial y una activación simpática crónica.
+Con las manos trabajo columna dorsal, diafragma y cadena cervical, para liberar las restricciones que sostienen un patrón respiratorio superficial y una activación simpática mantenida.
 
-Entrenamiento respiratorio lento pautado (4-6 respiraciones por minuto, con fase espiratoria alargada). Un ensayo controlado con bloqueo farmacológico mostró que el aumento de variabilidad cardíaca durante respiración lenta está mediado casi por completo por vía parasimpática (vagal): el bloqueo parasimpático elimina el efecto, el simpático no lo modifica ([Kromenacker et al., 2018](https://doi.org/10.1097/PSY.0000000000000603)). Es decir, la respiración lenta activa el vago, y el vago tiene un papel documentado en la modulación antiinflamatoria sistémica.
+Y entreno respiración lenta pautada, en torno a 4-6 respiraciones por minuto con la espiración alargada. Un ensayo con bloqueo farmacológico mostró que el aumento de variabilidad cardíaca durante la respiración lenta está mediado casi por completo por vía vagal: el bloqueo parasimpático elimina el efecto, el simpático no lo modifica ([Kromenacker et al., 2018](https://doi.org/10.1097/PSY.0000000000000603)).
 
-En consulta enseño el patrón, verifico ejecución, y dejo pautas para práctica diaria breve — dos ventanas de 10 minutos, mañana y noche.
+En consulta te enseño el patrón, verifico que lo ejecutas bien, y te dejo una pauta breve para casa: dos ventanas de diez minutos, mañana y noche.
 
-## Cuándo derivo
+## Cuándo te derivo
 
-Ante brote activo severo, artritis psoriásica no controlada, síntomas sistémicos nuevos, o cambio brusco de patrón cutáneo, la primera parada es tu dermatólogo o reumatólogo. El trabajo osteopático no se inicia durante un brote agudo si tu especialista no lo ha revisado antes.
+Ante brote activo severo, artritis psoriásica no controlada, síntomas sistémicos nuevos o cambio brusco del patrón cutáneo, la primera parada es tu dermatólogo o tu reumatólogo.
 
-## Cómo empezar
-
-Escríbeme a [alfon.atman@gmail.com](mailto:alfon.atman@gmail.com?subject=Consulta%20osteopat%C3%ADa%20-%20psoriasis&body=Describe%20tu%20problema%20con%20tus%20palabras.) contándome tu caso con tus palabras — desde cuándo, qué tratamiento sigues, qué relación observas con tu nivel de estrés. Estudiaré tu caso sin compromiso.
+No inicio trabajo osteopático durante un brote agudo sin que tu especialista lo haya visto antes.
