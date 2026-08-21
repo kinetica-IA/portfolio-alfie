@@ -3,6 +3,11 @@ export default function FooterField() {
     <footer className="footer-field">
       <div className="footer-content">
         <span className="footer-brand">KINETICA AI</span>
+        <nav className="footer-links">
+          <a href="mailto:alfon.atman@gmail.com?subject=Consulta%20osteopat%C3%ADa&body=Describe%20tu%20problema%20con%20tus%20palabras.">Contacto</a>
+          <span className="footer-links-sep">·</span>
+          <a href="/profesionales">Profesionales</a>
+        </nav>
         <span className="footer-copy">© {new Date().getFullYear()} Alfonso Navarro · Built in the open, engineered for reproducibility.</span>
       </div>
 
@@ -37,6 +42,25 @@ export default function FooterField() {
           font-size: var(--text-eyebrow);
           color: var(--text-dim);
           letter-spacing: 0.04em;
+        }
+        .footer-links {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: var(--mono);
+          font-size: var(--text-eyebrow);
+          letter-spacing: 0.04em;
+        }
+        .footer-links a {
+          color: var(--text-dim);
+          text-decoration: none;
+        }
+        .footer-links a:hover {
+          color: var(--text-heading);
+        }
+        .footer-links-sep {
+          color: var(--text-dim);
+          opacity: 0.5;
         }
       `}</style>
     </footer>

@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { getEntry, render } from 'astro:content'
+
+const entry = await getEntry('pages', 'profesionales')
+const { Content } = await render(entry)
+---
+<Layout title={entry.data.title} description={entry.data.summary}>
+  <section class="section profesionales-page">
+    <span class="eyebrow" style="color: var(--sea)">PROFESIONALES</span>
+    <h1 class="profesionales-title">{entry.data.title}</h1>
+    <div class="profesionales-prose">
+      <Content />
+    </div>
+  </section>
+
+  <style>
+    .profesionales-page {
+      display: flex;
+      flex-direction: column;
+    }
+    .profesionales-title {
+      font-family: var(--sans);
+      font-size: var(--text-section);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 16px 0 var(--space-subsection);
+    }
+    .profesionales-prose {
+      font-size: var(--text-body);
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.75;
+      max-width: 640px;
+    }
+    .profesionales-prose :global(p) {
+      margin: 0 0 18px;
+    }
+  </style>
+</Layout>

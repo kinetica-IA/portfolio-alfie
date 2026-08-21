@@ -36,3 +36,5 @@ Tampoco trabajo sobre una enfermedad autoinmune en brote sin que tu especialista
 [alfon.atman@gmail.com](mailto:alfon.atman@gmail.com?subject=Consulta%20osteopat%C3%ADa&body=Describe%20tu%20problema%20con%20tus%20palabras.) · [WhatsApp](https://wa.me/34665777726)
 
 Cuéntame qué te pasa con tus palabras. No hace falta lenguaje técnico. Estudiaré tu caso sin compromiso.
+
+¿Eres profesional sanitario o de sala y quieres coordinar el seguimiento de un paciente? [Ve a la página para profesionales](/profesionales).

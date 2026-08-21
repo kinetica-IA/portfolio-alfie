@@ -54,3 +54,5 @@ La pauta que traslado a sala en estos casos es explícita: no llevar la musculat
 Un informe enviado al especialista de sala no reemplaza la evaluación clínica ni el criterio del profesional que lleva la sesión. Ofrece contexto biomecánico específico que rara vez está en la formación estándar del método, y explicita las restricciones que el paciente arrastra pero no siempre sabe comunicar.
 
 La calidad del seguimiento de estos pacientes depende menos de la potencia individual de cada profesional y más de que compartan la misma imagen del cuerpo que tienen delante. Escribir estas notas es parte del trabajo.
+
+Si coordinas el seguimiento de un paciente conmigo, más información en [la página para profesionales](/profesionales).
