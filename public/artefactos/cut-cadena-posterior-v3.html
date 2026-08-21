@@ -1,163 +1,889 @@
-<!DOCTYPE html><html lang="es" data-astro-cid-ju4pidww><head><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.Sx5bM3k1.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#f0f9f9"><link rel="manifest" href="/manifest.webmanifest"><!-- SEO --><title>Programa Cut + Cadena Posterior — Kinetica AI</title><meta name="description" content="Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km."><meta name="author" content="Alfonso Navarro"><link rel="canonical" href="https://www.kineticaai.com"><!-- Open Graph --><meta property="og:title" content="Programa Cut + Cadena Posterior — Kinetica AI"><meta property="og:description" content="Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km."><meta property="og:image" content="https://www.kineticaai.com/og-image.jpg"><meta property="og:url" content="https://www.kineticaai.com"><meta property="og:type" content="website"><!-- Schema.org --><script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalBusiness",
-      "name": "Kinetica AI",
-      "url": "https://www.kineticaai.com",
-      "email": "alfon.atman@gmail.com",
-      "medicalSpecialty": "PhysicalTherapy",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Alameda",
-        "addressRegion": "Málaga",
-        "addressCountry": "ES"
-      },
-      "founder": {
-        "@type": "Person",
-        "name": "Alfonso Navarro",
-        "jobTitle": "Osteópata D.O.",
-        "identifier": {
-          "@type": "PropertyValue",
-          "propertyID": "RPPS",
-          "value": "10010607702"
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Programa Cut + Cadena Posterior — Kinetica AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink:#1f3936; --ink-2:#34504b; --ink-soft:#5a716d; --ink-mute:#8a9c98;
+  --rule:#d8e4e0; --rule-soft:#e9efed; --bg:#f0f4f2; --bg-card:#ffffff; --bg-elev:#fafcfb;
+  --fuerza:#3d5c57; --cardio:#5a8a87; --recovery:#6b9e7a; --refeed:#6b9e7a; --off:#b4bcba;
+  --grow:#c4855a; --maint:#5a8a87;
+  --cutfinal:#2b4540; --deload:#d4a843; --warn:#c4855a; --danger:#b85d4a;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --shadow-card:0 1px 0 rgba(31,57,54,0.04),0 6px 24px rgba(31,57,54,0.06);
+  --radius:4px; --radius-lg:8px;
+}
+html, body { margin: 0; padding: 0; }
+    /* Scoped n-of-1 artefact tokens — intentionally distinct from the
+       site's tokens.css (Fraunces/Inter/JetBrains Mono vs Montserrat/DM Mono,
+       and a slightly different bg tint) so this entry keeps the "compatible
+       but self-contained" identity it was authored with. Scoping to
+       .cut-page means none of this leaks into the rest of the site. */
+    .cut-page {
+      --ink:#1f3936; --ink-2:#34504b; --ink-soft:#5a716d; --ink-mute:#8a9c98;
+      --rule:#d8e4e0; --rule-soft:#e9efed; --bg:#f0f4f2; --bg-card:#ffffff; --bg-elev:#fafcfb;
+      --fuerza:#3d5c57; --cardio:#5a8a87; --recovery:#6b9e7a; --refeed:#6b9e7a; --off:#b4bcba;
+      --grow:#c4855a; --maint:#5a8a87;
+      --cutfinal:#2b4540; --deload:#d4a843; --warn:#c4855a; --danger:#b85d4a;
+      --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+      --shadow-card:0 1px 0 rgba(31,57,54,0.04),0 6px 24px rgba(31,57,54,0.06);
+      --radius:4px; --radius-lg:8px;
+
+      display: block;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      position: relative;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .cut-page, .cut-page *, .cut-page *::before, .cut-page *::after { box-sizing: border-box; }
+
+    .cut-page .scroll-progress {
+      position: fixed; top: 56px; left: 0; height: 2px;
+      background: linear-gradient(90deg, var(--fuerza), var(--cardio), var(--recovery));
+      width: var(--progress, 0%); z-index: 60; transition: width 0.05s linear;
+    }
+    .cut-page .nav {
+      position: sticky; top: 56px;
+      background: rgba(240,244,242,0.92); backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--rule); z-index: 50;
+    }
+    .cut-page .nav-inner { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .cut-page .nav-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: var(--ink); }
+    .cut-page .nav-brand .mark { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+    .cut-page .nav-brand .name { font-family: var(--serif); font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+    .cut-page .nav-links { display: flex; gap: 22px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .cut-page .nav-links a { color: var(--ink-soft); text-decoration: none; transition: color 0.2s; position: relative; }
+    .cut-page .nav-links a:hover { color: var(--ink); }
+    .cut-page .nav-links a::after { content: ''; position: absolute; left: 0; bottom: -4px; height: 1px; width: 0; background: var(--fuerza); transition: width 0.3s cubic-bezier(0.2,0.8,0.2,1); }
+    .cut-page .nav-links a:hover::after { width: 100%; }
+    @media (max-width: 760px) { .cut-page .nav-links { display: none; } }
+
+    .cut-page .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .cut-page section { padding: 80px 0; }
+    .cut-page section[id] { scroll-margin-top: 116px; }
+    @media (max-width: 720px) { .cut-page section { padding: 56px 0; } }
+    .cut-page .sec-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 36px; max-width: 760px; }
+    .cut-page .sec-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+    .cut-page .sec-title { font-family: var(--serif); font-size: clamp(28px,4vw,42px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; }
+    .cut-page .sec-title em { font-style: italic; color: var(--fuerza); font-weight: 400; }
+    .cut-page .sec-lede { font-size: 16px; color: var(--ink-soft); max-width: 680px; margin-top: 8px; }
+
+    .cut-page .hero { padding: 40px 0 80px; }
+    .cut-page .hero-grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: end; }
+    @media (min-width: 980px) { .cut-page .hero-grid { grid-template-columns: 1.4fr 1fr; } }
+    .cut-page .hero-meta { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 28px; display: flex; flex-wrap: wrap; gap: 24px; }
+    .cut-page .hero-meta b { color: var(--ink-2); font-weight: 500; }
+    .cut-page .hero h1 { font-family: var(--serif); font-size: clamp(38px,6.5vw,76px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.03; }
+    .cut-page .hero h1 em { font-style: italic; color: var(--fuerza); }
+    .cut-page .hero-sub { font-size: clamp(15px,1.6vw,18px); color: var(--ink-soft); margin-top: 22px; max-width: 540px; }
+    .cut-page .hero-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; border-top: 1px solid var(--ink-2); padding-top: 20px; }
+    .cut-page .hstat { display: flex; flex-direction: column; gap: 4px; }
+    .cut-page .hstat .lbl { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); }
+    .cut-page .hstat .val { font-family: var(--serif); font-size: clamp(32px,4vw,46px); font-weight: 400; line-height: 1; letter-spacing: -0.025em; }
+    .cut-page .hstat .unit { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+    .cut-page .hstat .delta { font-family: var(--mono); font-size: 11px; color: var(--recovery); margin-top: 2px; }
+    .cut-page .counter[data-target] { display: inline-block; }
+
+    .cut-page .paradigm { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 32px; position: relative; overflow: hidden; }
+    .cut-page .paradigm::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--fuerza); }
+    .cut-page .paradigm-kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 12px; }
+    .cut-page .paradigm-title { font-family: var(--serif); font-size: clamp(20px,2.5vw,26px); font-weight: 500; letter-spacing: -0.015em; margin-bottom: 12px; }
+    .cut-page .paradigm-body { font-size: 14.5px; color: var(--ink-soft); line-height: 1.65; max-width: 840px; }
+    .cut-page .paradigm-body em { color: var(--fuerza); font-style: italic; font-weight: 500; }
+
+    .cut-page .focus-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 760px) { .cut-page .focus-grid { grid-template-columns: 1fr 1fr; } }
+    .cut-page .focus-card { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 28px; position: relative; overflow: hidden; }
+    .cut-page .focus-card.grow::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--grow); }
+    .cut-page .focus-card.maint::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--maint); }
+    .cut-page .focus-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+    .cut-page .focus-card.grow .focus-tag { color: var(--grow); }
+    .cut-page .focus-card.maint .focus-tag { color: var(--maint); }
+    .cut-page .focus-card h3 { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.015em; margin-bottom: 14px; }
+    .cut-page .focus-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
+    .cut-page .focus-list li { display: flex; gap: 8px; align-items: baseline; }
+    .cut-page .focus-list li::before { content: '·'; font-weight: 700; }
+    .cut-page .focus-card.grow .focus-list li::before { color: var(--grow); }
+    .cut-page .focus-card.maint .focus-list li::before { color: var(--maint); }
+
+    .cut-page .week-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 720px) { .cut-page .week-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (min-width: 1100px) { .cut-page .week-grid { grid-template-columns: repeat(7,1fr); gap: 8px; } }
+    .cut-page .day { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s, border-color 0.3s; }
+    .cut-page .day:hover { transform: translateY(-2px); border-color: var(--ink-mute); }
+    .cut-page .day-head { padding: 10px 14px 12px; color: #fff; display: flex; flex-direction: column; gap: 2px; }
+    .cut-page .day-head.fuerza { background: var(--fuerza); }
+    .cut-page .day-head.cardio { background: var(--cardio); }
+    .cut-page .day-head.refeed { background: var(--refeed); }
+    .cut-page .day-head.rest { background: var(--off); }
+    .cut-page .day-head.recovery { background: #88a89e; }
+    .cut-page .day-letter { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1; letter-spacing: -0.015em; }
+    .cut-page .day-name { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85; }
+    .cut-page .day-body { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--ink-soft); }
+    .cut-page .day-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); padding-bottom: 4px; border-bottom: 1px solid var(--rule-soft); margin-bottom: 2px; }
+    .cut-page .day-item { display: flex; gap: 8px; align-items: baseline; line-height: 1.4; }
+    .cut-page .day-item .t { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); flex-shrink: 0; min-width: 28px; }
+    .cut-page .day-load { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--rule-soft); font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
+
+    .cut-page .session-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 980px) { .cut-page .session-grid { grid-template-columns: 1fr 1fr; } }
+    .cut-page .session { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+    .cut-page .session-head { padding: 22px 26px; color: #fff; background: var(--fuerza); display: flex; flex-direction: column; gap: 4px; }
+    .cut-page .session-tag { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase; opacity: 0.85; }
+    .cut-page .session-name { font-family: var(--serif); font-size: 25px; font-weight: 500; letter-spacing: -0.015em; }
+    .cut-page .session-meta { font-family: var(--mono); font-size: 11px; opacity: 0.85; margin-top: 6px; }
+    .cut-page .session-body { padding: 26px; flex: 1; }
+    .cut-page .block-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin: 24px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-soft); }
+    .cut-page .block-label:first-child { margin-top: 0; }
+    .cut-page .ex-row { display: grid; grid-template-columns: 1.7fr auto auto auto; gap: 8px; padding: 13px 0; border-bottom: 1px solid var(--rule-soft); align-items: center; font-size: 13.5px; }
+    .cut-page .ex-row:last-child { border-bottom: 0; }
+    .cut-page .ex-name { color: var(--ink); font-weight: 500; }
+    .cut-page .ex-name small { display: block; font-weight: 400; font-size: 11px; color: var(--ink-mute); margin-top: 2px; font-family: var(--mono); }
+    .cut-page .ex-name .pill { display: inline-block; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+    .cut-page .pill.grow { background: #f7e6da; color: var(--grow); }
+    .cut-page .pill.maint { background: #e3eeed; color: var(--maint); }
+    .cut-page .ex-sets { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+    .cut-page .ex-tempo, .cut-page .ex-rest { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); text-align: right; white-space: nowrap; }
+    .cut-page .ex-tempo { color: var(--fuerza); font-weight: 600; }
+    @media (max-width: 580px) { .cut-page .ex-row { grid-template-columns: 1fr auto; } .cut-page .ex-tempo, .cut-page .ex-rest { grid-column: 2; } }
+    .cut-page .order-note { background: var(--bg-elev); border: 1px solid var(--rule); border-left: 3px solid var(--fuerza); border-radius: var(--radius); padding: 16px 18px; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 20px; line-height: 1.6; }
+    .cut-page .order-note b { color: var(--ink); }
+
+    .cut-page .cardio-stack { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .cut-page .cardio-card { background: var(--bg-card); border: 1px solid var(--rule); border-left: 3px solid var(--cardio); border-radius: var(--radius); padding: 22px 26px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 720px) { .cut-page .cardio-card { grid-template-columns: 1fr 2fr; align-items: start; } }
+    .cut-page .cardio-card.refeed { border-left-color: var(--refeed); }
+    .cut-page .cardio-card.hiit { border-left-color: var(--grow); }
+    .cut-page .cardio-day { display: flex; flex-direction: column; gap: 4px; }
+    .cut-page .cardio-day .d { font-family: var(--serif); font-size: 23px; font-weight: 500; }
+    .cut-page .cardio-day .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+    .cut-page .cardio-day .dur { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+    .cut-page .cardio-content { font-size: 13.5px; color: var(--ink-soft); }
+    .cut-page .cardio-content h4 { font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .cut-page .cardio-content ul { list-style: none; margin-top: 8px; }
+    .cut-page .cardio-content li { padding: 4px 0; display: flex; gap: 8px; align-items: baseline; }
+    .cut-page .cardio-content li::before { content: '→'; color: var(--cardio); font-family: var(--mono); font-size: 11px; }
+
+    .cut-page .emg-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .cut-page .emg-table { width: 100%; min-width: 560px; border-collapse: collapse; background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); overflow: hidden; }
+    .cut-page .emg-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); font-weight: 500; text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--rule); background: var(--bg-elev); }
+    .cut-page .emg-table td { padding: 11px 16px; border-bottom: 1px solid var(--rule-soft); font-size: 13px; color: var(--ink-soft); vertical-align: top; }
+    .cut-page .emg-table td:first-child { color: var(--ink); font-weight: 500; }
+    .cut-page .emg-table tr:last-child td { border-bottom: 0; }
+    .cut-page .emg-val { font-family: var(--mono); font-weight: 600; }
+    .cut-page .emg-high { color: var(--grow); }
+    .cut-page .emg-mod { color: var(--deload); }
+    .cut-page .emg-low { color: var(--ink-mute); }
+
+    .cut-page .diet-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    @media (min-width: 760px) { .cut-page .diet-grid { grid-template-columns: repeat(3,1fr); } }
+    .cut-page .diet-card { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 26px; text-align: center; transition: transform 0.3s; }
+    .cut-page .diet-card:hover { transform: translateY(-3px); }
+    .cut-page .diet-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; }
+    .cut-page .diet-val { font-family: var(--serif); font-size: 52px; font-weight: 400; line-height: 1; letter-spacing: -0.025em; }
+    .cut-page .diet-unit { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
+    .cut-page .diet-detail { margin-top: 14px; font-size: 12.5px; color: var(--ink-soft); padding-top: 14px; border-top: 1px solid var(--rule-soft); }
+    .cut-page .macro-bar { display: flex; height: 36px; border-radius: 4px; overflow: hidden; margin: 24px 0 16px; border: 1px solid var(--rule); }
+    .cut-page .macro-seg { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; font-family: var(--mono); font-size: 10.5px; padding: 0 8px; }
+    .cut-page .macro-seg.p { background: var(--fuerza); }
+    .cut-page .macro-seg.g { background: var(--cardio); }
+    .cut-page .macro-seg.c { background: var(--recovery); }
+    .cut-page .macro-seg b { font-weight: 600; }
+
+    .cut-page .card { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-card); }
+    .cut-page .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; margin-bottom: 18px; }
+    .cut-page .card-title { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.015em; }
+    .cut-page .card-mark { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); }
+
+    .cut-page .tracking-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    @media (min-width: 760px) { .cut-page .tracking-grid { grid-template-columns: 1fr 1fr; } }
+    .cut-page .rule-list { list-style: none; display: flex; flex-direction: column; gap: 1px; background: var(--rule-soft); border-radius: var(--radius); overflow: hidden; }
+    .cut-page .rule-list li { background: var(--bg-card); padding: 14px 18px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline; font-size: 13.5px; }
+    .cut-page .rule-trigger { color: var(--ink); }
+    .cut-page .rule-action { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); text-align: right; }
+    .cut-page .rule-action b { color: var(--fuerza); font-weight: 600; }
+    .cut-page .rule-list.warn li { background: #fdf6ef; }
+    .cut-page .rule-list.warn .rule-action b { color: var(--warn); }
+
+    .cut-page .changelog { background: var(--bg-card); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 30px; }
+    .cut-page .changelog-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .cut-page .changelog-list li { padding-left: 22px; position: relative; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+    .cut-page .changelog-list li::before { content: '→'; position: absolute; left: 0; top: 0; color: var(--fuerza); font-family: var(--mono); font-weight: 600; }
+    .cut-page .changelog-list b { color: var(--ink); font-weight: 600; }
+
+    .cut-page footer { padding: 60px 0 40px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); }
+    .cut-page .footer-grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: baseline; }
+    .cut-page footer b { color: var(--ink-2); font-weight: 500; }
+    .cut-page footer .spec { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .cut-page .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s cubic-bezier(0.2,0.8,0.2,1), transform 0.8s cubic-bezier(0.2,0.8,0.2,1); }
+    .cut-page .reveal.in { opacity: 1; transform: translateY(0); }
+    .cut-page .reveal-delay-1 { transition-delay: 0.05s; } .cut-page .reveal-delay-2 { transition-delay: 0.1s; } .cut-page .reveal-delay-3 { transition-delay: 0.15s; }
+    .cut-page .reveal-delay-4 { transition-delay: 0.2s; } .cut-page .reveal-delay-5 { transition-delay: 0.25s; } .cut-page .reveal-delay-6 { transition-delay: 0.3s; } .cut-page .reveal-delay-7 { transition-delay: 0.35s; }
+    .cut-page .hero-stagger > * { opacity: 0; transform: translateY(20px); animation: cutHeroIn 1s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+    .cut-page .hero-stagger > *:nth-child(1) { animation-delay: 0.1s; } .cut-page .hero-stagger > *:nth-child(2) { animation-delay: 0.25s; } .cut-page .hero-stagger > *:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes cutHeroIn { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+  <div class="cut-page">
+    <div class="scroll-progress" id="progress"></div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a href="#top" class="nav-brand"><span class="mark">KIN/AI</span><span class="name">Kinetica AI</span></a>
+        <div class="nav-links">
+          <a href="#paradigma">Paradigma</a>
+          <a href="#foco">Foco</a>
+          <a href="#semana">Semana</a>
+          <a href="#fuerza">Fuerza</a>
+          <a href="#cardio">Cardio</a>
+          <a href="#emg">Reclutamiento</a>
+          <a href="#dieta">Dieta</a>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero" id="top">
+      <div class="container hero-stagger">
+        <div class="hero-meta">
+          <span><b>Atleta</b> Alfonso · 46</span>
+          <span><b>Programa</b> Cut + Cadena posterior</span>
+          <span><b>Fase</b> 01 / 02</span>
+          <span><b>Rev.</b> v3.0 · 2026</span>
+        </div>
+        <div class="hero-grid">
+          <div>
+            <h1>Cut + <em>cadena posterior</em><br>preparación montaña</h1>
+            <p class="hero-sub">
+              Pérdida de grasa con foco único de crecimiento en glúteo e isquio.
+              Resto en mantenimiento. Cardio Z2 dominante, dos días de descanso real.
+              Diseñado para bajar el centro de gravedad y operar en alta montaña.
+            </p>
+          </div>
+          <div class="hero-stats">
+            <div class="hstat">
+              <span class="lbl">Peso inicial</span>
+              <span class="val"><span class="counter" data-target="87">0</span><span style="font-size:0.5em;color:var(--ink-mute);">kg</span></span>
+            </div>
+            <div class="hstat">
+              <span class="lbl">Peso objetivo</span>
+              <span class="val"><span class="counter" data-target="74">0</span><span style="font-size:0.5em;color:var(--ink-mute);">–76</span></span>
+              <span class="delta">−11 a −13 kg</span>
+            </div>
+            <div class="hstat">
+              <span class="lbl">Días entreno</span>
+              <span class="val"><span class="counter" data-target="5">0</span></span>
+              <span class="unit">+ 2 descanso</span>
+            </div>
+            <div class="hstat">
+              <span class="lbl">VO₂max</span>
+              <span class="val"><span class="counter" data-target="56">0</span></span>
+              <span class="unit">ml/kg/min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="paradigma" style="padding-top:0;">
+      <div class="container">
+        <div class="paradigm reveal">
+          <div class="paradigm-kicker">Paradigma · diseño v3.0</div>
+          <h2 class="paradigm-title">Una variable principal por fase</h2>
+          <p class="paradigm-body">
+            El error de las versiones previas fue perseguir cut + fuerza neural + acondicionamiento simultáneos.
+            A 46 años, post-Lyme, en déficit, esos objetivos compiten por el mismo recurso limitado: la recuperación.
+            <em>Fase 1 tiene una sola prioridad de crecimiento — glúteo e isquio, la cadena posterior que baja el
+            centro de gravedad y mueve la montaña.</em> Todo lo demás se mantiene, no progresa. El cardio Z2 hace
+            el trabajo de pérdida de grasa. La fuerza neural pura y los métodos avanzados esperan a Fase 2.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="foco" style="background:var(--bg-elev);">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">01 — Foco muscular</span>
+          <h2 class="sec-title">Qué crece y <em>qué se mantiene</em></h2>
+          <p class="sec-lede">
+            En déficit calórico el crecimiento se concentra donde hay déficit de desarrollo previo
+            + estímulo dirigido. Glúteo e isquio cumplen ambas. El resto ya está desarrollado: mantenimiento.
+          </p>
+        </div>
+        <div class="focus-grid">
+          <div class="focus-card grow reveal reveal-delay-1">
+            <div class="focus-tag">Crecimiento activo · volumen alto</div>
+            <h3>Glúteo + Isquio</h3>
+            <ul class="focus-list">
+              <li>Glúteo mayor → glute drive sentado (extensión cadera aislada)</li>
+              <li>Glúteo medio → máquina abductor (rango 60%+ MVIC, zona de fuerza)</li>
+              <li>Isquio → leg curl (flexión rodilla, excéntrico 3s, protección descenso)</li>
+              <li>Frecuencia 2×/semana — óptima para crecimiento</li>
+              <li>Objetivo funcional: bajar centro de gravedad, motor de ascenso, equilibrio cuádriceps/isquio</li>
+            </ul>
+          </div>
+          <div class="focus-card maint reveal reveal-delay-2">
+            <div class="focus-tag">Mantenimiento · volumen mínimo eficaz</div>
+            <h3>Núcleo + compensación</h3>
+            <ul class="focus-list">
+              <li>Dorsal + core anterior → dominada en L</li>
+              <li>Empuje vertical → press militar con barra</li>
+              <li>Carga axial + grip + trapecio → farmer's walk</li>
+              <li>Hombro/pecho → máquina multiángulo (deltoides medial/posterior + pectoral)</li>
+              <li>Cuádriceps → ya cubierto de sobra por el remo, sin trabajo dedicado</li>
+            </ul>
+          </div>
+        </div>
+        <p style="font-size:12.5px; color:var(--ink-mute); margin-top:20px; font-family:var(--mono); letter-spacing:0.02em;">
+          Descartado en Fase 1: sentadilla · peso muerto · antebrazo aislado (cubierto por dominada L + farmer's) · escaladora con carga · andar (economía demasiado optimizada, no genera gasto)
+        </p>
+      </div>
+    </section>
+
+    <section id="semana">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">02 — Vista semanal</span>
+          <h2 class="sec-title">5 días entreno · <em>2 de descanso</em></h2>
+          <p class="sec-lede">
+            Dos valles reales (miércoles y domingo) que la semana de sobrecarga no tuvo. La adaptación
+            y el crecimiento ocurren en el descanso, no en el estímulo. Carga en dos bloques separados.
+          </p>
+        </div>
+        <div class="week-grid">
+          <div class="day reveal reveal-delay-1">
+            <div class="day-head fuerza"><span class="day-name">Lunes</span><span class="day-letter">L</span></div>
+            <div class="day-body">
+              <span class="day-tag">Fuerza A</span>
+              <div class="day-item"><span class="t">→</span>Dominada L + bloque glúteo/isquio</div>
+              <div class="day-item"><span class="t">→</span>Farmer's walk</div>
+              <div class="day-item"><span class="t">Z2</span>Remo suave post 20'</div>
+              <div class="day-load">Carga media-alta</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-2">
+            <div class="day-head cardio"><span class="day-name">Martes</span><span class="day-letter">M</span></div>
+            <div class="day-body">
+              <span class="day-tag">Cardio puro</span>
+              <div class="day-item"><span class="t">Z2</span>Remo largo hasta 120'</div>
+              <div class="day-item"><span class="t">o</span>Picos controlados + Z2</div>
+              <div class="day-load">Carga media</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-3">
+            <div class="day-head rest"><span class="day-name">Miércoles</span><span class="day-letter">X</span></div>
+            <div class="day-body">
+              <span class="day-tag">Descanso</span>
+              <div class="day-item"><span class="t">→</span>Movilidad + estiramiento</div>
+              <div class="day-item"><span class="t">→</span>Paseo suave cómodo</div>
+              <div class="day-load">Recovery puro</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-4">
+            <div class="day-head fuerza"><span class="day-name">Jueves</span><span class="day-letter">J</span></div>
+            <div class="day-body">
+              <span class="day-tag">Fuerza B</span>
+              <div class="day-item"><span class="t">→</span>Press militar + bloque glúteo/isquio</div>
+              <div class="day-item"><span class="t">→</span>Máquina multiángulo</div>
+              <div class="day-item"><span class="t">Z2</span>Remo suave post 20'</div>
+              <div class="day-load">Carga media-alta</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-5">
+            <div class="day-head hiit" style="background:var(--grow);"><span class="day-name">Viernes</span><span class="day-letter">V</span></div>
+            <div class="day-body">
+              <span class="day-tag">Cardio puro · HIIT</span>
+              <div class="day-item"><span class="t">15'</span>SkiErg HIIT (1×/sem)</div>
+              <div class="day-item"><span class="t">Z2</span>Remo extensivo</div>
+              <div class="day-load">Carga media</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-6">
+            <div class="day-head refeed"><span class="day-name">Sábado</span><span class="day-letter">S</span></div>
+            <div class="day-body">
+              <span class="day-tag">Largo moderado</span>
+              <div class="day-item"><span class="t">→</span>Multi-erg, intensidad moderada</div>
+              <div class="day-item"><span class="t">→</span>Sin Z4 brutal, picos controlados</div>
+              <div class="day-load">Carga media</div>
+            </div>
+          </div>
+          <div class="day reveal reveal-delay-7">
+            <div class="day-head recovery"><span class="day-name">Domingo</span><span class="day-letter">D</span></div>
+            <div class="day-body">
+              <span class="day-tag">Descanso activo · flexible</span>
+              <div class="day-item"><span class="t">→</span>Neuro-funcional o solo movilidad</div>
+              <div class="day-item"><span class="t">→</span>Yoga + pranayama (apnea si HRV OK)</div>
+              <div class="day-load">Recovery / baja</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:12.5px; color:var(--ink-mute); margin-top:20px; font-family:var(--mono); letter-spacing:0.02em;">
+          Domingo flexible: si HRV baja o semana dura, degradar a solo movilidad + pranayama suave. Las tablas CO₂ son carga autonómica, no recovery — fuera en semanas exigentes.
+        </p>
+      </div>
+    </section>
+
+    <section id="fuerza" style="background:var(--bg-elev);">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">03 — Días de fuerza</span>
+          <h2 class="sec-title">Dos sesiones · <em>orden fragilidad → robustez</em></h2>
+          <p class="sec-lede">
+            El criterio de ordenación no es "compuestos vs máquinas" ni "lo que crece primero". Es: ejercicios
+            técnicamente frágiles bajo fatiga primero (necesitan frescura), ejercicios robustos a la fatiga después.
+          </p>
+        </div>
+
+        <div class="order-note reveal">
+          <b>Por qué este orden.</b> La dominada en L y el press militar son técnicamente frágiles: el L-sit colapsa
+          con fatiga de core/cadera, el press pierde estabilidad. Van primero, frescos. El glute drive, abductor y
+          leg curl son guiados y robustos: toleran fatiga previa sin que el estímulo de crecimiento se degrade.
+          El farmer's walk cierra porque es robustísimo — se ejecuta con todo el cuerpo cansado y sigue cumpliendo.
+        </div>
+
+        <div class="session-grid">
+          <div class="session reveal reveal-delay-1">
+            <div class="session-head">
+              <span class="session-tag">Lunes</span>
+              <h3 class="session-name">Fuerza A — Tracción + cadena posterior</h3>
+              <span class="session-meta">Calentamiento 10' airdyne · 60–70 min · Z2 suave post</span>
+            </div>
+            <div class="session-body">
+              <div class="block-label">Frágil — primero, fresco</div>
+              <div class="ex-row">
+                <span class="ex-name">Dominada en L <span class="pill maint">mant</span><small>Isometría 10s a 90°, excéntrica 3s</small></span>
+                <span class="ex-sets">4 × 5</span>
+                <span class="ex-tempo">3·ISO·1·1</span>
+                <span class="ex-rest">3 min</span>
+              </div>
+              <div class="block-label">Crecimiento — robusto, calidad alta</div>
+              <div class="ex-row">
+                <span class="ex-name">Glute drive sentado <span class="pill grow">crece</span><small>Glúteo mayor, pausa 2s pico</small></span>
+                <span class="ex-sets">4 × 10</span>
+                <span class="ex-tempo">2·2·1·0</span>
+                <span class="ex-rest">2 min</span>
+              </div>
+              <div class="ex-row">
+                <span class="ex-name">Abductor máquina <span class="pill grow">crece</span><small>Glúteo medio, rango completo</small></span>
+                <span class="ex-sets">3 × 12</span>
+                <span class="ex-tempo">2·1·2·0</span>
+                <span class="ex-rest">90 s</span>
+              </div>
+              <div class="ex-row">
+                <span class="ex-name">Leg curl <span class="pill grow">crece</span><small>Isquio flexión, excéntrico marcado</small></span>
+                <span class="ex-sets">4 × 10</span>
+                <span class="ex-tempo">3·1·1·0</span>
+                <span class="ex-rest">90 s</span>
+              </div>
+              <div class="block-label">Robusto — cierre</div>
+              <div class="ex-row">
+                <span class="ex-name">Farmer's walk <span class="pill maint">mant</span><small>Carga axial + grip + glúteo medio</small></span>
+                <span class="ex-sets">4 × 30 m</span>
+                <span class="ex-tempo">—</span>
+                <span class="ex-rest">2 min</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="session reveal reveal-delay-2">
+            <div class="session-head">
+              <span class="session-tag">Jueves</span>
+              <h3 class="session-name">Fuerza B — Empuje + cadena posterior</h3>
+              <span class="session-meta">Calentamiento 10' airdyne · 60–70 min · Z2 suave post</span>
+            </div>
+            <div class="session-body">
+              <div class="block-label">Frágil — primero, fresco</div>
+              <div class="ex-row">
+                <span class="ex-name">Press militar de pie <span class="pill maint">mant</span><small>Carga axial, core anti-extensión</small></span>
+                <span class="ex-sets">5 × 5</span>
+                <span class="ex-tempo">3·1·1·0</span>
+                <span class="ex-rest">3 min</span>
+              </div>
+              <div class="block-label">Crecimiento — robusto, calidad alta</div>
+              <div class="ex-row">
+                <span class="ex-name">Glute drive sentado <span class="pill grow">crece</span><small>Glúteo mayor, pausa 2s pico</small></span>
+                <span class="ex-sets">4 × 10</span>
+                <span class="ex-tempo">2·2·1·0</span>
+                <span class="ex-rest">2 min</span>
+              </div>
+              <div class="ex-row">
+                <span class="ex-name">Abductor máquina <span class="pill grow">crece</span><small>Glúteo medio, rango completo</small></span>
+                <span class="ex-sets">3 × 12</span>
+                <span class="ex-tempo">2·1·2·0</span>
+                <span class="ex-rest">90 s</span>
+              </div>
+              <div class="ex-row">
+                <span class="ex-name">Leg curl <span class="pill grow">crece</span><small>Isquio flexión, excéntrico marcado</small></span>
+                <span class="ex-sets">4 × 10</span>
+                <span class="ex-tempo">3·1·1·0</span>
+                <span class="ex-rest">90 s</span>
+              </div>
+              <div class="block-label">Robusto — cierre</div>
+              <div class="ex-row">
+                <span class="ex-name">Máquina multiángulo <span class="pill maint">mant</span><small>Deltoides medial/posterior + pectoral según ángulo</small></span>
+                <span class="ex-sets">3 × 12</span>
+                <span class="ex-tempo">2·1·2·0</span>
+                <span class="ex-rest">75 s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal reveal-delay-3" style="margin-top:24px;">
+          <div class="card-head">
+            <h3 class="card-title">Estructura del día de fuerza</h3>
+            <span class="card-mark">Apertura → cierre</span>
+          </div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--ink-soft);">
+            <li>· <b style="color:var(--ink);">Calentamiento</b>: 10 min airdyne suave, FC progresiva</li>
+            <li>· <b style="color:var(--ink);">Trabajo</b>: orden fragilidad → robustez (ver sesiones)</li>
+            <li>· <b style="color:var(--ink);">Descarga</b>: 20 min remo Z2 suave (aclaración metabolitos + volumen aeróbico barato)</li>
+            <li>· <b style="color:var(--ink);">Cierre</b>: bird dog + plancha lateral en V (anti-rotación) + estiramiento derivado de yoga/pilates + foam roller</li>
+            <li>· Estiramiento del flexor de cadera (corredor) al final, nunca antes del glute drive</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="cardio">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">04 — Cardio</span>
+          <h2 class="sec-title">Z2 dominante · <em>polarización controlada</em></h2>
+          <p class="sec-lede">
+            Sin Z4 de forma bruta. O bien picos de intensidad controlados + Z2, o solo Z2. El remo como herramienta
+            regulable es la base de la pérdida de grasa. SkiErg HIIT 1 día (revisable). Techo del extensivo: 120 min.
+          </p>
+        </div>
+        <div class="cardio-stack">
+          <div class="cardio-card reveal reveal-delay-1">
+            <div class="cardio-day"><span class="l">Post-fuerza · L y J</span><span class="d">Z2 suave</span><span class="dur">20 min</span></div>
+            <div class="cardio-content">
+              <h4>Descarga tras fuerza</h4>
+              <p>Remo Z2 baja tras la sesión de fuerza. No compite con el trabajo ya hecho.</p>
+              <ul>
+                <li>Aclaración de metabolitos por flujo sanguíneo suave</li>
+                <li>Volumen aeróbico de bajo coste sin interferencia</li>
+                <li>Z2 baja estricta, no subir a Z3</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cardio-card reveal reveal-delay-2">
+            <div class="cardio-day"><span class="l">Martes</span><span class="d">Remo extensivo</span><span class="dur">hasta 120 min</span></div>
+            <div class="cardio-content">
+              <h4>Base de pérdida de grasa</h4>
+              <p>El Z2 verdadero en remo es donde domina la oxidación lipídica. Techo 120 min para no comprometer masa magra.</p>
+              <ul>
+                <li>120–130 ppm sostenido, damper 5</li>
+                <li>O variante: picos controlados (no Z4 brutal) + Z2</li>
+                <li>Hidratación + electrolitos si supera 60 min</li>
+                <li>Métrica: pace /500 m a FC fija — track semanal</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cardio-card hiit reveal reveal-delay-3">
+            <div class="cardio-day"><span class="l">Viernes</span><span class="d">SkiErg HIIT</span><span class="dur">15 min + Z2</span></div>
+            <div class="cardio-content">
+              <h4>Estímulo VO₂max · 1×/semana (revisable)</h4>
+              <p>El SkiErg dispara la FC por reclutamiento masivo — se usa en su zona natural (HIIT), no peleando por mantenerlo en Z2. Cardio puro, lejos de fuerza.</p>
+              <ul>
+                <li>Calentamiento breve airdyne</li>
+                <li>SkiErg intervalos máx 15 min (no saturar pierna)</li>
+                <li>+ remo Z2 extensivo después</li>
+                <li>Subir a 2×/semana solo si recuperación estable</li>
+              </ul>
+            </div>
+          </div>
+          <div class="cardio-card refeed reveal reveal-delay-4">
+            <div class="cardio-day"><span class="l">Sábado</span><span class="d">Largo moderado</span><span class="dur">~90 min</span></div>
+            <div class="cardio-content">
+              <h4>Multi-erg moderado</h4>
+              <p>Más moderado que la versión polarizada previa. Tras la lección de sobrecarga, baja la intensidad.</p>
+              <ul>
+                <li>Remo + airdyne, intensidad moderada</li>
+                <li>Picos controlados, sin Z4 brutal sostenido</li>
+                <li>Pesa unilateral alternada si se usa carga, nunca mochila</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="emg" style="background:var(--bg-elev);">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">05 — Reclutamiento muscular</span>
+          <h2 class="sec-title">Mapa de <em>cobertura</em></h2>
+          <p class="sec-lede">
+            Análisis de qué activa cada ejercicio y dónde hay solapamiento o hueco. La activación EMG (%MVIC) mide
+            reclutamiento, no fuerza ni hipertrofia directa — referencia, no fisiología exacta. Valores de literatura
+            en poblaciones distintas a la del atleta.
+          </p>
+        </div>
+        <div class="reveal reveal-delay-1 emg-table-wrap">
+          <table class="emg-table">
+            <thead>
+              <tr><th>Músculo</th><th>Cardio cubre</th><th>Fuerza/accesorio cubre</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cuádriceps</td><td>Remo (alto), airdyne</td><td>—</td><td><span class="emg-val emg-mod">Cubierto cardio</span></td></tr>
+              <tr><td>Glúteo mayor</td><td>Remo drive</td><td>Glute drive</td><td><span class="emg-val emg-high">Crecimiento</span></td></tr>
+              <tr><td>Glúteo medio</td><td>Casi nada</td><td>Abductor (60%+ MVIC), farmer's</td><td><span class="emg-val emg-high">Crecimiento</span></td></tr>
+              <tr><td>Isquio (flexión)</td><td>—</td><td>Leg curl + sinergia glute drive</td><td><span class="emg-val emg-high">Crecimiento</span></td></tr>
+              <tr><td>Erector espinal</td><td>Remo (alto)</td><td>Farmer's walk</td><td><span class="emg-val emg-mod">Doble cobertura</span></td></tr>
+              <tr><td>Dorsal ancho</td><td>Remo, SkiErg</td><td>Dominada en L</td><td><span class="emg-val emg-mod">Triple cobertura</span></td></tr>
+              <tr><td>Core anterior</td><td>SkiErg, airdyne</td><td>Dominada L, press militar</td><td><span class="emg-val emg-mod">Cubierto</span></td></tr>
+              <tr><td>Deltoides ant/medial</td><td>SkiErg parcial</td><td>Press militar, multiángulo</td><td><span class="emg-val emg-mod">Cubierto</span></td></tr>
+              <tr><td>Deltoides posterior</td><td>Remo finish</td><td>Máquina multiángulo</td><td><span class="emg-val emg-mod">Cubierto</span></td></tr>
+              <tr><td>Pectoral / Tríceps</td><td>SkiErg, airdyne</td><td>Multiángulo, press</td><td><span class="emg-val emg-mod">Cubierto</span></td></tr>
+              <tr><td>Grip / Antebrazo</td><td>—</td><td>Farmer's walk, dominada L</td><td><span class="emg-val emg-mod">Funcional, no hipertrofia</span></td></tr>
+              <tr><td>Anti-rotación core</td><td>—</td><td>Bird dog, plancha V, yoga</td><td><span class="emg-val emg-mod">Triple cobertura</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card reveal reveal-delay-2" style="margin-top:24px;">
+          <div class="card-head">
+            <h3 class="card-title">Datos EMG de referencia · glúteo medio</h3>
+            <span class="card-mark">%MVIC literatura</span>
+          </div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--ink-soft);">
+            <li>· Abducción de pie con resistencia: ~60% MVIC (rango de ganancia de fuerza)</li>
+            <li>· Abducción decúbito lateral: ~80% MVIC (la más alta)</li>
+            <li>· Abducción-extensión resistida (segmento posterior): 69% MVIC</li>
+            <li>· Marco: 21–40% MVIC = resistencia/reeducación · 41–60%+ = ganancia de fuerza</li>
+            <li>· El glúteo medio NO lo cubre ningún erg — la máquina abductor es la única vía a rango de crecimiento</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="dieta">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">06 — Dieta</span>
+          <h2 class="sec-title">Energía y <em>macros</em></h2>
+          <p class="sec-lede">
+            Tres niveles según fase. Proteína fija no negociable (2.0–2.2 g/kg) — crítica para que glúteo e isquio
+            crezcan en déficit. Objetivo 74–76 kg con cut bifásico (respiro a mantenimiento entre 76 y 74).
+          </p>
+        </div>
+        <div class="diet-grid">
+          <div class="diet-card reveal reveal-delay-1">
+            <div class="diet-tag">Cut normal</div>
+            <div class="diet-val">2400</div>
+            <div class="diet-unit">kcal/día</div>
+            <div class="diet-detail">Déficit ~700 vs TDEE ~3077. Pérdida 0.6–0.75 kg/sem hasta 76 kg.</div>
+          </div>
+          <div class="diet-card reveal reveal-delay-2" style="background:#f5fbf6;">
+            <div class="diet-tag">Diet break / respiro</div>
+            <div class="diet-val">2900</div>
+            <div class="diet-unit">kcal/día</div>
+            <div class="diet-detail">A mantenimiento. Cada 5–6 sem, y respiro de 4 sem entre 76 y 74 kg.</div>
+          </div>
+          <div class="diet-card reveal reveal-delay-3" style="background:#f0f4f3; border-color:var(--cutfinal);">
+            <div class="diet-tag">Cut final · 76→74</div>
+            <div class="diet-val">2200</div>
+            <div class="diet-unit">kcal/día</div>
+            <div class="diet-detail">Últimos 2 kg, tasa lenta 0.3–0.4 kg/sem. Vigilar HRV, sueño, libido de cerca.</div>
+          </div>
+        </div>
+        <div class="card reveal reveal-delay-4" style="margin-top:40px;">
+          <div class="card-head"><h3 class="card-title">Macros</h3><span class="card-mark">2400 kcal base</span></div>
+          <div class="macro-bar">
+            <div class="macro-seg p" style="flex:30;"><b>180g</b> P · 30%</div>
+            <div class="macro-seg g" style="flex:28;"><b>75g</b> G · 28%</div>
+            <div class="macro-seg c" style="flex:42;"><b>250g</b> C · 42%</div>
+          </div>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px;">
+            Proteína distribuida en 4–5 tomas de 35–45 g. CHO prioritario pre/post fuerza. La proteína alta es la
+            red de seguridad del crecimiento glúteo/isquio en déficit.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tracking" style="background:var(--bg-elev);">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">07 — Tracking y ajuste</span>
+          <h2 class="sec-title">Señales <em>externas</em></h2>
+          <p class="sec-lede">
+            La propiocepción está calibrada para umbrales altos — mete más de lo que conviene. Las métricas externas
+            detectan fatiga antes de que el cuerpo colapse, como pasó en la semana de sobrecarga.
+          </p>
+        </div>
+        <div class="tracking-grid">
+          <div>
+            <div class="block-label" style="margin-top:0;">Métricas</div>
+            <ul class="rule-list">
+              <li><span class="rule-trigger">Peso · diario AM</span><span class="rule-action">Promedio 7 días</span></li>
+              <li><span class="rule-trigger">HRV · diario AM</span><span class="rule-action">Baseline ±%</span></li>
+              <li><span class="rule-trigger">Carga cardiovascular Polar</span><span class="rule-action">Evitar sobrecarga sostenida</span></li>
+              <li><span class="rule-trigger">Pace remo /500 m FC fija</span><span class="rule-action">Semanal</span></li>
+              <li><span class="rule-trigger">Glute drive / abductor carga</span><span class="rule-action">Progresión = crecimiento</span></li>
+              <li><span class="rule-trigger">Perímetro glúteo / cadera</span><span class="rule-action">Cinta, quincenal</span></li>
+              <li><span class="rule-trigger">Sueño + libido</span><span class="rule-action">Continuo</span></li>
+            </ul>
+          </div>
+          <div>
+            <div class="block-label" style="margin-top:0;">Criterios de ajuste</div>
+            <ul class="rule-list warn">
+              <li><span class="rule-trigger">No me puedo mover / fatiga aguda</span><span class="rule-action"><b>Off + revisar densidad</b></span></li>
+              <li><span class="rule-trigger">HRV ↓ &gt;7% baseline 10 días</span><span class="rule-action"><b>+200 kcal o −1 sesión</b></span></li>
+              <li><span class="rule-trigger">HRV ↓ &gt;15% una mañana</span><span class="rule-action"><b>Off completo</b></span></li>
+              <li><span class="rule-trigger">Polar marca sobrecarga 2 sem</span><span class="rule-action"><b>Reducir volumen</b></span></li>
+              <li><span class="rule-trigger">Pérdida &gt;0.9 kg/sem</span><span class="rule-action"><b>+200 kcal</b></span></li>
+              <li><span class="rule-trigger">Plateau &gt;14 días</span><span class="rule-action"><b>Diet break 7 días</b></span></li>
+              <li><span class="rule-trigger">Instinto de "meter más"</span><span class="rule-action"><b>Resistir · seguir plan</b></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="changelog">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">08 — Evolución del diseño</span>
+          <h2 class="sec-title">De v1 a <em>v3</em></h2>
+          <p class="sec-lede">
+            El programa cambió de raíz tres veces durante el debate. Cada giro vino de un dato real: una sesión
+            fallida, datos de Polar, fotos, o un argumento técnico del atleta que la evidencia respaldó.
+          </p>
+        </div>
+        <div class="changelog reveal reveal-delay-1">
+          <ul class="changelog-list">
+            <li><b>v1 → fuerza neural pura</b> (87–90% 1RM, 5×3). Falló: demasiada carga CNS + articular en cut a 46 años.</li>
+            <li><b>v2 → tension-control</b> (72–80%, tempo). Mejor, pero seguía intentando cut + fuerza + acondicionamiento a la vez.</li>
+            <li><b>v3 → una variable por fase</b>. El atleta identificó que cut + fuerza neural no casan a esta edad. Correcto.</li>
+            <li><b>Foco reducido a glúteo + isquio</b>: único crecimiento activo. Confirmado por análisis visual (cuádriceps ya desarrollado, glúteo plano).</li>
+            <li><b>Peso muerto y sentadilla fuera</b>: cadena posterior de pierna ya cubierta por remo. Farmer's walk da más estímulo funcional con menos coste.</li>
+            <li><b>Núcleo reducido a 3</b>: farmer's walk, dominada en L, press militar. Lo que los ergs no replican.</li>
+            <li><b>Orden fragilidad → robustez</b>: no "compuestos primero" sino "técnicamente frágil primero". Corrección del atleta, refinada.</li>
+            <li><b>SkiErg y escaladora con carga fuera</b> como base: economía demasiado optimizada, no genera gasto, consume masa magra. SkiErg solo como HIIT 1×.</li>
+            <li><b>Cardio Z2 dominante</b> como motor de pérdida de grasa. Sin Z4 brutal. Polarización controlada.</li>
+            <li><b>Dos días de descanso</b>: la adaptación ocurre en el descanso. Tras la semana de sobrecarga, no negociable.</li>
+            <li><b>Antebrazo aislado descartado</b>: cubierto funcionalmente por dominada L + farmer's, hipertrofia marginal en cut.</li>
+            <li><b>Objetivo 74–76 kg</b> confirmado: pérdida principalmente abdominal/visceral, tren inferior magro se preserva.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div><span>Kinetica AI · Programa <b>Cut + Cadena posterior</b></span></div>
+          <div class="spec"><span>Rev. <b>v3.0</b></span><span>Fase <b>01 / 02</b></span><span>2026</span></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+<script>
+    function initCutPage() {
+      const page = document.querySelector('.cut-page')
+      if (!page) return () => {}
+
+      const progress = page.querySelector('#progress')
+      const onScroll = () => {
+        const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+        progress.style.setProperty('--progress', scrolled + '%')
+      }
+      window.addEventListener('scroll', onScroll, { passive: true })
+
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in')
+            revealObserver.unobserve(entry.target)
+          }
+        })
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' })
+      page.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el))
+
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target
+            const target = parseInt(el.dataset.target, 10)
+            const duration = 1400
+            const start = performance.now()
+            const tick = (now) => {
+              const p = Math.min((now - start) / duration, 1)
+              const eased = 1 - Math.pow(1 - p, 3)
+              el.textContent = Math.floor(target * eased)
+              if (p < 1) requestAnimationFrame(tick)
+              else el.textContent = String(target)
+            }
+            requestAnimationFrame(tick)
+            counterObserver.unobserve(el)
+          }
+        })
+      }, { threshold: 0.5 })
+      page.querySelectorAll('.counter[data-target]').forEach((el) => counterObserver.observe(el))
+
+      const localNav = page.querySelector('.nav')
+      const clickHandlers = []
+      page.querySelectorAll('.nav-links a, .nav-brand').forEach((link) => {
+        const handler = (e) => {
+          const href = link.getAttribute('href')
+          if (href && href.startsWith('#')) {
+            e.preventDefault()
+            const target = document.querySelector(href)
+            if (target) {
+              const topbarH = 56
+              const navH = localNav ? localNav.offsetHeight : 0
+              window.scrollTo({
+                top: target.getBoundingClientRect().top + window.scrollY - topbarH - navH - 12,
+                behavior: 'smooth',
+              })
+            }
+          }
         }
+        link.addEventListener('click', handler)
+        clickHandlers.push([link, handler])
+      })
+
+      return () => {
+        window.removeEventListener('scroll', onScroll)
+        revealObserver.disconnect()
+        counterObserver.disconnect()
+        clickHandlers.forEach(([link, handler]) => link.removeEventListener('click', handler))
       }
     }
-    </script><!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;165f6fd632de46bb905ef551de19e2d1&quot;}"></script><!-- End Cloudflare Web Analytics --><link rel="stylesheet" href="/_astro/cut-cadena-posterior.Cotl06je.css"><style>.astro-route-announcer{clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;top:0;left:0;overflow:hidden}:root{--bg:#f0f9f9;--teal:#90a7a5;--green:#6b9e7a;--warm:#c4855a;--text:#3d5c57;--text-heading:#34504b;--text-sec:#4d6e68;--text-dim:#7a9e97;--text-metric:#34504b;--slate:#6a8690;--sea:#5d8a82;--moss:#6b8a6d;--ice:#85a8b8;--clay:#a8796e;--sand:#bfa87a;--gold:#d4a843;--fill-teal:#90a7a51a;--fill-green:#6b9e7a1a;--fill-warm:#c4855a1a;--fill-sea:#5d8a821a;--fill-ice:#85a8b81a;--fill-clay:#a8796e1a;--fill-sand:#bfa87a1a;--fill-moss:#6b8a6d1a;--fill-active:#90a7a526;--border:#90a7a526;--border-active:#90a7a54d;--shadow:#1a2a280f;--text-hero:clamp(3.5rem, 6vw, 4.5rem);--text-section:clamp(2rem, 3.5vw, 2.5rem);--text-subsection:clamp(1.25rem, 2vw, 1.5rem);--text-body-lg:1.125rem;--text-body:1rem;--text-caption:.8125rem;--text-eyebrow:.9375rem;--space-section:clamp(48px, 6vh, 72px);--space-subsection:32px;--space-element:20px;--space-tight:10px;--sans:"Montserrat", -apple-system, BlinkMacSystemFont, sans-serif;--mono:"DM Mono", "SF Mono", "Fira Code", monospace;--ease-out:cubic-bezier(.16, 1, .3, 1);--duration-reveal:1.6s;--duration-hover:.3s;--ease-organic:cubic-bezier(.22, 1, .36, 1);--anim-fast:.4s;--anim-base:.7s;--anim-slow:1s}*,:before,:after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;background:var(--bg);font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:16px;line-height:1.65}body{color:var(--text);min-height:100dvh;overflow-x:hidden}a{color:var(--sea);transition:color var(--duration-hover) ease;text-decoration:none}a:hover{color:var(--green)}img{max-width:100%;display:block}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#90a7a533}.eyebrow{font-family:var(--mono);font-size:var(--text-eyebrow);letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);font-weight:500}.section{padding:var(--space-section) 0}.reveal-base{opacity:0;transition:opacity var(--duration-reveal) var(--ease-out), transform var(--duration-reveal) var(--ease-out);transform:translateY(40px)}.reveal-base.revealed{opacity:1;transform:translateY(0)}.divider{border:none;border-top:1px solid var(--border);margin:0}.scroll-hook{opacity:.45;justify-content:center;align-items:center;gap:8px;padding:8px 0 0;transition:opacity .4s;display:flex}.scroll-hook:hover{opacity:.7}.scroll-hook-text{font-family:var(--mono);font-size:var(--text-eyebrow);color:var(--text-dim);letter-spacing:.06em}.scroll-hook-arrow{color:var(--text-dim);font-size:14px;animation:2.5s ease-in-out infinite hookBob}@keyframes hookBob{0%,to{transform:translateY(0)}50%{transform:translateY(3px)}}:focus-visible{outline:2px solid var(--teal);outline-offset:3px}@media (width<=480px){:root{--text-section:clamp(1.5rem, 6vw, 2rem);--text-subsection:clamp(1.1rem, 3.5vw, 1.25rem);--text-body-lg:1rem}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}.content-layer[data-astro-cid-ju4pidww]{z-index:1;max-width:960px;margin:0 auto;padding:0 48px;position:relative}@media (width<=768px){.content-layer[data-astro-cid-ju4pidww]{padding:0 20px}}@media (width<=420px){.content-layer[data-astro-cid-ju4pidww]{padding:0 16px}}
-</style></head><body data-astro-cid-ju4pidww><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="Z79S2M" component-url="/_astro/GrainHoverBackground.DDgZ-2zB.js" component-export="default" renderer-url="/_astro/client.ZU6hKBOx.js" props="{&quot;data-astro-transition-persist&quot;:[0,&quot;ambient-bg&quot;],&quot;data-astro-cid-ju4pidww&quot;:[0,true]}" ssr client="only" opts="{&quot;name&quot;:&quot;GrainHoverBackground&quot;,&quot;value&quot;:&quot;react&quot;}" data-astro-transition-persist="ambient-bg"></astro-island><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><astro-island uid="ZdAqf3" prefix="r3" component-url="/_astro/OrganicSymbols.C0r_1pPD.js" component-export="FloatingDecorators" renderer-url="/_astro/client.ZU6hKBOx.js" props="{&quot;data-astro-transition-persist&quot;:[0,&quot;floating-deco&quot;],&quot;data-astro-cid-ju4pidww&quot;:[0,true]}" ssr client="load" opts="{&quot;name&quot;:&quot;FloatingDecorators&quot;,&quot;value&quot;:true}" data-astro-transition-persist="floating-deco" await-children><div class="floating-deco" aria-hidden="true"><span class="deco deco--plus deco--1">+</span><span class="deco deco--dot deco--2"></span><span class="deco deco--ring deco--3"></span><span class="deco deco--plus deco--4">+</span><span class="deco deco--dot deco--5"></span><style>
-        .floating-deco {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          overflow: hidden;
-        }
-        .deco {
-          position: absolute;
-          display: block;
-          color: var(--teal);
-          opacity: 0;
-          animation: decoFloat 8s ease-in-out infinite;
-        }
-        .deco--plus {
-          font-family: var(--mono);
-          font-size: 14px;
-          font-weight: 300;
-          line-height: 1;
-        }
-        .deco--dot {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: var(--teal);
-        }
-        .deco--ring {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          border: 0.8px solid var(--sea);
-        }
-        .deco--1 { top: 18%; left: 5%; animation-delay: 0s; color: var(--teal); }
-        .deco--2 { top: 38%; right: 6%; animation-delay: 2s; background: var(--sea); }
-        .deco--3 { top: 55%; left: 4%; animation-delay: 4s; border-color: var(--green); }
-        .deco--4 { top: 72%; right: 5%; animation-delay: 1s; color: var(--warm); }
-        .deco--5 { top: 88%; left: 7%; animation-delay: 3s; background: var(--ice); }
 
-        @keyframes decoFloat {
-          0%, 100% { opacity: 0; transform: translateY(0px) rotate(0deg); }
-          20% { opacity: 0.28; }
-          50% { opacity: 0.18; transform: translateY(-8px) rotate(45deg); }
-          80% { opacity: 0.28; }
-        }
-        @media (max-width: 768px) {
-          .floating-deco { display: none; }
-        }
-      </style></div><!--astro:end--></astro-island><astro-island uid="Z2k2DVj" prefix="r4" component-url="/_astro/TopBar.C_6-2JJe.js" component-export="default" renderer-url="/_astro/client.ZU6hKBOx.js" props="{&quot;data-astro-transition-persist&quot;:[0,&quot;topbar&quot;],&quot;data-astro-cid-ju4pidww&quot;:[0,true]}" ssr client="load" opts="{&quot;name&quot;:&quot;TopBar&quot;,&quot;value&quot;:true}" data-astro-transition-persist="topbar" await-children><header class="topbar" style="transform:translateY(0)"><a href="/" class="topbar-brand">KINETICAAI</a><nav class="topbar-nav"><a href="/" class="topbar-link">Inicio</a><a href="/about" class="topbar-link">Sobre mí</a><a href="/informes" class="topbar-link">Informes</a><a href="/lab" class="topbar-link">Lab</a><a href="/#contacto" class="topbar-link">Contacto</a></nav><div class="topbar-icons"><a href="https://www.linkedin.com/in/navarro-kinetica-ai" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="topbar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg></a><a href="mailto:alfon.atman@gmail.com" aria-label="Email" class="topbar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 4L12 13 2 4"></path></svg></a></div><style>
-        .topbar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 9999;
-          height: 56px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 48px;
-          background: rgba(240, 249, 249, 0.92);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          border-bottom: 1px solid var(--border);
-          transition: transform 0.3s var(--ease-out);
-        }
-        .topbar-brand {
-          font-family: var(--sans);
-          font-size: 0.85rem;
-          font-weight: 500;
-          letter-spacing: 0.12em;
-          color: var(--text-heading);
-          text-decoration: none;
-        }
-        .topbar-nav {
-          display: flex;
-          gap: 28px;
-        }
-        .topbar-link {
-          font-family: var(--mono);
-          font-size: var(--text-caption);
-          color: var(--text-dim);
-          text-decoration: none;
-          transition: color var(--duration-hover) ease;
-        }
-        .topbar-link:hover { color: var(--text); }
-        .topbar-icons {
-          display: flex;
-          gap: 16px;
-          align-items: center;
-        }
-        .topbar-icon {
-          color: var(--text-dim);
-          transition: color var(--duration-hover) ease;
-          display: flex;
-        }
-        .topbar-icon:hover { color: var(--sea); }
-        @media (max-width: 768px) {
-          .topbar { padding: 0 20px; }
-        }
-        @media (max-width: 640px) {
-          .topbar-nav { display: none; }
-          .topbar { padding: 0 16px; }
-        }
-      </style></header><!--astro:end--></astro-island><main class="content-layer" data-astro-cid-ju4pidww><div class="cut-page" data-astro-cid-hnazf2xw><div class="scroll-progress" id="progress" data-astro-cid-hnazf2xw></div><nav class="nav" data-astro-cid-hnazf2xw><div class="nav-inner" data-astro-cid-hnazf2xw><a href="#top" class="nav-brand" data-astro-cid-hnazf2xw><span class="mark" data-astro-cid-hnazf2xw>KIN/AI</span><span class="name" data-astro-cid-hnazf2xw>Kinetica AI</span></a><div class="nav-links" data-astro-cid-hnazf2xw><a href="#paradigma" data-astro-cid-hnazf2xw>Paradigma</a><a href="#foco" data-astro-cid-hnazf2xw>Foco</a><a href="#semana" data-astro-cid-hnazf2xw>Semana</a><a href="#fuerza" data-astro-cid-hnazf2xw>Fuerza</a><a href="#cardio" data-astro-cid-hnazf2xw>Cardio</a><a href="#emg" data-astro-cid-hnazf2xw>Reclutamiento</a><a href="#dieta" data-astro-cid-hnazf2xw>Dieta</a></div></div></nav><section class="hero" id="top" data-astro-cid-hnazf2xw><div class="container hero-stagger" data-astro-cid-hnazf2xw><div class="hero-meta" data-astro-cid-hnazf2xw><span data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Atleta</b> Alfonso · 46</span><span data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Programa</b> Cut + Cadena posterior</span><span data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Fase</b> 01 / 02</span><span data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Rev.</b> v3.0 · 2026</span></div><div class="hero-grid" data-astro-cid-hnazf2xw><div data-astro-cid-hnazf2xw><h1 data-astro-cid-hnazf2xw>Cut + <em data-astro-cid-hnazf2xw>cadena posterior</em><br data-astro-cid-hnazf2xw>preparación montaña</h1><p class="hero-sub" data-astro-cid-hnazf2xw>Pérdida de grasa con foco único de crecimiento en glúteo e isquio. Resto en mantenimiento. Cardio Z2 dominante, dos días de descanso real. Diseñado para bajar el centro de gravedad y operar en alta montaña.</p></div><div class="hero-stats" data-astro-cid-hnazf2xw><div class="hstat" data-astro-cid-hnazf2xw><span class="lbl" data-astro-cid-hnazf2xw>Peso inicial</span><span class="val" data-astro-cid-hnazf2xw><span class="counter" data-target="87" data-astro-cid-hnazf2xw>0</span><span style="font-size:0.5em;color:var(--ink-mute);" data-astro-cid-hnazf2xw>kg</span></span></div><div class="hstat" data-astro-cid-hnazf2xw><span class="lbl" data-astro-cid-hnazf2xw>Peso objetivo</span><span class="val" data-astro-cid-hnazf2xw><span class="counter" data-target="74" data-astro-cid-hnazf2xw>0</span><span style="font-size:0.5em;color:var(--ink-mute);" data-astro-cid-hnazf2xw>–76</span></span><span class="delta" data-astro-cid-hnazf2xw>−11 a −13 kg</span></div><div class="hstat" data-astro-cid-hnazf2xw><span class="lbl" data-astro-cid-hnazf2xw>Días entreno</span><span class="val" data-astro-cid-hnazf2xw><span class="counter" data-target="5" data-astro-cid-hnazf2xw>0</span></span><span class="unit" data-astro-cid-hnazf2xw>+ 2 descanso</span></div><div class="hstat" data-astro-cid-hnazf2xw><span class="lbl" data-astro-cid-hnazf2xw>VO₂max</span><span class="val" data-astro-cid-hnazf2xw><span class="counter" data-target="56" data-astro-cid-hnazf2xw>0</span></span><span class="unit" data-astro-cid-hnazf2xw>ml/kg/min</span></div></div></div></div></section><section id="paradigma" style="padding-top:0;" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="paradigm reveal" data-astro-cid-hnazf2xw><div class="paradigm-kicker" data-astro-cid-hnazf2xw>Paradigma · diseño v3.0</div><h2 class="paradigm-title" data-astro-cid-hnazf2xw>Una variable principal por fase</h2><p class="paradigm-body" data-astro-cid-hnazf2xw>El error de las versiones previas fue perseguir cut + fuerza neural + acondicionamiento simultáneos. A 46 años, post-Lyme, en déficit, esos objetivos compiten por el mismo recurso limitado: la recuperación.<em data-astro-cid-hnazf2xw>Fase 1 tiene una sola prioridad de crecimiento — glúteo e isquio, la cadena posterior que baja el centro de gravedad y mueve la montaña.</em> Todo lo demás se mantiene, no progresa. El cardio Z2 hace el trabajo de pérdida de grasa. La fuerza neural pura y los métodos avanzados esperan a Fase 2.</p></div></div></section><section id="foco" style="background:var(--bg-elev);" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>01 — Foco muscular</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Qué crece y <em data-astro-cid-hnazf2xw>qué se mantiene</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>En déficit calórico el crecimiento se concentra donde hay déficit de desarrollo previo + estímulo dirigido. Glúteo e isquio cumplen ambas. El resto ya está desarrollado: mantenimiento.</p></div><div class="focus-grid" data-astro-cid-hnazf2xw><div class="focus-card grow reveal reveal-delay-1" data-astro-cid-hnazf2xw><div class="focus-tag" data-astro-cid-hnazf2xw>Crecimiento activo · volumen alto</div><h3 data-astro-cid-hnazf2xw>Glúteo + Isquio</h3><ul class="focus-list" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>Glúteo mayor → glute drive sentado (extensión cadera aislada)</li><li data-astro-cid-hnazf2xw>Glúteo medio → máquina abductor (rango 60%+ MVIC, zona de fuerza)</li><li data-astro-cid-hnazf2xw>Isquio → leg curl (flexión rodilla, excéntrico 3s, protección descenso)</li><li data-astro-cid-hnazf2xw>Frecuencia 2×/semana — óptima para crecimiento</li><li data-astro-cid-hnazf2xw>Objetivo funcional: bajar centro de gravedad, motor de ascenso, equilibrio cuádriceps/isquio</li></ul></div><div class="focus-card maint reveal reveal-delay-2" data-astro-cid-hnazf2xw><div class="focus-tag" data-astro-cid-hnazf2xw>Mantenimiento · volumen mínimo eficaz</div><h3 data-astro-cid-hnazf2xw>Núcleo + compensación</h3><ul class="focus-list" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>Dorsal + core anterior → dominada en L</li><li data-astro-cid-hnazf2xw>Empuje vertical → press militar con barra</li><li data-astro-cid-hnazf2xw>Carga axial + grip + trapecio → farmer's walk</li><li data-astro-cid-hnazf2xw>Hombro/pecho → máquina multiángulo (deltoides medial/posterior + pectoral)</li><li data-astro-cid-hnazf2xw>Cuádriceps → ya cubierto de sobra por el remo, sin trabajo dedicado</li></ul></div></div><p style="font-size:12.5px; color:var(--ink-mute); margin-top:20px; font-family:var(--mono); letter-spacing:0.02em;" data-astro-cid-hnazf2xw>Descartado en Fase 1: sentadilla · peso muerto · antebrazo aislado (cubierto por dominada L + farmer's) · escaladora con carga · andar (economía demasiado optimizada, no genera gasto)</p></div></section><section id="semana" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>02 — Vista semanal</span><h2 class="sec-title" data-astro-cid-hnazf2xw>5 días entreno · <em data-astro-cid-hnazf2xw>2 de descanso</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>Dos valles reales (miércoles y domingo) que la semana de sobrecarga no tuvo. La adaptación y el crecimiento ocurren en el descanso, no en el estímulo. Carga en dos bloques separados.</p></div><div class="week-grid" data-astro-cid-hnazf2xw><div class="day reveal reveal-delay-1" data-astro-cid-hnazf2xw><div class="day-head fuerza" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Lunes</span><span class="day-letter" data-astro-cid-hnazf2xw>L</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Fuerza A</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Dominada L + bloque glúteo/isquio</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Farmer's walk</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>Z2</span>Remo suave post 20'</div><div class="day-load" data-astro-cid-hnazf2xw>Carga media-alta</div></div></div><div class="day reveal reveal-delay-2" data-astro-cid-hnazf2xw><div class="day-head cardio" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Martes</span><span class="day-letter" data-astro-cid-hnazf2xw>M</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Cardio puro</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>Z2</span>Remo largo hasta 120'</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>o</span>Picos controlados + Z2</div><div class="day-load" data-astro-cid-hnazf2xw>Carga media</div></div></div><div class="day reveal reveal-delay-3" data-astro-cid-hnazf2xw><div class="day-head rest" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Miércoles</span><span class="day-letter" data-astro-cid-hnazf2xw>X</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Descanso</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Movilidad + estiramiento</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Paseo suave cómodo</div><div class="day-load" data-astro-cid-hnazf2xw>Recovery puro</div></div></div><div class="day reveal reveal-delay-4" data-astro-cid-hnazf2xw><div class="day-head fuerza" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Jueves</span><span class="day-letter" data-astro-cid-hnazf2xw>J</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Fuerza B</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Press militar + bloque glúteo/isquio</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Máquina multiángulo</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>Z2</span>Remo suave post 20'</div><div class="day-load" data-astro-cid-hnazf2xw>Carga media-alta</div></div></div><div class="day reveal reveal-delay-5" data-astro-cid-hnazf2xw><div class="day-head hiit" style="background:var(--grow);" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Viernes</span><span class="day-letter" data-astro-cid-hnazf2xw>V</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Cardio puro · HIIT</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>15'</span>SkiErg HIIT (1×/sem)</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>Z2</span>Remo extensivo</div><div class="day-load" data-astro-cid-hnazf2xw>Carga media</div></div></div><div class="day reveal reveal-delay-6" data-astro-cid-hnazf2xw><div class="day-head refeed" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Sábado</span><span class="day-letter" data-astro-cid-hnazf2xw>S</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Largo moderado</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Multi-erg, intensidad moderada</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Sin Z4 brutal, picos controlados</div><div class="day-load" data-astro-cid-hnazf2xw>Carga media</div></div></div><div class="day reveal reveal-delay-7" data-astro-cid-hnazf2xw><div class="day-head recovery" data-astro-cid-hnazf2xw><span class="day-name" data-astro-cid-hnazf2xw>Domingo</span><span class="day-letter" data-astro-cid-hnazf2xw>D</span></div><div class="day-body" data-astro-cid-hnazf2xw><span class="day-tag" data-astro-cid-hnazf2xw>Descanso activo · flexible</span><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Neuro-funcional o solo movilidad</div><div class="day-item" data-astro-cid-hnazf2xw><span class="t" data-astro-cid-hnazf2xw>→</span>Yoga + pranayama (apnea si HRV OK)</div><div class="day-load" data-astro-cid-hnazf2xw>Recovery / baja</div></div></div></div><p style="font-size:12.5px; color:var(--ink-mute); margin-top:20px; font-family:var(--mono); letter-spacing:0.02em;" data-astro-cid-hnazf2xw>Domingo flexible: si HRV baja o semana dura, degradar a solo movilidad + pranayama suave. Las tablas CO₂ son carga autonómica, no recovery — fuera en semanas exigentes.</p></div></section><section id="fuerza" style="background:var(--bg-elev);" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>03 — Días de fuerza</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Dos sesiones · <em data-astro-cid-hnazf2xw>orden fragilidad → robustez</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>El criterio de ordenación no es "compuestos vs máquinas" ni "lo que crece primero". Es: ejercicios técnicamente frágiles bajo fatiga primero (necesitan frescura), ejercicios robustos a la fatiga después.</p></div><div class="order-note reveal" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Por qué este orden.</b> La dominada en L y el press militar son técnicamente frágiles: el L-sit colapsa con fatiga de core/cadera, el press pierde estabilidad. Van primero, frescos. El glute drive, abductor y leg curl son guiados y robustos: toleran fatiga previa sin que el estímulo de crecimiento se degrade. El farmer's walk cierra porque es robustísimo — se ejecuta con todo el cuerpo cansado y sigue cumpliendo.</div><div class="session-grid" data-astro-cid-hnazf2xw><div class="session reveal reveal-delay-1" data-astro-cid-hnazf2xw><div class="session-head" data-astro-cid-hnazf2xw><span class="session-tag" data-astro-cid-hnazf2xw>Lunes</span><h3 class="session-name" data-astro-cid-hnazf2xw>Fuerza A — Tracción + cadena posterior</h3><span class="session-meta" data-astro-cid-hnazf2xw>Calentamiento 10' airdyne · 60–70 min · Z2 suave post</span></div><div class="session-body" data-astro-cid-hnazf2xw><div class="block-label" data-astro-cid-hnazf2xw>Frágil — primero, fresco</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Dominada en L <span class="pill maint" data-astro-cid-hnazf2xw>mant</span><small data-astro-cid-hnazf2xw>Isometría 10s a 90°, excéntrica 3s</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 5</span><span class="ex-tempo" data-astro-cid-hnazf2xw>3·ISO·1·1</span><span class="ex-rest" data-astro-cid-hnazf2xw>3 min</span></div><div class="block-label" data-astro-cid-hnazf2xw>Crecimiento — robusto, calidad alta</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Glute drive sentado <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Glúteo mayor, pausa 2s pico</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 10</span><span class="ex-tempo" data-astro-cid-hnazf2xw>2·2·1·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>2 min</span></div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Abductor máquina <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Glúteo medio, rango completo</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>3 × 12</span><span class="ex-tempo" data-astro-cid-hnazf2xw>2·1·2·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>90 s</span></div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Leg curl <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Isquio flexión, excéntrico marcado</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 10</span><span class="ex-tempo" data-astro-cid-hnazf2xw>3·1·1·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>90 s</span></div><div class="block-label" data-astro-cid-hnazf2xw>Robusto — cierre</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Farmer's walk <span class="pill maint" data-astro-cid-hnazf2xw>mant</span><small data-astro-cid-hnazf2xw>Carga axial + grip + glúteo medio</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 30 m</span><span class="ex-tempo" data-astro-cid-hnazf2xw>—</span><span class="ex-rest" data-astro-cid-hnazf2xw>2 min</span></div></div></div><div class="session reveal reveal-delay-2" data-astro-cid-hnazf2xw><div class="session-head" data-astro-cid-hnazf2xw><span class="session-tag" data-astro-cid-hnazf2xw>Jueves</span><h3 class="session-name" data-astro-cid-hnazf2xw>Fuerza B — Empuje + cadena posterior</h3><span class="session-meta" data-astro-cid-hnazf2xw>Calentamiento 10' airdyne · 60–70 min · Z2 suave post</span></div><div class="session-body" data-astro-cid-hnazf2xw><div class="block-label" data-astro-cid-hnazf2xw>Frágil — primero, fresco</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Press militar de pie <span class="pill maint" data-astro-cid-hnazf2xw>mant</span><small data-astro-cid-hnazf2xw>Carga axial, core anti-extensión</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>5 × 5</span><span class="ex-tempo" data-astro-cid-hnazf2xw>3·1·1·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>3 min</span></div><div class="block-label" data-astro-cid-hnazf2xw>Crecimiento — robusto, calidad alta</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Glute drive sentado <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Glúteo mayor, pausa 2s pico</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 10</span><span class="ex-tempo" data-astro-cid-hnazf2xw>2·2·1·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>2 min</span></div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Abductor máquina <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Glúteo medio, rango completo</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>3 × 12</span><span class="ex-tempo" data-astro-cid-hnazf2xw>2·1·2·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>90 s</span></div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Leg curl <span class="pill grow" data-astro-cid-hnazf2xw>crece</span><small data-astro-cid-hnazf2xw>Isquio flexión, excéntrico marcado</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>4 × 10</span><span class="ex-tempo" data-astro-cid-hnazf2xw>3·1·1·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>90 s</span></div><div class="block-label" data-astro-cid-hnazf2xw>Robusto — cierre</div><div class="ex-row" data-astro-cid-hnazf2xw><span class="ex-name" data-astro-cid-hnazf2xw>Máquina multiángulo <span class="pill maint" data-astro-cid-hnazf2xw>mant</span><small data-astro-cid-hnazf2xw>Deltoides medial/posterior + pectoral según ángulo</small></span><span class="ex-sets" data-astro-cid-hnazf2xw>3 × 12</span><span class="ex-tempo" data-astro-cid-hnazf2xw>2·1·2·0</span><span class="ex-rest" data-astro-cid-hnazf2xw>75 s</span></div></div></div></div><div class="card reveal reveal-delay-3" style="margin-top:24px;" data-astro-cid-hnazf2xw><div class="card-head" data-astro-cid-hnazf2xw><h3 class="card-title" data-astro-cid-hnazf2xw>Estructura del día de fuerza</h3><span class="card-mark" data-astro-cid-hnazf2xw>Apertura → cierre</span></div><ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--ink-soft);" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>· <b style="color:var(--ink);" data-astro-cid-hnazf2xw>Calentamiento</b>: 10 min airdyne suave, FC progresiva</li><li data-astro-cid-hnazf2xw>· <b style="color:var(--ink);" data-astro-cid-hnazf2xw>Trabajo</b>: orden fragilidad → robustez (ver sesiones)</li><li data-astro-cid-hnazf2xw>· <b style="color:var(--ink);" data-astro-cid-hnazf2xw>Descarga</b>: 20 min remo Z2 suave (aclaración metabolitos + volumen aeróbico barato)</li><li data-astro-cid-hnazf2xw>· <b style="color:var(--ink);" data-astro-cid-hnazf2xw>Cierre</b>: bird dog + plancha lateral en V (anti-rotación) + estiramiento derivado de yoga/pilates + foam roller</li><li data-astro-cid-hnazf2xw>· Estiramiento del flexor de cadera (corredor) al final, nunca antes del glute drive</li></ul></div></div></section><section id="cardio" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>04 — Cardio</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Z2 dominante · <em data-astro-cid-hnazf2xw>polarización controlada</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>Sin Z4 de forma bruta. O bien picos de intensidad controlados + Z2, o solo Z2. El remo como herramienta regulable es la base de la pérdida de grasa. SkiErg HIIT 1 día (revisable). Techo del extensivo: 120 min.</p></div><div class="cardio-stack" data-astro-cid-hnazf2xw><div class="cardio-card reveal reveal-delay-1" data-astro-cid-hnazf2xw><div class="cardio-day" data-astro-cid-hnazf2xw><span class="l" data-astro-cid-hnazf2xw>Post-fuerza · L y J</span><span class="d" data-astro-cid-hnazf2xw>Z2 suave</span><span class="dur" data-astro-cid-hnazf2xw>20 min</span></div><div class="cardio-content" data-astro-cid-hnazf2xw><h4 data-astro-cid-hnazf2xw>Descarga tras fuerza</h4><p data-astro-cid-hnazf2xw>Remo Z2 baja tras la sesión de fuerza. No compite con el trabajo ya hecho.</p><ul data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>Aclaración de metabolitos por flujo sanguíneo suave</li><li data-astro-cid-hnazf2xw>Volumen aeróbico de bajo coste sin interferencia</li><li data-astro-cid-hnazf2xw>Z2 baja estricta, no subir a Z3</li></ul></div></div><div class="cardio-card reveal reveal-delay-2" data-astro-cid-hnazf2xw><div class="cardio-day" data-astro-cid-hnazf2xw><span class="l" data-astro-cid-hnazf2xw>Martes</span><span class="d" data-astro-cid-hnazf2xw>Remo extensivo</span><span class="dur" data-astro-cid-hnazf2xw>hasta 120 min</span></div><div class="cardio-content" data-astro-cid-hnazf2xw><h4 data-astro-cid-hnazf2xw>Base de pérdida de grasa</h4><p data-astro-cid-hnazf2xw>El Z2 verdadero en remo es donde domina la oxidación lipídica. Techo 120 min para no comprometer masa magra.</p><ul data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>120–130 ppm sostenido, damper 5</li><li data-astro-cid-hnazf2xw>O variante: picos controlados (no Z4 brutal) + Z2</li><li data-astro-cid-hnazf2xw>Hidratación + electrolitos si supera 60 min</li><li data-astro-cid-hnazf2xw>Métrica: pace /500 m a FC fija — track semanal</li></ul></div></div><div class="cardio-card hiit reveal reveal-delay-3" data-astro-cid-hnazf2xw><div class="cardio-day" data-astro-cid-hnazf2xw><span class="l" data-astro-cid-hnazf2xw>Viernes</span><span class="d" data-astro-cid-hnazf2xw>SkiErg HIIT</span><span class="dur" data-astro-cid-hnazf2xw>15 min + Z2</span></div><div class="cardio-content" data-astro-cid-hnazf2xw><h4 data-astro-cid-hnazf2xw>Estímulo VO₂max · 1×/semana (revisable)</h4><p data-astro-cid-hnazf2xw>El SkiErg dispara la FC por reclutamiento masivo — se usa en su zona natural (HIIT), no peleando por mantenerlo en Z2. Cardio puro, lejos de fuerza.</p><ul data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>Calentamiento breve airdyne</li><li data-astro-cid-hnazf2xw>SkiErg intervalos máx 15 min (no saturar pierna)</li><li data-astro-cid-hnazf2xw>+ remo Z2 extensivo después</li><li data-astro-cid-hnazf2xw>Subir a 2×/semana solo si recuperación estable</li></ul></div></div><div class="cardio-card refeed reveal reveal-delay-4" data-astro-cid-hnazf2xw><div class="cardio-day" data-astro-cid-hnazf2xw><span class="l" data-astro-cid-hnazf2xw>Sábado</span><span class="d" data-astro-cid-hnazf2xw>Largo moderado</span><span class="dur" data-astro-cid-hnazf2xw>~90 min</span></div><div class="cardio-content" data-astro-cid-hnazf2xw><h4 data-astro-cid-hnazf2xw>Multi-erg moderado</h4><p data-astro-cid-hnazf2xw>Más moderado que la versión polarizada previa. Tras la lección de sobrecarga, baja la intensidad.</p><ul data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>Remo + airdyne, intensidad moderada</li><li data-astro-cid-hnazf2xw>Picos controlados, sin Z4 brutal sostenido</li><li data-astro-cid-hnazf2xw>Pesa unilateral alternada si se usa carga, nunca mochila</li></ul></div></div></div></div></section><section id="emg" style="background:var(--bg-elev);" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>05 — Reclutamiento muscular</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Mapa de <em data-astro-cid-hnazf2xw>cobertura</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>Análisis de qué activa cada ejercicio y dónde hay solapamiento o hueco. La activación EMG (%MVIC) mide reclutamiento, no fuerza ni hipertrofia directa — referencia, no fisiología exacta. Valores de literatura en poblaciones distintas a la del atleta.</p></div><div class="reveal reveal-delay-1 emg-table-wrap" data-astro-cid-hnazf2xw><table class="emg-table" data-astro-cid-hnazf2xw><thead data-astro-cid-hnazf2xw><tr data-astro-cid-hnazf2xw><th data-astro-cid-hnazf2xw>Músculo</th><th data-astro-cid-hnazf2xw>Cardio cubre</th><th data-astro-cid-hnazf2xw>Fuerza/accesorio cubre</th><th data-astro-cid-hnazf2xw>Estado</th></tr></thead><tbody data-astro-cid-hnazf2xw><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Cuádriceps</td><td data-astro-cid-hnazf2xw>Remo (alto), airdyne</td><td data-astro-cid-hnazf2xw>—</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Cubierto cardio</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Glúteo mayor</td><td data-astro-cid-hnazf2xw>Remo drive</td><td data-astro-cid-hnazf2xw>Glute drive</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-high" data-astro-cid-hnazf2xw>Crecimiento</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Glúteo medio</td><td data-astro-cid-hnazf2xw>Casi nada</td><td data-astro-cid-hnazf2xw>Abductor (60%+ MVIC), farmer's</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-high" data-astro-cid-hnazf2xw>Crecimiento</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Isquio (flexión)</td><td data-astro-cid-hnazf2xw>—</td><td data-astro-cid-hnazf2xw>Leg curl + sinergia glute drive</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-high" data-astro-cid-hnazf2xw>Crecimiento</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Erector espinal</td><td data-astro-cid-hnazf2xw>Remo (alto)</td><td data-astro-cid-hnazf2xw>Farmer's walk</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Doble cobertura</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Dorsal ancho</td><td data-astro-cid-hnazf2xw>Remo, SkiErg</td><td data-astro-cid-hnazf2xw>Dominada en L</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Triple cobertura</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Core anterior</td><td data-astro-cid-hnazf2xw>SkiErg, airdyne</td><td data-astro-cid-hnazf2xw>Dominada L, press militar</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Cubierto</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Deltoides ant/medial</td><td data-astro-cid-hnazf2xw>SkiErg parcial</td><td data-astro-cid-hnazf2xw>Press militar, multiángulo</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Cubierto</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Deltoides posterior</td><td data-astro-cid-hnazf2xw>Remo finish</td><td data-astro-cid-hnazf2xw>Máquina multiángulo</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Cubierto</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Pectoral / Tríceps</td><td data-astro-cid-hnazf2xw>SkiErg, airdyne</td><td data-astro-cid-hnazf2xw>Multiángulo, press</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Cubierto</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Grip / Antebrazo</td><td data-astro-cid-hnazf2xw>—</td><td data-astro-cid-hnazf2xw>Farmer's walk, dominada L</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Funcional, no hipertrofia</span></td></tr><tr data-astro-cid-hnazf2xw><td data-astro-cid-hnazf2xw>Anti-rotación core</td><td data-astro-cid-hnazf2xw>—</td><td data-astro-cid-hnazf2xw>Bird dog, plancha V, yoga</td><td data-astro-cid-hnazf2xw><span class="emg-val emg-mod" data-astro-cid-hnazf2xw>Triple cobertura</span></td></tr></tbody></table></div><div class="card reveal reveal-delay-2" style="margin-top:24px;" data-astro-cid-hnazf2xw><div class="card-head" data-astro-cid-hnazf2xw><h3 class="card-title" data-astro-cid-hnazf2xw>Datos EMG de referencia · glúteo medio</h3><span class="card-mark" data-astro-cid-hnazf2xw>%MVIC literatura</span></div><ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--ink-soft);" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw>· Abducción de pie con resistencia: ~60% MVIC (rango de ganancia de fuerza)</li><li data-astro-cid-hnazf2xw>· Abducción decúbito lateral: ~80% MVIC (la más alta)</li><li data-astro-cid-hnazf2xw>· Abducción-extensión resistida (segmento posterior): 69% MVIC</li><li data-astro-cid-hnazf2xw>· Marco: 21–40% MVIC = resistencia/reeducación · 41–60%+ = ganancia de fuerza</li><li data-astro-cid-hnazf2xw>· El glúteo medio NO lo cubre ningún erg — la máquina abductor es la única vía a rango de crecimiento</li></ul></div></div></section><section id="dieta" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>06 — Dieta</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Energía y <em data-astro-cid-hnazf2xw>macros</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>Tres niveles según fase. Proteína fija no negociable (2.0–2.2 g/kg) — crítica para que glúteo e isquio crezcan en déficit. Objetivo 74–76 kg con cut bifásico (respiro a mantenimiento entre 76 y 74).</p></div><div class="diet-grid" data-astro-cid-hnazf2xw><div class="diet-card reveal reveal-delay-1" data-astro-cid-hnazf2xw><div class="diet-tag" data-astro-cid-hnazf2xw>Cut normal</div><div class="diet-val" data-astro-cid-hnazf2xw>2400</div><div class="diet-unit" data-astro-cid-hnazf2xw>kcal/día</div><div class="diet-detail" data-astro-cid-hnazf2xw>Déficit ~700 vs TDEE ~3077. Pérdida 0.6–0.75 kg/sem hasta 76 kg.</div></div><div class="diet-card reveal reveal-delay-2" style="background:#f5fbf6;" data-astro-cid-hnazf2xw><div class="diet-tag" data-astro-cid-hnazf2xw>Diet break / respiro</div><div class="diet-val" data-astro-cid-hnazf2xw>2900</div><div class="diet-unit" data-astro-cid-hnazf2xw>kcal/día</div><div class="diet-detail" data-astro-cid-hnazf2xw>A mantenimiento. Cada 5–6 sem, y respiro de 4 sem entre 76 y 74 kg.</div></div><div class="diet-card reveal reveal-delay-3" style="background:#f0f4f3; border-color:var(--cutfinal);" data-astro-cid-hnazf2xw><div class="diet-tag" data-astro-cid-hnazf2xw>Cut final · 76→74</div><div class="diet-val" data-astro-cid-hnazf2xw>2200</div><div class="diet-unit" data-astro-cid-hnazf2xw>kcal/día</div><div class="diet-detail" data-astro-cid-hnazf2xw>Últimos 2 kg, tasa lenta 0.3–0.4 kg/sem. Vigilar HRV, sueño, libido de cerca.</div></div></div><div class="card reveal reveal-delay-4" style="margin-top:40px;" data-astro-cid-hnazf2xw><div class="card-head" data-astro-cid-hnazf2xw><h3 class="card-title" data-astro-cid-hnazf2xw>Macros</h3><span class="card-mark" data-astro-cid-hnazf2xw>2400 kcal base</span></div><div class="macro-bar" data-astro-cid-hnazf2xw><div class="macro-seg p" style="flex:30;" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>180g</b> P · 30%</div><div class="macro-seg g" style="flex:28;" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>75g</b> G · 28%</div><div class="macro-seg c" style="flex:42;" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>250g</b> C · 42%</div></div><p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px;" data-astro-cid-hnazf2xw>Proteína distribuida en 4–5 tomas de 35–45 g. CHO prioritario pre/post fuerza. La proteína alta es la red de seguridad del crecimiento glúteo/isquio en déficit.</p></div></div></section><section id="tracking" style="background:var(--bg-elev);" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>07 — Tracking y ajuste</span><h2 class="sec-title" data-astro-cid-hnazf2xw>Señales <em data-astro-cid-hnazf2xw>externas</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>La propiocepción está calibrada para umbrales altos — mete más de lo que conviene. Las métricas externas detectan fatiga antes de que el cuerpo colapse, como pasó en la semana de sobrecarga.</p></div><div class="tracking-grid" data-astro-cid-hnazf2xw><div data-astro-cid-hnazf2xw><div class="block-label" style="margin-top:0;" data-astro-cid-hnazf2xw>Métricas</div><ul class="rule-list" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Peso · diario AM</span><span class="rule-action" data-astro-cid-hnazf2xw>Promedio 7 días</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>HRV · diario AM</span><span class="rule-action" data-astro-cid-hnazf2xw>Baseline ±%</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Carga cardiovascular Polar</span><span class="rule-action" data-astro-cid-hnazf2xw>Evitar sobrecarga sostenida</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Pace remo /500 m FC fija</span><span class="rule-action" data-astro-cid-hnazf2xw>Semanal</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Glute drive / abductor carga</span><span class="rule-action" data-astro-cid-hnazf2xw>Progresión = crecimiento</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Perímetro glúteo / cadera</span><span class="rule-action" data-astro-cid-hnazf2xw>Cinta, quincenal</span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Sueño + libido</span><span class="rule-action" data-astro-cid-hnazf2xw>Continuo</span></li></ul></div><div data-astro-cid-hnazf2xw><div class="block-label" style="margin-top:0;" data-astro-cid-hnazf2xw>Criterios de ajuste</div><ul class="rule-list warn" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>No me puedo mover / fatiga aguda</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Off + revisar densidad</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>HRV ↓ &gt;7% baseline 10 días</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>+200 kcal o −1 sesión</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>HRV ↓ &gt;15% una mañana</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Off completo</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Polar marca sobrecarga 2 sem</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Reducir volumen</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Pérdida &gt;0.9 kg/sem</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>+200 kcal</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Plateau &gt;14 días</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Diet break 7 días</b></span></li><li data-astro-cid-hnazf2xw><span class="rule-trigger" data-astro-cid-hnazf2xw>Instinto de "meter más"</span><span class="rule-action" data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Resistir · seguir plan</b></span></li></ul></div></div></div></section><section id="changelog" data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="sec-head reveal" data-astro-cid-hnazf2xw><span class="sec-kicker" data-astro-cid-hnazf2xw>08 — Evolución del diseño</span><h2 class="sec-title" data-astro-cid-hnazf2xw>De v1 a <em data-astro-cid-hnazf2xw>v3</em></h2><p class="sec-lede" data-astro-cid-hnazf2xw>El programa cambió de raíz tres veces durante el debate. Cada giro vino de un dato real: una sesión fallida, datos de Polar, fotos, o un argumento técnico del atleta que la evidencia respaldó.</p></div><div class="changelog reveal reveal-delay-1" data-astro-cid-hnazf2xw><ul class="changelog-list" data-astro-cid-hnazf2xw><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>v1 → fuerza neural pura</b> (87–90% 1RM, 5×3). Falló: demasiada carga CNS + articular en cut a 46 años.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>v2 → tension-control</b> (72–80%, tempo). Mejor, pero seguía intentando cut + fuerza + acondicionamiento a la vez.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>v3 → una variable por fase</b>. El atleta identificó que cut + fuerza neural no casan a esta edad. Correcto.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Foco reducido a glúteo + isquio</b>: único crecimiento activo. Confirmado por análisis visual (cuádriceps ya desarrollado, glúteo plano).</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Peso muerto y sentadilla fuera</b>: cadena posterior de pierna ya cubierta por remo. Farmer's walk da más estímulo funcional con menos coste.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Núcleo reducido a 3</b>: farmer's walk, dominada en L, press militar. Lo que los ergs no replican.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Orden fragilidad → robustez</b>: no "compuestos primero" sino "técnicamente frágil primero". Corrección del atleta, refinada.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>SkiErg y escaladora con carga fuera</b> como base: economía demasiado optimizada, no genera gasto, consume masa magra. SkiErg solo como HIIT 1×.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Cardio Z2 dominante</b> como motor de pérdida de grasa. Sin Z4 brutal. Polarización controlada.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Dos días de descanso</b>: la adaptación ocurre en el descanso. Tras la semana de sobrecarga, no negociable.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Antebrazo aislado descartado</b>: cubierto funcionalmente por dominada L + farmer's, hipertrofia marginal en cut.</li><li data-astro-cid-hnazf2xw><b data-astro-cid-hnazf2xw>Objetivo 74–76 kg</b> confirmado: pérdida principalmente abdominal/visceral, tren inferior magro se preserva.</li></ul></div></div></section><footer data-astro-cid-hnazf2xw><div class="container" data-astro-cid-hnazf2xw><div class="footer-grid" data-astro-cid-hnazf2xw><div data-astro-cid-hnazf2xw><span data-astro-cid-hnazf2xw>Kinetica AI · Programa <b data-astro-cid-hnazf2xw>Cut + Cadena posterior</b></span></div><div class="spec" data-astro-cid-hnazf2xw><span data-astro-cid-hnazf2xw>Rev. <b data-astro-cid-hnazf2xw>v3.0</b></span><span data-astro-cid-hnazf2xw>Fase <b data-astro-cid-hnazf2xw>01 / 02</b></span><span data-astro-cid-hnazf2xw>2026</span></div></div></div></footer></div><script type="module">function e(){let e=document.querySelector(`.cut-page`);if(!e)return()=>{};let t=e.querySelector(`#progress`),n=()=>{let e=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;t.style.setProperty(`--progress`,e+`%`)};window.addEventListener(`scroll`,n,{passive:!0});let r=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.classList.add(`in`),r.unobserve(e.target))})},{threshold:.1,rootMargin:`0px 0px -50px 0px`});e.querySelectorAll(`.reveal`).forEach(e=>r.observe(e));let i=new IntersectionObserver(e=>{e.forEach(e=>{if(e.isIntersecting){let t=e.target,n=parseInt(t.dataset.target,10),r=performance.now(),a=e=>{let i=Math.min((e-r)/1400,1),o=1-(1-i)**3;t.textContent=Math.floor(n*o),i<1?requestAnimationFrame(a):t.textContent=String(n)};requestAnimationFrame(a),i.unobserve(t)}})},{threshold:.5});e.querySelectorAll(`.counter[data-target]`).forEach(e=>i.observe(e));let a=e.querySelector(`.nav`),o=[];return e.querySelectorAll(`.nav-links a, .nav-brand`).forEach(e=>{let t=t=>{let n=e.getAttribute(`href`);if(n&&n.startsWith(`#`)){t.preventDefault();let e=document.querySelector(n);if(e){let t=a?a.offsetHeight:0;window.scrollTo({top:e.getBoundingClientRect().top+window.scrollY-56-t-12,behavior:`smooth`})}}};e.addEventListener(`click`,t),o.push([e,t])}),()=>{window.removeEventListener(`scroll`,n),r.disconnect(),i.disconnect(),o.forEach(([e,t])=>e.removeEventListener(`click`,t))}}var t=null;document.addEventListener(`astro:page-load`,()=>{t&&t(),t=e()});</script></main><footer class="footer-field"><div class="footer-content"><span class="footer-brand">KINETICA AI</span><span class="footer-copy">© <!-- -->2026<!-- --> Alfonso Navarro · Built in the open, engineered for reproducibility.</span></div><style>
-        .footer-field {
-          position: relative;
-          width: 100%;
-          overflow: hidden;
-        }
-        .footer-content {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 200px;
-          padding: 60px 24px;
-          gap: 16px;
-          text-align: center;
-        }
-        .footer-brand {
-          font-family: var(--sans);
-          font-size: 1.6rem;
-          font-weight: 300;
-          letter-spacing: 0.25em;
-          color: var(--text-heading);
-          opacity: 0.6;
-        }
-        .footer-copy {
-          font-family: var(--mono);
-          font-size: var(--text-eyebrow);
-          color: var(--text-dim);
-          letter-spacing: 0.04em;
-        }
-      </style></footer><!-- Analytics (GoatCounter — privacy-first, no cookies) --><script data-goatcounter="https://kineticaai.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script></body></html>
+    let cutPageCleanup = null
+    document.addEventListener('astro:page-load', () => {
+      if (cutPageCleanup) cutPageCleanup()
+      cutPageCleanup = initCutPage()
+    })
+
+    let cutPageInitialised = false
+    function initCutPageOnce() {
+      if (cutPageInitialised) return
+      cutPageInitialised = true
+      if (cutPageCleanup) cutPageCleanup()
+      cutPageCleanup = initCutPage()
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCutPageOnce)
+    } else {
+      initCutPageOnce()
+    }
+</script>
+</body>
+</html>

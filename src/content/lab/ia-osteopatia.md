@@ -4,6 +4,7 @@ slug: ia-osteopatia
 summary: La inteligencia artificial ha entrado en el campo musculoesquelético con promesas variadas. Vale la pena separar lo que aporta valor real de lo que es marketing envuelto en jerga técnica.
 kind: essay
 date: 2026-08-12
+draft: true
 ---
 
 ## De dónde viene esta nota
