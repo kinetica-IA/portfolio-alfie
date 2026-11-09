@@ -12,12 +12,14 @@ Working contract for content work in this repository. Read this before editing
 any file under `src/content/`.
 
 Repository: `portfolio-alfie` (GitHub org `kinetica-IA`)
-Local path: `/Users/alfonsonavarro/portfolio-alfie-web-live`
+Local path: `/Users/alfonsonavarro/Code/portfolio-alfie-web-live`
 Deploy: any push to `main` triggers GitHub Actions and publishes to
 `www.kineticaai.com` in ~2 minutes. There is no staging branch.
 
-Do not confuse this checkout with `/Users/alfonsonavarro/portfolio-alfie`,
-which holds a live Polar sync and must not be touched.
+Do not confuse this checkout with `/Users/alfonsonavarro/Code/portfolio-alfie`,
+which contains historical research and Polar pipeline work. Its current runtime
+status is not established by this file. Keep that checkout separate from clinical
+site work; preserve its local branches, stash and uncommitted files.
 
 ---
 
@@ -104,57 +106,42 @@ files that need an embedded component. Leave every other file as plain `.md`.
 Do not enable `markdown.format: 'mdx'` globally — it widens the build failure
 surface across all content for the benefit of three files.
 
-## 6. Publish skill — build brief
+## 6. Publication reference — use only for an explicit publishing task
 
-Build a skill, `content-publish`, that runs the following in order and stops on
-the first failure:
+This section describes a workflow reference, not an instruction to create a skill
+or start publishing. Do not install tooling or resume an old task from this file.
 
-1. `git pull origin main` and report if the working tree was not clean.
-2. Validate frontmatter of every changed file against the collection schema.
-3. Run the prohibited-language check from section 4 across changed bodies.
-   Report line numbers. Do not auto-edit.
-4. Run a PII check: age + sex + diagnosis co-occurrence, dates of surgery,
-   place names smaller than a province.
-5. Resolve every DOI in the changed frontmatter against PubMed. Report title
-   mismatches. Do not correct them.
-6. Verify media policy: any file added under `/public/video/` exceeding 5 MB is
-   a failure.
-7. `npm run build`. Report errors verbatim.
-8. Print `git status` and the full diff, then stop and wait for "sí".
-9. On "sí": commit with `content: <description>` and push to `main`. Then poll
-   the Actions run and report the result.
+1. Read `git status`, the current branch and the local/remote references. Check
+   that this is the clinical checkout. Report uncommitted changes before planning
+   an update; do not run an automatic `git pull` or merge as a preflight step.
+2. Validate frontmatter of changed content against the collection schema.
+3. Check the editorial restrictions in section 4 and report line numbers; do not
+   auto-edit prose. Run the PII check for age, sex and diagnosis co-occurrence,
+   surgery dates and places smaller than a province; report identifying details.
+4. Resolve the DOIs used by changed content against PubMed, report title mismatches and do not
+   invent or silently repair identifiers.
+5. Check the media policy in section 5. New files under `/public/video/` larger
+   than 5 MB fail that check.
+6. Run `npm run build` when validating an authorized site change. Report errors.
+7. Present the complete intended diff and exact commit/push commands. Wait for
+   Alfonso's explicit "sí" before publishing; a push to `main` publishes.
+   For a content commit, retain the `content: <description>` message convention.
+8. After an authorized publication, verify its Actions result. Do not infer
+   success from a local commit or from an old successful run.
 
-## 7. Content state
+## 7. State references, not a standing task list
 
-Current files under `src/content/`:
+Inspection on 2026-11-08 found that the old "Open" list was partly superseded:
 
-```
-pages/about.md
-informes/atm-les.md
-informes/psoriasis.md
-informes/lumbar.md
-lab/coordinacion-pilates-fusion.md
-lab/ia-osteopatia.md
-lab/entrenamiento-personalizado.md
-lab/cut-cadena-posterior.md
-lab/lyme-pipeline.md        # draft: true, excluded from build
-```
+- The listed voice/typo terms in `atm-les.md` and `psoriasis.md` were absent; the
+  2026-08-20 commit records the voice rewrite. This does not certify every aspect
+  of those clinical texts.
+- `about.md` contains a WhatsApp link. Its photo and Annuaire Sante QR status were
+  not confirmed by this audit and must be checked if requested.
+- `cut-cadena-posterior.md` has a non-empty body and an iframe. The 2026-08-21
+  commit records the standalone artefact and route work.
+- Treat `lyme-pipeline.md` as excluded draft material unless a new explicit
+  decision authorizes changing that publication restriction.
 
-Closed 2026-08-20:
-
-- `about.md`: expanded — Cómo trabajo, La sesión, Lo que no hago, Escríbeme. ✓
-- `lumbar.md`: voice pass (evalúo, te derivo); patient-pilgrimage intro
-  removed; calibration paragraph added; cross-link to
-  /lab/coordinacion-pilates-fusion. ✓
-- `atm-les.md`: case-report heading removed. ✓
-- `lyme-pipeline.md`: draft:true confirmed, excluded from all routes. ✓
-
-Open:
-
-- `atm-les.md`: voice and typos in body still pending — "se ha de evaluar",
-  "derivar para", `reamatologo`, `promer`, `patologias`.
-- `psoriasis.md`: same voice/typo pass needed (`respioración`, `evalúar`,
-  infinitive headers).
-- `about.md`: photo, Annuaire Santé QR (RPPS credential), `wa.me` CTA
-  alongside the existing `mailto:`.
-- `cut-cadena-posterior.md`: body empty; embed HTML artefact via iframe.
+Read the current files and the user's request to decide what remains to do.
+Do not recreate historical pending tasks or assume an old checklist is current.
