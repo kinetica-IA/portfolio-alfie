@@ -98,7 +98,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
   <div style="position:absolute;inset:-6%;background:url(assets/helecho-1.jpg) center/cover;filter:blur(36px) saturate(.72);opacity:{{ bgLearn }};transition:opacity 1.2s ease;animation:pr-kb 52s ease-in-out infinite"></div>
   <div style="position:absolute;inset:-6%;background:url(assets/helecho-2.jpg) center/cover;filter:blur(36px) saturate(.72);opacity:{{ bgProg }};transition:opacity 1.2s ease;animation:pr-kb 56s ease-in-out infinite"></div>
   <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%,rgba(242,239,230,.5) 0%,rgba(242,239,230,.86) 100%)"></div>
-  <canvas ref="{{ golRef }}" style="position:absolute;inset:0;width:100%;height:100%;filter:blur(1.5px)"></canvas>
+  <canvas ref="{{ golRef }}" style="position:absolute;inset:0;width:100%;height:100%;filter:blur(3px)"></canvas>
 </div>
 <div ref="{{ topRef }}" aria-hidden="true" style="position:absolute;top:0;left:0;right:0;z-index:20;padding:max(12px,env(safe-area-inset-top)) 16px 11px;text-align:center;font:600 15px/1.2 var(--f-ui);color:{{ topFg }};background:{{ topBg }};backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);box-shadow:{{ topSh }};opacity:0;transform:translateY(-10px);transition:opacity .35s var(--ease),transform .45s var(--ease);pointer-events:none">{{ topTitle }}</div>
 <div ref="{{ scrollRef }}" onScroll="{{ onScroll }}" class="pr-scroll">
@@ -728,16 +728,16 @@ button:active{transform:scale(.97);transition-duration:.12s}
 const PHOTOS = ['assets/helecho-2.jpg', 'assets/helecho-1.jpg', 'assets/diente-leon.jpg'];
 const C1 = 251.33, C2 = 235, C3 = 268.3;
 /* Background: slow, out-of-focus 3D Game of Life (from the gol_3d_cube study), drawn as soft seed/pollen bokeh */
-const GOL = { G: 14, density: 0.2, noise: 3, birth: 5, survMin: 4, survMax: 5, genMs: 1600, rot: 0.00003, tilt: 0.42, persp: 2.5, fps: 30 };
+const GOL = { G: 11, density: 0.18, noise: 2, birth: 5, survMin: 4, survMax: 5, genMs: 2400, rot: 0.00007, tilt: 0.42, persp: 2.6, fps: 60 };
 const GOL_PAL = {
   dim: { a: 0.55, c: [[243, 238, 223], [229, 212, 169], [201, 213, 191], [209, 177, 124], [235, 226, 204], [191, 203, 179], [223, 201, 159]] },
-  light: { a: 0.34, c: [[122, 143, 116], [172, 147, 99], [101, 123, 99], [151, 165, 135], [183, 161, 114], [113, 135, 125], [157, 140, 104]] }
+  light: { a: 0.16, c: [[122, 143, 116], [172, 147, 99], [101, 123, 99], [151, 165, 135], [183, 161, 114], [113, 135, 125], [157, 140, 104]] }
 };
 function golSprites(pal) {
   return pal.c.map(([r, g, b]) => {
     const c = document.createElement('canvas'); c.width = c.height = 64;
     const x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gr.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',1)'); gr.addColorStop(0.35, 'rgba(' + r + ',' + g + ',' + b + ',.55)'); gr.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0)');
+    [[0, 1], [0.18, 0.82], [0.36, 0.5], [0.54, 0.24], [0.72, 0.08], [0.86, 0.02], [1, 0]].forEach(([o, a]) => gr.addColorStop(o, 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')'));
     x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
   });
 }
@@ -817,8 +817,8 @@ class Component extends DCLogic {
     }
     const v = this.gv, c = this.gc, k = this.reduced ? 1 : Math.min(1, dt / 2400);
     for (let i = 0; i < v.length; i++) v[i] += (c[i] - v[i]) * k;
-    const ctx = this.gctx, G = GOL.G, hw = G / 2, cA = Math.cos(this.gRot), sA = Math.sin(this.gRot), cT = Math.cos(GOL.tilt), sT = Math.sin(GOL.tilt);
-    const cam = GOL.persp * hw, CELL = Math.max(W, H) * 0.62 / G, cx = W / 2, cy = H * 0.46;
+    const ctx = this.gctx, G = GOL.G, hw = G / 2, cA = Math.cos(this.gRot), sA = Math.sin(this.gRot), tl = GOL.tilt + (this.reduced ? 0 : 0.09 * Math.sin(ts * 0.00006)), cT = Math.cos(tl), sT = Math.sin(tl);
+    const cam = GOL.persp * hw, CELL = Math.max(W, H) * 0.7 / G, cx = W / 2 + (this.reduced ? 0 : Math.sin(ts * 0.00005) * W * 0.04), cy = H * 0.46 + (this.reduced ? 0 : Math.cos(ts * 0.00004) * H * 0.03);
     ctx.clearRect(0, 0, W, H);
     const sets = [];
     if (this.gMix > 0.02) sets.push([this.gSpr.dim, GOL_PAL.dim.a * this.gMix]);
@@ -828,9 +828,9 @@ class Component extends DCLogic {
       const rx = x - hw + 0.5, ry = y - hw + 0.5, rz = z - hw + 0.5;
       const ax = rx * cA - rz * sA, az = rx * sA + rz * cA, by = ry * cT - az * sT, bz = ry * sT + az * cT;
       const den = bz + cam; if (den < 0.05) continue;
-      const pf = Math.min(4, cam / den), size = CELL * 0.5 * pf * pf, px = cx + ax * CELL * pf, py = cy - by * CELL * pf;
+      const pf = Math.min(4, cam / den), size = CELL * (0.9 + 0.8 * pf * pf), px = cx + ax * CELL * pf, py = cy - by * CELL * pf;
       if (px < -size || px > W + size || py < -size || py > H + size) continue;
-      const fade = val * Math.min(1, 0.85 / pf);
+      const fade = val * Math.min(1, 0.9 / Math.pow(pf, 1.5));
       for (const [spr, a] of sets) { ctx.globalAlpha = Math.min(1, fade * a); ctx.drawImage(spr[z % 7], px - size / 2, py - size / 2, size, size); }
     }
     ctx.globalAlpha = 1;
