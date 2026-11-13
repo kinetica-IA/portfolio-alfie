@@ -1,5 +1,5 @@
 /* Offline support: app shell cache-first, Google Fonts stale-while-revalidate. Bump VERSION on every release. */
-const VERSION = 'pranayama-v5-7';
+const VERSION = 'pranayama-v5-8';
 const SHELL = ['./', 'index.html', 'support.js', 'pranayama-data.js', 'breath-engine-2.js',
   'vendor/react.production.min.js', 'vendor/react-dom.production.min.js',
   'assets/diente-leon.jpg', 'assets/helecho-1.jpg', 'assets/helecho-2.jpg',

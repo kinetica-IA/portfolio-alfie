@@ -14,7 +14,10 @@
     rapid: { label: "Expulsa", tone: "cool" }, rest: { label: "Descansa", tone: "rest" }
   };
   const REF = { RV: 0.20, FRC: 0.40, TLC: 1 };
-  const TIDAL = { base: 0.40, amp: 0.08, period: 5 };
+  const TIDAL = { base: 0.40, amp: 0.083, period: 5 };
+  /* Reference adult proportions (OpenStax/UEN table): RV, FRC and tidal volume as fractions of TLC */
+  const PROFILES = { h: { RV: 1200 / 6000, FRC: 2400 / 6000, VT: 500 / 6000 }, m: { RV: 1100 / 4200, FRC: 1800 / 4200, VT: 500 / 4200 } };
+  function setProfile(sex) { const P = PROFILES[sex] || PROFILES.h; REF.RV = P.RV; REF.FRC = P.FRC; TIDAL.base = P.FRC; TIDAL.amp = P.VT; }
 
   const smoothstep = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
   const inhale = p => { p = Math.max(0, Math.min(1, p)); return p * p * p * (p * (6 * p - 15) + 10); };
@@ -23,10 +26,10 @@
   /* Volume range of each technique (fraction of TLC) */
   function levels(c) {
     if (c.type === "rest" || c.tech === "asvini") return { lo: TIDAL.base, hi: TIDAL.base + TIDAL.amp, tidal: true };
-    if (c.tech === "conciencia") return { lo: 0.40, hi: 0.52 };
-    if (c.type === "rapid") return { lo: 0.33, hi: 0.40 };
-    if (c.type === "bhastrika") return { lo: 0.30, hi: 0.90, bellows: [0.40, 0.58] };
-    return { lo: 0.27, hi: 0.90 };
+    if (c.tech === "conciencia") return { lo: REF.FRC, hi: REF.FRC + 0.12 };
+    if (c.type === "rapid") return { lo: REF.FRC - 0.07, hi: REF.FRC };
+    if (c.type === "bhastrika") return { lo: REF.RV + 0.10, hi: 0.90, bellows: [REF.FRC, REF.FRC + 0.18] };
+    return { lo: REF.RV + 0.07, hi: 0.90 };
   }
 
   function loadPreset(METRO, tech, key, saved) {
@@ -282,7 +285,11 @@
       clearInterval(this.timer); this.timer = setInterval(() => this.update(), 200);
     }
     pause() { if (!this.running) return; this.running = false; this.pausedAt = performance.now(); this.halt(); }
-    stop() { if (this.started) this.endedAt = this.elapsed(); this.running = false; this.started = false; this.halt(); }
+    stop() {
+      const was = this.started; if (was) this.endedAt = this.elapsed();
+      this.running = false; this.started = false; this.halt();
+      if (was && this.o.onEnd) try { this.o.onEnd(this.endedAt, !!this._done); } catch (e) { }
+    }
     halt() { cancelAnimationFrame(this.raf); clearInterval(this.timer); this.wakeOff(); }
     enter(st) {
       this.lastTick = 0;
@@ -305,7 +312,7 @@
         if (this.i >= this.steps.length) {
           this.cycles++;
           this.o.onCycle && this.o.onCycle(this.cycles, this);
-          if (this.done()) { this.stop(); endTone(); if (this.opt("vibrate")) vibrate([120, 80, 120, 80, 240]); this.o.onFinish && this.o.onFinish(this); return; }
+          if (this.done()) { this._done = true; this.stop(); endTone(); if (this.opt("vibrate")) vibrate([120, 80, 120, 80, 240]); this.o.onFinish && this.o.onFinish(this); return; }
           this.i = 0;
         }
         st = this.steps[this.i]; this.enter(st);
@@ -337,5 +344,5 @@
     wakeOff() { try { if (this.wake) this.wake.release(); } catch (e) { } this.wake = null; }
   }
 
-  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale }, cue, CUES, synthCue };
+  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale }, cue, CUES, synthCue, PROFILES, setProfile };
 })();
