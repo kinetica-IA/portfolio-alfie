@@ -1,6 +1,6 @@
 /* Offline support: app shell cache-first, Google Fonts stale-while-revalidate. Bump VERSION on every release. */
-const VERSION = 'pranayama-v5-2';
-const SHELL = ['./', 'index.html', 'support.js', 'pranayama-data.js', 'breath-engine.js',
+const VERSION = 'pranayama-v5-3';
+const SHELL = ['./', 'index.html', 'support.js', 'pranayama-data.js', 'breath-engine-2.js',
   'vendor/react.production.min.js', 'vendor/react-dom.production.min.js',
   'assets/diente-leon.jpg', 'assets/helecho-1.jpg', 'assets/helecho-2.jpg',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
