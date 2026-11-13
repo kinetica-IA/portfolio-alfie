@@ -1,4 +1,5 @@
 /* Breath engine v2: steps and timing, physiological volume curve, continuous guide audio, vibration.
+ * Guide audio is a whispered, female-formant breath sound; there is no pitched tone.
  * Volumes are fractions of total lung capacity (TLC = 1). Reference adult values, not measured:
  * residual volume ~0.20, functional residual capacity (resting end-expiration) ~0.40.
  * Inhalation: smootherstep S (slow start, peak flow mid-phase, soft landing).
@@ -132,7 +133,7 @@
     return st.v0;
   }
 
-  /* Audio: master, soft bells, continuous guide (tone follows volume, breath noise follows airflow) */
+  /* Audio: master, soft bells, continuous whispered guide that follows airflow */
   const A = { ctx: null, master: null, vol: 45, muted: false };
   function ensureAudio() {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
@@ -163,39 +164,79 @@
   function phaseTone(kind) { if (PHASE_BELL[kind]) bell(PHASE_BELL[kind], 1.6, 0.08); }
   function endTone() { bell(392, 2.6, 0.08); bell(493.9, 2.6, 0.07, 0.3); bell(587.3, 3.2, 0.07, 0.6); }
 
+  /* Guide voice: an unvoiced, whispered "haa / huu" shaped like a female vocal tract.
+   * Two decorrelated noise sources (left/right) excite four parallel formant filters each.
+   * Airflow drives loudness (silent in retentions); lung volume and direction morph the vowel:
+   * fuller lungs open it towards "a", emptying rounds it towards "u", inhaling brightens it. */
+  const VOWEL = {
+    open:  [920, 1480, 2850, 4100],   /* whispered female /a/ (F1 sits higher than when voiced) */
+    round: [520, 1020, 2650, 3900],   /* whispered female /o/-/u/ */
+    front: [760, 2050, 3050, 4300]    /* brighter, airier: used while breathing in */
+  };
+  const FBW = [240, 280, 340, 460], FAMP = [1, 0.62, 0.34, 0.18], GUIDE_GAIN = 1.4;
+  function noiseBuffer(c, secs) {
+    const len = Math.floor(c.sampleRate * secs), buf = c.createBuffer(2, len, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch); let b = 0;
+      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; b = 0.6 * b + 0.4 * w; d[i] = 0.55 * w + 0.45 * b; }
+    }
+    return buf;
+  }
+  function buildGuide(c, dest) {
+    const out = c.createGain(); out.gain.value = 0; out.connect(dest);
+    const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 280; hp.Q.value = 0.5; hp.connect(out);
+    const air = c.createGain(); air.gain.value = 0; air.connect(hp);
+    const flut = c.createGain(); flut.gain.value = 1; flut.connect(air);
+    const lfos = [[4.3, 0.07], [6.9, 0.045], [0.37, 0.12]].map(([f, d]) => {
+      const o = c.createOscillator(), g = c.createGain(); o.frequency.value = f; g.gain.value = d; o.connect(g); g.connect(flut.gain); o.start(); return o;
+    });
+    const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 4800; lp.Q.value = 0.5; lp.connect(flut);
+    const mrg = c.createChannelMerger(2); mrg.connect(lp);
+    const split = c.createChannelSplitter(2);
+    const src = c.createBufferSource(); src.buffer = noiseBuffer(c, 3); src.loop = true; src.connect(split);
+    const filters = [];
+    for (let ch = 0; ch < 2; ch++) {
+      VOWEL.round.forEach((f, k) => {
+        const g = c.createGain(); g.gain.value = FAMP[k] * GUIDE_GAIN;
+        let prev = null;
+        for (let j = 0; j < 2; j++) {           /* two poles per formant: steeper skirts, less hiss between resonances */
+          const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = f; bp.Q.value = f / FBW[k];
+          if (prev) prev.connect(bp); else split.connect(bp, ch);
+          prev = bp; filters.push([bp, k]);
+        }
+        prev.connect(g); g.connect(mrg, 0, ch);
+      });
+    }
+    const sheen = c.createBiquadFilter(); sheen.type = "bandpass"; sheen.frequency.value = 6200; sheen.Q.value = 0.9;
+    const sg = c.createGain(); sg.gain.value = 0; split.connect(sheen, 0); sheen.connect(sg); sg.connect(flut);
+    src.start();
+    out.gain.setTargetAtTime(1, c.currentTime, 0.4);
+    return { c, out, air, filters, sg, src, lfos, dir: 0 };
+  }
+  function steerGuide(n, t, norm, flow, dir) {
+    const lv = flow / (flow + 0.06);                     /* compressive: quiet tidal breaths stay audible */
+    n.air.gain.setTargetAtTime(lv, t, 0.07);
+    if (dir) n.dir = dir;
+    const b = n.dir > 0 ? 0.55 : 0;
+    for (const [bp, k] of n.filters) {
+      const f = VOWEL.round[k] + (VOWEL.open[k] - VOWEL.round[k]) * norm;
+      bp.frequency.setTargetAtTime(f + (VOWEL.front[k] - f) * b, t, 0.14);
+    }
+    n.sg.gain.setTargetAtTime((n.dir > 0 ? 0.05 : 0.025) * lv * GUIDE_GAIN, t, 0.1);
+  }
   const G = { nodes: null };
   function guideStart() {
     const c = ensureAudio(); if (!c || G.nodes) return;
-    try {
-      const out = c.createGain(); out.gain.value = 0; out.connect(A.master);
-      const o1 = c.createOscillator(), o2 = c.createOscillator();
-      o1.type = "sine"; o2.type = "sine"; o1.frequency.value = 174.61; o2.frequency.value = 261.63;
-      const tg = c.createGain(), g2 = c.createGain(); tg.gain.value = 0; g2.gain.value = 0.45;
-      o1.connect(tg); o2.connect(g2); g2.connect(tg); tg.connect(out);
-      const len = c.sampleRate * 2, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
-      let b0 = 0, b1 = 0, b2 = 0;   /* pinkish noise: soft, breathy */
-      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; b0 = 0.99765 * b0 + w * 0.099; b1 = 0.963 * b1 + w * 0.2965; b2 = 0.57 * b2 + w * 1.0527; d[i] = (b0 + b1 + b2 + w * 0.1848) * 0.11; }
-      const src = c.createBufferSource(); src.buffer = buf; src.loop = true;
-      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 0.7; bp.frequency.value = 600;
-      const ng = c.createGain(); ng.gain.value = 0;
-      src.connect(bp); bp.connect(ng); ng.connect(out);
-      o1.start(); o2.start(); src.start();
-      out.gain.setTargetAtTime(1, c.currentTime, 0.4);
-      G.nodes = { out, o1, o2, tg, ng, bp, src };
-    } catch (e) { G.nodes = null; }
+    try { G.nodes = buildGuide(c, A.master); } catch (e) { G.nodes = null; }
   }
-  function guideUpdate(norm, flow) {
+  function guideUpdate(norm, flow, dir) {
     const n = G.nodes; if (!n || !A.ctx) return;
-    const t = A.ctx.currentTime, r = Math.pow(2, norm * 4 / 12);
-    n.o1.frequency.setTargetAtTime(174.61 * r, t, 0.1); n.o2.frequency.setTargetAtTime(261.63 * r, t, 0.1);
-    n.tg.gain.setTargetAtTime(0.03 + 0.06 * norm, t, 0.15);
-    n.ng.gain.setTargetAtTime(Math.min(0.5, flow * 1.6), t, 0.06);
-    n.bp.frequency.setTargetAtTime(450 + 650 * norm, t, 0.12);
+    steerGuide(n, A.ctx.currentTime, norm, flow, dir);
   }
   function guideStop() {
     const n = G.nodes; if (!n) return; G.nodes = null;
     try { n.out.gain.setTargetAtTime(0, A.ctx.currentTime, 0.25); } catch (e) { }
-    setTimeout(() => { try { n.o1.stop(); n.o2.stop(); n.src.stop(); n.out.disconnect(); } catch (e) { } }, 1600);
+    setTimeout(() => { try { n.src.stop(); n.lfos.forEach(o => o.stop()); n.out.disconnect(); } catch (e) { } }, 1600);
   }
 
   const VIB = { in: [70], hold: [30, 60, 30], out: [180], holdEmpty: [30, 60, 30, 60, 30], rapid: [40, 40, 40], rest: [300] };
@@ -288,10 +329,10 @@
       const p = Math.min(1, t / st.dur);
       const v = this.volAt(this.elapsed()).v, n = this.norm(v);
       const dt = this.lastNow ? Math.max(0.008, (now - this.lastNow) / 1000) : 0.016;
-      const rawFlow = this.lastV == null ? 0 : Math.abs(v - this.lastV) / dt;
+      const dv = this.lastV == null ? 0 : v - this.lastV, rawFlow = Math.abs(dv) / dt;
       this.flow += (rawFlow - this.flow) * Math.min(1, dt / 0.08);
       this.lastV = v; this.lastNow = now;
-      guideUpdate(n, this.flow);
+      guideUpdate(n, this.flow, rawFlow > 0.004 ? Math.sign(dv) : 0);
       let cd;
       if (st.kind === "rapid") {
         const iv = 60 / st.tempo, beat = Math.floor(t / iv);
@@ -312,5 +353,5 @@
     wakeOff() { try { if (this.wake) this.wake.release(); } catch (e) { } this.wake = null; }
   }
 
-  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale } };
+  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale }, voice: { buildGuide, steerGuide } };
 })();

@@ -1238,7 +1238,7 @@ class Component extends DCLogic {
       onBpm: e => { this.bpm = parseFloat(e.target.value); },
       applyBpm: () => { const b = this.bpm; if (b >= 40 && b <= 110) this.upd(x => x.unit = Math.round(Math.min(1.6, Math.max(0.6, 60 / b)) * 100) / 100); },
       switches: [
-        sw('Sonido guía', !s.snd.muted, () => this.setSnd({ muted: !s.snd.muted }), 'Tono y soplo que siguen la curva, con campanilla suave al cambiar de fase'),
+        sw('Sonido guía', !s.snd.muted, () => this.setSnd({ muted: !s.snd.muted }), 'Susurro que sigue el aire de cada fase, con campanilla suave al cambiar'),
         sw('Tic en cada unidad', s.snd.tick, () => this.setSnd({ tick: !s.snd.tick }), 'Para contar sin mirar'),
         sw('Vibración', s.snd.vibrate, () => this.setSnd({ vibrate: !s.snd.vibrate }), vibOk ? 'Pulso distinto por fase: practica con los ojos cerrados' : 'No disponible en este dispositivo')
       ],
