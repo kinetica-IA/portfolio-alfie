@@ -55,7 +55,7 @@ const TECNICAS = [
     evidencia: "Las respiraciones lentas, incluida la alternada, se asocian a pequeñas bajadas de la tensión y del pulso {E:3,5}. Los resultados específicos de la respiración alternada son poco consistentes {E:5}.",
     profesor: ["Al principio la atención se va a los dedos: es normal {p:48}.", "Si el brazo se cansa, codo sobre un cojín o cambio de mano {C}.", "En grupo, marca en voz alta «izquierda / derecha» las primeras rondas."],
     metro: "nadi/inicio" },
-  { id: "ritmada", n: 3, nombre: "Respiración ritmada", sub: "Y completamente ritmada (1:2:2 → 1:4:2)", nivel: "Inicial-medio", semana: 4, ref: "pp. 61–64",
+  { id: "ritmada", n: 3, nombre: "Respiración ritmada", sub: "Con retención: de 1:2:2 a 1:4:2", nivel: "Inicial-medio", semana: 4, ref: "pp. 61–64",
     para: "Sincronizar el aliento con el latido. El ritmo absorbe la atención e induce calma {p:63}.",
     postura: "La de pranayama, con la columna recta.",
     pasos: [
@@ -295,7 +295,7 @@ const CONTRA = [
   ["Hipertiroidismo", "Jalandhara (según el libro, también el pranayama salvo la respiración completa)", "Compresión del cuello sobre la glándula tiroides {p:91}.", "Libro"],
   ["Problemas cervicales, mareo al flexionar el cuello, seno carotídeo sensible (sobre todo en mayores)", "Jalandhara completo", "La flexión intensa y la presión en el cuello actúan sobre los receptores de presión de la carótida: bradicardia e hipotensión refleja {p:89–90}. Alternativa: barbilla ligeramente recogida.", "Libro + Prudencia"],
   ["Infección o tapón nasal, otitis, sangrado nasal", "Jala Neti", "Riesgo de llevar líquido al oído o de empeorar la irritación.", "Prudencia"],
-  ["Cualquier persona con agua no estéril", "Jala Neti con agua del grifo sin hervir", "Hay casos mortales de meningoencefalitis amebiana (Naegleria fowleri) por lavados nasales con agua contaminada. Usa agua hervida, destilada o estéril {E:17,18}.", "Evidencia"],
+  ["Lavado nasal con agua no estéril", "Jala Neti con agua del grifo sin hervir", "Hay casos mortales de meningoencefalitis amebiana (Naegleria fowleri) por lavados nasales con agua contaminada. Usa agua hervida, destilada o estéril {E:17,18}.", "Evidencia"],
   ["Menores; personas mayores frágiles", "Retenciones largas; técnicas rápidas", "Menos margen de seguridad. En los casos de efectos adversos del yoga, más de la mitad de las personas tenía vulnerabilidades previas {E:1}.", "Evidencia (indirecta) + Prudencia"],
   ["Ayuno prolongado", "Retenciones tras respiración rápida", "El ayuno sumado a la hiperventilación aumenta la susceptibilidad a perder el conocimiento en apneas repetidas {E:10}.", "Evidencia"]
 ];
@@ -377,14 +377,14 @@ const EVIDENCIA = [
   "Retener el aliento desencadena el reflejo de inmersión: el corazón se enlentece {E:11,12}."
 ];
 const REGLAS = [
-  ["Estómago vacío", "30 min tras comer; 3 h para retenciones largas {p:49, 57, 161}."],
-  ["Nariz despejada", "Vejiga vacía, lugar ventilado y templado {p:159}."],
-  ["Columna recta", "Rostro relajado; usa adaptaciones si las necesitas {p:78}."],
+  ["En ayunas", "Practica siempre antes de comer."],
+  ["Nariz despejada", "Si una fosa está tapada, destápala antes {p:47, 159}."],
+  ["Lugar y postura", "Vejiga vacía, lugar ventilado y templado; columna recta, rostro relajado y adaptaciones si las necesitas {p:78, 159}."],
   ["Siempre por la nariz", "Salvo indicación expresa {p:159}."]
 ];
 const PARAR = "Mareo, hormigueo en manos o labios, visión borrosa, falta de aire, palpitaciones, presión en la cabeza o los ojos, dolor torácico o ansiedad creciente.";
 const CONDICIONES = [
-  ["Estómago vacío", "30 min sin retención; 1,5–5 h con retenciones; 3 h con retenciones prolongadas {p:49, 57, 161}."],
+  ["En ayunas", "Practica siempre antes de comer."],
   ["Nariz limpia", "Si una fosa está tapada, destápala antes {p:47, 159}."],
   ["Lugar ventilado y templado", "{p:159}"],
   ["Columna recta", "Con la espalda curvada no hay control abdominal {p:78}."],

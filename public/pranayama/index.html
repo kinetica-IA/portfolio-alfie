@@ -173,7 +173,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
       <svg width="13" height="15" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1.5v13l12-6.5z" fill="currentColor"></path></svg>
       Empezar sesión
     </button>
-    <p class="t-small c3" style="text-align:center;margin-top:-4px">Las técnicas se encadenan solas y terminan con Shavasana.</p>
+    <p class="t-small c3" style="text-align:center;margin-top:-4px">Las técnicas se encadenan solas.</p>
   </section>
 
   <section class="card rise" style="--d:.2s;padding:20px;display:flex;flex-direction:column;gap:14px">
@@ -289,7 +289,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
     <p class="t-quote c2" style="font-size:19px;padding:0 4px">Lo justo para practicar con sentido. El vocabulario tradicional se usa como imagen para guiar la atención, no como anatomía.</p>
     <button class="card tap" onClick="{{ openVol }}" style="border:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;text-align:left;padding:18px 20px;color:inherit;cursor:pointer;animation:pr-rise .7s var(--ease) both">
       <svg viewBox="0 0 300 64" aria-hidden="true" style="grid-column:1 / -1;width:100%;height:56px;overflow:visible"><line x1="0" x2="300" y1="40" y2="40" style="stroke:var(--fg-3);stroke-width:1;stroke-dasharray:3 4;opacity:.5"></line><path ref="{{ volMiniRef }}" pathLength="1" class="vol-trace" style="fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;animation:pr-trace 2.4s .2s var(--ease) both"></path></svg>
-      <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="t-label ca">Fisiología · con gráfico</span><span class="t-head" style="font-size:22px">Volúmenes de tu respiración</span><span class="t-small c3">Cuánto aire mueves, cuánto queda siempre dentro y por qué la espiración se frena.</span></span>
+      <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="t-label ca">Fisiología</span><span class="t-head" style="font-size:22px">Volúmenes de tu respiración</span><span class="t-small c3">Cuánto aire mueves, cuánto queda siempre dentro y por qué la espiración se frena.</span></span>
       <svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--fg-3)"><path d="M1.5 1.5 6.5 6.5l-5 5"></path></svg>
     </button>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px">
@@ -565,7 +565,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
         <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--inhale)"></span>Inspira · retén lleno</span>
         <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--exhale)"></span>Espira · retén vacío</span>
         <span>{{ playHint }}</span>
-        <span style="flex-basis:100%;text-align:center;opacity:.8">Espirograma con volúmenes de referencia, no medidos · <button onClick="{{ openVolPrac }}" style="border:0;background:transparent;padding:4px 0;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:.2em">qué significa</button></span>
+        <span style="flex-basis:100%;text-align:center;opacity:.8">Espirograma de referencia, no medido · <button onClick="{{ openVolPrac }}" style="border:0;background:transparent;padding:4px 0;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:.2em">qué significa</button></span>
       </div>
     </div>
     </sc-if>
@@ -760,7 +760,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
           <button onClick="{{ k.pick }}" aria-pressed="{{ k.on }}" style="min-height:36px;padding:0 13px;border-radius:999px;border:0;background:{{ k.bg }};color:{{ k.fg }};font:600 13px var(--f-ui);cursor:pointer;transition:background-color .35s var(--ease),color .35s var(--ease)">{{ k.label }}</button>
           </sc-for>
         </div>
-        <span class="t-label c3" style="margin-top:4px">Capacidades: sumas de volúmenes</span>
+        <span class="t-label c3" style="margin-top:4px">Capacidades</span>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
           <sc-for list="{{ volChipsC }}" as="k" hint-placeholder-count="3">
           <button onClick="{{ k.pick }}" aria-pressed="{{ k.on }}" style="min-height:36px;padding:0 13px;border-radius:999px;border:0;background:{{ k.bg }};color:{{ k.fg }};font:600 13px var(--f-ui);cursor:pointer;transition:background-color .35s var(--ease),color .35s var(--ease)">{{ k.label }}</button>
@@ -775,7 +775,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
         <span class="t-small c3">{{ vs.pct }}{{ vs.sum }}</span>
         <p class="t-body c2">{{ vs.desc }}</p>
       </div>
-      <p class="t-small c3">Espirograma de referencia de un adulto sano: respiración tranquila, una inspiración máxima, una espiración máxima y vuelta a la calma. Son valores medios, no los tuyos.</p>
+      <p class="t-small c3">Espirograma de referencia de un adulto sano: respiración tranquila, una inspiración máxima, una espiración máxima y vuelta a la calma.</p>
     </section>
 
     <section class="rise" style="--d:.2s;display:flex;flex-direction:column;gap:12px">
@@ -787,7 +787,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
           <div style="position:relative;height:10px;border-radius:999px;background:var(--tint)"><span class="vol-morph" style="position:absolute;top:0;bottom:0;left:{{ r.l }};width:{{ r.w }};min-width:4px;border-radius:999px;background:{{ r.c }};transition:left .9s var(--ease),width .9s var(--ease)"></span></div>
         </div>
         </sc-for>
-        <p class="t-small c3">El espirograma de práctica usa las proporciones del hombre de referencia (residual 20 %, CRF 40 %) y dibuja la respiración completa entre el 27 % y el 90 %, sin forzar los extremos.</p>
+        <p class="t-small c3">El espirograma de práctica usa las proporciones del hombre de referencia y no fuerza los extremos.</p>
       </div>
     </section>
 
@@ -803,7 +803,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
         </div>
         </sc-for>
       </div>
-      <p class="t-small c3" style="padding:0 4px">Valores en litros. Las capacidades son sumas de volúmenes.</p>
+      <p class="t-small c3" style="padding:0 4px">Valores en litros.</p>
     </section>
 
     <section class="rise" style="--d:.28s;display:flex;flex-direction:column;gap:12px">
@@ -827,7 +827,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
           <span style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:2.4px;border-radius:2px;background:var(--accent)"></span>Espiración frenada (pranayama)</span>
         </div>
       </div>
-      <p class="t-body">La <strong>espiración pasiva</strong> es un vaciado exponencial que gobierna la constante de tiempo: resistencia × distensibilidad. Tras una, dos y tres constantes quedan el 37 %, el 13,5 % y el 5 % del volumen inicial. Por eso el aire sale rápido al principio y se frena después.</p>
+      <p class="t-body">La <strong>espiración pasiva</strong> es un vaciado exponencial gobernado por la constante de tiempo: resistencia × distensibilidad. Tras una, dos y tres constantes quedan el 37 %, el 13,5 % y el 5 % del volumen inicial. Por eso el aire sale rápido al principio y se frena después.</p>
       <p class="t-body">En el pranayama esa espiración <strong>se frena a voluntad</strong> (y con la glotis en Ujjayi), así que la cola se alarga y se suaviza.</p>
       <p class="t-body">La <strong>inspiración</strong>, en cambio, es activa: arranca suave, alcanza su máximo flujo a mitad y aterriza frenando. Son las mismas formas que sigue el metrónomo.</p>
     </section>
@@ -1020,7 +1020,7 @@ class Component extends DCLogic {
       .replace(/\s*\{p:([^}]+)\}/g, r ? ' (p. $1)' : '')
       .replace(/\s*\{E:([\d, ]+)\}/g, (m, l) => r ? ' [estudios ' + l.replace(/\s/g, '').split(',').join(', ') + ']' : '')
       .replace(/\s*\{C\}/g, r ? ' (complemento al libro)' : '')
-      .replace(/\s+([.,;:])/g, '$1').trim();
+      .replace(/\s+([.,;]|:(?!\s?\d))/g, '$1').trim();
   }
   fmtSecs(s) { return s < 60 ? Math.round(s) + ' s' : Math.round(s / 60) + ' min'; }
   period() { const h = this.props.horaDemo >= 0 && this.props.horaDemo <= 23 ? this.props.horaDemo : new Date().getHours(); return h >= 5 && h < 10 ? 'alba' : h < 17 && h >= 10 ? 'dia' : h >= 17 && h < 21 ? 'tarde' : 'noche'; }
@@ -1325,7 +1325,7 @@ class Component extends DCLogic {
     const open = id => () => { clearTimeout(this.dtT); this.setState({ detail: id, dtOut: false }); };
     const tecs = D.TECNICAS.slice().sort((a, b) => a.semana - b.semana || a.n - b.n);
     const ini = n => n.replace(/^(Respiración|Toma de|Pranayama) /, '').charAt(0).toUpperCase();
-    const row = (t, i) => ({ name: t.nombre, sub: t.sub, ini: ini(t.nombre), delay: dl(i), meta: t.semana <= cw ? 'Sem. ' + t.semana : 'Semana ' + t.semana, open: open(t.id) });
+    const row = (t, i) => ({ name: t.nombre, sub: t.sub, ini: ini(t.nombre), delay: dl(i), meta: 'Semana ' + t.semana, open: open(t.id) });
     const tecLater = tecs.filter(t => t.semana > cw).map(row);
     const ex = o => ({ rows: o ? '1fr' : '0fr', vis: o ? 'visible' : 'hidden', op: o ? 1 : 0, ty: o ? '0px' : '-6px', rot: o ? '180deg' : '0deg' });
     const rowKey = (k, i) => k + i;
@@ -1354,8 +1354,9 @@ class Component extends DCLogic {
     if (run.status === 'paused') runLabel = 'En pausa';
     if (gap) { runLabel = 'Siguiente'; runSub = nextIt.name + (nextIt.label ? ' · ' + nextIt.label : ''); }
     let counterTxt = '';
-    if (c.type === 'cycle' || c.type === 'viloma') counterTxt = 'CICLO ' + (run.cycles || 0) + (c.mode === 'ciclos' ? ' DE ' + c.amount : ' · ' + c.amount + ' MIN');
-    else if (c.type === 'rapid' || c.type === 'bhastrika') counterTxt = (c.type === 'rapid' ? 'RÁFAGA ' : 'RONDA ') + (run.round || 0) + ' DE ' + c.rounds;
+    const idle = run.status === 'idle';
+    if (c.type === 'cycle' || c.type === 'viloma') counterTxt = idle ? (c.mode === 'ciclos' ? c.amount + ' CICLOS' : '') : 'CICLO ' + (c.mode === 'ciclos' ? Math.min(c.amount, (run.cycles || 0) + 1) + ' DE ' + c.amount : ((run.cycles || 0) + 1) + ' · ' + c.amount + ' MIN');
+    else if (c.type === 'rapid' || c.type === 'bhastrika') counterTxt = idle ? c.rounds + (c.type === 'rapid' ? ' RÁFAGAS' : ' RONDAS') : (c.type === 'rapid' ? 'RÁFAGA ' : 'RONDA ') + (run.round || 1) + ' DE ' + c.rounds;
     else if (c.type === 'rest') counterTxt = 'RELAJACIÓN FINAL';
     if (gap) counterTxt = 'PAUSA ENTRE TÉCNICAS';
     const side = run.side;
@@ -1395,7 +1396,7 @@ class Component extends DCLogic {
       if (c.type === 'cycle' || c.type === 'viloma') {
         choices.push({ label: 'Duración por', opts: [['ciclos', 'Ciclos'], ['minutos', 'Minutos']].map(([v, l]) => opt(c.mode === v, () => this.upd(x => x.mode = v), l)) });
         F(c.mode === 'minutos' ? 'Minutos' : 'Ciclos', c.amount, 1, 60, 1, (x, v) => x.amount = v);
-        F('Unidad (s)', c.unit, 0.6, 1.6, 0.05, (x, v) => x.unit = v, v => v.toFixed(2));
+        F('Unidad (s)', c.unit, 0.6, 1.6, 0.05, (x, v) => x.unit = v, v => v.toFixed(2).replace('.', ','));
       }
       const hold = E.maxHold(c);
       if (c.type === 'rapid' || c.type === 'bhastrika') notes.push({ d: 'Técnica rápida: siempre sentado y nunca en el agua. Para si notas mareo, hormigueo o visión borrosa. No apta con problemas cardiacos, hipertensión, epilepsia, pánico, enfermedad pulmonar, glaucoma o embarazo.' });
@@ -1476,14 +1477,14 @@ class Component extends DCLogic {
       showSides: !!(c.alt || c.type === 'bhastrika'), izqOp: sideOp('izq'), dchaOp: sideOp('dcha'), izqBd: sideBd('izq'), dchaBd: sideBd('dcha'),
       isRunning: run.status === 'running', notRunning: run.status !== 'running',
       playAria: run.status === 'running' ? 'Pausar' : 'Iniciar',
-      playHint: run.status === 'running' ? 'Espacio: pausar' : 'Espacio: iniciar',
+      playHint: !matchMedia('(hover: hover) and (pointer: fine)').matches ? '' : run.status === 'running' ? 'Espacio: pausar' : 'Espacio: iniciar',
       toggle: () => this.toggle(), reset: () => this.reset(),
       glowRef: this.glowRef, ensoRef: this.ensoRef, enso2Ref: this.enso2Ref, enso3Ref: this.enso3Ref, cdRef: this.cdRef, barRef: this.barRef, spiroRef: this.spiroRef,
 
       sheet: s.sheet, openSheet: () => this.setState({ sheet: true }),
       closeSheet: () => this.setState({ sheet: false }),
       showCfg: !ss && c.type !== 'rest', fields, choices, notes, hasUnit: c.type === 'cycle' || c.type === 'viloma',
-      cycleInfo: c.type === 'rest' ? '' : 'Un ciclo dura ' + E.cycleSecs(c).toFixed(1) + ' s · total ≈ ' + this.fmtSecs(E.totalSecs(c)),
+      cycleInfo: c.type === 'rest' ? '' : 'Un ciclo dura ' + E.cycleSecs(c).toFixed(1).replace('.', ',') + ' s · total ≈ ' + this.fmtSecs(E.totalSecs(c)),
       onBpm: e => { this.bpm = parseFloat(e.target.value); },
       applyBpm: () => { const b = this.bpm; if (b >= 40 && b <= 110) this.upd(x => x.unit = Math.round(Math.min(1.6, Math.max(0.6, 60 / b)) * 100) / 100); },
       switches: [
