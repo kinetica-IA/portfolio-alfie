@@ -82,6 +82,9 @@ button:active{transform:scale(.97);transition-duration:.12s}
 @keyframes pr-kb{0%,100%{transform:scale(1.18) translate(0,0)}50%{transform:scale(1.28) translate(-2%,1.5%)}}
 @keyframes pr-breathe{0%,100%{transform:scale(.92);opacity:.8}50%{transform:scale(1.04);opacity:1}}
 @keyframes pr-draw{from{stroke-dashoffset:251}}
+@keyframes pr-trace{from{stroke-dashoffset:1}}
+.vol-morph{transition:d .9s var(--ease),transform .9s var(--ease),y .9s var(--ease),height .9s var(--ease),opacity .5s ease}
+@media (prefers-reduced-motion:reduce){.vol-morph{transition:none}.vol-trace{animation:none !important}}
 @container (max-height:640px){
   .pr-prac{gap:8px !important}
   .pr-lbl{min-height:56px !important}
@@ -284,6 +287,11 @@ button:active{transform:scale(.97);transition-duration:.12s}
   <sc-if value="{{ lCon }}" hint-placeholder-val="{{ false }}">
   <section style="display:flex;flex-direction:column;gap:12px;animation:pr-view .6s var(--ease) both">
     <p class="t-quote c2" style="font-size:19px;padding:0 4px">Lo justo para practicar con sentido. El vocabulario tradicional se usa como imagen para guiar la atención, no como anatomía.</p>
+    <button class="card tap" onClick="{{ openVol }}" style="border:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;text-align:left;padding:18px 20px;color:inherit;cursor:pointer;animation:pr-rise .7s var(--ease) both">
+      <svg viewBox="0 0 300 64" aria-hidden="true" style="grid-column:1 / -1;width:100%;height:56px;overflow:visible"><line x1="0" x2="300" y1="40" y2="40" style="stroke:var(--fg-3);stroke-width:1;stroke-dasharray:3 4;opacity:.5"></line><path ref="{{ volMiniRef }}" pathLength="1" class="vol-trace" style="fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;animation:pr-trace 2.4s .2s var(--ease) both"></path></svg>
+      <span style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="t-label ca">Fisiología · con gráfico</span><span class="t-head" style="font-size:22px">Volúmenes de tu respiración</span><span class="t-small c3">Cuánto aire mueves, cuánto queda siempre dentro y por qué la espiración se frena.</span></span>
+      <svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--fg-3)"><path d="M1.5 1.5 6.5 6.5l-5 5"></path></svg>
+    </button>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px">
       <sc-for list="{{ conceptos }}" as="c" hint-placeholder-count="6">
       <article class="card" style="padding:18px 20px;display:flex;flex-direction:column;gap:6px;animation:pr-rise .7s var(--ease) both;animation-delay:{{ c.delay }}">
@@ -557,7 +565,7 @@ button:active{transform:scale(.97);transition-duration:.12s}
         <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--inhale)"></span>Inspira · retén lleno</span>
         <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--exhale)"></span>Espira · retén vacío</span>
         <span>{{ playHint }}</span>
-        <span style="flex-basis:100%;text-align:center;opacity:.8">Espirograma con volúmenes de referencia, no medidos</span>
+        <span style="flex-basis:100%;text-align:center;opacity:.8">Espirograma con volúmenes de referencia, no medidos · <button onClick="{{ openVolPrac }}" style="border:0;background:transparent;padding:4px 0;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:.2em">qué significa</button></span>
       </div>
     </div>
     </sc-if>
@@ -702,6 +710,146 @@ button:active{transform:scale(.97);transition-duration:.12s}
 </div>
 </sc-if>
 
+<sc-if value="{{ volOpen }}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Volúmenes de tu respiración" class="th-light" style="position:fixed;inset:0;z-index:45;background:var(--paper-l);overflow-y:auto;animation:{{ volAnim }}">
+  <div style="position:sticky;top:0;z-index:2;background:rgba(246,243,235,.94);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 1px 0 var(--hair)">
+    <div style="padding:max(8px,env(safe-area-inset-top)) 10px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <button class="btn" onClick="{{ closeVol }}" style="background:transparent;color:var(--fg);padding:0 14px 0 8px;min-height:44px;gap:8px"><svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 1.5 1.5 6.5l5 5"></path></svg>Volver</button>
+      <div role="radiogroup" aria-label="Valores de referencia" style="position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:3px;background:var(--tint);border-radius:999px;width:176px">
+        <span aria-hidden="true" style="position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px) / 2);border-radius:999px;background:#FFFDF8;box-shadow:0 2px 10px -2px rgba(38,42,34,.2);transform:translateX({{ volSexX }});transition:transform .5s var(--ease)"></span>
+        <button role="radio" aria-checked="{{ volH }}" onClick="{{ pickH }}" style="position:relative;min-height:36px;border:0;background:transparent;color:{{ volHfg }};font:600 13.5px var(--f-ui);cursor:pointer">Hombre</button>
+        <button role="radio" aria-checked="{{ volM }}" onClick="{{ pickM }}" style="position:relative;min-height:36px;border:0;background:transparent;color:{{ volMfg }};font:600 13.5px var(--f-ui);cursor:pointer">Mujer</button>
+      </div>
+    </div>
+  </div>
+  <article style="padding:24px 20px 72px;display:flex;flex-direction:column;gap:26px;max-width:720px;margin:0 auto">
+    <header class="rise" style="--d:.08s;display:flex;flex-direction:column;gap:10px">
+      <span class="t-label ca">Fisiología · valores de referencia</span>
+      <h1 class="t-display" style="font-size:40px">Volúmenes de tu respiración</h1>
+      <p class="t-quote c2" style="font-size:20px">Cuánto aire mueves al respirar, cuánto podrías mover y cuánto queda siempre dentro.</p>
+    </header>
+
+    <section class="card rise" style="--d:.14s;padding:16px 14px 18px;display:flex;flex-direction:column;gap:14px">
+      <svg viewBox="0 0 340 214" role="img" aria-label="{{ volAria }}" style="width:100%;height:auto;overflow:visible;font-family:var(--f-ui)">
+        <line x1="34" x2="296" y1="192" y2="192" style="stroke:var(--fg-3);stroke-width:1;opacity:.5"></line>
+        <line x1="34" x2="296" y1="136.6" y2="136.6" style="stroke:var(--hair);stroke-width:1"></line>
+        <line x1="34" x2="296" y1="81.2" y2="81.2" style="stroke:var(--hair);stroke-width:1"></line>
+        <line x1="34" x2="296" y1="25.8" y2="25.8" style="stroke:var(--hair);stroke-width:1"></line>
+        <text x="28" y="196" text-anchor="end" style="font-size:10.5px;fill:var(--fg-3)">0 L</text>
+        <text x="28" y="140.6" text-anchor="end" style="font-size:10.5px;fill:var(--fg-3)">2</text>
+        <text x="28" y="85.2" text-anchor="end" style="font-size:10.5px;fill:var(--fg-3)">4</text>
+        <text x="28" y="29.8" text-anchor="end" style="font-size:10.5px;fill:var(--fg-3)">6</text>
+        <rect class="vol-morph" x="34" width="262" y="0" height="0" rx="3" style="y:{{ vb.y }}px;height:{{ vb.h }}px;fill:color-mix(in srgb,var(--accent) 15%,transparent)"></rect>
+        <line class="vol-morph" x1="34" x2="296" y1="0" y2="0" style="transform:translateY({{ vb.y }}px);stroke:var(--accent);stroke-width:1.2;opacity:.7"></line>
+        <line class="vol-morph" x1="34" x2="296" y1="0" y2="0" style="transform:translateY({{ vb.y2 }}px);stroke:var(--accent);stroke-width:1.2;opacity:.7"></line>
+        <line class="vol-morph" x1="34" x2="296" y1="0" y2="0" style="transform:translateY({{ vg.tlc }}px);stroke:var(--fg-3);stroke-width:1;stroke-dasharray:2 3;opacity:.7"></line>
+        <line class="vol-morph" x1="34" x2="296" y1="0" y2="0" style="transform:translateY({{ vg.frc }}px);stroke:var(--fg-2);stroke-width:1.1;stroke-dasharray:5 4;opacity:.75"></line>
+        <line class="vol-morph" x1="34" x2="296" y1="0" y2="0" style="transform:translateY({{ vg.rv }}px);stroke:var(--fg-3);stroke-width:1;stroke-dasharray:2 3;opacity:.7"></line>
+        <text class="vol-morph" x="301" y="0" style="transform:translateY({{ vg.tlcT }}px);font-size:10.5px;font-weight:600;fill:var(--fg-2)">CPT</text>
+        <text class="vol-morph" x="301" y="0" style="transform:translateY({{ vg.frcT }}px);font-size:10.5px;font-weight:600;fill:var(--fg-2)">CRF</text>
+        <text class="vol-morph" x="301" y="0" style="transform:translateY({{ vg.rvT }}px);font-size:10.5px;font-weight:600;fill:var(--fg-2)">VR</text>
+        <path class="vol-morph vol-trace" ref="{{ vgRef }}" pathLength="1" style="d:path('{{ vg.path }}');fill:none;stroke:var(--primary);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;animation:pr-trace 3s .3s var(--ease) both"></path>
+        <text x="34" y="210" style="font-size:10px;fill:var(--fg-3)">tranquila</text>
+        <text class="vol-morph" x="0" y="210" text-anchor="middle" style="transform:translateX({{ vg.xMax }}px);font-size:10px;fill:var(--fg-3)">al máximo</text>
+        <text x="296" y="210" text-anchor="end" style="font-size:10px;fill:var(--fg-3)">tranquila</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span class="t-label c3">Volúmenes</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ volChipsV }}" as="k" hint-placeholder-count="4">
+          <button onClick="{{ k.pick }}" aria-pressed="{{ k.on }}" style="min-height:36px;padding:0 13px;border-radius:999px;border:0;background:{{ k.bg }};color:{{ k.fg }};font:600 13px var(--f-ui);cursor:pointer;transition:background-color .35s var(--ease),color .35s var(--ease)">{{ k.label }}</button>
+          </sc-for>
+        </div>
+        <span class="t-label c3" style="margin-top:4px">Capacidades: sumas de volúmenes</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ volChipsC }}" as="k" hint-placeholder-count="3">
+          <button onClick="{{ k.pick }}" aria-pressed="{{ k.on }}" style="min-height:36px;padding:0 13px;border-radius:999px;border:0;background:{{ k.bg }};color:{{ k.fg }};font:600 13px var(--f-ui);cursor:pointer;transition:background-color .35s var(--ease),color .35s var(--ease)">{{ k.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div aria-live="polite" style="padding:14px 16px;border-radius:16px;background:var(--accent-soft);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+          <h2 class="t-head" style="font-size:20px">{{ vs.name }}</h2>
+          <span class="t-num" style="font-size:24px;color:var(--accent)">{{ vs.val }}</span>
+        </div>
+        <span class="t-small c3">{{ vs.pct }}{{ vs.sum }}</span>
+        <p class="t-body c2">{{ vs.desc }}</p>
+      </div>
+      <p class="t-small c3">Espirograma de referencia de un adulto sano: respiración tranquila, una inspiración máxima, una espiración máxima y vuelta a la calma. Son valores medios, no los tuyos.</p>
+    </section>
+
+    <section class="rise" style="--d:.2s;display:flex;flex-direction:column;gap:12px">
+      <h2 class="t-title">En porcentaje de <em>pulmón lleno</em></h2>
+      <div class="card" style="padding:16px 18px;display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ volPct }}" as="r" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;gap:12px"><span class="t-small" style="font-weight:600">{{ r.t }}</span><span class="t-small t-num c3" style="white-space:nowrap">{{ r.v }}</span></div>
+          <div style="position:relative;height:10px;border-radius:999px;background:var(--tint)"><span class="vol-morph" style="position:absolute;top:0;bottom:0;left:{{ r.l }};width:{{ r.w }};min-width:4px;border-radius:999px;background:{{ r.c }};transition:left .9s var(--ease),width .9s var(--ease)"></span></div>
+        </div>
+        </sc-for>
+        <p class="t-small c3">El espirograma de práctica usa las proporciones del hombre de referencia (residual 20 %, CRF 40 %) y dibuja la respiración completa entre el 27 % y el 90 %, sin forzar los extremos.</p>
+      </div>
+    </section>
+
+    <section class="rise" style="--d:.24s;display:flex;flex-direction:column;gap:12px">
+      <h2 class="t-title">Valores de referencia</h2>
+      <div class="list">
+        <div class="row" style="display:grid;grid-template-columns:minmax(0,1fr) 64px 64px;gap:10px;padding:10px 16px"><span class="t-label c3">Adulto sano</span><span class="t-label c3" style="text-align:right">Hombre</span><span class="t-label c3" style="text-align:right">Mujer</span></div>
+        <sc-for list="{{ volRows }}" as="r" hint-placeholder-count="8">
+        <div class="row" style="display:grid;grid-template-columns:minmax(0,1fr) 64px 64px;gap:4px 10px;align-items:baseline;padding:13px 16px;background:{{ r.bg }}">
+          <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="t-small" style="font-weight:600">{{ r.t }}</span><span class="t-small c3">{{ r.d }}</span></span>
+          <span class="t-num" style="text-align:right;font-size:16px">{{ r.h }}</span>
+          <span class="t-num" style="text-align:right;font-size:16px">{{ r.m }}</span>
+        </div>
+        </sc-for>
+      </div>
+      <p class="t-small c3" style="padding:0 4px">Valores en litros. Las capacidades son sumas de volúmenes.</p>
+    </section>
+
+    <section class="rise" style="--d:.28s;display:flex;flex-direction:column;gap:12px">
+      <h2 class="t-title">La forma de <em>la curva</em></h2>
+      <div class="card" style="padding:16px 14px;display:flex;flex-direction:column;gap:12px">
+        <svg viewBox="0 0 340 176" role="img" aria-label="Inspiración activa en forma de S y dos espiraciones: la pasiva, que se vacía de forma exponencial y deja el 37, el 13,5 y el 5 % tras una, dos y tres constantes de tiempo, y la frenada del pranayama, más lenta y con una cola más larga." style="width:100%;height:auto;overflow:visible;font-family:var(--f-ui)">
+          <line x1="16" x2="330" y1="150" y2="150" style="stroke:var(--fg-3);stroke-width:1;opacity:.5"></line>
+          <line x1="110.2" x2="110.2" y1="14" y2="150" style="stroke:var(--hair);stroke-width:1"></line>
+          <text x="16" y="168" style="font-size:10.5px;fill:var(--fg-3)">Inspiración</text>
+          <text x="116.2" y="168" style="font-size:10.5px;fill:var(--fg-3)">Espiración</text>
+          <path ref="{{ vc.inhRef }}" pathLength="1" class="vol-trace" style="fill:none;stroke:var(--primary);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:1;animation:pr-trace 1.4s .3s var(--ease) both"></path>
+          <path ref="{{ vc.brakedRef }}" pathLength="1" class="vol-trace" style="fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:1;animation:pr-trace 2.4s 1.5s var(--ease) both"></path>
+          <path ref="{{ vc.passiveRef }}" pathLength="1" class="vol-trace" style="fill:none;stroke:var(--fg-3);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:1;animation:pr-trace 2.4s 1.5s var(--ease) both"></path>
+          <g style="transform:translate({{ vc.d0.x }}px,{{ vc.d0.y }}px)"><circle cx="0" cy="0" r="3.2" style="fill:var(--fg-3);animation:pr-fade .6s 2.2s ease both"></circle><text x="5" y="-7" style="font-size:10.5px;font-weight:600;fill:var(--fg-2);animation:pr-fade .6s 2.2s ease both">37 %</text></g>
+          <g style="transform:translate({{ vc.d1.x }}px,{{ vc.d1.y }}px)"><circle cx="0" cy="0" r="3.2" style="fill:var(--fg-3);animation:pr-fade .6s 2.45s ease both"></circle><text x="5" y="-7" style="font-size:10.5px;font-weight:600;fill:var(--fg-2);animation:pr-fade .6s 2.45s ease both">13,5 %</text></g>
+          <g style="transform:translate({{ vc.d2.x }}px,{{ vc.d2.y }}px)"><circle cx="0" cy="0" r="3.2" style="fill:var(--fg-3);animation:pr-fade .6s 2.7s ease both"></circle><text x="5" y="-7" style="font-size:10.5px;font-weight:600;fill:var(--fg-2);animation:pr-fade .6s 2.7s ease both">5 %</text></g>
+        </svg>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 16px" class="t-small c2">
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:2.4px;border-radius:2px;background:var(--primary)"></span>Inspiración activa</span>
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:2.4px;border-radius:2px;background:var(--fg-3)"></span>Espiración pasiva</span>
+          <span style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:2.4px;border-radius:2px;background:var(--accent)"></span>Espiración frenada (pranayama)</span>
+        </div>
+      </div>
+      <p class="t-body">La <strong>espiración pasiva</strong> es un vaciado exponencial que gobierna la constante de tiempo: resistencia × distensibilidad. Tras una, dos y tres constantes quedan el 37 %, el 13,5 % y el 5 % del volumen inicial. Por eso el aire sale rápido al principio y se frena después.</p>
+      <p class="t-body">En el pranayama esa espiración <strong>se frena a voluntad</strong> (y con la glotis en Ujjayi), así que la cola se alarga y se suaviza.</p>
+      <p class="t-body">La <strong>inspiración</strong>, en cambio, es activa: arranca suave, alcanza su máximo flujo a mitad y aterriza frenando. Son las mismas formas que sigue el metrónomo.</p>
+    </section>
+
+    <section class="card" style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+      <h2 class="t-head" style="font-size:20px">Por qué las cifras no siempre coinciden</h2>
+      <p class="t-body c2">StatPearls sitúa la CRF en unos 3 L y el volumen residual entre 1 y 1,2 L. La tabla de referencia de OpenStax da 2,4 L de CRF en el hombre. Los valores cambian con la edad, el sexo, la talla, el peso y la actividad física, y la CRF baja al tumbarte.</p>
+      <p class="t-body c2">El volumen residual, la CRF y la CPT no se miden con una espirometría simple: hace falta pletismografía o dilución de gases. La app no mide tu respiración; dibuja estas proporciones como guía.</p>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:8px">
+      <h2 class="t-label c3" style="padding:0 4px">Fuentes</h2>
+      <div class="list">
+        <sc-for list="{{ volSrc }}" as="f" hint-placeholder-count="4">
+        <a class="row" href="{{ f.url }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:2px;padding:13px 16px;color:inherit;text-decoration:none"><span class="t-small" style="font-weight:600">{{ f.t }}</span><span class="t-small c3">{{ f.d }}</span></a>
+        </sc-for>
+      </div>
+    </section>
+  </article>
+</div>
+</sc-if>
+
 <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
 <nav aria-label="Secciones" style="position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 10px max(10px,env(safe-area-inset-bottom));background:{{ navBg }};backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);box-shadow:{{ navSh }};transition:background-color .6s var(--ease),box-shadow .6s var(--ease);animation:pr-fade .5s ease both">
   <span aria-hidden="true" style="position:absolute;top:6px;left:10px;width:calc((100% - 20px) / 4);height:52px;border-radius:16px;background:{{ navInd }};transform:translateX({{ navX }});transition:transform .6s var(--ease),background-color .6s var(--ease)"></span>
@@ -746,7 +894,7 @@ function golSprites(pal) {
 }
 
 class Component extends DCLogic {
-  state = { ready: false, tab: 'hoy', learn: 'tecnicas', detail: null, prog: {}, seen: false, refs: null, openWeek: null, openRow: null, outOpen: false, cfg: null, sheet: false, run: { status: 'idle' }, session: null, snd: { muted: false, vol: 60, tick: true, vibrate: true }, full: false, dtOut: false, sheetOut: false, pracOut: false };
+  state = { ready: false, tab: 'hoy', learn: 'tecnicas', detail: null, prog: {}, seen: false, refs: null, openWeek: null, openRow: null, outOpen: false, cfg: null, sheet: false, run: { status: 'idle' }, session: null, snd: { muted: false, vol: 60, tick: true, vibrate: true }, full: false, dtOut: false, sheetOut: false, pracOut: false, vol: false, volOut: false, volSex: 'h', volSel: 'vt' };
   glowRef = React.createRef(); ensoRef = React.createRef(); enso2Ref = React.createRef(); enso3Ref = React.createRef(); cdRef = React.createRef(); barRef = React.createRef(); spiroRef = React.createRef();
     heroRef = React.createRef(); topRef = React.createRef(); scrollRef = React.createRef(); golRef = React.createRef();
   onScroll = e => {
@@ -765,7 +913,7 @@ class Component extends DCLogic {
     const go = () => (window.PR_DATA && window.BreathEngine) ? this.init() : (this.wt = setTimeout(go, 40));
     go();
     this.onKey = e => {
-      if (this.state.tab !== 'practicar' || this.state.sheet || this.state.detail) return;
+      if (this.state.tab !== 'practicar' || this.state.sheet || this.state.detail || this.state.vol) return;
       const tag = (e.target.tagName || '').toLowerCase();
       if (['input', 'select', 'textarea', 'button', 'a'].includes(tag)) return;
       if (e.code === 'Space') { e.preventDefault(); this.toggle(); }
@@ -932,6 +1080,107 @@ class Component extends DCLogic {
     const key = JSON.stringify(c);
     if (this._pvKey !== key) { this._pvKey = key; this._pv = new this.E.Runner(c, {}); }
     return this._pv;
+  }
+  /* Reference lung volumes page (adult values, mL; OpenStax/UEN table) */
+  volModel(sex) {
+    const R = sex === 'm' ? { vt: 500, vri: 1900, vre: 700, vr: 1100 } : { vt: 500, vri: 3100, vre: 1200, vr: 1200 };
+    const frc = R.vre + R.vr, tlc = frc + R.vt + R.vri, cv = R.vt + R.vri + R.vre;
+    return { ...R, frc, tlc, cv };
+  }
+  volGeom(sex) {
+    this._vg = this._vg || {}; if (this._vg[sex]) return this._vg[sex];
+    const v = this.volModel(sex), C = window.BreathEngine.curves, Y = mL => +(192 - mL / 1000 * 27.7).toFixed(1);
+    const segs = [];
+    const tidal = n => { for (let i = 0; i < n; i++) { segs.push([v.frc, v.frc + v.vt, 0.036, 'in']); segs.push([v.frc + v.vt, v.frc, 0.054, 'out']); } };
+    tidal(3);
+    segs.push([v.frc, v.tlc, 0.11, 'in']); const iMax = segs.length;
+    segs.push([v.tlc, v.vr, 0.17, 'out']);
+    segs.push([v.vr, v.frc + v.vt, 0.08, 'in']); segs.push([v.frc + v.vt, v.frc, 0.054, 'out']);
+    tidal(2);
+    const tot = segs.reduce((a, q) => a + q[2], 0), W = 262; let x = 34, pts = [], xMax = 0;
+    segs.forEach(([a, b, d, k], i) => {
+      const w = d / tot * W, n = Math.max(8, Math.round(w / 1.5));
+      for (let j = (i ? 1 : 0); j <= n; j++) { const p = j / n, f = k === 'in' ? C.inhale(p) : C.exhale(p); pts.push((x + p * w).toFixed(1) + ' ' + Y(a + (b - a) * f)); }
+      if (i === iMax) xMax = x; x += w;
+    });
+    const g = { path: 'M' + pts.join(' L'), tlc: Y(v.tlc), frc: Y(v.frc), rv: Y(v.vr), tlcT: Y(v.tlc) + 4, frcT: Y(v.frc) + 4, rvT: Y(v.vr) + 4, xMax: xMax.toFixed(1), Y };
+    return (this._vg[sex] = g);
+  }
+  volCurve() {
+    if (this._vc) return this._vc;
+    const C = window.BreathEngine.curves, top = 20, bot = 150, x0 = 16 + 314 * 0.3, xe = 330, span = xe - x0, tau = span / 4.4;
+    const Y = f => (bot - (bot - top) * f).toFixed(1), P = [], B = [], E = [];
+    for (let i = 0; i <= 60; i++) { const p = i / 60; P.push((16 + (x0 - 16) * p).toFixed(1) + ' ' + Y(C.inhale(p))); }
+    for (let i = 0; i <= 120; i++) { const p = i / 120, x = x0 + span * p; B.push(x.toFixed(1) + ' ' + Y(1 - C.exhale(p))); E.push(x.toFixed(1) + ' ' + Y(Math.exp(-(span * p) / tau))); }
+    const dot = k => ({ x: (x0 + tau * k).toFixed(1), y: Y(Math.exp(-k)) });
+    return (this._vc = { x0: x0.toFixed(1), xLab: (x0 + 6).toFixed(1), inh: 'M' + P.join(' L'), braked: 'M' + B.join(' L'), passive: 'M' + E.join(' L'), d0: dot(1), d1: dot(2), d2: dot(3) });
+  }
+  openVol(fromPractice) {
+    if (fromPractice && this.state.run.status === 'running' && this.runner) { this.runner.pause(); this.setState(s => ({ run: { ...s.run, status: 'paused' } })); }
+    clearTimeout(this.volT); this.setState({ vol: true, volOut: false });
+  }
+  closeVol() { if (this.state.volOut) return; this.setState({ volOut: true }); clearTimeout(this.volT); this.volT = setTimeout(() => this.setState({ vol: false, volOut: false }), this.reduced ? 0 : 380); }
+  volVals(s) {
+    if (!window.BreathEngine) return { volOpen: false };
+    const mini = this._vmini || (this._vmini = (() => { const g = this.volGeom('h'); return g.path.replace(/(\d+\.?\d*) (\d+\.?\d*)/g, (_, x, y) => ((x - 34) / 262 * 300).toFixed(1) + ' ' + ((y - 20) / 172 * 64).toFixed(1)); })());
+    const setD = d => el => { if (el) el.setAttribute('d', d); };
+    const base = { volMiniRef: setD(mini), openVol: () => this.openVol(false), openVolPrac: () => this.openVol(true), volOpen: s.vol };
+    if (!s.vol) return base;
+    const sex = s.volSex, v = this.volModel(sex), g = this.volGeom(sex), Y = g.Y;
+    const L = n => (n / 1000).toFixed(1).replace('.', ',');
+    const mL = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' mL';
+    const pc = n => Math.round(n / v.tlc * 100) + ' %';
+    const IT = {
+      vt: ['Corriente', 'Volumen corriente', v.vt, [v.frc, v.frc + v.vt], 'Lo que mueves respirando tranquilo, sin pensar en ello.'],
+      vri: ['Reserva inspiratoria', 'Volumen de reserva inspiratoria', v.vri, [v.frc + v.vt, v.tlc], 'Lo que aún puedes meter tras una inspiración normal.'],
+      vre: ['Reserva espiratoria', 'Volumen de reserva espiratoria', v.vre, [v.vr, v.frc], 'Lo que aún puedes sacar tras una espiración normal.'],
+      vr: ['Residual', 'Volumen residual', v.vr, [0, v.vr], 'Lo que siempre queda: ni forzando sale. En el espirograma de práctica es la franja de abajo.'],
+      cv: ['Vital', 'Capacidad vital', v.cv, [v.vr, v.tlc], 'Lo máximo que puedes sacar tras llenarte a fondo: inspiración máxima y luego espiración a fondo.', 'corriente + reserva inspiratoria + reserva espiratoria'],
+      crf: ['Residual funcional', 'Capacidad residual funcional (CRF)', v.frc, [0, v.frc], 'Lo que queda al final de una espiración tranquila. Es el punto en que el retroceso elástico del pulmón hacia dentro y el de la caja torácica hacia fuera se equilibran. En el espirograma de práctica es la línea discontinua.', 'reserva espiratoria + residual'],
+      cpt: ['Pulmonar total', 'Capacidad pulmonar total (CPT)', v.tlc, [0, v.tlc], 'Pulmón lleno al máximo. Es el techo del espirograma de práctica.', 'los cuatro volúmenes']
+    };
+    const chip = k => { const on = s.volSel === k; return { label: IT[k][0], on, bg: on ? 'var(--primary)' : 'var(--tint)', fg: on ? 'var(--on-primary)' : 'var(--fg-2)', pick: () => this.setState({ volSel: k }) }; };
+    const it = IT[s.volSel] || IT.vt, [lo, hi] = it[3];
+    const sexW = sex === 'm' ? 'mujer' : 'hombre';
+    const H = this.volModel('h'), M = this.volModel('m');
+    const row = (t, d, k, cap) => ({ t, d, h: L(H[k]), m: L(M[k]), bg: cap ? 'var(--accent-soft)' : 'transparent' });
+    const rng = (a, b) => ({ l: (a / v.tlc * 100).toFixed(1) + '%', w: ((b - a) / v.tlc * 100).toFixed(1) + '%' });
+    return {
+      ...base,
+      volAnim: s.volOut ? 'pr-down .38s var(--ease-io) both' : 'pr-up .65s var(--ease) both',
+      closeVol: () => this.closeVol(),
+      volSexX: sex === 'm' ? '100%' : '0%', volH: sex === 'h', volM: sex === 'm',
+      volHfg: sex === 'h' ? 'var(--fg)' : 'var(--fg-3)', volMfg: sex === 'm' ? 'var(--fg)' : 'var(--fg-3)',
+      pickH: () => this.setState({ volSex: 'h' }), pickM: () => this.setState({ volSex: 'm' }),
+      vg: g, vgRef: setD(g.path), vb: { y: Y(hi), h: +(Y(lo) - Y(hi)).toFixed(1), y2: Y(lo) },
+      volAria: 'Espirograma de referencia, ' + sexW + ': respiración tranquila entre ' + L(v.frc) + ' y ' + L(v.frc + v.vt) + ' litros, inspiración máxima hasta ' + L(v.tlc) + ' litros y espiración máxima hasta ' + L(v.vr) + ' litros. Resaltado: ' + it[1] + ', ' + mL(it[2]) + '.',
+      volChipsV: ['vt', 'vri', 'vre', 'vr'].map(chip), volChipsC: ['cv', 'crf', 'cpt'].map(chip),
+      vs: { name: it[1], val: mL(it[2]), pct: pc(it[2]) + ' de la capacidad pulmonar total, ' + sexW, sum: it[5] ? ' · suma de ' + it[5] : '', desc: it[4] },
+      volPct: [
+        { t: 'Siempre queda (residual)', v: '0–' + pc(v.vr), ...rng(0, v.vr), c: 'color-mix(in srgb,var(--fg-3) 55%,transparent)' },
+        { t: 'Final de una espiración tranquila (CRF)', v: pc(v.frc), ...rng(v.frc, v.frc), c: 'var(--fg-2)' },
+        { t: 'Respiración tranquila', v: pc(v.frc).replace(' %', '') + '–' + pc(v.frc + v.vt), ...rng(v.frc, v.frc + v.vt), c: 'var(--primary)' },
+        { t: 'Respiración completa, al máximo', v: pc(v.vr).replace(' %', '') + '–100 %', ...rng(v.vr, v.tlc), c: 'var(--accent)' },
+        { t: 'Respiración completa en el espirograma de la app', v: '27–90 %', l: '27%', w: '63%', c: 'color-mix(in srgb,var(--accent) 50%,transparent)' }
+      ],
+      volRows: [
+        row('Volumen corriente', 'Lo que mueves respirando tranquilo', 'vt'),
+        row('Reserva inspiratoria', 'Lo que aún puedes meter tras una inspiración normal', 'vri'),
+        row('Reserva espiratoria', 'Lo que aún puedes sacar tras una espiración normal', 'vre'),
+        row('Volumen residual', 'Lo que siempre queda, ni forzando sale', 'vr'),
+        row('Capacidad vital', 'Corriente + reservas', 'cv', true),
+        row('Capacidad residual funcional', 'Reserva espiratoria + residual', 'frc', true),
+        row('Capacidad pulmonar total', 'Pulmón lleno al máximo', 'tlc', true)
+      ],
+      vc: (() => { const c = this.volCurve(); return { ...c, inhRef: setD(c.inh), brakedRef: setD(c.braked), passiveRef: setD(c.passive) }; })(),
+      volSrc: [
+        { t: 'Respiratory Volumes and Capacities', d: 'Anatomy & Physiology (OpenStax, adaptación de UEN). Tabla de valores típicos', url: 'https://uen.pressbooks.pub/anatomyphysiology/chapter/respiratory-volumes-capacities/' },
+        { t: '22.3 The Process of Breathing', d: 'OpenStax, Anatomy and Physiology 2e', url: 'https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing' },
+        { t: 'Physiology, Residual Volume', d: 'StatPearls', url: 'https://www.statpearls.com/point-of-care/28405' },
+        { t: 'Physiology, Functional Residual Capacity', d: 'StatPearls', url: 'https://www.statpearls.com/articlelibrary/viewarticle/21997/' },
+        { t: 'Time constants', d: 'LITFL, Part One', url: 'https://partone.litfl.com/time-constants.html' }
+      ]
+    };
   }
   drawSpiro() {
     const cv = this.spiroRef.current, r = this.spiroSource(); if (!cv || !r) return;
@@ -1247,7 +1496,8 @@ class Component extends DCLogic {
       totalDays, segs24: D.SEMANAS.map((x, i) => ({ bg: s.prog[x.n] && s.prog[x.n].done ? 'var(--primary)' : x.n === cw ? 'var(--accent)' : 'var(--tint)', delay: (0.02 * i).toFixed(2) + 's' })), phases,
       resetProg: () => { if (confirm('¿Borrar todo tu progreso? No se puede deshacer.')) { this.put('pranayama-progreso-v1', {}); this.setState({ prog: {} }); } },
 
-      showTabs: s.tab !== 'practicar' && !hasDetail && !s.sheet,
+      showTabs: s.tab !== 'practicar' && !hasDetail && !s.sheet && !s.vol,
+      ...this.volVals(s),
       tb, navX: Math.max(0, ['hoy', 'aprender', 'practicar', 'progreso'].indexOf(s.tab)) * 100 + '%',
       navBg: dimUI ? 'rgba(22,29,24,.88)' : 'rgba(246,243,235,.94)', navInd: dimUI ? 'rgba(244,241,232,.13)' : 'rgba(63,90,67,.1)',
       navSh: dimUI ? '0 -1px 0 rgba(244,241,232,.07)' : '0 -1px 0 rgba(38,42,34,.07),0 -14px 32px -22px rgba(38,42,34,.3)',
