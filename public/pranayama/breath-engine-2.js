@@ -1,5 +1,5 @@
-/* Breath engine v2: steps and timing, physiological volume curve, continuous guide audio, vibration.
- * Guide audio is a whispered, female-formant breath sound; there is no pitched tone.
+/* Breath engine v2: steps and timing, physiological volume curve, phase cue audio, vibration.
+ * Audio: short synthesised struck cues at phase changes (bowl taps, temple wood), no continuous sound.
  * Volumes are fractions of total lung capacity (TLC = 1). Reference adult values, not measured:
  * residual volume ~0.20, functional residual capacity (resting end-expiration) ~0.40.
  * Inhalation: smootherstep S (slow start, peak flow mid-phase, soft landing).
@@ -133,11 +133,14 @@
     return st.v0;
   }
 
-  /* Audio: master, soft bells, continuous whispered guide that follows airflow */
-  const A = { ctx: null, master: null, vol: 45, muted: false };
+  /* Audio: master volume and short struck cues that mark each phase change. No continuous sound.
+   * Cues are synthesised once as damped vibration modes (modal synthesis), so no files are needed:
+   * a small bowl tap to breathe in, a larger bowl to breathe out, hollow wood for retentions,
+   * a quiet wood tick for units and two long bowls to close the session. */
+  const A = { ctx: null, master: null, vol: 45, muted: false, cues: null };
   function ensureAudio() {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-    if (!A.ctx) { try { A.ctx = new AC(); A.master = A.ctx.createGain(); A.master.connect(A.ctx.destination); setVol(A.vol, A.muted); } catch (e) { A.ctx = null; return null; } }
+    if (!A.ctx) { try { A.ctx = new AC(); A.master = A.ctx.createGain(); A.master.connect(A.ctx.destination); setVol(A.vol, A.muted); A.cues = makeCues(A.ctx); } catch (e) { A.ctx = null; return null; } }
     if (A.ctx.state === "suspended") A.ctx.resume();
     return A.ctx;
   }
@@ -155,89 +158,70 @@
       o.connect(g); g.connect(A.master); o.start(t); o.stop(t + dur + 0.05);
     } catch (e) { }
   }
-  /* Soft bell: fundamental + quiet octave partial, slow attack, long decay */
   function bell(freq, dur, vol, delay) {
     tone(freq, dur || 1.6, "sine", vol || 0.09, delay, null, 0.04);
     tone(freq * 2, (dur || 1.6) * 0.6, "sine", (vol || 0.09) * 0.25, delay, null, 0.04);
   }
-  const PHASE_BELL = { in: 392, hold: 349.2, out: 329.6, holdEmpty: 293.7, rest: 261.6, rapid: 329.6 };
-  function phaseTone(kind) { if (PHASE_BELL[kind]) bell(PHASE_BELL[kind], 1.6, 0.08); }
-  function endTone() { bell(392, 2.6, 0.08); bell(493.9, 2.6, 0.07, 0.3); bell(587.3, 3.2, 0.07, 0.6); }
 
-  /* Guide voice: an unvoiced, whispered "haa / huu" shaped like a female vocal tract.
-   * Two decorrelated noise sources (left/right) excite four parallel formant filters each.
-   * Airflow drives loudness (silent in retentions); lung volume and direction morph the vowel:
-   * fuller lungs open it towards "a", emptying rounds it towards "u", inhaling brightens it. */
-  const VOWEL = {
-    open:  [920, 1480, 2850, 4100],   /* whispered female /a/ (F1 sits higher than when voiced) */
-    round: [520, 1020, 2650, 3900],   /* whispered female /o/-/u/ */
-    front: [760, 2050, 3050, 4300]    /* brighter, airier: used while breathing in */
+  /* Bowl modes: inharmonic ratios of a struck metal bowl; a soft mallet excites the low ones most.
+   * damp: seconds after which a hand mutes the bowl, so a cue never spills into the next phase. */
+  const BOWL_R = [1, 2.71, 5.02, 7.92, 11.6], BOWL_A = [1, 0.42, 0.17, 0.07, 0.03];
+  const WOOD_R = [1, 2.35, 4.1, 6.0], WOOD_A = [1, 0.55, 0.3, 0.15], WOOD_T = [0.09, 0.06, 0.04, 0.03];
+  const CUES = {
+    in:        { type: "bowl", f: 659.3, t60: 1.5, damp: 0.32, vol: 0.11 },
+    rapid:     { type: "bowl", f: 659.3, t60: 1.5, damp: 0.32, vol: 0.11 },
+    out:       { type: "bowl", f: 440.0, t60: 1.8, damp: 0.38, vol: 0.12 },
+    rest:      { type: "bowl", f: 329.6, t60: 2.0, damp: 0.45, vol: 0.10 },
+    hold:      { type: "wood", f: 430, vol: 0.13 },
+    holdEmpty: { type: "wood", f: 360, vol: 0.13 },
+    tick:      { type: "wood", f: 1150, small: true, vol: 0.05 },
+    count:     { type: "bowl", f: 987.8, t60: 1.0, damp: 0.25, vol: 0.06 },
+    end1:      { type: "bowl", f: 329.6, t60: 6, vol: 0.10 },
+    end2:      { type: "bowl", f: 220.0, t60: 8, vol: 0.11 }
   };
-  const FBW = [240, 280, 340, 460], FAMP = [1, 0.62, 0.34, 0.18], GUIDE_GAIN = 1.4;
-  function noiseBuffer(c, secs) {
-    const len = Math.floor(c.sampleRate * secs), buf = c.createBuffer(2, len, c.sampleRate);
-    for (let ch = 0; ch < 2; ch++) {
-      const d = buf.getChannelData(ch); let b = 0;
-      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; b = 0.6 * b + 0.4 * w; d[i] = 0.55 * w + 0.45 * b; }
-    }
-    return buf;
-  }
-  function buildGuide(c, dest) {
-    const out = c.createGain(); out.gain.value = 0; out.connect(dest);
-    const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 280; hp.Q.value = 0.5; hp.connect(out);
-    const air = c.createGain(); air.gain.value = 0; air.connect(hp);
-    const flut = c.createGain(); flut.gain.value = 1; flut.connect(air);
-    const lfos = [[4.3, 0.07], [6.9, 0.045], [0.37, 0.12]].map(([f, d]) => {
-      const o = c.createOscillator(), g = c.createGain(); o.frequency.value = f; g.gain.value = d; o.connect(g); g.connect(flut.gain); o.start(); return o;
+  function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function synthCue(sr, q, seed) {
+    const R = rng(seed), bowl = q.type === "bowl";
+    const dur = bowl ? (q.damp ? q.damp + 0.55 : q.t60 * 1.1) : (q.small ? 0.12 : 0.3);
+    const n = Math.ceil(sr * dur), d = new Float32Array(n), TAU = 2 * Math.PI;
+    const modes = [];
+    if (bowl) BOWL_R.forEach((r, k) => {
+      const f = q.f * r * (1 + (R() - 0.5) * 0.004); if (f > sr * 0.45) return;
+      const t60 = q.t60 / Math.pow(r, 0.7);
+      modes.push([f, BOWL_A[k], t60, R() * TAU]);
+      modes.push([f * (1 + 0.0011 + R() * 0.0006), BOWL_A[k] * 0.3, t60, R() * TAU]);   /* slightly split pair: gentle beating */
     });
-    const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 4800; lp.Q.value = 0.5; lp.connect(flut);
-    const mrg = c.createChannelMerger(2); mrg.connect(lp);
-    const split = c.createChannelSplitter(2);
-    const src = c.createBufferSource(); src.buffer = noiseBuffer(c, 3); src.loop = true; src.connect(split);
-    const filters = [];
-    for (let ch = 0; ch < 2; ch++) {
-      VOWEL.round.forEach((f, k) => {
-        const g = c.createGain(); g.gain.value = FAMP[k] * GUIDE_GAIN;
-        let prev = null;
-        for (let j = 0; j < 2; j++) {           /* two poles per formant: steeper skirts, less hiss between resonances */
-          const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = f; bp.Q.value = f / FBW[k];
-          if (prev) prev.connect(bp); else split.connect(bp, ch);
-          prev = bp; filters.push([bp, k]);
-        }
-        prev.connect(g); g.connect(mrg, 0, ch);
-      });
+    else (q.small ? [0, 1] : [0, 1, 2, 3]).forEach(k => modes.push([q.f * WOOD_R[k] * (1 + (R() - 0.5) * 0.01), WOOD_A[k], WOOD_T[k] * (q.small ? 0.45 : 1), R() * TAU]));
+    for (const [f, amp, t60, ph] of modes) {
+      const w = TAU * f / sr, k = 6.91 / (t60 * sr);
+      for (let i = 0; i < n; i++) d[i] += amp * Math.exp(-k * i) * Math.sin(w * i + ph);
     }
-    const sheen = c.createBiquadFilter(); sheen.type = "bandpass"; sheen.frequency.value = 6200; sheen.Q.value = 0.9;
-    const sg = c.createGain(); sg.gain.value = 0; split.connect(sheen, 0); sheen.connect(sg); sg.connect(flut);
-    src.start();
-    out.gain.setTargetAtTime(1, c.currentTime, 0.4);
-    return { c, out, air, filters, sg, src, lfos, dir: 0 };
+    const nc = Math.floor(sr * (bowl ? 0.004 : 0.002)); let lp = 0;            /* mallet contact: short soft noise */
+    for (let i = 0; i < nc; i++) { lp = lp * (bowl ? 0.6 : 0.2) + (R() * 2 - 1) * (bowl ? 0.4 : 0.8); d[i] += lp * (bowl ? 0.25 : 0.5) * (1 - i / nc); }
+    const at = Math.floor(sr * 0.0015); for (let i = 0; i < at; i++) d[i] *= i / at;
+    if (bowl && q.damp) { const i0 = Math.floor(q.damp * sr), k = 6.91 / (0.22 * sr); for (let i = i0; i < n; i++) d[i] *= Math.exp(-k * (i - i0)); }
+    const fo = Math.floor(sr * 0.02); for (let i = 0; i < fo; i++) d[n - 1 - i] *= i / fo;
+    let pk = 0; for (let i = 0; i < n; i++) pk = Math.max(pk, Math.abs(d[i])); for (let i = 0; i < n; i++) d[i] *= 0.9 / pk;
+    return d;
   }
-  function steerGuide(n, t, norm, flow, dir) {
-    const lv = flow / (flow + 0.06);                     /* compressive: quiet tidal breaths stay audible */
-    n.air.gain.setTargetAtTime(lv, t, 0.07);
-    if (dir) n.dir = dir;
-    const b = n.dir > 0 ? 0.55 : 0;
-    for (const [bp, k] of n.filters) {
-      const f = VOWEL.round[k] + (VOWEL.open[k] - VOWEL.round[k]) * norm;
-      bp.frequency.setTargetAtTime(f + (VOWEL.front[k] - f) * b, t, 0.14);
-    }
-    n.sg.gain.setTargetAtTime((n.dir > 0 ? 0.05 : 0.025) * lv * GUIDE_GAIN, t, 0.1);
+  function makeCues(c) {
+    const out = {};
+    for (const k in CUES) out[k] = [1, 2, 3].map(v => { const d = synthCue(c.sampleRate, CUES[k], v * 7919 + k.length * 131), b = c.createBuffer(1, d.length, c.sampleRate); b.getChannelData(0).set(d); return b; });
+    return out;
   }
-  const G = { nodes: null };
-  function guideStart() {
-    const c = ensureAudio(); if (!c || G.nodes) return;
-    try { G.nodes = buildGuide(c, A.master); } catch (e) { G.nodes = null; }
+  /* Play a cue: one of three takes, with a hair of pitch and level variation so repeats never sound identical */
+  function cue(name, delay) {
+    const c = A.ctx; if (!c || A.muted || A.vol === 0 || !A.cues || !A.cues[name]) return;
+    try {
+      const q = CUES[name], takes = A.cues[name], src = c.createBufferSource(), g = c.createGain();
+      src.buffer = takes[Math.floor(Math.random() * takes.length)];
+      src.playbackRate.value = 1 + (Math.random() - 0.5) * 0.006; g.gain.value = q.vol * (0.92 + Math.random() * 0.16);
+      src.connect(g); g.connect(A.master); src.start(c.currentTime + (delay || 0));
+    } catch (e) { }
   }
-  function guideUpdate(norm, flow, dir) {
-    const n = G.nodes; if (!n || !A.ctx) return;
-    steerGuide(n, A.ctx.currentTime, norm, flow, dir);
-  }
-  function guideStop() {
-    const n = G.nodes; if (!n) return; G.nodes = null;
-    try { n.out.gain.setTargetAtTime(0, A.ctx.currentTime, 0.25); } catch (e) { }
-    setTimeout(() => { try { n.src.stop(); n.lfos.forEach(o => o.stop()); n.out.disconnect(); } catch (e) { } }, 1600);
-  }
+  function phaseTone(kind) { cue(kind); }
+  function tickTone() { cue("tick"); }
+  function endTone() { cue("end1"); cue("end2", 0.9); }
 
   const VIB = { in: [70], hold: [30, 60, 30], out: [180], holdEmpty: [30, 60, 30, 60, 30], rapid: [40, 40, 40], rest: [300] };
   function vibrate(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { } }
@@ -291,7 +275,7 @@
       } else {
         const d = performance.now() - this.pausedAt; this.stepStart += d; this.startedAt += d;
       }
-      this.running = true; this.wakeOn(); guideStart();
+      this.running = true; this.wakeOn();
       cancelAnimationFrame(this.raf);
       const loop = () => { this.update(); if (this.running) this.raf = requestAnimationFrame(loop); };
       this.raf = requestAnimationFrame(loop);
@@ -299,7 +283,7 @@
     }
     pause() { if (!this.running) return; this.running = false; this.pausedAt = performance.now(); this.halt(); }
     stop() { if (this.started) this.endedAt = this.elapsed(); this.running = false; this.started = false; this.halt(); }
-    halt() { cancelAnimationFrame(this.raf); clearInterval(this.timer); this.wakeOff(); guideStop(); }
+    halt() { cancelAnimationFrame(this.raf); clearInterval(this.timer); this.wakeOff(); }
     enter(st) {
       this.lastTick = 0;
       phaseTone(st.kind);
@@ -332,17 +316,17 @@
       const dv = this.lastV == null ? 0 : v - this.lastV, rawFlow = Math.abs(dv) / dt;
       this.flow += (rawFlow - this.flow) * Math.min(1, dt / 0.08);
       this.lastV = v; this.lastNow = now;
-      guideUpdate(n, this.flow, rawFlow > 0.004 ? Math.sign(dv) : 0);
       let cd;
       if (st.kind === "rapid") {
         const iv = 60 / st.tempo, beat = Math.floor(t / iv);
+        if (beat > this.lastTick && beat < st.count) { this.lastTick = beat; if (this.opt("tick")) tickTone(); }   /* each expulsion: soft bowl tap */
         cd = String(Math.min(st.count, beat + 1));
       } else {
         const left = Math.max(1, Math.ceil(st.dur - t));
         cd = st.dur > 90 ? Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0") : String(left);
         if (this.opt("tick") && this.cfg.type !== "bhastrika" && this.cfg.type !== "rest") {
           const u = this.cfg.unit || 1, k = Math.floor(t / u);
-          if (k > this.lastTick && t < st.dur - 0.15) { this.lastTick = k; tone(220, 0.12, "sine", 0.05, 0, null, 0.012); }
+          if (k > this.lastTick && t < st.dur - 0.15) { this.lastTick = k; tickTone(); }
         }
       }
       let sc = 0.42 + 0.58 * n;
@@ -353,5 +337,5 @@
     wakeOff() { try { if (this.wake) this.wake.release(); } catch (e) { } this.wake = null; }
   }
 
-  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale }, voice: { buildGuide, steerGuide } };
+  window.BreathEngine = { KIND, REF, loadPreset, buildSteps, cycleSecs, totalSecs, maxHold, ensureAudio, setVol, tone, bell, endTone, vibrate, Runner, curves: { inhale, exhale }, cue, CUES, synthCue };
 })();
