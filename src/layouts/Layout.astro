@@ -22,6 +22,7 @@ function truncate(text: string, max = 160) {
 }
 
 const { title, description } = Astro.props
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://www.kineticaai.com').href
 const pageTitle = title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'
 const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTION
 ---
@@ -39,13 +40,13 @@ const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTIO
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <meta name="author" content="Alfonso Navarro" />
-    <link rel="canonical" href="https://www.kineticaai.com" />
+    <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content="https://www.kineticaai.com/og-image.jpg" />
-    <meta property="og:url" content="https://www.kineticaai.com" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:type" content="website" />
 
     <!-- Schema.org -->

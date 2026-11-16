@@ -1,0 +1,26 @@
+---
+import Layout from '../../../layouts/Layout.astro'
+import cases from '../../../data/portfolio.json'
+export function getStaticPaths(){return cases.map(project=>({params:{id:project.id},props:{project}}))}
+const { project } = Astro.props
+---
+<Layout title={project.name} description={project.intro}>
+  <article class="section case">
+    <a class="back" href="/lab/proyectos/">← Los cuatro proyectos</a>
+    <p class="eyebrow discipline">{project.discipline}</p><h1>{project.name}</h1><p class="lead">{project.intro}</p><p class="status">{project.status}</p>
+    {project.url && <a class="demo" href={project.url} target="_blank" rel="noopener noreferrer">{project.cta} ↗</a>}
+    {project.id === 'prompt-lab' && <section class="evaluation"><h2>Comparación real · 16 noviembre 2026</h2><table><caption>Diez casos de desarrollo por variante. Comprobaciones automáticas; revisión humana pendiente.</caption><thead><tr><th scope="col">Variante</th><th scope="col">Casos correctos</th><th scope="col">Fallos críticos</th></tr></thead><tbody><tr><th scope="row">Base</th><td>8/10</td><td>1</td></tr><tr><th scope="row">Candidata</th><td>9/10</td><td>1</td></tr></tbody></table><p>La candidata conserva el prompt suficiente; ambas incumplen la etiqueta de investigación pendiente de un caso crítico. Ninguna supera todavía el criterio completo de aceptación.</p><p><a class="demo" href="/portfolio-demo/PROMPT-LAB-EVALUACION-REAL-2026-11-16.json">Descargar resultados reales (JSON)</a></p><p><a href="/portfolio-demo/PROMPT-LAB-REPLAY-SINTETICO.json">Ejemplo separado de replay artificial (JSON)</a></p></section>}
+    {project.id === 'polar'  && <p><a class="demo" href="/portfolio-demo/POLAR-DEMO-SINTETICA.zip">Descargar reproducción con datos sintéticos (.zip)</a></p>}
+    {project.id === 'io3-alma' && <p><a class="demo" href="/portfolio-demo/IO3-ALMA-DEMO-LOCAL.zip">Descargar ejemplo editorial artificial (.zip)</a></p>}
+    <section><h2>El problema</h2><p>{project.problem}</p></section>
+    <section><h2>El recorrido completo</h2><ol class="flow">{project.flow.map(step=><li>{step}</li>)}</ol></section>
+    <section><h2>Evidencia disponible</h2><ul>{project.evidence.map(item=><li>{item}</li>)}</ul></section>
+    <section class="limits"><h2>Límites que importan</h2><ul>{project.limits.map(item=><li>{item}</li>)}</ul></section>
+    <section><h2>El próximo cierre</h2><p>{project.next}</p><h3>Cómo medirlo</h3><p>{project.metric}</p><h3>Qué significa escalar aquí</h3><p>{project.scale}</p></section>
+    <section class="credit"><h2>Aportación y asistencia</h2><p>Proyecto del portfolio de Alfonso Navarro, desarrollado y revisado con asistencia de IA. Las pruebas citadas documentan las ejecuciones observadas y el alcance de cada entrega.</p></section>
+    <a class="back" href="/lab/proyectos/">← Volver a los proyectos</a>
+  </article>
+  <style>
+    .case{max-width:720px}.back{font:12px var(--mono)}.discipline{margin-top:32px;font-size:12px}.case h1{font-weight:400;font-size:var(--text-section);line-height:1.2;margin:14px 0 20px;color:var(--text-heading)}.lead{font-size:var(--text-body-lg)}.status{font:11px var(--mono);color:var(--sea);margin:18px 0}.demo{display:inline-block;border:1px solid var(--border-active);padding:10px 16px;font-size:13px;margin-bottom:8px}.case section{padding:25px 0;border-top:1px solid var(--border)}h2{font-size:var(--text-subsection);font-weight:400;margin-bottom:14px}h3{font-size:var(--text-body);font-weight:500;margin:18px 0 8px}ul{padding-left:20px}li{padding:4px 0}.flow{padding-left:22px;font-family:var(--mono);font-size:13px}.limits{border-left:2px solid var(--warm);padding-left:18px!important}.credit{font-size:13px;color:var(--text-sec);margin-bottom:25px}.credit h2{font-size:var(--text-body)}table{width:100%;border-collapse:collapse;font-size:13px;margin:18px 0}caption{text-align:left;color:var(--text-sec);margin-bottom:12px;line-height:1.7}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border)}
+  </style>
+</Layout>

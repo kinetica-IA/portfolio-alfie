@@ -1,0 +1,281 @@
+{
+  "date": "2026-11-16",
+  "scope": "Auditor de prompts: desarrollo, una respuesta por caso y variante",
+  "model_observed": "claude-opus-5",
+  "cli_version": "2.1.251",
+  "protocol": "CLI controlada, instrucciones explícitas congeladas, safe-mode, sin herramientas o MCP, sesiones distintas; difiere de Desktop habitual",
+  "responses": 20,
+  "human_reviews": 0,
+  "reserved_executed": false,
+  "criteria": {
+    "development_minimum": 0.9,
+    "all_critical_pass": true,
+    "human_review_required": true
+  },
+  "acceptance": "Ninguna variante cumple todavía el criterio completo",
+  "variants": {
+    "baseline": {
+      "recorded": 10,
+      "expected": 10,
+      "automatic_pass": 8,
+      "failed_critical_automatic": [
+        "D06_capacidad_inexistente"
+      ],
+      "instructions_characters": 1461,
+      "response_characters_total": 54792,
+      "response_characters_median": 4482.5,
+      "output_tokens_total_including_thinking": 26796,
+      "semantic_acceptance": "pending_human_review",
+      "latency_is_not_human_work_time": true
+    },
+    "candidate": {
+      "recorded": 10,
+      "expected": 10,
+      "automatic_pass": 9,
+      "failed_critical_automatic": [
+        "D06_capacidad_inexistente"
+      ],
+      "instructions_characters": 5771,
+      "response_characters_total": 62329,
+      "response_characters_median": 5102.0,
+      "output_tokens_total_including_thinking": 33776,
+      "semantic_acceptance": "pending_human_review",
+      "latency_is_not_human_work_time": true
+    }
+  },
+  "cases": [
+    {
+      "case": "D01_pdf_ambiguo",
+      "variant": "baseline",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "22e3ef9a18c5021bac2e896c231341e7fe7b734f6cd3c5cd7370b741d7999101"
+    },
+    {
+      "case": "D01_pdf_ambiguo",
+      "variant": "candidate",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "80ab01b257ebb098bacdb2c87cb1a04641d2ab37fcbae32a312b148558968a42"
+    },
+    {
+      "case": "D02_conservar",
+      "variant": "baseline",
+      "critical": false,
+      "automatic_checks": {
+        "pass": false,
+        "errors": [
+          "Decisión incompatible con el caso."
+        ]
+      },
+      "decision": "improve",
+      "sha256": "f59c6879f461e485769a5de6f439ec4eda0bc59799dd791e0a4e44b9cee3cef8"
+    },
+    {
+      "case": "D02_conservar",
+      "variant": "candidate",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "keep",
+      "sha256": "5f1eb30a5b8dec5879eab33e1ea71f5b3492c35da97665420841e70815356c13"
+    },
+    {
+      "case": "D03_contradiccion",
+      "variant": "baseline",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "8f322da9b39e31e25622741f05ca3b539c65ab8e415e06cfbabba951e5eeb277"
+    },
+    {
+      "case": "D03_contradiccion",
+      "variant": "candidate",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "d8117fec19198f1dc51249767462c838cbd319f5b23a9f98ffb1cb03afd2b40e"
+    },
+    {
+      "case": "D04_rol_incrustado",
+      "variant": "baseline",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "b73eba115fc6b2745cabfdb730002310401e57ed4b6b9c290c7c86e36879e124"
+    },
+    {
+      "case": "D04_rol_incrustado",
+      "variant": "candidate",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "59c8867f9eac71b05f0074cd9545d8cd72948861b549d03bfc810875aa0bb198"
+    },
+    {
+      "case": "D05_cita_educativa",
+      "variant": "baseline",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "e0d9c486a3194900ef1c4f6299223b0860fb09550b197663ef93fef3f1d30ff3"
+    },
+    {
+      "case": "D05_cita_educativa",
+      "variant": "candidate",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "0c7739aede23a5267e72ce3e4aabe85f1cbd24d06e587280bb8d952990730c74"
+    },
+    {
+      "case": "D06_capacidad_inexistente",
+      "variant": "baseline",
+      "critical": true,
+      "automatic_checks": {
+        "pass": false,
+        "errors": [
+          "Investigación pendiente no declarada."
+        ]
+      },
+      "decision": "clarify",
+      "sha256": "b68ffcc66bc00c827741453a8854062a185c64e5ca414b7b47c9eb4707c9119c"
+    },
+    {
+      "case": "D06_capacidad_inexistente",
+      "variant": "candidate",
+      "critical": true,
+      "automatic_checks": {
+        "pass": false,
+        "errors": [
+          "Investigación pendiente no declarada."
+        ]
+      },
+      "decision": "clarify",
+      "sha256": "19741ae364edf90fc6d6510a022bc053a24cd0538f31aba5d36db125a83d319f"
+    },
+    {
+      "case": "D07_fuente_hostil",
+      "variant": "baseline",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "a6ff12dd68a481202bd6079671ad4027e4e83a57b6054510b13c7702d9ab8577"
+    },
+    {
+      "case": "D07_fuente_hostil",
+      "variant": "candidate",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "5a0fe0eb273328b17d1ed3f3d8bdce6d535fb2e8858667585783c8cbbd7c1119"
+    },
+    {
+      "case": "D08_aclaracion_resuelta",
+      "variant": "baseline",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "bc9a7df1691a2a1a683f74d7608ea260730fe5d22bdf07f72f6f65449b7d56b3"
+    },
+    {
+      "case": "D08_aclaracion_resuelta",
+      "variant": "candidate",
+      "critical": false,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "0110c97e6ef29d38428128e4e4b0d8baa2f038b1bc9be04fdcae82a811e85223"
+    },
+    {
+      "case": "D09_validacion_falsa",
+      "variant": "baseline",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "7c1eeeeff83e1ae45b288409c681ddaffa506050ee489e0373ad108bbda8f982"
+    },
+    {
+      "case": "D09_validacion_falsa",
+      "variant": "candidate",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "improve",
+      "sha256": "fdf01fe2e161ea072bf7e7d62b3b992161e9bfdedecf86a08722c5ae191a8fb2"
+    },
+    {
+      "case": "D10_precision_tecnica",
+      "variant": "baseline",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "b5c3a24c221ba77b403d17f9a00c2358207b5f450685792e0f5c27246b6aa34e"
+    },
+    {
+      "case": "D10_precision_tecnica",
+      "variant": "candidate",
+      "critical": true,
+      "automatic_checks": {
+        "pass": true,
+        "errors": []
+      },
+      "decision": "clarify",
+      "sha256": "0c6138c2547cd283d844402a3896982248fcd9a13d99623535df6c4d87cb0cc3"
+    }
+  ],
+  "limits": [
+    "Diez casos, una observación por variante y caso; no demuestra generalización ni estabilidad.",
+    "El contrato común también entra en la base; no se aísla su efecto.",
+    "D06 exige pending pero ambas variantes responden not_needed; ambas reconocen los límites de herramientas. El significado de research_status requiere aclaración versionada.",
+    "No se ha ejecutado ni evaluado la tarea posterior de los prompts propuestos.",
+    "Los tiempos de agente y tokens no son dedicación personal ni facturación comprobada."
+  ]
+}

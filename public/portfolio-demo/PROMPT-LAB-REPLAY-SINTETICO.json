@@ -1,0 +1,13 @@
+{
+  "demo": "replay de una respuesta artificial, sin modelo",
+  "steps": [
+    "prepare",
+    "verify",
+    "record fixture",
+    "report"
+  ],
+  "contract_check": true,
+  "real_passed_responses": 0,
+  "selection": "insufficient_evidence",
+  "pending": "Comparación con respuestas reales y revisión humana; este ejemplo no la sustituye."
+}

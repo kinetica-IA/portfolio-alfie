@@ -1,0 +1,118 @@
+[
+  {
+    "id": "web",
+    "name": "Web clínica",
+    "discipline": "Producto web · Astro / React",
+    "status": "Publicada · cierre de calidad pendiente",
+    "intro": "Un sitio real que separa información para pacientes de un espacio de trabajo técnico y hace visible cómo contactar.",
+    "problem": "Convertir contenido, servicios y formas de contacto en una experiencia coherente, manteniendo separada la investigación.",
+    "flow": [
+      "Contenido y esquema editorial",
+      "Build estático y revisión",
+      "Publicación en GitHub Pages",
+      "Verificación de rutas y contacto"
+    ],
+    "evidence": [
+      "Sitio y artículo Polar respondieron HTTP 200 en la comprobación del 16/11.",
+      "Compilación aislada comprobada con Node 22.23.5 en la consolidación.",
+      "Astro y React comparten esquema de contenido, estilos y publicación mediante GitHub Actions."
+    ],
+    "limits": [
+      "No se han medido conversiones, usuarios reales ni rendimiento web con Lighthouse.",
+      "El contenido sanitario necesita su revisión editorial y profesional; el build no la sustituye."
+    ],
+    "next": "Comprobar el recorrido desde los servicios hasta el contacto y medir tareas con personas antes de declarar el cierre de calidad.",
+    "metric": "Propuesta: cinco personas completan la tarea de localizar el servicio y el contacto; registrar éxito y tiempo, sin inventar conversiones.",
+    "scale": "El build permite ampliar contenido con el mismo esquema. La capacidad bajo carga y los resultados comerciales no están medidos.",
+    "url": "https://www.kineticaai.com/",
+    "cta": "Abrir sitio publicado"
+  },
+  {
+    "id": "prompt-lab",
+    "name": "Prompt Lab",
+    "discipline": "Evaluación · contratos · evidencia",
+    "status": "20 respuestas reales · aceptación pendiente",
+    "intro": "Un flujo para comparar instrucciones y conservar respuestas, criterios y revisiones sin confundir una simulación con una mejora real.",
+    "problem": "Tomar decisiones sobre prompts a partir de evidencia revisable, evitando puntuaciones inventadas y comparaciones contaminadas.",
+    "flow": [
+      "Fijar casos y variantes",
+      "Obtener respuestas independientes",
+      "Comprobar contrato y revisar contenido",
+      "Registrar decisión y límites"
+    ],
+    "evidence": [
+      "El 16/11/2026 se ejecutaron 10 casos de desarrollo con dos variantes en 20 sesiones nuevas de Claude Code; identificador observado: claude-opus-5.",
+      "Comprobación automática: base 8/10; candidata 9/10. La candidata conservó correctamente un prompt que ya era suficiente.",
+      "Se conservaron entradas, instrucciones y criterios congelados, respuestas exactas y hashes. Las 15 pruebas de infraestructura anteriores se distinguen de esta evaluación real."
+    ],
+    "limits": [
+      "Ambas variantes fallan un caso crítico: declaran not_needed donde el caso exige research_status: pending. Ambas reconocen que no disponen de web, correo ni programación.",
+      "Hay cero revisiones humanas registradas; los cuatro casos reservados siguen sin ejecutarse. Ninguna variante cumple todavía el criterio completo.",
+      "Una respuesta por caso no demuestra estabilidad ni superioridad general. Las instrucciones de la candidata son 3,95 veces más extensas y sus respuestas suman un 13,8 % más de caracteres.",
+      "La modalidad CLI controlada difiere de la carga habitual de instrucciones en Desktop. No se ha evaluado la ejecución posterior de los prompts propuestos."
+    ],
+    "next": "Revisar las respuestas, aclarar el significado de investigación pendiente y preparar una candidata breve en una nueva versión. Mantener los reservados cerrados hasta cumplir desarrollo y revisión humana.",
+    "metric": "Criterio fijado antes de ejecutar: desarrollo ≥90 %, todos los críticos correctos y revisión humana. Se conserva el resultado observado aunque no permita aceptar una variante.",
+    "scale": "El contrato facilita añadir casos y conservar evidencia; coste, calidad y estabilidad entre modelos siguen por medir.",
+    "url": null,
+    "cta": null
+  },
+  {
+    "id": "polar",
+    "name": "Polar retrospectivo",
+    "discipline": "Datos · reproducibilidad · análisis temporal",
+    "status": "Análisis publicado · alcance N-of-1",
+    "intro": "Un análisis de métricas y síntomas que publica resultados agregados y explica lo que una muestra personal permite concluir.",
+    "problem": "Explorar relaciones retrospectivas sin filtrar información futura hacia el entrenamiento ni exponer el diario.",
+    "flow": [
+      "Entradas con fechas",
+      "Unión y retardos de calendario",
+      "Evaluación por historia creciente",
+      "Agregados públicos y límites"
+    ],
+    "evidence": [
+      "El análisis publicado usa 61 fechas emparejadas; el objetivo autonómico dispone de 55.",
+      "Cinco pruebas sintéticas del benchmark pasaron en la consolidación del 16/11.",
+      "El artículo y el resumen agregado publicado están separados de las trazas y parámetros privados."
+    ],
+    "limits": [
+      "No es validación clínica, prospectiva o causal ni permite generalizar a otras personas.",
+      "Sigue pendiente reconstruir toda la derivación de los agregados desde señales brutas.",
+      "La métrica de niebla mental es inestable por tener un solo negativo evaluado; fatiga empeora frente a la referencia en Brier."
+    ],
+    "next": "Cerrar la trazabilidad del recorrido seleccionado desde export bruto hasta agregado. El ejemplo sintético descargable permite reproducir el software sin divulgar el diario.",
+    "metric": "Trazabilidad completa del recorrido elegido, rechazo de entradas inválidas y reproducción del ejemplo. No perseguir la AUC mayor.",
+    "scale": "El pipeline podría aceptar otros ficheros tras validar su esquema. La generalización estadística requiere otro estudio.",
+    "url": "https://www.kineticaai.com/lab/polar-retrospectivo/",
+    "cta": "Leer análisis publicado"
+  },
+  {
+    "id": "io3-alma",
+    "name": "IO3 / ALMA",
+    "discipline": "Trazabilidad · revisión editorial · QA",
+    "status": "Recorte local comprobado · prototipo amplio archivado",
+    "intro": "De un prototipo amplio a una utilidad concreta: localizar avisos y errores en contenido sin convertirlos en una aprobación automática.",
+    "problem": "Reutilizar lo aprendido sobre supervisión y contexto en una herramienta pequeña cuyo comportamiento se pueda examinar.",
+    "flow": [
+      "Markdown de alcance definido",
+      "Reglas locales y fuente identificada",
+      "Informe con archivo, línea y estado",
+      "Revisión humana y decisión"
+    ],
+    "evidence": [
+      "El revisor derivado tiene 12 pruebas de aceptación superadas.",
+      "Examinar nueve Markdown actuales no produjo avisos en sus reglas limitadas.",
+      "El original ALMA devolvía PASS ante ciertos fallos; la adaptación distingue error, revisión y ausencia limitada de hallazgos."
+    ],
+    "limits": [
+      "El revisor nuevo no demuestra que la plataforma IO3 completa esté validada.",
+      "No verifica veracidad clínica, DOI por red, datos personales o adecuación legal.",
+      "La arquitectura amplia conserva tests parciales y fallos conocidos; no se presenta como servicio clínico listo."
+    ],
+    "next": "Probar su utilidad en un flujo editorial real y ampliar solo con casos de aceptación fijados antes de programar.",
+    "metric": "Registrar avisos útiles, falsos positivos revisados y fallos explícitos en un corpus de prueba. No publicar un porcentaje de seguridad inventado.",
+    "scale": "CLI sin servicios ni modelos; el alcance actual impone límites de archivos y tamaño. Ampliarlo requiere medir cobertura y coste.",
+    "url": null,
+    "cta": null
+  }
+]
