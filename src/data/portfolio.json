@@ -2,118 +2,113 @@
   {
     "id": "web",
     "name": "Web clínica",
-    "discipline": "Producto web · Astro / React",
+    "discipline": "Desarrollo web · Astro y React",
     "status": "Publicada · entrega técnica v1",
-    "intro": "Un sitio real que separa información para pacientes de un espacio de trabajo técnico y hace visible cómo contactar.",
-    "problem": "Convertir contenido, servicios y formas de contacto en una experiencia coherente, manteniendo separada la investigación.",
+    "intro": "Sitio web que reúne la información de la actividad clínica y las vías de contacto, con un espacio diferenciado para los proyectos técnicos.",
+    "problem": "Organizar servicios, contenidos y contacto en una web coherente, separando la información para pacientes del trabajo de investigación y desarrollo.",
     "flow": [
-      "Contenido y esquema editorial",
-      "Build estático y revisión",
-      "Publicación en GitHub Pages",
-      "Verificación de rutas y contacto"
+      "Definición de contenidos y navegación",
+      "Desarrollo y compilación estática",
+      "Publicación mediante GitHub Pages",
+      "Comprobación de páginas y enlaces de contacto"
     ],
     "evidence": [
-      "El 18/11/2026 la portada, el índice, los cuatro casos y el artículo Polar responden HTTP 200; las siete páginas incluyen enlaces de contacto.",
-      "La compilación de 18 páginas con Node 22.23.5 quedó comprobada en la consolidación previa.",
-      "Astro y React comparten esquema de contenido, estilos y publicación mediante GitHub Actions."
+      "La compilación genera 18 páginas con Node 22.23.5.",
+      "El control del 18 de noviembre de 2026 comprobó siete de las 18 páginas: portada, índice de proyectos, cuatro fichas y artículo de Polar. Todas respondieron HTTP 200 y contenían enlaces de contacto.",
+      "El código y el proceso de publicación se mantienen en un repositorio con historial de cambios."
     ],
     "limits": [
-      "No se han medido conversiones, usuarios reales ni rendimiento web con Lighthouse.",
-      "El contenido sanitario necesita su revisión editorial y profesional; el build no la sustituye."
+      "Las comprobaciones técnicas no evalúan la facilidad de uso ni acreditan la recepción efectiva de mensajes.",
+      "No se han medido conversiones ni realizado una evaluación con Lighthouse. La revisión del contenido sanitario requiere criterio profesional."
     ],
-    "next": "Usar el sitio y observar cómo encuentran servicio y contacto personas reales. Esta validación de uso se distingue de la entrega técnica publicada.",
-    "metric": "Propuesta: cinco personas completan la tarea de localizar el servicio y el contacto; registrar éxito y tiempo, sin inventar conversiones.",
-    "scale": "El build permite ampliar contenido con el mismo esquema. La capacidad bajo carga y los resultados comerciales no están medidos.",
+    "next": "Evaluar si las personas encuentran los servicios y el contacto con facilidad.",
+    "metric": "Prueba de uso propuesta con cinco participantes: registrar si completan ambas tareas, cuánto tardan y qué dificultades encuentran.",
+    "scale": "La estructura permite incorporar contenido con un esquema común. Quedan por medir el comportamiento bajo carga y los resultados de uso.",
     "url": "https://www.kineticaai.com/",
-    "cta": "Abrir sitio publicado"
+    "cta": "Visitar la web"
   },
   {
     "id": "prompt-lab",
     "name": "Prompt Lab",
-    "discipline": "Evaluación · contratos · evidencia",
-    "status": "v0.4 fijada · herramienta de trabajo",
-    "intro": "Un flujo para comparar instrucciones y conservar respuestas, criterios y revisiones sin confundir una simulación con una mejora real.",
-    "problem": "Tomar decisiones sobre prompts a partir de evidencia revisable, evitando puntuaciones inventadas y comparaciones contaminadas.",
+    "discipline": "Auditoría de prompts · evaluación y trazabilidad",
+    "status": "v0.4 publicada · uso personal",
+    "intro": "Herramienta que revisa instrucciones para modelos de lenguaje: conserva las que ya cumplen el objetivo, pide aclaraciones o propone una mejora justificada.",
+    "problem": "Revisar prompts con criterios explícitos y conservar las respuestas y revisiones que sustentan cada decisión.",
     "flow": [
-      "Fijar casos y variantes",
-      "Obtener respuestas independientes",
-      "Comprobar contrato y revisar contenido",
-      "Registrar decisión y límites"
+      "Definición del encargo y sus restricciones",
+      "Auditoría del prompt",
+      "Comprobación del contrato de salida y revisión del contenido",
+      "Registro de resultados y decisión de uso"
     ],
     "evidence": [
-      "El usuario fijó v0.4 como la versión óptima para su trabajo el 18/11/2026; esa elección cierra la comparación.",
-      "La evaluación v0.4 conserva veinte respuestas reales sobre diez casos históricos: base 8/10 y candidata 10/10 en comprobaciones automáticas.",
-      "Hay nueve veredictos humanos explícitos, separados de las recomendaciones del asistente. Las respuestas, fallos y hashes históricos se conservan.",
-      "El desarrollo activo tiene nueve casos tras retirar D06 por decisión del usuario. El resultado histórico no se recalcula."
+      "La entrega pública contiene el auditor v0.4, nueve casos de desarrollo tras retirar D06 y herramientas locales de registro. La copia distribuida supera nueve pruebas de Python y seis de Node.",
+      "La evaluación del 18 de noviembre de 2026 registró veinte respuestas sobre diez casos: la referencia superó 8/10 comprobaciones automáticas y v0.4, 10/10. Se conservan nueve veredictos humanos explícitos; la cobertura de revisión humana es parcial y se distingue de las recomendaciones del asistente.",
+      "v0.4 es la versión elegida por el usuario para su trabajo. D06 se retiró posteriormente del banco activo; el resultado histórico de diez casos se conserva sin recalcular."
     ],
     "limits": [
-      "La selección de uso personal no se presenta como superioridad general ni como cumplimiento de toda la aceptación formal; los cuatro reservados siguen sin ejecutar.",
-      "La comparación posterior v0.4/v0.5 se detuvo por decisión del usuario: 32 respuestas registradas, dos intentos interrumpidos y dos no iniciados. No se ofrece como comparación final.",
-      "La CLI controlada difiere de Desktop. No se ha medido la utilidad posterior de los prompts recomendados ni un ahorro de tiempo humano."
+      "Una comprobación automática no sustituye la revisión del contenido. La elección para uso personal no acredita superioridad general ni aceptación formal completa; los casos reservados no se han ejecutado.",
+      "No se ha medido el ahorro de tiempo ni la utilidad de los prompts recomendados al realizar sus tareas finales."
     ],
-    "next": "Usar v0.4 en encargos reales y registrar fallos concretos. No reabrir versiones o evaluaciones automáticamente.",
-    "metric": "Separar contrato automático, juicio humano y utilidad del encargo final; conservar resultados históricos y decisiones de uso sin inflar las pruebas.",
-    "scale": "El contrato facilita añadir casos y conservar evidencia; coste, calidad y estabilidad entre modelos siguen por medir.",
-    "url": null,
-    "cta": null
+    "next": "Utilizar v0.4 en encargos reales y registrar necesidades o fallos concretos, sin iniciar nuevas comparaciones por defecto.",
+    "metric": "En usos futuros, registrar si el prompt recomendado cumple el objetivo, qué correcciones necesita y el tiempo dedicado. Esas mediciones todavía no están disponibles.",
+    "scale": "El sistema de registro admite nuevos casos y revisiones. La calidad entre modelos, el coste y la estabilidad requieren mediciones específicas.",
+    "url": "https://github.com/kinetica-IA/prompt-lab",
+    "cta": "Consultar código y documentación"
   },
   {
     "id": "polar",
     "name": "Polar retrospectivo",
-    "discipline": "Datos · reproducibilidad · análisis temporal",
-    "status": "Publicado · cinco variables conciliadas",
-    "intro": "Un análisis de métricas y síntomas que publica resultados agregados y explica lo que una muestra personal permite concluir.",
-    "problem": "Explorar relaciones retrospectivas sin filtrar información futura hacia el entrenamiento ni exponer el diario.",
+    "discipline": "Análisis de datos · series temporales",
+    "status": "Análisis publicado · datos de entrada contrastados",
+    "intro": "Estudio retrospectivo de una persona que explora la relación entre métricas de un reloj Polar y síntomas registrados en un diario.",
+    "problem": "Relacionar ambas fuentes respetando sus fechas, evitando usar información futura en la evaluación y manteniendo privado el diario.",
     "flow": [
-      "Entradas con fechas",
-      "Unión y retardos de calendario",
-      "Evaluación por historia creciente",
-      "Agregados públicos y límites"
+      "Revisión de exportaciones y fechas",
+      "Unión de datos y construcción de retardos de calendario",
+      "Evaluación temporal con historia creciente",
+      "Publicación de resultados agregados y limitaciones"
     ],
     "evidence": [
-      "El análisis retrospectivo publicado usa 61 fechas emparejadas; el objetivo autonómico dispone de 55.",
-      "Las cinco variables de entrada se reconstruyeron desde los exports brutos hasta el CSV del benchmark, sin discrepancias en valores ni faltantes.",
-      "Coinciden 216 valores RMSSD, 214 ANS, 214 recovery_sublevel, 218 sleep_wake_min y 225 sleep_interruptions. La cobertura t0/D−1 y los hashes enlazan con el entrenamiento publicado.",
-      "La conciliación supera ocho pruebas sintéticas; artículo, agregados, diario y modelos privados permanecen separados."
+      "El análisis publicado incluye 61 fechas emparejadas. El objetivo autonómico dispone de 55 registros utilizables por la ausencia de algunas puntuaciones del diario.",
+      "Se contrastaron las cinco variables de entrada entre las exportaciones originales y el CSV utilizado en la evaluación. Los valores y los datos ausentes coinciden sin discrepancias.",
+      "La comprobación incluye la cobertura temporal, las huellas de los archivos utilizados y ocho pruebas con datos sintéticos."
     ],
     "limits": [
-      "No es validación clínica, prospectiva o causal ni permite generalizar a otras personas.",
-      "Se acredita la conciliación directa export→CSV de cinco variables; no la ejecución histórica de los Parquet intermedios ni las ventanas PPI excluidas.",
-      "La métrica de niebla mental es inestable por tener un solo negativo evaluado; fatiga empeora frente a la referencia en Brier."
+      "Es un estudio de una persona: no demuestra causalidad ni validez clínica o prospectiva, y no permite generalizar a otras poblaciones.",
+      "La comprobación acredita el recorrido directo de las exportaciones al CSV de cinco variables. No certifica la ejecución histórica de los archivos Parquet intermedios ni incluye las ventanas PPI excluidas.",
+      "La evaluación de niebla mental contiene una sola observación por debajo del umbral del objetivo; su resultado es inestable. En fatiga, la puntuación de Brier es peor que la de la referencia."
     ],
-    "next": "Conservar este estudio como caso reproducible y explicar sus límites. Otra población, objetivo o validación prospectiva requeriría un estudio nuevo.",
-    "metric": "Cinco de cinco variables del recorrido directo conciliadas; entradas inválidas y huecos de calendario controlados. No se persigue una AUC mayor.",
-    "scale": "El pipeline podría aceptar otros ficheros tras validar su esquema. La generalización estadística requiere otro estudio.",
+    "next": "Conservar el estudio y su documentación como un caso de análisis retrospectivo. Una validación prospectiva o en otras personas requeriría un estudio nuevo.",
+    "metric": "Correspondencia entre exportaciones y CSV comprobada para las cinco variables de entrada, sin discrepancias en valores ni datos ausentes. Este resultado mide la coherencia de los datos, no la capacidad de predicción clínica.",
+    "scale": "El proceso podría adaptarse a otros archivos tras validar su estructura. Incorporar más personas exigiría revisar el diseño y la evaluación estadística.",
     "url": "https://www.kineticaai.com/lab/polar-retrospectivo/",
-    "cta": "Leer análisis publicado"
+    "cta": "Leer el análisis"
   },
   {
     "id": "io3-alma",
     "name": "IO3 / ALMA",
-    "discipline": "Trazabilidad · revisión editorial · QA",
-    "status": "Revisor editorial v1 · utilidad manual",
-    "intro": "De un prototipo amplio a una utilidad concreta: localizar avisos y errores en contenido sin convertirlos en una aprobación automática.",
-    "problem": "Reutilizar lo aprendido sobre supervisión y contexto en una herramienta pequeña cuyo comportamiento se pueda examinar.",
+    "discipline": "Revisión editorial · trazabilidad y pruebas",
+    "status": "Revisor editorial v1 · ejecución manual",
+    "intro": "Herramienta local de revisión de archivos Markdown, derivada de los aprendizajes de IO3/ALMA. Se ejecuta desde la terminal sin llamadas a modelos; identifica incidencias mediante reglas explícitas y deja la decisión en manos de una persona.",
+    "problem": "Convertir parte de la experimentación del prototipo original en una utilidad concreta cuyo comportamiento se pueda comprobar.",
     "flow": [
-      "Markdown de alcance definido",
-      "Reglas locales y fuente identificada",
+      "Selección de archivos Markdown",
+      "Aplicación de reglas locales",
       "Informe con archivo, línea y estado",
-      "Revisión humana y decisión"
+      "Revisión humana de las incidencias"
     ],
     "evidence": [
-      "Doce pruebas de aceptación superadas, incluidas entradas inválidas, errores de lectura y códigos de salida.",
-      "Uso real registrado sobre nueve Markdown de informes y Lab; cero avisos en este conjunto limitado de reglas.",
-      "La salida distingue error, revisión humana y ausencia de hallazgos; nunca concede aprobación clínica ni permiso de publicación.",
-      "La plataforma IO3/ALMA original permanece archivada y consultable; la herramienta acotada no la reactiva."
+      "La herramienta supera doce pruebas de aceptación, incluidas entradas inválidas, errores de lectura y códigos de salida.",
+      "Se ejecutó sobre nueve archivos reales de informes y del Lab. No encontró incidencias dentro del conjunto de reglas aplicado.",
+      "La salida distingue errores, necesidad de revisión humana y ausencia de hallazgos. La plataforma original permanece archivada y consultable."
     ],
     "limits": [
-      "Cero avisos no mide precisión, exhaustividad ni falsos negativos sin un corpus de referencia humano.",
-      "No valida veracidad clínica, DOI por red, datos personales ni páginas fuera de su alcance.",
-      "El rescate no acredita la plataforma clínica histórica ni su autonomía."
+      "La ausencia de avisos no permite estimar precisión ni falsos negativos sin un conjunto de referencia revisado por personas.",
+      "La herramienta no verifica la veracidad clínica, la validez de DOI por Internet ni la presencia de datos personales. Tampoco concede aprobación clínica o autorización para publicar."
     ],
-    "next": "Usar el revisor manual antes de revisar textos; interpretar sus avisos. Ampliar reglas solo ante una necesidad observada.",
-    "metric": "Doce pruebas de aceptación y nueve archivos reales examinados. La utilidad editorial cuantificada queda sin medir.",
-    "scale": "CLI sin servicios ni modelos; el alcance actual impone límites de archivos y tamaño. Ampliarlo requiere medir cobertura y coste.",
+    "next": "Medir su utilidad como apoyo a la revisión editorial y ampliar las reglas cuando aparezcan necesidades documentadas.",
+    "metric": "Doce pruebas superadas y nueve archivos examinados. Falta medir las incidencias relevantes detectadas y omitidas frente a una revisión humana.",
+    "scale": "La ampliación a más archivos o reglas exige medir tiempos de ejecución y cobertura, con un conjunto de referencia revisado por personas.",
     "url": null,
     "cta": null
   }

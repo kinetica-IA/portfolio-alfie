@@ -5,7 +5,7 @@ Actualizado el 18 de noviembre de 2026. El portfolio presenta cuatro entregas de
 | Caso | Fuente | Estado |
 |---|---|---|
 | Web | Este repositorio; src/content/ y src/data/portfolio.json | Astro/React publicado, índice y cuatro fichas accesibles. |
-| Prompt Lab | Proyecto independiente; su entrega pública de código se prepara por separado | v0.4 elegida por el usuario para su trabajo. Comparación de versiones cerrada. |
+| Prompt Lab | [Repositorio independiente de Prompt Lab](https://github.com/kinetica-IA/prompt-lab); entrega pública v0.4 | v0.4 elegida por el usuario para su trabajo. Comparación de versiones cerrada. |
 | Polar | [scripts/polar](scripts/polar/README.md) y artículo público | Estudio retrospectivo N-of-1; cinco variables conciliadas directamente desde export hasta CSV. |
 | IO3/ALMA | [scripts/editorial](scripts/editorial/README.md) | Revisor editorial manual v1 derivado del aprendizaje de un prototipo histórico archivado. |
 

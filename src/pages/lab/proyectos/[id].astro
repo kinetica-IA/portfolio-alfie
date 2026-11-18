@@ -6,18 +6,18 @@ const { project } = Astro.props
 ---
 <Layout title={project.name} description={project.intro}>
   <article class="section case">
-    <a class="back" href="/lab/proyectos/">← Los cuatro proyectos</a>
+    <a class="back" href="/lab/proyectos/">← Ver todos los proyectos</a>
     <p class="eyebrow discipline">{project.discipline}</p><h1>{project.name}</h1><p class="lead">{project.intro}</p><p class="status">{project.status}</p>
     {project.url && <a class="demo" href={project.url} target="_blank" rel="noopener noreferrer">{project.cta} ↗</a>}
-    {project.id === 'prompt-lab' && <section class="evaluation"><h2>Comparación real · 16 noviembre 2026</h2><table><caption>Diez casos de desarrollo por variante. Comprobaciones automáticas; revisión humana pendiente.</caption><thead><tr><th scope="col">Variante</th><th scope="col">Casos correctos</th><th scope="col">Fallos críticos</th></tr></thead><tbody><tr><th scope="row">Base</th><td>8/10</td><td>1</td></tr><tr><th scope="row">Candidata</th><td>9/10</td><td>1</td></tr></tbody></table><p>La candidata conserva el prompt suficiente; ambas incumplen la etiqueta de investigación pendiente de un caso crítico. Ninguna supera todavía el criterio completo de aceptación.</p><p><a class="demo" href="/portfolio-demo/PROMPT-LAB-EVALUACION-REAL-2026-11-16.json">Descargar resultados reales (JSON)</a></p><p><a href="/portfolio-demo/PROMPT-LAB-REPLAY-SINTETICO.json">Ejemplo separado de replay artificial (JSON)</a></p></section>}
-    {project.id === 'polar'  && <p><a class="demo" href="/portfolio-demo/POLAR-DEMO-SINTETICA.zip">Descargar reproducción con datos sintéticos (.zip)</a></p>}
-    {project.id === 'io3-alma' && <p><a class="demo" href="/portfolio-demo/IO3-ALMA-DEMO-LOCAL.zip">Descargar ejemplo editorial artificial (.zip)</a></p>}
-    <section><h2>El problema</h2><p>{project.problem}</p></section>
-    <section><h2>El recorrido completo</h2><ol class="flow">{project.flow.map(step=><li>{step}</li>)}</ol></section>
+    {project.id === 'prompt-lab' && <section class="evaluation"><h2>Evaluación anterior · 16 de noviembre de 2026</h2><table><caption>Registro histórico: diez casos por variante. Sin revisión humana registrada en esa ejecución. Esta tabla no corresponde a v0.4.</caption><thead><tr><th scope="col">Variante</th><th scope="col">Casos que superan el contrato</th><th scope="col">Fallos críticos</th></tr></thead><tbody><tr><th scope="row">Base</th><td>8/10</td><td>1</td></tr><tr><th scope="row">Candidata</th><td>9/10</td><td>1</td></tr></tbody></table><p>En esta evaluación anterior, ambas variantes fallaron un caso crítico relativo a investigación pendiente. Se conserva el resultado original como registro histórico; la entrega v0.4 y su evaluación posterior se describen en la evidencia disponible.</p><p><a class="demo" href="/portfolio-demo/PROMPT-LAB-EVALUACION-REAL-2026-11-16.json">Descargar resultados del 16 de noviembre (JSON)</a></p><p><a href="/portfolio-demo/PROMPT-LAB-REPLAY-SINTETICO.json">Ejemplo independiente de comprobación con datos sintéticos (JSON)</a></p></section>}
+    {project.id === 'polar'  && <p><a class="demo" href="/portfolio-demo/POLAR-DEMO-SINTETICA.zip">Descargar ejemplo con datos sintéticos (.zip)</a></p>}
+    {project.id === 'io3-alma' && <p><a class="demo" href="/portfolio-demo/IO3-ALMA-DEMO-LOCAL.zip">Descargar ejemplo de revisión con datos sintéticos (.zip)</a></p>}
+    <section><h2>Problema</h2><p>{project.problem}</p></section>
+    <section><h2>Proceso</h2><ol class="flow">{project.flow.map(step=><li>{step}</li>)}</ol></section>
     <section><h2>Evidencia disponible</h2><ul>{project.evidence.map(item=><li>{item}</li>)}</ul></section>
-    <section class="limits"><h2>Límites que importan</h2><ul>{project.limits.map(item=><li>{item}</li>)}</ul></section>
-    <section><h2>El próximo cierre</h2><p>{project.next}</p><h3>Cómo medirlo</h3><p>{project.metric}</p><h3>Qué significa escalar aquí</h3><p>{project.scale}</p></section>
-    <section class="credit"><h2>Aportación y asistencia</h2><p>Proyecto del portfolio de Alfonso Navarro, desarrollado y revisado con asistencia de IA. Las pruebas citadas documentan las ejecuciones observadas y el alcance de cada entrega.</p></section>
+    <section class="limits"><h2>Limitaciones</h2><ul>{project.limits.map(item=><li>{item}</li>)}</ul></section>
+    <section><h2>Siguiente paso</h2><p>{project.next}</p><h3>Medición</h3><p>{project.metric}</p><h3>Posibilidades de ampliación</h3><p>{project.scale}</p></section>
+    <section class="credit"><h2>Desarrollo y asistencia de IA</h2><p>Proyecto del portfolio de Alfonso Navarro, desarrollado y revisado con asistencia de IA. Las pruebas citadas permiten examinar las ejecuciones realizadas y el alcance de la entrega; no atribuyen por sí solas la autoría de cada componente.</p></section>
     <a class="back" href="/lab/proyectos/">← Volver a los proyectos</a>
   </article>
   <style>
