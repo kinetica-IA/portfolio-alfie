@@ -26,5 +26,12 @@ entra en el entrenamiento que la evalúa. El ajuste final completo es independie
 del cálculo de métricas.
 
 Esto es exploración retrospectiva N-of-1. No acredita causalidad, generalización,
-diagnóstico ni validación prospectiva. Los agregados de origen necesitan aún
-completar su trazabilidad a las señales brutas. No proporciona un servicio clínico.
+diagnóstico ni validación prospectiva. El 18/11/2026 se concilió directamente el export bruto con las cinco columnas
+del CSV usado en el benchmark: valores y faltantes coinciden sin discrepancias.
+La ejecución histórica de los Parquet intermedios no está certificada. No proporciona un servicio clínico.
+
+Cierre de trazabilidad: 216 valores RMSSD, 214 ANS, 214 recovery_sublevel,
+218 sleep_wake_min y 225 sleep_interruptions coinciden con el CSV. Los faltantes
+compartidos y las coberturas t0/D−1 coinciden con el entrenamiento publicado.
+La reconstrucción y sus ocho pruebas se conservan en el expediente privado de
+cierre del 18/11; no se añade el diario, modelos ni exports a este repositorio.

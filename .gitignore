@@ -57,3 +57,6 @@ __pycache__/
 PORTFOLIO_AUDIT_DUMP.md
 dist/
 data/backups/
+
+# Project-local Python environment (Polar tooling)
+.venv/
