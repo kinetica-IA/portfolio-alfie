@@ -1,0 +1,325 @@
+---
+/**
+ * PolarDemo — (a) SAVED aggregated results from the public summary; (b) LOCAL method view on a
+ * deterministic synthetic series. No props. One instance per page.
+ * Data: src/data/demos/polar/polar-results.json and polar-method-synthetic.json (see README.md).
+ * No daily records, diary fields or private files. No model is trained, here or in the browser.
+ * Without JS: bars, a static method SVG (first evaluated day, lag 0) and data tables.
+ */
+import results from '../../data/demos/polar/polar-results.json'
+import method from '../../data/demos/polar/polar-method-synthetic.json'
+import { badgesFor, fmt } from './lib/polar-results.mjs'
+import { evalRange, cellRoles, trainingStats, valueText, roleText } from './lib/polar-method.mjs'
+
+// ---------- (a) results ----------
+const minClass = results.method.min_training_class_count
+const MAX_BRIER = 0.3
+const pct = (x: number) => `${Math.min(100, (x / MAX_BRIER) * 100).toFixed(1)}%`
+const targets = results.targets.map((t) => ({ ...t, badges: badgesFor(t, minClass) }))
+
+// ---------- (b) method ----------
+const days = method.days
+const N = method.n_days
+const minTrain = method.method_from_public_summary.min_train_observations
+const lag0 = 0
+const range0 = evalRange(N, minTrain, lag0)
+const day0 = range0.min
+const roles0 = cellRoles(N, lag0, day0)
+const stats0 = trainingStats(days, lag0, day0)
+const text0 = valueText(day0, lag0, stats0)
+
+// SVG geometry (viewBox units)
+const LEFT = 92
+const CELL = 14
+const W = LEFT + N * CELL + 16
+const SIG_BASE = 104
+const SIG_MAX = 64
+const LAB_Y = 134
+const H = 182
+const cx = (d: number) => LEFT + (d - 1) * CELL + CELL / 2
+const ticks = [1, 5, 10, 15, 20, 25, 30, 35, 40].filter((d) => d <= N)
+const trainEnd0 = day0 - 1
+---
+<section class="po" data-polar-demo aria-labelledby="po-title">
+  <header>
+    <p class="po-eyebrow">Interactive evidence · Polar retrospective analysis</p>
+    <h2 id="po-title">Saved results, then the method on synthetic data</h2>
+  </header>
+
+  <!-- (a) SAVED results -->
+  <section class="po-part" aria-labelledby="po-res-title">
+    <h3 id="po-res-title"><span class="po-origin po-origin--saved">SAVED</span> Results by target versus the reference</h3>
+    <figure class="po-fig" aria-labelledby="po-res-cap">
+      <p class="po-limits"><strong>Retrospective, one person (N=1). Not causal, not clinically validated, not a prediction service.</strong></p>
+      <p class="po-legend" aria-hidden="true"><span class="po-key po-key--model"></span>Model Brier score <span class="po-key po-key--ref"></span>Reference Brier score</p>
+      <ul class="po-bars">
+        {targets.map((t) => (
+          <li class="po-row">
+            <p class="po-target">
+              <span class="po-target-name">{t.label_en}</span>
+              <span class="po-n">{t.evaluated_observations} evaluated ({t.evaluated_positive} positive / {t.evaluated_negative} negative)</span>
+              {t.badges.map((b) => <span class={`po-badge po-badge--${b.kind}`}>{b.text}</span>)}
+            </p>
+            <p class="po-bar-line"><span class="po-bar-label">Model</span><span class="po-track"><span class="po-bar po-bar--model" style={`width:${pct(t.brier)}`}></span></span><span class="po-val">{fmt(t.brier)}</span></p>
+            <p class="po-bar-line"><span class="po-bar-label">Reference</span><span class="po-track"><span class="po-bar po-bar--ref" style={`width:${pct(t.reference_brier)}`}></span></span><span class="po-val">{fmt(t.reference_brier)}</span></p>
+          </li>
+        ))}
+      </ul>
+      <figcaption id="po-res-cap" class="po-cap">
+        Brier score per target: lower is better; bars run from 0 to {MAX_BRIER}. Reference: {results.method.reference}. {results.method.evaluation}; at least {results.method.min_train_observations} training observations. Analysis date {results.analysis_date}; {results.paired_observations} paired dates (fewer for some targets). Aggregated results only; the diary and daily records stay private.
+      </figcaption>
+    </figure>
+    <details class="po-details">
+      <summary>Data table: all saved metrics</summary>
+      <div class="po-scroll" tabindex="0" role="region" aria-label="Saved Polar metrics">
+        <table class="po-table">
+          <caption>Saved aggregates from <code>{results.source.path}</code> (analysis date {results.analysis_date}). Not causal, not clinically validated.</caption>
+          <thead><tr><th scope="col">Target</th><th scope="col">Paired</th><th scope="col">Evaluated (pos / neg)</th><th scope="col">Brier</th><th scope="col">Reference Brier</th><th scope="col">AUROC</th><th scope="col">Avg. precision</th><th scope="col">Flags</th></tr></thead>
+          <tbody>
+            {targets.map((t) => (
+              <tr>
+                <th scope="row">{t.label_en}</th>
+                <td>{t.paired_observations}</td>
+                <td>{t.evaluated_observations} ({t.evaluated_positive} / {t.evaluated_negative})</td>
+                <td>{fmt(t.brier)}</td>
+                <td>{fmt(t.reference_brier)}</td>
+                <td>{fmt(t.auroc)}</td>
+                <td>{fmt(t.average_precision)}</td>
+                <td>{t.badges.length ? t.badges.map((b) => b.text).join('; ') : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+    <p class="po-small">Flags: “Worse than baseline” when the model Brier score is higher than the reference; “Unstable” when the evaluated minority class has fewer than {minClass} observations.</p>
+  </section>
+
+  <!-- (b) LOCAL method on synthetic data -->
+  <section class="po-part" aria-labelledby="po-met-title">
+    <h3 id="po-met-title"><span class="po-origin po-origin--local">LOCAL</span> How the evaluation walks forward</h3>
+    <p class="po-synth"><strong>{method.label_en}</strong> Each evaluated day is scored only with earlier days. The browser only recolours that split; no model is trained here.</p>
+
+    <div class="po-controls" data-po-controls hidden>
+      <fieldset class="po-lag">
+        <legend>Calendar lag</legend>
+        <label><input type="radio" name="po-lag" value="0" checked /> 0 · same-day signal</label>
+        <label><input type="radio" name="po-lag" value="1" /> 1 · previous-day signal</label>
+      </fieldset>
+      <div class="po-range">
+        <label for="po-day">Evaluated day</label>
+        <input id="po-day" type="range" min={range0.min} max={range0.max} step="1" value={day0} aria-valuetext={text0} aria-describedby="po-status" />
+      </div>
+    </div>
+    <p class="po-status" id="po-status" data-po-status>{text0} · lag 0 · training classes {stats0.positive} positive / {stats0.negative} negative (minimum {method.method_from_public_summary.min_training_class_count} each)</p>
+
+    <figure class="po-fig">
+      <svg class="po-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="po-svg-title po-svg-desc" xmlns="http://www.w3.org/2000/svg" data-po-svg>
+        <title id="po-svg-title">Expanding-history evaluation on synthetic data</title>
+        <desc id="po-svg-desc">{N} synthetic days. Top row: synthetic signal bars. Bottom row: synthetic label, filled for positive and hollow for negative. Training cells are teal and the evaluated observation is orange. Cells the evaluation does not use are faded: every later day and, with lag 1, the same-day signal. The data table below lists every cell.</desc>
+        <rect class="po-band" data-po-band="signal" x={cx(day0) - CELL / 2} y={SIG_BASE - SIG_MAX - 6} width={CELL} height={SIG_MAX + 10} />
+        <rect class="po-band" data-po-band="label" x={cx(day0) - CELL / 2} y={LAB_Y - 12} width={CELL} height={24} />
+        <line class="po-span" data-po-span x1={cx(1) - CELL / 2} x2={cx(trainEnd0) + CELL / 2} y1="16" y2="16" />
+        <text class="po-span-text" data-po-span-text x={cx(1) - CELL / 2} y="11">training history: {stats0.observations} observations</text>
+        <text class="po-row-label" x="4" y={SIG_BASE - 22}>Signal</text>
+        <text class="po-row-label po-row-sub" x="4" y={SIG_BASE - 6}>(synthetic)</text>
+        <text class="po-row-label" x="4" y={LAB_Y + 4}>Label</text>
+        <line class="po-axis" x1={LEFT - 4} x2={W - 12} y1={SIG_BASE} y2={SIG_BASE} />
+        {days.map((d, i) => (
+          <rect class="po-cell po-sig" data-cell="signal" data-day={d.day} data-role={roles0.signal[i]}
+            x={cx(d.day) - 5} y={SIG_BASE - Math.max(2, d.signal * SIG_MAX)} width="10" height={Math.max(2, d.signal * SIG_MAX)} />
+        ))}
+        {days.map((d, i) => (
+          <circle class={`po-cell po-lab po-lab--${d.label ? 'pos' : 'neg'}`} data-cell="label" data-day={d.day} data-role={roles0.label[i]}
+            cx={cx(d.day)} cy={LAB_Y} r="5" />
+        ))}
+        <line class="po-link" data-po-link x1={cx(day0)} x2={cx(day0)} y1={SIG_BASE + 2} y2={LAB_Y - 7} />
+        {ticks.map((d) => <text class="po-tick" x={cx(d)} y={H - 18} text-anchor="middle">{d}</text>)}
+        <text class="po-tick" x={LEFT + (N * CELL) / 2} y={H - 2} text-anchor="middle">day</text>
+      </svg>
+      <figcaption class="po-cap">
+        <span class="po-legend-item"><span class="po-key po-key--train"></span>training</span>
+        <span class="po-legend-item"><span class="po-key po-key--eval"></span>evaluated</span>
+        <span class="po-legend-item"><span class="po-key po-key--unused"></span>not used</span>
+        <span class="po-legend-item">filled dot = positive label, ring = negative label</span>
+        <br />Seed {method.seed}, {N} days. Settings borrowed from the real analysis: at least {minTrain} training observations, lag 0 or 1, at least {method.method_from_public_summary.min_training_class_count} examples per class. <span data-po-nojs>Shown without JavaScript: day {day0}, lag 0.</span>
+      </figcaption>
+    </figure>
+
+    <details class="po-details">
+      <summary>Data table: synthetic series ({N} days)</summary>
+      <div class="po-scroll" tabindex="0" role="region" aria-label="Synthetic series">
+        <table class="po-table" data-po-table>
+          <caption>Synthetic data — illustrates the method, not results. Roles for <span data-po-table-state>day {day0}, lag 0</span>.</caption>
+          <thead><tr><th scope="col">Day</th><th scope="col">Signal</th><th scope="col">Label</th><th scope="col">Signal role</th><th scope="col">Label role</th></tr></thead>
+          <tbody>
+            {days.map((d, i) => (
+              <tr>
+                <th scope="row">{d.day}</th>
+                <td>{d.signal.toFixed(2)}</td>
+                <td>{d.label ? 'positive' : 'negative'}</td>
+                <td data-role-cell="signal" data-day={d.day}>{roleText(roles0.signal[i])}</td>
+                <td data-role-cell="label" data-day={d.day}>{roleText(roles0.label[i])}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <script is:inline type="application/json" data-po-series set:html={JSON.stringify({ days, minTrain, minClass: method.method_from_public_summary.min_training_class_count, cell: CELL, left: LEFT })}></script>
+</section>
+
+<script>
+  import { evalRange, clampEvalDay, cellRoles, trainingStats, valueText, roleText } from './lib/polar-method.mjs'
+
+  function initPolarDemo() {
+    document.querySelectorAll<HTMLElement>('[data-polar-demo]').forEach((root) => {
+      if (root.dataset.poEnhanced === 'true') return
+      const seriesEl = root.querySelector('[data-po-series]')
+      const controls = root.querySelector<HTMLElement>('[data-po-controls]')
+      const slider = root.querySelector<HTMLInputElement>('#po-day')
+      if (!seriesEl || !controls || !slider) return
+      root.dataset.poEnhanced = 'true'
+      const { days, minTrain, minClass, cell, left } = JSON.parse(seriesEl.textContent || '{}')
+      const n = days.length
+      const cx = (d: number) => left + (d - 1) * cell + cell / 2
+      const status = root.querySelector<HTMLElement>('[data-po-status]')!
+      const tableState = root.querySelector<HTMLElement>('[data-po-table-state]')
+      const nojs = root.querySelector<HTMLElement>('[data-po-nojs]')
+      const bandSignal = root.querySelector('[data-po-band="signal"]')!
+      const bandLabel = root.querySelector('[data-po-band="label"]')!
+      const link = root.querySelector('[data-po-link]')!
+      const span = root.querySelector('[data-po-span]')!
+      const spanText = root.querySelector('[data-po-span-text]')!
+      const sigCells = Array.from(root.querySelectorAll('[data-cell="signal"]'))
+      const labCells = Array.from(root.querySelectorAll('[data-cell="label"]'))
+      const sigRoleCells = Array.from(root.querySelectorAll('[data-role-cell="signal"]'))
+      const labRoleCells = Array.from(root.querySelectorAll('[data-role-cell="label"]'))
+      controls.hidden = false
+      if (nojs) nojs.hidden = true
+
+      const lag = () => Number(root.querySelector<HTMLInputElement>('input[name="po-lag"]:checked')?.value ?? 0)
+
+      function render() {
+        const l = lag()
+        const range = evalRange(n, minTrain, l)
+        slider!.min = String(range.min)
+        slider!.max = String(range.max)
+        const day = clampEvalDay(slider!.value, range)
+        slider!.value = String(day)
+        const roles = cellRoles(n, l, day)
+        const stats = trainingStats(days, l, day)
+        const text = valueText(day, l, stats)
+        slider!.setAttribute('aria-valuetext', text)
+        status.textContent = `${text} · lag ${l} · training classes ${stats.positive} positive / ${stats.negative} negative (minimum ${minClass} each)`
+        if (tableState) tableState.textContent = `day ${day}, lag ${l}`
+        sigCells.forEach((c, i) => c.setAttribute('data-role', roles.signal[i]))
+        labCells.forEach((c, i) => c.setAttribute('data-role', roles.label[i]))
+        sigRoleCells.forEach((c, i) => (c.textContent = roleText(roles.signal[i])))
+        labRoleCells.forEach((c, i) => (c.textContent = roleText(roles.label[i])))
+        const sigDay = day - l
+        bandSignal.setAttribute('x', String(cx(sigDay) - cell / 2))
+        bandLabel.setAttribute('x', String(cx(day) - cell / 2))
+        link.setAttribute('x1', String(cx(sigDay)))
+        link.setAttribute('x2', String(cx(day)))
+        const firstTrain = 1 + l
+        span.setAttribute('x1', String(cx(firstTrain) - cell / 2))
+        span.setAttribute('x2', String(cx(day - 1) + cell / 2))
+        spanText.setAttribute('x', String(cx(firstTrain) - cell / 2))
+        spanText.textContent = `training history: ${stats.observations} observations`
+      }
+
+      slider.addEventListener('input', render)
+      root.querySelectorAll('input[name="po-lag"]').forEach((r) => r.addEventListener('change', render))
+      render()
+    })
+  }
+  initPolarDemo()
+  document.addEventListener('astro:page-load', initPolarDemo)
+</script>
+
+<style>
+  .po { font-family: var(--sans); color: var(--text); margin: 32px 0; padding: 24px 0; border-top: 1px solid var(--border-active); }
+  .po [hidden] { display: none !important; }
+  .po-eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sec); margin: 0 0 8px; }
+  .po h2 { font-size: var(--text-subsection); font-weight: 400; color: var(--text-heading); margin: 0 0 12px; line-height: 1.3; }
+  .po h3 { font-size: var(--text-body-lg); font-weight: 500; color: var(--text-heading); margin: 0 0 12px; line-height: 1.4; }
+  .po p { margin: 0 0 10px; }
+  .po code { font-family: var(--mono); font-size: 0.85em; overflow-wrap: anywhere; }
+  .po :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+  .po-part { padding: 18px 0; }
+  .po-part + .po-part { border-top: 1px dashed var(--border-active); }
+  .po-origin { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: 0.08em; padding: 5px 7px; border: 1px solid; border-radius: 3px; color: var(--text-heading); vertical-align: 0.15em; margin-right: 6px; }
+  .po-origin--saved { border-color: var(--sea-text); background: var(--fill-sea); }
+  .po-origin--local { border-color: var(--slate); background: var(--fill-ice); }
+  .po-fig { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--border-active); border-radius: 4px; background: rgba(255, 255, 255, 0.5); }
+  .po-limits { border-left: 3px solid var(--warm); padding-left: 12px; font-size: 14px; }
+  .po-legend { font-size: 12px; color: var(--text-sec); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .po-key { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .po-key--model { background: var(--sea); }
+  .po-key--ref { background: repeating-linear-gradient(45deg, var(--sand), var(--sand) 2px, transparent 2px, transparent 4px); border: 1px solid var(--sand); }
+  .po-key--train { background: var(--sea); }
+  .po-key--eval { background: var(--warm); }
+  .po-key--unused { background: transparent; border: 1px dashed var(--teal); }
+  .po-bars { list-style: none; margin: 8px 0 0; padding: 0; }
+  .po-row { padding: 10px 0; border-top: 1px solid var(--border); }
+  .po-target { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px !important; }
+  .po-target-name { font-weight: 500; color: var(--text-heading); }
+  .po-n { font-size: 12px; color: var(--text-sec); }
+  .po-badge { font: 500 11px/1.2 var(--mono); padding: 3px 6px; border-radius: 3px; border: 1px solid; color: var(--text-heading); }
+  .po-badge--worse { border-color: var(--clay); background: var(--fill-clay); }
+  .po-badge--unstable { border-color: var(--warm); background: var(--fill-warm); }
+  .po-bar-line { display: grid; grid-template-columns: 5.5em 1fr 3.5em; align-items: center; gap: 8px; margin: 0 0 4px !important; font-size: 12px; }
+  .po-bar-label { color: var(--text-sec); }
+  .po-track { display: block; height: 12px; background: var(--fill-teal); border-radius: 2px; }
+  .po-bar { display: block; height: 100%; border-radius: 2px; }
+  .po-bar--model { background: var(--sea); }
+  .po-bar--ref { background: repeating-linear-gradient(45deg, var(--sand), var(--sand) 3px, rgba(191, 168, 122, 0.35) 3px, rgba(191, 168, 122, 0.35) 6px); }
+  .po-val { font-family: var(--mono); text-align: right; }
+  .po-cap { font-size: 12px; color: var(--text-sec); line-height: 1.7; margin-top: 8px; }
+  .po-small { font-size: 12px; color: var(--text-sec); }
+  .po-synth { font-size: 14px; border-left: 3px solid var(--slate); padding-left: 12px; }
+  .po-controls { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-end; margin: 0 0 10px; }
+  .po-lag { border: 1px solid var(--border-active); border-radius: 4px; padding: 6px 12px 8px; }
+  .po-lag legend { font: 12px var(--mono); color: var(--text-sec); padding: 0 4px; }
+  .po-lag label { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-right: 14px; font-size: 14px; cursor: pointer; }
+  .po-lag input { width: 18px; height: 18px; accent-color: var(--sea-text); }
+  .po-range { display: flex; flex-direction: column; gap: 4px; flex: 1 1 220px; }
+  .po-range label { font: 12px var(--mono); color: var(--text-sec); }
+  .po-range input { width: 100%; min-height: 44px; accent-color: var(--warm); }
+  .po-status { font: 13px/1.5 var(--mono); color: var(--text-heading); }
+  .po-svg { width: 100%; height: auto; display: block; }
+  .po-svg text { font-family: var(--mono); fill: var(--text-sec); }
+  .po-row-label { font-size: 13px; fill: var(--text-heading) !important; }
+  .po-row-sub { font-size: 10px; }
+  .po-tick { font-size: 11px; }
+  .po-span-text { font-size: 10px; }
+  .po-axis { stroke: var(--border-active); stroke-width: 1; }
+  .po-span { stroke: var(--sea); stroke-width: 2; }
+  .po-band { fill: var(--fill-warm); stroke: var(--warm); stroke-width: 1; stroke-dasharray: 2 2; }
+  .po-link { stroke: var(--warm); stroke-width: 2; }
+  .po-sig[data-role='train'] { fill: var(--sea); }
+  .po-sig[data-role='eval'] { fill: var(--warm); }
+  .po-sig[data-role='unused'] { fill: transparent; stroke: var(--teal); stroke-dasharray: 2 2; }
+  .po-lab { stroke-width: 2; }
+  .po-lab--pos[data-role='train'] { fill: var(--sea); stroke: var(--sea); }
+  .po-lab--neg[data-role='train'] { fill: var(--bg); stroke: var(--sea); }
+  .po-lab--pos[data-role='eval'] { fill: var(--warm); stroke: var(--warm); }
+  .po-lab--neg[data-role='eval'] { fill: var(--bg); stroke: var(--warm); }
+  .po-lab--pos[data-role='unused'] { fill: var(--teal); stroke: var(--teal); opacity: 0.45; }
+  .po-lab--neg[data-role='unused'] { fill: var(--bg); stroke: var(--teal); opacity: 0.45; }
+  .po-lab[data-role='unpaired'] { fill: var(--bg); stroke: var(--text-dim); stroke-dasharray: 2 2; }
+  .po-legend-item { display: inline-flex; align-items: center; margin-right: 12px; }
+  .po-details { margin: 8px 0; font-size: 14px; }
+  .po-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--sea-text); }
+  .po-scroll { overflow-x: auto; max-height: 28rem; }
+  .po-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .po-table caption { text-align: left; font-size: 12px; color: var(--text-sec); margin-bottom: 6px; }
+  .po-table th, .po-table td { text-align: left; padding: 6px; border-bottom: 1px solid var(--border-active); white-space: nowrap; }
+  .po-table thead th { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-sec); position: sticky; top: 0; background: var(--bg); }
+  @media (prefers-reduced-motion: reduce) {
+    .po * { transition: none !important; animation: none !important; }
+  }
+</style>

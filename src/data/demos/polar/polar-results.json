@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "demo": "polar-results",
+  "origin": "SAVED",
+  "origin_note": "Aggregated results already published on the site. No daily records, diary fields or private files.",
+  "generator": "node src/data/demos/_tools/build-polar-fixtures.mjs",
+  "source": {
+    "path": "public/data/polar-retrospective-summary.json",
+    "sha256": "ddcbbfa28dbc8b1abb916dea04974d4df9c167c9b0a0ca297a8043b68be6a06b",
+    "commit": "15e928cd352739106a3f595af49db2fff7fa05d9",
+    "commit_date": "2026-11-15T19:54:27+01:00"
+  },
+  "analysis_date": "2026-11-15",
+  "study": "retrospective exploratory N-of-1",
+  "participants": 1,
+  "paired_observations": 61,
+  "method": {
+    "feature_count": 5,
+    "calendar_lags": [
+      0,
+      1
+    ],
+    "min_train_observations": 30,
+    "min_training_class_count": 3,
+    "evaluation": "expanding history, one later observation at a time",
+    "estimator": "LogisticRegression",
+    "reference": "prevalence of positive labels in the training history"
+  },
+  "limits_en": [
+    "Retrospective, one person (N=1). Not causal, not clinically validated, not a prediction service.",
+    "Aggregated results only; the diary and daily records stay private."
+  ],
+  "targets": [
+    {
+      "key": "severity",
+      "label_en": "Overall severity",
+      "paired_observations": 61,
+      "evaluated_observations": 31,
+      "evaluated_positive": 18,
+      "evaluated_negative": 13,
+      "skipped_folds": 0,
+      "auroc": 0.7435897435897436,
+      "average_precision": 0.8315830541597462,
+      "brier": 0.21101700543937055,
+      "reference_brier": 0.24924984420227667
+    },
+    {
+      "key": "fatigue",
+      "label_en": "Fatigue",
+      "paired_observations": 61,
+      "evaluated_observations": 31,
+      "evaluated_positive": 20,
+      "evaluated_negative": 11,
+      "skipped_folds": 0,
+      "auroc": 0.6454545454545455,
+      "average_precision": 0.7859579370120542,
+      "brier": 0.2512395512531553,
+      "reference_brier": 0.23733068174028651
+    },
+    {
+      "key": "pem",
+      "label_en": "Post-exertional malaise",
+      "paired_observations": 61,
+      "evaluated_observations": 31,
+      "evaluated_positive": 20,
+      "evaluated_negative": 11,
+      "skipped_folds": 0,
+      "auroc": 0.7318181818181819,
+      "average_precision": 0.8759451866217627,
+      "brier": 0.21011280067012722,
+      "reference_brier": 0.23566632484811315
+    },
+    {
+      "key": "brain_fog",
+      "label_en": "Brain fog",
+      "paired_observations": 61,
+      "evaluated_observations": 31,
+      "evaluated_positive": 30,
+      "evaluated_negative": 1,
+      "skipped_folds": 0,
+      "auroc": 0.9666666666666667,
+      "average_precision": 0.9989247311827957,
+      "brier": 0.03149721832223422,
+      "reference_brier": 0.0410049409908883
+    },
+    {
+      "key": "autonomic",
+      "label_en": "Autonomic symptoms",
+      "paired_observations": 55,
+      "evaluated_observations": 25,
+      "evaluated_positive": 14,
+      "evaluated_negative": 11,
+      "skipped_folds": 0,
+      "auroc": 0.6948051948051948,
+      "average_precision": 0.7761090574366971,
+      "brier": 0.23880041377662536,
+      "reference_brier": 0.2531741040523488
+    }
+  ]
+}

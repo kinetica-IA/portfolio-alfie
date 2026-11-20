@@ -1,0 +1,113 @@
+---
+// Project card for /projects/: proof, honest status and direct actions.
+// Data: src/data/portfolio.json (item.en, item.slug).
+interface Action { label: string; href: string; kind?: string; external?: boolean; download?: boolean; hreflang?: string }
+interface Props { project: any; index: number; headingLevel?: 2 | 3 }
+const { project, index, headingLevel = 2 } = Astro.props
+const en = project.en
+const caseHref = `/projects/${project.slug}/`
+const direct: Action | undefined = (en.actions as Action[])[0]
+const Heading = headingLevel === 3 ? 'h3' : 'h2'
+const titleId = `card-${project.slug}`
+---
+<article class="pcard" aria-labelledby={titleId}>
+  <div class="pcard-top">
+    <span class="pcard-num" aria-hidden="true">0{index + 1}</span>
+    <p class="pcard-discipline">{en.discipline}</p>
+  </div>
+  <Heading id={titleId} class="pcard-title"><a href={caseHref}>{en.name}</a></Heading>
+  <p class="pcard-summary">{en.summary}</p>
+  <p class="pcard-status"><span class="visually-hidden">Status: </span>{en.status}</p>
+  <p class="pcard-proof"><span class="pcard-label">Proof</span> {en.cardProof}</p>
+  <div class="pcard-actions">
+    <a class="btn btn--primary pcard-btn" href={caseHref}>Open case<span class="visually-hidden">: {en.name}</span></a>
+    {direct && (
+      <a
+        class="btn btn--secondary pcard-btn"
+        href={direct.href}
+        hreflang={direct.hreflang}
+        target={direct.external ? '_blank' : undefined}
+        rel={direct.external ? 'noopener noreferrer' : undefined}
+        download={direct.download ? '' : undefined}
+        data-astro-reload={direct.download || direct.href.endsWith('.json') ? true : undefined}
+      >
+        {direct.label}{direct.external && <span aria-hidden="true"> ↗</span>}{direct.external && <span class="visually-hidden"> (opens in a new tab)</span>}
+      </a>
+    )}
+  </div>
+</article>
+
+<style>
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+    border: 1px solid var(--border-active);
+    border-top: 2px solid var(--teal);
+    background: rgba(240, 249, 249, 0.6);
+  }
+  .pcard-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .pcard-num {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--teal-text);
+  }
+  .pcard-discipline {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+  }
+  .pcard-title {
+    font-family: var(--sans);
+    font-size: var(--text-subsection);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .pcard-title a { color: var(--text-heading); }
+  .pcard-title a:hover { color: var(--green-text); }
+  .pcard-summary {
+    font-size: var(--text-body);
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-sec);
+  }
+  .pcard-status {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    color: var(--sea-text);
+    background: var(--fill-teal);
+    padding: 4px 10px;
+  }
+  .pcard-proof {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .pcard-label {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+    margin-right: 6px;
+  }
+  .pcard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+  .pcard-btn { padding: 10px 16px; }
+  @media (max-width: 480px) {
+    .pcard { padding: 20px 16px; }
+    .pcard-actions { flex-direction: column; align-items: stretch; }
+  }
+</style>

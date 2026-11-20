@@ -1,17 +1,18 @@
 ---
-import Layout from '../../layouts/Layout.astro'
+// /es/informes/ — previously /informes (redirect in astro.config.mjs).
+import Layout from '../../../layouts/Layout.astro'
 import { getCollection } from 'astro:content'
 
 const entries = (await getCollection('informes'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 ---
-<Layout title="Informes">
+<Layout title="Informes" lang="es" medicalSchema ogImage="/og/es.png">
   <section class="section informes-page">
-    <span class="eyebrow" style="color: var(--green)">INFORMES</span>
+    <span class="eyebrow" style="color: var(--green-text)">INFORMES</span>
     <h1 class="informes-title">Casos clínicos</h1>
     <div class="informes-grid">
       {entries.map(entry => (
-        <a href={`/informes/${entry.data.slug}`} class="informe-card">
+        <a href={`/es/informes/${entry.data.slug}/`} class="informe-card">
           <span class="informe-card-title">{entry.data.title}</span>
           <span class="informe-card-summary">{entry.data.summary}</span>
           <span class="informe-card-cta">Leer más →</span>
@@ -63,7 +64,7 @@ const entries = (await getCollection('informes'))
     .informe-card-cta {
       font-family: var(--mono);
       font-size: var(--text-caption);
-      color: var(--green);
+      color: var(--green-text);
       margin-top: auto;
     }
   </style>

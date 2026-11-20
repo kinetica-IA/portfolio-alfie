@@ -1,18 +1,63 @@
 ---
 // src/layouts/Layout.astro
+//
+// Props
+//   title?          page title; rendered as "<title> — Kinetica AI"
+//   description?    meta/og/twitter description (truncated to 160 chars)
+//   lang?           'en' (default) | 'es' — sets <html lang>, skip-link text,
+//                   TopBar navigation, footer, og:locale and defaults
+//   ogImage?        path or absolute URL of a 1200x630 image
+//                   (default /og/home.png for en, /og/es.png for es)
+//   ogImageAlt?     alt text for og:image / twitter:image
+//   alternates?     { en?: string, es?: string } paths of strictly equivalent
+//                   pages; emits reciprocal <link rel="alternate" hreflang>
+//                   plus x-default (the English one when present)
+//   langSwitchHref? target of the "Español"/"English" switch in TopBar when
+//                   there is no strict alternate (defaults to the other root)
+//   medicalSchema?  true only on the Spanish clinical pages (/es/…):
+//                   emits the MedicalBusiness JSON-LD
 import GrainHoverBackground from '../components/GrainHoverBackground.jsx'
 import { FloatingDecorators } from '../components/OrganicSymbols.jsx'
 import TopBar from '../components/TopBar.jsx'
-import FooterField from '../components/FooterField.jsx'
+import SiteFooter from '../components/site/SiteFooter.astro'
 import ClientRouter from 'astro/components/ClientRouter.astro'
 import '../styles/tokens.css'
 
+type Lang = 'en' | 'es'
+interface Alternates { en?: string; es?: string }
 interface Props {
   title?: string
   description?: string
+  lang?: Lang
+  ogImage?: string
+  ogImageAlt?: string
+  alternates?: Alternates
+  langSwitchHref?: string
+  medicalSchema?: boolean
 }
 
-const DEFAULT_DESCRIPTION = 'Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km.'
+const SITE = Astro.site ?? new URL('https://www.kineticaai.com')
+
+const DEFAULTS = {
+  en: {
+    title: 'Kinetica AI — Alfonso Navarro, AI & Workflow Automation',
+    description: 'Entry-level AI & workflow automation profile: four projects with tests, saved results and stated limits. Based in Ogre, Latvia, from 7 January 2027.',
+    ogImage: '/og/home.png',
+    ogImageAlt: 'Alfonso Navarro, AI & Workflow Automation. AI-assisted workflows, built to be checked.',
+    locale: 'en_US',
+    skip: 'Skip to content',
+    switchFallback: '/es/',
+  },
+  es: {
+    title: 'Kinetica AI — Osteopatía y biomecánica',
+    description: 'Osteópata D.O. Registre de France. Consulta clínica y biomecánica en Alameda (Málaga) y a domicilio en radio superior a 100 km.',
+    ogImage: '/og/es.png',
+    ogImageAlt: 'Kinetica AI. Osteopatía y biomecánica, Alfonso Navarro.',
+    locale: 'es_ES',
+    skip: 'Saltar al contenido',
+    switchFallback: '/',
+  },
+} as const
 
 function truncate(text: string, max = 160) {
   if (text.length <= max) return text
@@ -21,13 +66,37 @@ function truncate(text: string, max = 160) {
   return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd() + '…'
 }
 
-const { title, description } = Astro.props
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://www.kineticaai.com').href
-const pageTitle = title ? `${title} — Kinetica AI` : 'Kinetica AI — Osteopatía y biomecánica'
-const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTION
+const {
+  title,
+  description,
+  lang = 'en',
+  ogImage,
+  ogImageAlt,
+  alternates,
+  langSwitchHref,
+  medicalSchema = false,
+} = Astro.props
+
+const L: Lang = lang === 'es' ? 'es' : 'en'
+const other: Lang = L === 'es' ? 'en' : 'es'
+const d = DEFAULTS[L]
+
+const canonicalURL = new URL(Astro.url.pathname, SITE).href
+const pageTitle = title ? `${title} — Kinetica AI` : d.title
+const pageDescription = description ? truncate(description) : d.description
+const ogImageURL = new URL(ogImage ?? d.ogImage, SITE).href
+const ogAlt = ogImageAlt ?? d.ogImageAlt
+
+const hreflangLinks = alternates
+  ? (Object.entries(alternates) as [Lang, string | undefined][])
+      .filter(([, href]) => !!href)
+      .map(([hl, href]) => ({ hreflang: hl, href: new URL(href as string, SITE).href }))
+  : []
+const xDefault = alternates?.en ?? alternates?.es
+const switchHref = langSwitchHref ?? alternates?.[other] ?? d.switchFallback
 ---
 <!DOCTYPE html>
-<html lang="es">
+<html lang={L}>
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
@@ -41,57 +110,87 @@ const pageDescription = description ? truncate(description) : DEFAULT_DESCRIPTIO
     <meta name="description" content={pageDescription} />
     <meta name="author" content="Alfonso Navarro" />
     <link rel="canonical" href={canonicalURL} />
+    {hreflangLinks.map(link => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
+    {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault, SITE).href} />}
 
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
-    <meta property="og:image" content="https://www.kineticaai.com/og-image.jpg" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={d.locale} />
+    <meta property="og:site_name" content="Kinetica AI" />
 
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalBusiness",
-      "name": "Kinetica AI",
-      "url": "https://www.kineticaai.com",
-      "email": "alfon.atman@gmail.com",
-      "medicalSpecialty": "PhysicalTherapy",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Alameda",
-        "addressRegion": "Málaga",
-        "addressCountry": "ES"
-      },
-      "founder": {
-        "@type": "Person",
-        "name": "Alfonso Navarro",
-        "jobTitle": "Osteópata D.O.",
-        "identifier": {
-          "@type": "PropertyValue",
-          "propertyID": "RPPS",
-          "value": "10010607702"
-        }
-      }
-    }
-    </script>
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={ogAlt} />
 
-    <!-- Fonts -->
+    {medicalSchema && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'MedicalBusiness',
+        name: 'Kinetica AI',
+        url: 'https://www.kineticaai.com/es/',
+        email: 'alfon.atman@gmail.com',
+        medicalSpecialty: 'PhysicalTherapy',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Alameda',
+          addressRegion: 'Málaga',
+          addressCountry: 'ES',
+        },
+        founder: {
+          '@type': 'Person',
+          name: 'Alfonso Navarro',
+          jobTitle: 'Osteópata D.O.',
+          identifier: {
+            '@type': 'PropertyValue',
+            propertyID: 'RPPS',
+            value: '10010607702',
+          },
+        },
+      })} />
+    )}
+
+    <!-- Fonts: only the two families used in src/ (Montserrat, DM Mono).
+         Fraunces, Inter and JetBrains Mono were only referenced here; the
+         artefact in /public/artefactos/ loads its own fonts. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Without JS the mobile "Menu" button cannot open the panel: show the links. -->
+    <noscript>
+      <style>
+        @media (max-width: 720px) {
+          .topbar-menu-btn { display: none !important; }
+          .topbar-nav { display: block !important; position: static !important; box-shadow: none !important; border: 0 !important; padding: 0 !important; background: transparent !important; overflow-x: auto; min-width: 0; flex: 1 1 auto; }
+          .topbar-list { flex-direction: row !important; gap: 12px !important; }
+          .topbar-link { min-height: 44px !important; padding: 0 !important; font-size: var(--text-caption) !important; }
+          .topbar-switch-item { border-top: 0 !important; margin-top: 0 !important; }
+          .topbar-icons { display: none !important; }
+        }
+      </style>
+    </noscript>
 
     <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "165f6fd632de46bb905ef551de19e2d1"}'></script><!-- End Cloudflare Web Analytics -->
   </head>
   <body>
+    <a class="skip-link" href="#main" data-astro-reload>{d.skip}</a>
     <GrainHoverBackground client:only="react" transition:persist="ambient-bg" />
     <FloatingDecorators client:load transition:persist="floating-deco" />
-    <TopBar client:load transition:persist="topbar" />
-    <main class="content-layer">
+    <TopBar client:load transition:persist="topbar" lang={L} path={Astro.url.pathname} switchHref={switchHref} />
+    <main id="main" tabindex="-1" class="content-layer">
       <slot />
     </main>
-    <FooterField />
+    <SiteFooter lang={L} />
 
     <!-- Analytics (GoatCounter — privacy-first, no cookies) -->
     <script data-goatcounter="https://kineticaai.goatcounter.com/count"

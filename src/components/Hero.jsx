@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useTextDecode } from '../hooks/useTextDecode'
 // ════════════════════════════════════════════════════════════════════
-// HERO — wordmark + alternating slogan, boot-sequence entrance.
+// HERO (ES, clinical home at /es/) — wordmark + alternating slogan.
+// The rotating slogan has no aria-live: screen readers are not interrupted
+// every few seconds. With reduced motion it does not rotate.
+// The English home uses src/components/site/HomeHero.astro instead.
 // ════════════════════════════════════════════════════════════════════
 
 const SUBTITLES = ['Recupera tu movimiento', 'Del síntoma al mecanismo']
@@ -61,13 +64,13 @@ export default function Hero() {
       <div className="hero-content">
         <h1 className="hero-brand" style={rise(0)}>KINETICAAI</h1>
 
-        <p className="hero-tagline" style={rise(1)} aria-live="polite">
+        <p className="hero-tagline" style={rise(1)}>
           {reducedMotion ? SUBTITLES[0] : tagline}
         </p>
 
         <div className="hero-cta" style={rise(2)}>
           <a href={MAILTO_HREF} className="hero-btn hero-btn--primary">Cuéntame tu caso, sin compromiso</a>
-          <a href="/informes" className="hero-btn hero-btn--secondary">Ver informes</a>
+          <a href="/es/informes/" className="hero-btn hero-btn--secondary">Ver informes</a>
         </div>
       </div>
 
@@ -119,6 +122,10 @@ export default function Hero() {
           z-index: 1;
         }
         .hero-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 44px;
           font-family: var(--mono);
           font-size: var(--text-caption);
           padding: 12px 28px;
@@ -126,11 +133,11 @@ export default function Hero() {
           text-decoration: none;
         }
         .hero-btn--primary {
-          border: 1.5px solid var(--green);
-          color: var(--green);
+          border: 1.5px solid var(--green-text);
+          color: var(--green-text);
         }
         .hero-btn--primary:hover {
-          background: var(--green);
+          background: var(--green-text);
           color: white;
           box-shadow: 0 2px 12px rgba(107,158,122,0.15);
         }

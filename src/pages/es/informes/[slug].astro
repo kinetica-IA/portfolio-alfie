@@ -1,5 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro'
+// /es/informes/<slug>/ — previously /informes/<slug> (dynamic redirect in
+// astro.config.mjs). DOIs rendered from frontmatter unchanged.
+import Layout from '../../../layouts/Layout.astro'
 import { getCollection, render } from 'astro:content'
 
 export async function getStaticPaths() {
@@ -13,9 +15,9 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
-<Layout title={entry.data.title} description={entry.data.summary}>
+<Layout title={entry.data.title} description={entry.data.summary} lang="es" medicalSchema ogImage="/og/es.png">
   <article class="section informe-page">
-    <span class="eyebrow" style="color: var(--green)">INFORME</span>
+    <span class="eyebrow" style="color: var(--green-text)">INFORME</span>
     <h1 class="informe-title">{entry.data.title}</h1>
     {entry.data.patient_register && (
       <p class="informe-note">Registro pensado para pacientes, sin tecnicismos innecesarios.</p>
@@ -33,7 +35,7 @@ const { Content } = await render(entry)
         </ul>
       </div>
     )}
-    <a href="/informes" class="informe-back">← Volver a informes</a>
+    <a href="/es/informes/" class="informe-back">← Volver a informes</a>
   </article>
 
   <style>
@@ -89,6 +91,6 @@ const { Content } = await render(entry)
       font-size: var(--text-caption);
       color: var(--text-dim);
     }
-    .informe-back:hover { color: var(--green); }
+    .informe-back:hover { color: var(--green-text); }
   </style>
 </Layout>

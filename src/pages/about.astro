@@ -1,42 +1,118 @@
 ---
+// /about/ — English technical "About". The clinical "Sobre mí" moved to
+// /es/about/; a visible link points there. No hreflang pair: the two pages
+// are not equivalent content, so only the language switch links them.
+// Facts used: src/data/profile.en.json, AboutBio.jsx (timeline, course
+// verification links), src/content/pages/about.md (D.O., clinical work).
 import Layout from '../layouts/Layout.astro'
-import AboutBio from '../components/AboutBio.jsx'
-import { getEntry, render } from 'astro:content'
+import Availability from '../components/site/Availability.astro'
 
-const entry = await getEntry('pages', 'about')
-const { Content } = await render(entry)
+const COURSES = [
+  { title: 'AI Engineering', issuer: 'IBM', year: '2025', href: 'https://coursera.org/verify/professional-cert/JF2GSC5966NA' },
+  { title: 'AI Agents & Agentic AI Architecture in Python', issuer: 'Vanderbilt University', year: '2025', href: 'https://coursera.org/verify/T1BWK1P3CEWP' },
+  { title: 'Computational Neuroscience', issuer: 'University of Washington', year: '2025', href: 'https://coursera.org/verify/YNQB7TYP4N8G' },
+]
 ---
-<Layout title="Sobre mí">
-  <section class="section about-page">
-    <span class="eyebrow" style="color: var(--sea)">SOBRE MÍ</span>
-    <h1 class="about-title">{entry.data.title}</h1>
-    <div class="about-prose">
-      <Content />
-    </div>
-    <AboutBio client:load />
+<Layout
+  title="About"
+  description="Alfonso Navarro: entry-level profile in AI & workflow automation, with a clinical background in osteopathy and biomechanics."
+  lang="en"
+  langSwitchHref="/es/about/"
+  ogImage="/og/home.png"
+>
+  <section class="section about-en" aria-labelledby="about-title">
+    <p class="eyebrow about-eyebrow">About</p>
+    <h1 id="about-title" class="about-title">Alfonso Navarro</h1>
+    <p class="about-lead">
+      I am looking for an entry-level role in AI &amp; workflow automation. My projects
+      focus on the checks around AI-assisted work: evaluating prompts against explicit
+      criteria, rule-based review with clear states, and handling time-ordered data
+      without leakage.
+    </p>
+
+    <h2 class="about-h2">How I work</h2>
+    <ul class="about-list">
+      <li>I keep saved results and say what each check shows and what it does not.</li>
+      <li>I record automatic checks and human review separately.</li>
+      <li>I build with AI coding assistants and say so in every project.</li>
+    </ul>
+    <p class="about-cta"><a class="btn btn--primary" href="/projects/">See projects</a></p>
+
+    <h2 class="about-h2">Background</h2>
+    <p class="about-p">
+      My background is clinical: osteopathy (D.O.) and biomechanics, with earlier
+      studies in physics. The clinical side of my work is described in Spanish in
+      <a href="/es/about/" hreflang="es">Sobre mí</a>.
+    </p>
+
+    <h2 class="about-h2">Online courses</h2>
+    <ul class="about-courses">
+      {COURSES.map(c => (
+        <li>
+          <a href={c.href} target="_blank" rel="noopener noreferrer">{c.title}<span class="visually-hidden"> (verification page, opens in a new tab)</span></a>
+          <span class="about-meta">{c.issuer} · Coursera · {c.year}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="about-h2">Availability</h2>
+    <Availability />
+
+    <p class="about-contact"><a class="btn btn--secondary" href="/contact/">Contact</a></p>
   </section>
 
   <style>
-    .about-page {
-      display: flex;
-      flex-direction: column;
-    }
+    .about-en { max-width: 720px; }
+    .about-eyebrow { color: var(--sea-text); font-size: var(--text-caption); }
     .about-title {
       font-family: var(--sans);
       font-size: var(--text-section);
       font-weight: 400;
       color: var(--text-heading);
-      margin: 16px 0 var(--space-subsection);
+      margin: 12px 0 16px;
     }
-    .about-prose {
+    .about-lead {
+      font-size: var(--text-body-lg);
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-sec);
+    }
+    .about-h2 {
+      font-family: var(--sans);
+      font-size: var(--text-subsection);
+      font-weight: 400;
+      color: var(--text-heading);
+      margin: 36px 0 12px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .about-p, .about-list li {
       font-size: var(--text-body);
       font-weight: 300;
+      line-height: 1.7;
       color: var(--text-sec);
-      line-height: 1.75;
-      max-width: 640px;
     }
-    .about-prose :global(p) {
-      margin: 0 0 18px;
+    .about-list { padding-left: 20px; }
+    .about-list li { padding: 3px 0; }
+    .about-cta { margin-top: 20px; }
+    .about-courses { list-style: none; }
+    .about-courses li {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
     }
+    .about-courses a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-size: var(--text-body);
+    }
+    .about-meta {
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+      color: var(--text-dim);
+    }
+    .about-contact { margin-top: 32px; }
   </style>
 </Layout>

@@ -1,0 +1,72 @@
+{
+  "home": {
+    "path": "/og/home.png",
+    "title": "AI-assisted workflows, built to be checked.",
+    "alt": "AI-assisted workflows, built to be checked. — AI & Workflow Automation (entry level). Four public projects with tests, saved results and stated limits. Moving to Latvia on 7 January 2027 · open to on-site work in Riga",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 132812,
+    "sha256": "7e3d7c927e4e1f65d279cb55220393993a6d67bb904cafca809ba0df06536b6b"
+  },
+  "projects": {
+    "path": "/og/projects.png",
+    "title": "Four public projects",
+    "alt": "Four public projects — Website · Prompt Lab v0.4 · Polar retrospective · Editorial checker v1.0 AI-assisted workflows, built to be checked.",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 124188,
+    "sha256": "0fbd22abdcc533aab4eb09b5069cc701a6a2e752e25c7ac7a6bcade566081128"
+  },
+  "website": {
+    "path": "/og/website.png",
+    "title": "kineticaai.com",
+    "alt": "kineticaai.com — Astro + React site, built with GitHub Actions and deployed to GitHub Pages. Astro · React · GitHub Pages",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 120432,
+    "sha256": "0567737d90cc45f89021a4c52281b4549c9695c34718b8685a6d76848d3448da"
+  },
+  "prompt-lab": {
+    "path": "/og/prompt-lab.png",
+    "title": "Prompt Lab v0.4",
+    "alt": "Prompt Lab v0.4 — Reviews LLM prompts: keep the prompt, ask to clarify, or propose a justified change. Saved results · automatic checks, partial human review",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 116143,
+    "sha256": "c16798fabde4ff470639ecc7a541a1e539620342867dc6698e722033007b6037"
+  },
+  "polar": {
+    "path": "/og/polar.png",
+    "title": "Polar retrospective study",
+    "alt": "Polar retrospective study — Watch metrics and diary symptoms, evaluated with a growing history and no future data. N=1, retrospective · no causal or clinical claims",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 127032,
+    "sha256": "d9cd4ed9d589933b642e3c4cc2663b38abef608b6e757099fc362700ef48f7cf"
+  },
+  "editorial-checker": {
+    "path": "/og/editorial-checker.png",
+    "title": "Editorial checker v1.0",
+    "alt": "Editorial checker v1.0 — Local rule-based review of Markdown files. JSON report and exit codes 0 / 1 / 2. No model calls · approval: false",
+    "lang": "en",
+    "width": 1200,
+    "height": 630,
+    "bytes": 124281,
+    "sha256": "846751902546c447a3e21f68c73d47aff64c913c12fa4bdb54d7da5b4b251fde"
+  },
+  "es": {
+    "path": "/og/es.png",
+    "title": "Kinetica AI — Osteopatía y biomecánica",
+    "alt": "Kinetica AI — Osteopatía y biomecánica — Consulta clínica y biomecánica. kineticaai.com/es",
+    "lang": "es",
+    "width": 1200,
+    "height": 630,
+    "bytes": 116607,
+    "sha256": "3a483bf8e88f8661b5ae7f0b798594a08727718e5db00fa1c62f4086ec8252d7"
+  }
+}

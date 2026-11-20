@@ -1,8 +1,9 @@
 ---
+// /lab/proyectos/ — Spanish project index. English equivalent: /projects/.
 import Layout from '../../../layouts/Layout.astro'
 import cases from '../../../data/portfolio.json'
 ---
-<Layout title="Proyectos y evidencia" description="Cuatro proyectos de desarrollo web, auditoría de prompts, análisis de datos y revisión editorial. Entregas, pruebas y limitaciones.">
+<Layout title="Proyectos y evidencia" description="Cuatro proyectos de desarrollo web, auditoría de prompts, análisis de datos y revisión editorial. Entregas, pruebas y limitaciones." lang="es" alternates={{ en: '/projects/', es: '/lab/proyectos/' }} ogImage="/og/es.png">
   <section class="section portfolio">
     <span class="eyebrow">PROYECTOS / ALFONSO NAVARRO</span>
     <h1>Proyectos, resultados<br/>y evidencia.</h1>
@@ -17,9 +18,10 @@ import cases from '../../../data/portfolio.json'
       ))}
     </div>
     <section class="method"><span class="eyebrow">CÓMO LEER LOS CASOS</span><h2>Entregas y alcance<br/>de las comprobaciones.</h2><p>Las pruebas documentan aspectos concretos de cada entrega. Se distingue entre funcionamiento técnico, revisión del contenido y utilidad en condiciones reales; las conclusiones se limitan a lo comprobado.</p><p class="note">Portfolio de Alfonso Navarro. Desarrollo y revisión con asistencia de IA; cada caso documenta las pruebas realizadas y el alcance de la entrega.</p></section>
+    <p class="lang-alt"><a href="/projects/" hreflang="en" lang="en">English version</a></p>
     <a class="back" href="/lab/">← Volver al Lab</a>
   </section>
   <style>
-    .portfolio{max-width:860px}.portfolio h1{font-family:var(--sans);font-size:clamp(2.7rem,6vw,4.5rem);line-height:1.12;font-weight:400;letter-spacing:-.045em;color:var(--text-heading);margin:20px 0 24px}.lead{max-width:650px;font-size:var(--text-body-lg);line-height:1.8}.overview{display:flex;flex-wrap:wrap;gap:16px 32px;margin:32px 0 44px;font-family:var(--mono);font-size:12px;color:var(--sea)}.projects{border-top:1px solid var(--border-active)}.project{display:grid;grid-template-columns:60px 1fr;gap:18px;padding:32px 0;border-bottom:1px solid var(--border-active)}.number{font-family:var(--mono);font-size:18px;color:var(--teal);padding-top:3px}.category{font-size:11px;letter-spacing:.06em}.project h2{font-size:var(--text-subsection);font-weight:400;margin:9px 0 12px}.project h2 a{color:var(--text-heading)}.project p{max-width:630px}.status{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--sea);background:var(--fill-teal);padding:6px 9px;margin:16px 0}.case-link{display:block;font-size:13px}.method{padding:52px 0 34px}.method h2{font-weight:400;font-size:var(--text-subsection);margin:16px 0}.method p{max-width:660px}.note{font-size:13px;margin-top:18px;color:var(--text-dim)}.back{font-family:var(--mono);font-size:12px}@media(max-width:480px){.project{grid-template-columns:28px 1fr;gap:12px}.overview{gap:12px 20px}.portfolio h1{font-size:2.7rem}}
+    .portfolio{max-width:860px}.portfolio h1{font-family:var(--sans);font-size:clamp(2.7rem,6vw,4.5rem);line-height:1.12;font-weight:400;letter-spacing:-.045em;color:var(--text-heading);margin:20px 0 24px}.lead{max-width:650px;font-size:var(--text-body-lg);line-height:1.8}.overview{display:flex;flex-wrap:wrap;gap:16px 32px;margin:32px 0 44px;font-family:var(--mono);font-size:13px;color:var(--sea-text)}.projects{border-top:1px solid var(--border-active)}.project{display:grid;grid-template-columns:60px 1fr;gap:18px;padding:32px 0;border-bottom:1px solid var(--border-active)}.number{font-family:var(--mono);font-size:18px;color:var(--teal-text);padding-top:3px}.category{font-size:13px;letter-spacing:.06em}.project h2{font-size:var(--text-subsection);font-weight:400;margin:9px 0 12px}.project h2 a{color:var(--text-heading)}.project p{max-width:630px}.status{display:inline-block;font-family:var(--mono);font-size:13px;color:var(--sea-text);background:var(--fill-teal);padding:6px 9px;margin:16px 0}.case-link{display:block;font-size:13px}.method{padding:52px 0 34px}.method h2{font-weight:400;font-size:var(--text-subsection);margin:16px 0}.method p{max-width:660px}.note{font-size:13px;margin-top:18px;color:var(--text-dim)}.back{font-family:var(--mono);font-size:13px}@media(max-width:480px){.project{grid-template-columns:28px 1fr;gap:12px}.overview{gap:12px 20px}.portfolio h1{font-size:2.7rem}}
   </style>
 </Layout>

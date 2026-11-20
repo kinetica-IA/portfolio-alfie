@@ -1,0 +1,31 @@
+---
+// /projects/editorial-checker/ — English case. Spanish equivalent: /lab/proyectos/io3-alma/.
+// The coordinator replaces the INSERT markers below with the components of
+// agents 2 and 3 (they are not imported yet so the build does not break).
+import Layout from '../../layouts/Layout.astro'
+import CaseStudy from '../../components/site/CaseStudy.astro'
+import ProjectDiagram from '../../components/evidence/ProjectDiagram.astro'
+import EditorialDemo from '../../components/demos/EditorialDemo.astro'
+import portfolio from '../../data/portfolio.json'
+
+const project = portfolio.find(p => p.slug === 'editorial-checker')!
+---
+<Layout
+  title={project.en.name}
+  description="Local Markdown review CLI with explicit rules, JSON output and exit codes 0 / 1 / 2. Never approves publication."
+  lang="en"
+  alternates={{ en: '/projects/editorial-checker/', es: '/lab/proyectos/io3-alma/' }}
+  ogImage="/og/editorial-checker.png"
+>
+  <CaseStudy project={project}>
+  <section slot="evidence" class="case-block" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <ProjectDiagram project="editorial-checker" />
+  </section>
+
+  <section slot="demo" class="case-block" aria-labelledby="demo-title">
+    <h2 id="demo-title">Synthetic samples and saved outputs</h2>
+    <EditorialDemo />
+  </section>
+  </CaseStudy>
+</Layout>

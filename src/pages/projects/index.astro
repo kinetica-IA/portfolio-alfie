@@ -1,0 +1,67 @@
+---
+// /projects/ — four project cards (proof, honest status, direct action).
+// Spanish equivalent: /lab/proyectos/ (reciprocal hreflang).
+import Layout from '../../layouts/Layout.astro'
+import ProjectCard from '../../components/site/ProjectCard.astro'
+import portfolio from '../../data/portfolio.json'
+
+const projects = [...portfolio].sort((a, b) => a.order - b.order)
+---
+<Layout
+  title="Projects"
+  description="Four projects: a prompt evaluation lab, a Markdown review tool, a one-person retrospective data analysis and this website. Each links to code, a sample or a live page."
+  lang="en"
+  alternates={{ en: '/projects/', es: '/lab/proyectos/' }}
+  ogImage="/og/projects.png"
+>
+  <section class="section projects-page" aria-labelledby="projects-title">
+    <p class="eyebrow projects-eyebrow">Projects · AI &amp; Workflow Automation</p>
+    <h1 id="projects-title" class="projects-title">Projects, results and evidence.</h1>
+    <p class="projects-lead">
+      Four projects built with AI assistance. Each card shows one proof, its status
+      and a direct link; limits are detailed inside each case.
+    </p>
+    <div class="projects-grid">
+      {projects.map((project, i) => <ProjectCard project={project} index={i} />)}
+    </div>
+    <p class="projects-es" lang="es"><a href="/lab/proyectos/" hreflang="es">Fichas en español</a></p>
+  </section>
+
+  <style>
+    .projects-page { max-width: 900px; }
+    .projects-eyebrow { color: var(--sea-text); font-size: var(--text-caption); }
+    .projects-title {
+      font-family: var(--sans);
+      font-size: clamp(2rem, 5.5vw, 3.25rem);
+      line-height: 1.15;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--text-heading);
+      margin: 12px 0 14px;
+    }
+    .projects-lead {
+      max-width: 620px;
+      font-size: var(--text-body);
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-sec);
+      margin-bottom: 28px;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .projects-es { margin-top: 28px; }
+    .projects-es a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-family: var(--mono);
+      font-size: var(--text-caption);
+    }
+    @media (max-width: 720px) {
+      .projects-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</Layout>

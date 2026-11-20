@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "demo": "polar-method",
+  "origin": "LOCAL",
+  "synthetic": true,
+  "label_en": "Synthetic data — illustrates the method, not results.",
+  "origin_note": "Deterministic synthetic series. The browser only recolours the training/evaluated split; no model is trained.",
+  "generator": "node src/data/demos/_tools/build-polar-fixtures.mjs",
+  "prng": "mulberry32",
+  "seed": 20261120,
+  "n_days": 40,
+  "method_from_public_summary": {
+    "source": "public/data/polar-retrospective-summary.json",
+    "min_train_observations": 30,
+    "min_training_class_count": 3,
+    "calendar_lags": [
+      0,
+      1
+    ]
+  },
+  "days": [
+    {
+      "day": 1,
+      "signal": 0.7,
+      "label": 1
+    },
+    {
+      "day": 2,
+      "signal": 0.69,
+      "label": 0
+    },
+    {
+      "day": 3,
+      "signal": 0.48,
+      "label": 0
+    },
+    {
+      "day": 4,
+      "signal": 0.72,
+      "label": 0
+    },
+    {
+      "day": 5,
+      "signal": 0.79,
+      "label": 1
+    },
+    {
+      "day": 6,
+      "signal": 0.76,
+      "label": 0
+    },
+    {
+      "day": 7,
+      "signal": 0.49,
+      "label": 1
+    },
+    {
+      "day": 8,
+      "signal": 0.74,
+      "label": 1
+    },
+    {
+      "day": 9,
+      "signal": 0.66,
+      "label": 1
+    },
+    {
+      "day": 10,
+      "signal": 0.56,
+      "label": 0
+    },
+    {
+      "day": 11,
+      "signal": 0.66,
+      "label": 1
+    },
+    {
+      "day": 12,
+      "signal": 0.37,
+      "label": 1
+    },
+    {
+      "day": 13,
+      "signal": 0.65,
+      "label": 0
+    },
+    {
+      "day": 14,
+      "signal": 0.71,
+      "label": 1
+    },
+    {
+      "day": 15,
+      "signal": 0.79,
+      "label": 1
+    },
+    {
+      "day": 16,
+      "signal": 0.49,
+      "label": 1
+    },
+    {
+      "day": 17,
+      "signal": 0.51,
+      "label": 0
+    },
+    {
+      "day": 18,
+      "signal": 0.58,
+      "label": 1
+    },
+    {
+      "day": 19,
+      "signal": 0.33,
+      "label": 1
+    },
+    {
+      "day": 20,
+      "signal": 0.43,
+      "label": 0
+    },
+    {
+      "day": 21,
+      "signal": 0.32,
+      "label": 0
+    },
+    {
+      "day": 22,
+      "signal": 0.56,
+      "label": 0
+    },
+    {
+      "day": 23,
+      "signal": 0.77,
+      "label": 1
+    },
+    {
+      "day": 24,
+      "signal": 0.54,
+      "label": 0
+    },
+    {
+      "day": 25,
+      "signal": 0.65,
+      "label": 0
+    },
+    {
+      "day": 26,
+      "signal": 0.62,
+      "label": 0
+    },
+    {
+      "day": 27,
+      "signal": 0.6,
+      "label": 0
+    },
+    {
+      "day": 28,
+      "signal": 0.36,
+      "label": 1
+    },
+    {
+      "day": 29,
+      "signal": 0.65,
+      "label": 1
+    },
+    {
+      "day": 30,
+      "signal": 0.63,
+      "label": 1
+    },
+    {
+      "day": 31,
+      "signal": 0.68,
+      "label": 0
+    },
+    {
+      "day": 32,
+      "signal": 0.82,
+      "label": 1
+    },
+    {
+      "day": 33,
+      "signal": 0.69,
+      "label": 1
+    },
+    {
+      "day": 34,
+      "signal": 0.77,
+      "label": 0
+    },
+    {
+      "day": 35,
+      "signal": 0.64,
+      "label": 1
+    },
+    {
+      "day": 36,
+      "signal": 0.57,
+      "label": 0
+    },
+    {
+      "day": 37,
+      "signal": 0.78,
+      "label": 1
+    },
+    {
+      "day": 38,
+      "signal": 0.88,
+      "label": 1
+    },
+    {
+      "day": 39,
+      "signal": 0.88,
+      "label": 1
+    },
+    {
+      "day": 40,
+      "signal": 0.7,
+      "label": 1
+    }
+  ]
+}

@@ -1,10 +1,12 @@
 ---
+// /lab/proyectos/<id>/ — Spanish case pages (ids: web, prompt-lab, polar,
+// io3-alma). English equivalents: /projects/<slug>/ (slug in portfolio.json).
 import Layout from '../../../layouts/Layout.astro'
 import cases from '../../../data/portfolio.json'
 export function getStaticPaths(){return cases.map(project=>({params:{id:project.id},props:{project}}))}
 const { project } = Astro.props
 ---
-<Layout title={project.name} description={project.intro}>
+<Layout title={project.name} description={project.intro} lang="es" alternates={{ en: `/projects/${project.slug}/`, es: `/lab/proyectos/${project.id}/` }} ogImage="/og/es.png">
   <article class="section case">
     <a class="back" href="/lab/proyectos/">← Ver todos los proyectos</a>
     <p class="eyebrow discipline">{project.discipline}</p><h1>{project.name}</h1><p class="lead">{project.intro}</p><p class="status">{project.status}</p>
@@ -18,9 +20,10 @@ const { project } = Astro.props
     <section class="limits"><h2>Limitaciones</h2><ul>{project.limits.map(item=><li>{item}</li>)}</ul></section>
     <section><h2>Siguiente paso</h2><p>{project.next}</p><h3>Medición</h3><p>{project.metric}</p><h3>Posibilidades de ampliación</h3><p>{project.scale}</p></section>
     <section class="credit"><h2>Desarrollo y asistencia de IA</h2><p>Proyecto del portfolio de Alfonso Navarro, desarrollado y revisado con asistencia de IA. Las pruebas citadas permiten examinar las ejecuciones realizadas y el alcance de la entrega; no atribuyen por sí solas la autoría de cada componente.</p></section>
+    <p class="lang-alt"><a href={`/projects/${project.slug}/`} hreflang="en" lang="en">English version</a></p>
     <a class="back" href="/lab/proyectos/">← Volver a los proyectos</a>
   </article>
   <style>
-    .case{max-width:720px}.back{font:12px var(--mono)}.discipline{margin-top:32px;font-size:12px}.case h1{font-weight:400;font-size:var(--text-section);line-height:1.2;margin:14px 0 20px;color:var(--text-heading)}.lead{font-size:var(--text-body-lg)}.status{font:11px var(--mono);color:var(--sea);margin:18px 0}.demo{display:inline-block;border:1px solid var(--border-active);padding:10px 16px;font-size:13px;margin-bottom:8px}.case section{padding:25px 0;border-top:1px solid var(--border)}h2{font-size:var(--text-subsection);font-weight:400;margin-bottom:14px}h3{font-size:var(--text-body);font-weight:500;margin:18px 0 8px}ul{padding-left:20px}li{padding:4px 0}.flow{padding-left:22px;font-family:var(--mono);font-size:13px}.limits{border-left:2px solid var(--warm);padding-left:18px!important}.credit{font-size:13px;color:var(--text-sec);margin-bottom:25px}.credit h2{font-size:var(--text-body)}table{width:100%;border-collapse:collapse;font-size:13px;margin:18px 0}caption{text-align:left;color:var(--text-sec);margin-bottom:12px;line-height:1.7}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border)}
+    .case{max-width:720px}.back{font:13px var(--mono)}.discipline{margin-top:32px;font-size:13px}.case h1{font-weight:400;font-size:var(--text-section);line-height:1.2;margin:14px 0 20px;color:var(--text-heading)}.lead{font-size:var(--text-body-lg)}.status{font:13px var(--mono);color:var(--sea-text);margin:18px 0}.demo{display:inline-block;border:1px solid var(--border-active);padding:10px 16px;font-size:13px;margin-bottom:8px}.case section{padding:25px 0;border-top:1px solid var(--border)}h2{font-size:var(--text-subsection);font-weight:400;margin-bottom:14px}h3{font-size:var(--text-body);font-weight:500;margin:18px 0 8px}ul{padding-left:20px}li{padding:4px 0}.flow{padding-left:22px;font-family:var(--mono);font-size:13px}.limits{border-left:2px solid var(--warm);padding-left:18px!important}.credit{font-size:13px;color:var(--text-sec);margin-bottom:25px}.credit h2{font-size:var(--text-body)}table{width:100%;border-collapse:collapse;font-size:13px;margin:18px 0}caption{text-align:left;color:var(--text-sec);margin-bottom:12px;line-height:1.7}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border)}
   </style>
 </Layout>

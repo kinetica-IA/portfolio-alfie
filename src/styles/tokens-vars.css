@@ -16,8 +16,18 @@
   --text: #3d5c57;
   --text-heading: #34504b;
   --text-sec: #4d6e68;
-  --text-dim: #7a9e97;
+  --text-dim: #506e68;          /* 5.20:1 on --bg (was #7a9e97, 2.74:1) */
+  --text-dim-soft: #7a9e97;     /* decoration only */
   --text-metric: #34504b;
+
+  /* Text-safe accent variants (same hue, >= 5.1:1 on --bg) */
+  --green-text: #4b7256;
+  --sea-text: #4c706a;
+  --teal-text: #576d6b;
+  --clay-text: #8b5e53;
+  --warm-text: #935b34;
+  --link: var(--sea-text);
+  --focus-ring: #708d8a;        /* 3.35:1 on --bg */
 
   /* Extended */
   --slate: #6a8690;
@@ -45,13 +55,16 @@
   --shadow: rgba(26, 42, 40, 0.06);
 
   /* Typography scale */
-  --text-hero: clamp(3.5rem, 6vw, 4.5rem);
+  --text-hero: clamp(2.6rem, 11vw, 4.5rem);
   --text-section: clamp(2rem, 3.5vw, 2.5rem);
   --text-subsection: clamp(1.25rem, 2vw, 1.5rem);
   --text-body-lg: 1.125rem;
   --text-body: 1rem;
   --text-caption: 0.8125rem;
   --text-eyebrow: 0.9375rem;
+
+  /* Fixed header height */
+  --header-h: 56px;
 
   /* Spacing scale */
   --space-section: clamp(48px, 6vh, 72px);

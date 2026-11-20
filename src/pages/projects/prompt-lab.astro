@@ -1,0 +1,87 @@
+---
+// /projects/prompt-lab/ — English case. Spanish equivalent: /lab/proyectos/prompt-lab/.
+// The coordinator replaces the INSERT markers below with the components of
+// agents 2 and 3 (they are not imported yet so the build does not break).
+import Layout from '../../layouts/Layout.astro'
+import CaseStudy from '../../components/site/CaseStudy.astro'
+import ProjectDiagram from '../../components/evidence/ProjectDiagram.astro'
+import PromptLabDemo from '../../components/demos/PromptLabDemo.astro'
+import portfolio from '../../data/portfolio.json'
+
+const project = portfolio.find(p => p.slug === 'prompt-lab')!
+const history = project.en.history
+---
+<Layout
+  title={project.en.name}
+  description="Prompt auditor v0.4: 10/10 automatic checks vs 8/10 baseline on 18 Nov 2026, with partial human review. 9 active and 4 reserved cases."
+  lang="en"
+  alternates={{ en: '/projects/prompt-lab/', es: '/lab/proyectos/prompt-lab/' }}
+  ogImage="/og/prompt-lab.png"
+>
+  <CaseStudy project={project}>
+  <section slot="evidence" class="case-block" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <ProjectDiagram project="prompt-lab" />
+  </section>
+
+  <section slot="demo" class="case-block" aria-labelledby="demo-title">
+    <h2 id="demo-title">Saved results: original, revision and why</h2>
+    <PromptLabDemo />
+  </section>
+
+  <section slot="extra" class="case-block history" aria-labelledby="history-title">
+    <h2 id="history-title" class="visually-hidden">Earlier evaluation</h2>
+    <details class="history-details">
+      <summary>{history.summary}</summary>
+      <table>
+        <caption>{history.caption}</caption>
+        <thead>
+          <tr>{history.columns.map((col: string) => <th scope="col">{col}</th>)}</tr>
+        </thead>
+        <tbody>
+          {history.rows.map((row: string[]) => (
+            <tr><th scope="row">{row[0]}</th><td>{row[1]}</td><td>{row[2]}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p>{history.note}</p>
+    </details>
+  </section>
+  </CaseStudy>
+</Layout>
+
+<style>
+  .history-details {
+    border: 1px solid var(--border-active);
+    padding: 0 16px;
+  }
+  .history-details summary {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    color: var(--text-heading);
+  }
+  .history-details[open] summary { border-bottom: 1px solid var(--border); }
+  .history-details table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    margin: 16px 0;
+  }
+  .history-details caption {
+    text-align: left;
+    color: var(--text-sec);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .history-details th,
+  .history-details td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+</style>

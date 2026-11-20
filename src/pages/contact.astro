@@ -1,0 +1,14 @@
+---
+// /contact/ — English contact page. The clinical contact stays at /es/#contacto.
+import Layout from '../layouts/Layout.astro'
+import ContactBlock from '../components/site/ContactBlock.astro'
+---
+<Layout
+  title="Contact"
+  description="Contact Alfonso Navarro by email, LinkedIn or GitHub. Based in Ogre, Latvia, from 7 January 2027; open to daily on-site work in Riga."
+  lang="en"
+  langSwitchHref="/es/#contacto"
+  ogImage="/og/home.png"
+>
+  <ContactBlock id="contact" headingLevel={1} />
+</Layout>

@@ -1,4 +1,6 @@
 ---
+// /lab/ — Spanish technical notebook. Stays at its URL with lang="es".
+// Drafts (lyme-pipeline, ia-osteopatia) remain excluded by the draft filter.
 import Layout from '../../layouts/Layout.astro'
 import { getCollection } from 'astro:content'
 
@@ -12,9 +14,9 @@ const entries = (await getCollection('lab'))
   .filter(e => !e.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 ---
-<Layout title="Lab">
+<Layout title="Lab" lang="es" langSwitchHref="/projects/" ogImage="/og/es.png">
   <section class="section lab-page">
-    <span class="eyebrow" style="color: var(--teal)">LAB</span>
+    <span class="eyebrow" style="color: var(--teal-text)">LAB</span>
     <h1 class="lab-title">Cuaderno de trabajo</h1>
     <p style="margin-bottom:24px"><a href="/lab/proyectos/">Explorar los cuatro proyectos y sus evidencias →</a></p>
     <div class="lab-grid">
@@ -69,13 +71,13 @@ const entries = (await getCollection('lab'))
       border-top-color: var(--warm);
       background: var(--fill-warm);
     }
-    .lab-card-featured .lab-card-kind { color: var(--warm); }
-    .lab-card-featured .lab-card-cta { color: var(--warm); }
+    .lab-card-featured .lab-card-kind { color: var(--warm-text); }
+    .lab-card-featured .lab-card-cta { color: var(--warm-text); }
     .lab-card-kind {
       font-family: var(--mono);
       font-size: var(--text-eyebrow);
       letter-spacing: 0.08em;
-      color: var(--teal);
+      color: var(--teal-text);
     }
     .lab-card-title {
       font-family: var(--sans);
@@ -92,7 +94,7 @@ const entries = (await getCollection('lab'))
     .lab-card-cta {
       font-family: var(--mono);
       font-size: var(--text-caption);
-      color: var(--teal);
+      color: var(--teal-text);
       margin-top: auto;
     }
   </style>

@@ -1,0 +1,25 @@
+---
+// /es/ — clinical home in Spanish (previously at /). Content unchanged:
+// the existing App (Hero, informes, lab, contacto). MedicalBusiness schema
+// only on the Spanish clinical pages.
+import Layout from '../../layouts/Layout.astro'
+import App from '../../App.jsx'
+import { getCollection } from 'astro:content'
+
+const informesEntries = await getCollection('informes')
+const labEntries = await getCollection('lab')
+
+const informes = informesEntries
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
+
+// Drafts (lyme-pipeline, ia-osteopatia) stay excluded.
+const lab = labEntries
+  .filter(e => !e.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
+---
+
+<Layout lang="es" medicalSchema alternates={{ en: '/', es: '/es/' }} ogImage="/og/es.png">
+  <App client:load informes={informes} lab={lab} />
+</Layout>

@@ -7,14 +7,14 @@ export default function InformesPreview({ items = [] }) {
 
   return (
     <section className="section informes-preview" ref={ref}>
-      <span className="eyebrow" style={{ color: 'var(--green)' }}>INFORMES</span>
+      <span className="eyebrow" style={{ color: 'var(--green-text)' }}>INFORMES</span>
       <h2 className="ip-title">Casos clínicos</h2>
 
       <div className="ip-grid">
         {items.slice(0, 3).map((item, i) => (
           <a
             key={item.slug}
-            href={`/informes/${item.slug}`}
+            href={`/es/informes/${item.slug}/`}
             className="ip-card"
             style={{
               opacity: revealed ? 1 : 0,
@@ -29,7 +29,7 @@ export default function InformesPreview({ items = [] }) {
         ))}
       </div>
 
-      <a href="/informes" className="ip-see-all">Ver todos los informes →</a>
+      <a href="/es/informes/" className="ip-see-all">Ver todos los informes →</a>
 
       <style>{`
         .ip-title {
@@ -59,7 +59,7 @@ export default function InformesPreview({ items = [] }) {
         }
         .ip-card:hover {
           border-color: var(--border-active);
-          border-top-color: var(--green);
+          border-top-color: var(--green-text);
           background: var(--fill-green);
         }
         .ip-card-title {
@@ -77,7 +77,7 @@ export default function InformesPreview({ items = [] }) {
         .ip-card-cta {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--green);
+          color: var(--green-text);
           margin-top: auto;
         }
         .ip-see-all {
@@ -87,7 +87,7 @@ export default function InformesPreview({ items = [] }) {
           font-size: var(--text-caption);
           color: var(--text-dim);
         }
-        .ip-see-all:hover { color: var(--green); }
+        .ip-see-all:hover { color: var(--green-text); }
       `}</style>
     </section>
   )

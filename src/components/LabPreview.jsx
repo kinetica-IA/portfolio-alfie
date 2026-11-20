@@ -7,7 +7,7 @@ export default function LabPreview({ items = [] }) {
 
   return (
     <section className="section lab-preview" ref={ref}>
-      <span className="eyebrow" style={{ color: 'var(--teal)' }}>LAB</span>
+      <span className="eyebrow" style={{ color: 'var(--teal-text)' }}>LAB</span>
       <h2 className="lp-title">Cuaderno de trabajo</h2>
 
       <div className="lp-grid">
@@ -59,7 +59,7 @@ export default function LabPreview({ items = [] }) {
         }
         .lp-card:hover {
           border-color: var(--border-active);
-          border-top-color: var(--teal);
+          border-top-color: var(--teal-text);
           background: var(--fill-teal);
         }
         .lp-card-title {
@@ -77,7 +77,7 @@ export default function LabPreview({ items = [] }) {
         .lp-card-cta {
           font-family: var(--mono);
           font-size: var(--text-caption);
-          color: var(--teal);
+          color: var(--teal-text);
           margin-top: auto;
         }
         .lp-see-all {
@@ -87,7 +87,7 @@ export default function LabPreview({ items = [] }) {
           font-size: var(--text-caption);
           color: var(--text-dim);
         }
-        .lp-see-all:hover { color: var(--teal); }
+        .lp-see-all:hover { color: var(--teal-text); }
       `}</style>
     </section>
   )

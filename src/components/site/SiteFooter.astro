@@ -1,0 +1,82 @@
+---
+// Site footer in the page language. Replaces FooterField.jsx in Layout.astro
+// (FooterField is left untouched in the repo, no longer mounted).
+interface Props { lang?: 'en' | 'es' }
+const { lang = 'en' } = Astro.props
+const year = new Date().getFullYear()
+const links = lang === 'es'
+  ? [
+      { label: 'Contacto', href: '/es/#contacto' },
+      { label: 'Profesionales', href: '/es/profesionales/' },
+      { label: 'English', href: '/', hreflang: 'en', lang: 'en' },
+    ]
+  : [
+      { label: 'Projects', href: '/projects/' },
+      { label: 'About', href: '/about/' },
+      { label: 'Contact', href: '/contact/' },
+      { label: 'Español', href: '/es/', hreflang: 'es', lang: 'es' },
+    ]
+const label = lang === 'es' ? 'Pie de página' : 'Footer'
+---
+<footer class="site-footer">
+  <div class="footer-content">
+    <span class="footer-brand" aria-hidden="true">KINETICA AI</span>
+    <nav class="footer-links" aria-label={label}>
+      {links.map((l, i) => (
+        <>
+          {i > 0 && <span class="footer-sep" aria-hidden="true">·</span>}
+          <a href={l.href} hreflang={l.hreflang} lang={l.lang}>{l.label}</a>
+        </>
+      ))}
+    </nav>
+    <span class="footer-copy">© {year} Alfonso Navarro</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer { position: relative; width: 100%; }
+  .footer-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 60px 24px;
+    gap: 12px;
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: var(--sans);
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: var(--text-heading);
+    opacity: 0.6;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0 8px;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+  }
+  .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 4px;
+    color: var(--text-dim);
+  }
+  .footer-links a:hover { color: var(--text-heading); }
+  .footer-sep { color: var(--text-dim-soft); }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+</style>

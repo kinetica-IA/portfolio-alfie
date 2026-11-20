@@ -25,7 +25,54 @@
     "metric": "Prueba de uso propuesta con cinco participantes: registrar si completan ambas tareas, cuánto tardan y qué dificultades encuentran.",
     "scale": "La estructura permite incorporar contenido con un esquema común. Quedan por medir el comportamiento bajo carga y los resultados de uso.",
     "url": "https://www.kineticaai.com/",
-    "cta": "Visitar la web"
+    "cta": "Visitar la web",
+    "slug": "website",
+    "order": 4,
+    "en": {
+      "name": "This website",
+      "discipline": "Web development · Astro and React",
+      "status": "Live · static site on GitHub Pages",
+      "cardProof": "Deploys through GitHub Actions; 7 of 18 pages checked for HTTP 200 on 18 Nov",
+      "summary": "The static site you are reading: an English section with four projects and a Spanish section with clinical information.",
+      "glance": {
+        "what": "A static Astro and React site on GitHub Pages: English projects at the root, clinical pages in Spanish under /es/.",
+        "did": "Developed and reviewed with AI assistance. Who wrote each component is not separately documented.",
+        "proof": "GitHub Actions builds and deploys it on every push to main. On 18 Nov 2026, 7 of the 18 pages then built returned HTTP 200.",
+        "limits": "No usability test, conversion data or Lighthouse audit yet. The structure changed after the 18 Nov check."
+      },
+      "flow": [
+        "Content and navigation",
+        "Static build with Astro",
+        "Publishing to GitHub Pages through GitHub Actions",
+        "Checks on pages and contact links"
+      ],
+      "proof": [
+        "Static build with Astro and React; the deployment workflow runs npm ci and npm run build, then publishes the output to GitHub Pages.",
+        "The 18 Nov 2026 check covered 7 of the 18 pages then built: home, project index, four case pages and the Polar article. All returned HTTP 200 and contained contact links.",
+        "Code and publishing process are kept in a repository with change history."
+      ],
+      "limits": [
+        "Technical checks do not assess ease of use or confirm that messages actually arrive.",
+        "No conversion measurement or Lighthouse audit has been done yet.",
+        "The site was reorganised after the 18 Nov check (English root, Spanish section under /es/). That check has not been repeated on the new structure."
+      ],
+      "next": "Check whether people find the projects and the contact details easily.",
+      "metric": "Proposed usability test with five participants: whether they complete both tasks, how long it takes and where they get stuck. Not run yet.",
+      "actions": [
+        {
+          "label": "Visit the site",
+          "href": "/",
+          "kind": "site"
+        },
+        {
+          "label": "Spanish section",
+          "href": "/es/",
+          "kind": "site",
+          "hreflang": "es"
+        }
+      ],
+      "aiNote": "Part of my portfolio, developed and reviewed with AI assistance. The checks cited here show what was run and the scope of the delivery; on their own they do not attribute authorship of each component."
+    }
   },
   {
     "id": "prompt-lab",
@@ -53,7 +100,83 @@
     "metric": "En usos futuros, registrar si el prompt recomendado cumple el objetivo, qué correcciones necesita y el tiempo dedicado. Esas mediciones todavía no están disponibles.",
     "scale": "El sistema de registro admite nuevos casos y revisiones. La calidad entre modelos, el coste y la estabilidad requieren mediciones específicas.",
     "url": "https://github.com/kinetica-IA/prompt-lab",
-    "cta": "Consultar código y documentación"
+    "cta": "Consultar código y documentación",
+    "slug": "prompt-lab",
+    "order": 1,
+    "en": {
+      "name": "Prompt Lab",
+      "discipline": "Prompt auditing · evaluation and traceability",
+      "status": "v0.4 · personal use",
+      "cardProof": "18 Nov: v0.4 passed 10/10 automatic checks vs 8/10 baseline; partial human review",
+      "summary": "A prompt auditor that keeps what already works, asks for clarification on decisive points and proposes justified changes.",
+      "glance": {
+        "what": "A prompt auditor for Claude Code. It keeps prompts that already work, asks about decisive doubts or proposes a justified change.",
+        "did": "Chose v0.4 for my own work and retired case D06. Developed and reviewed with AI assistance.",
+        "proof": "18 Nov 2026, 10 cases: v0.4 passed 10/10 automatic checks, the baseline 8/10. Human review is partial and logged separately.",
+        "limits": "Automatic checks do not prove content quality. The 4 reserved cases have not been run; time savings are not measured."
+      },
+      "flow": [
+        "Define the task and its constraints",
+        "Audit the prompt",
+        "Check the output contract and review the content",
+        "Record results and decide on use"
+      ],
+      "proof": [
+        "The public delivery contains auditor v0.4, nine active development cases after retiring D06, four reserved cases and local logging tools.",
+        "Reported local checks on the distributed copy: 9 Python tests and 6 Node tests pass.",
+        "The 18 Nov 2026 evaluation recorded 20 responses on 10 cases: the baseline passed 8/10 automatic checks and v0.4 passed 10/10. Nine explicit human verdicts are kept; human review coverage is partial and kept apart from the assistant's recommendations.",
+        "The local scripts prepare inputs, import responses and check evidence. They do not call models. Human verdicts and model reviews are recorded as different kinds.",
+        "The earlier 10-case result is kept with its original denominator and is not recalculated."
+      ],
+      "limits": [
+        "An automatic check does not replace reviewing the content.",
+        "Choosing v0.4 for personal use does not show general superiority or full formal acceptance. The 4 reserved cases have not been run.",
+        "Time savings and the usefulness of the recommended prompts in the final tasks have not been measured."
+      ],
+      "next": "Use v0.4 on real tasks and record concrete needs or failures, without starting new comparisons by default.",
+      "metric": "In future use: whether the recommended prompt meets its goal, which corrections it needs and the time spent. These measurements are not available yet.",
+      "actions": [
+        {
+          "label": "Code and docs (GitHub)",
+          "href": "https://github.com/kinetica-IA/prompt-lab",
+          "kind": "code",
+          "external": true
+        },
+        {
+          "label": "16 Nov results (JSON)",
+          "href": "/portfolio-demo/PROMPT-LAB-EVALUACION-REAL-2026-11-16.json",
+          "kind": "sample"
+        },
+        {
+          "label": "Synthetic replay example (JSON)",
+          "href": "/portfolio-demo/PROMPT-LAB-REPLAY-SINTETICO.json",
+          "kind": "sample"
+        }
+      ],
+      "history": {
+        "summary": "Earlier evaluation (16 Nov 2026, 10 cases, not v0.4)",
+        "caption": "Historical record: ten cases per variant. No human review was recorded in that run. This table does not correspond to v0.4.",
+        "columns": [
+          "Variant",
+          "Cases passing the contract",
+          "Critical failures"
+        ],
+        "rows": [
+          [
+            "Baseline",
+            "8/10",
+            "1"
+          ],
+          [
+            "Candidate",
+            "9/10",
+            "1"
+          ]
+        ],
+        "note": "In this earlier evaluation, both variants failed one critical case about pending research. The original result is kept as a historical record; v0.4 and its later evaluation are described above."
+      },
+      "aiNote": "Part of my portfolio, developed and reviewed with AI assistance. The checks cited here show what was run and the scope of the delivery; on their own they do not attribute authorship of each component."
+    }
   },
   {
     "id": "polar",
@@ -82,7 +205,62 @@
     "metric": "Correspondencia entre exportaciones y CSV comprobada para las cinco variables de entrada, sin discrepancias en valores ni datos ausentes. Este resultado mide la coherencia de los datos, no la capacidad de predicción clínica.",
     "scale": "El proceso podría adaptarse a otros archivos tras validar su estructura. Incorporar más personas exigiría revisar el diseño y la evaluación estadística.",
     "url": "https://www.kineticaai.com/lab/polar-retrospectivo/",
-    "cta": "Leer el análisis"
+    "cta": "Leer el análisis",
+    "slug": "polar",
+    "order": 3,
+    "en": {
+      "name": "Polar retrospective",
+      "discipline": "Data analysis · time series",
+      "status": "N=1 retrospective · analysis published",
+      "cardProof": "5 input variables reconciled from raw export to CSV with no discrepancies",
+      "summary": "A one-person retrospective study of watch metrics and a symptom diary, evaluated without using future data.",
+      "glance": {
+        "what": "A retrospective study of one person (N=1): Polar watch metrics and symptoms recorded in a diary.",
+        "did": "Kept the diary and ran the analysis on my own records, with AI assistance and code checks. The diary stays private.",
+        "proof": "61 paired dates; each evaluated record stays out of its own training. 5 input variables match from raw export to CSV.",
+        "limits": "N=1: no causal, clinical or prospective claims. For fatigue, the Brier score is worse than the simple reference."
+      },
+      "flow": [
+        "Review exports and dates",
+        "Join the sources and build calendar lags",
+        "Evaluate with an expanding history",
+        "Publish aggregated results and limits"
+      ],
+      "proof": [
+        "The published analysis has 61 paired dates. The autonomic target has 55 usable records because some diary scores are missing; they are not filled with invented values.",
+        "Fixed setup chosen before seeing the results: five feature families with calendar lags 0 and 1, logistic regression with fixed parameters, no feature or hyperparameter search. Median imputation and scaling are fitted on the training history only.",
+        "Evaluation starts after 30 observations and moves forward by date; the observation being evaluated never enters its own training.",
+        "On 18 Nov 2026 the raw export was reconciled with the five CSV columns used in the analysis (216 RMSSD, 214 ANS, 214 recovery, 218 sleep-wake and 225 sleep-interruption values): values and missing entries match.",
+        "The check includes temporal coverage, file hashes and eight synthetic-data tests, kept in a private closure record."
+      ],
+      "limits": [
+        "N=1: it does not show causality or clinical or prospective validity, and it does not generalise to other people.",
+        "The reconciliation covers the direct path from export to the five-variable CSV. It does not certify the historical run of the intermediate Parquet files and leaves out the excluded PPI windows.",
+        "Brain fog has a single observation below its threshold, so its result is unstable. For fatigue, the Brier score (0.251) is worse than the reference (0.237)."
+      ],
+      "next": "Keep the study and its documentation as a retrospective analysis case. A prospective validation or a study in other people would need a new design.",
+      "metric": "Export-to-CSV match checked for the five input variables, with no discrepancies in values or missing entries. This measures data consistency, not clinical predictive ability.",
+      "actions": [
+        {
+          "label": "Read the analysis (Spanish)",
+          "href": "/lab/polar-retrospectivo/",
+          "kind": "case",
+          "hreflang": "es"
+        },
+        {
+          "label": "Aggregated results (JSON)",
+          "href": "/data/polar-retrospective-summary.json",
+          "kind": "sample"
+        },
+        {
+          "label": "Synthetic sample (.zip)",
+          "href": "/portfolio-demo/POLAR-DEMO-SINTETICA.zip",
+          "kind": "sample",
+          "download": true
+        }
+      ],
+      "aiNote": "Part of my portfolio, developed and reviewed with AI assistance. The checks cited here show what was run and the scope of the delivery; on their own they do not attribute authorship of each component."
+    }
   },
   {
     "id": "io3-alma",
@@ -110,6 +288,50 @@
     "metric": "Doce pruebas superadas y nueve archivos examinados. Falta medir las incidencias relevantes detectadas y omitidas frente a una revisión humana.",
     "scale": "La ampliación a más archivos o reglas exige medir tiempos de ejecución y cobertura, con un conjunto de referencia revisado por personas.",
     "url": null,
-    "cta": null
+    "cta": null,
+    "slug": "editorial-checker",
+    "order": 2,
+    "en": {
+      "name": "Editorial checker",
+      "discipline": "Markdown review CLI · rule-based checks",
+      "status": "v1.0 · manual run",
+      "cardProof": "JSON output with exit codes 0 / 1 / 2; 12 acceptance tests reported passing",
+      "summary": "A local command-line tool that reviews Markdown with explicit rules and leaves the decision to a person.",
+      "glance": {
+        "what": "A local command-line tool that reviews Markdown with explicit rules. Standard-library Python, no model calls, JSON output.",
+        "did": "Developed and reviewed with AI assistance, from lessons of the archived IO3/ALMA prototype.",
+        "proof": "Exit codes 0 no findings / 1 needs review / 2 error; always clinical_or_publication_approval: false. 12 acceptance tests reported passing.",
+        "limits": "No precision or false-negative estimate. It does not check facts, DOIs online or personal data, and never approves publication."
+      },
+      "flow": [
+        "Select Markdown files",
+        "Apply local rules",
+        "Report file, line and status",
+        "Human review of the findings"
+      ],
+      "proof": [
+        "Exit code 0: no warnings under this limited rule set (not a quality or publishing approval). Exit code 1: located warnings that a person must interpret. Exit code 2: files not examined, incomplete input or failures; never approval by default.",
+        "The output always includes clinical_or_publication_approval: false.",
+        "Twelve acceptance tests are reported passing, including read failures, out-of-scope links, incomplete headers, missing paths, quotes and negations, and CLI exit codes.",
+        "Run on nine current Markdown files from this site: no warnings under these rules. Checked with Python 3.13.11.",
+        "Read-only: it writes JSON to stdout, does not modify files and is not connected to the build, CI, hooks or publishing."
+      ],
+      "limits": [
+        "No warnings does not allow estimating precision or false negatives without a reference set reviewed by people.",
+        "It does not verify factual or clinical accuracy, DOIs over the network, citation matching or personal data. It grants no clinical approval or permission to publish.",
+        "The original IO3/ALMA platform stays archived and is not reactivated."
+      ],
+      "next": "Measure how useful it is as support for editorial review, and add rules only when documented needs appear.",
+      "metric": "Twelve tests passed and nine files examined. Relevant findings caught and missed, compared with a human review, are not measured yet.",
+      "actions": [
+        {
+          "label": "Synthetic sample (.zip)",
+          "href": "/portfolio-demo/IO3-ALMA-DEMO-LOCAL.zip",
+          "kind": "sample",
+          "download": true
+        }
+      ],
+      "aiNote": "Part of my portfolio, developed and reviewed with AI assistance. The checks cited here show what was run and the scope of the delivery; on their own they do not attribute authorship of each component."
+    }
   }
 ]

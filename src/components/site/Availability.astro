@@ -1,0 +1,49 @@
+---
+// Availability facts (Ogre from 7 Jan 2027, daily on-site in Riga, English level).
+// Source of truth: src/data/profile.en.json. Static, no JS.
+import profile from '../../data/profile.en.json'
+
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props
+---
+<dl class:list={['avail', { 'avail--compact': compact }]}>
+  {profile.availability.map(item => (
+    <div class="avail-row">
+      <dt>{item.term}</dt>
+      <dd>{item.detail}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .avail {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+  }
+  .avail-row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  dt {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+  }
+  dd {
+    margin: 0;
+    font-size: var(--text-body);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .avail--compact dd { font-size: 0.9375rem; }
+  @media (max-width: 420px) {
+    .avail-row { grid-template-columns: 1fr; gap: 0; }
+    .avail-row + .avail-row { margin-top: 6px; }
+  }
+</style>

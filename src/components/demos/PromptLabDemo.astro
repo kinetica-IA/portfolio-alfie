@@ -1,0 +1,207 @@
+---
+/**
+ * PromptLabDemo — original prompt → v0.4 revision → why. No props. One instance per page.
+ * Data: src/data/demos/prompt-lab/prompt-lab-demo.json (public artefacts only; see README.md).
+ * No saved v0.4 output is public, so step 2 says so and shows the historical
+ * 16 Nov evaluation (10 cases, not v0.4) with its own label. Nothing runs live.
+ */
+import data from '../../data/demos/prompt-lab/prompt-lab-demo.json'
+
+const repo = data.public_repo
+const short = repo.commit.slice(0, 7)
+const repoAt = `${repo.url}/tree/${repo.commit}`
+const fileAt = (path: string) => `${repo.url}/blob/${repo.commit}/${path}`
+const hist = data.historical_summary
+const replay = data.synthetic_replay
+const shortCase = (id: string) => id.split('_')[0]
+const CONTEXT_KEYS: Record<string, string> = {
+  environment: 'environment',
+  goal: 'goal',
+  audience: 'audience',
+  success: 'success',
+  retrieved_document: 'retrieved document',
+  user_answers: 'user answers',
+}
+const DECISION_EN: Record<string, string> = { keep: 'Kept as is', clarify: 'Asked for clarification', improve: 'Revised' }
+---
+<section class="pl" data-pl-demo aria-labelledby="pl-title">
+  <header class="pl-head">
+    <p class="pl-eyebrow">Interactive evidence · Prompt Lab auditor {repo.auditor_version}</p>
+    <h2 id="pl-title">Original prompt → v0.4 revision → why</h2>
+    <p>Nothing runs live on this page: no model, no API, no network request. Every result below is a saved file with its source.</p>
+    <ul class="pl-facts">
+      <li><span class="pl-k">Current bank</span> <strong>9 active / 4 reserved, not run</strong></li>
+      <li><span class="pl-k">Public repository</span> <a href={repoAt}>kinetica-IA/prompt-lab @ <code>{short}</code></a> · {repo.commit_date.slice(0, 10)} · auditor {repo.auditor_version}, infrastructure {repo.infrastructure_version}</li>
+    </ul>
+    <div class="pl-notice" role="note">
+      <p><span class="pl-badge pl-badge--pending">PENDING</span> <strong>No saved v0.4 output is public yet.</strong></p>
+      <p>The public repository ships the v0.4 auditor and the development bank, but no real responses. Outputs from the 18 Nov 2026 v0.4 evaluation are not public, so none are shown. For each case you see the public input, the expected behaviour, and what the <em>historical 16 Nov evaluation (10 cases, not v0.4)</em> saved.</p>
+    </div>
+  </header>
+
+  <nav class="pl-index" data-tabs-index aria-label="Prompt Lab cases">
+    <ol>
+      {data.cases.map((c) => <li><a href={`#pl-case-${c.id}`}>{shortCase(c.id)} · {c.title_en}</a></li>)}
+    </ol>
+  </nav>
+
+  <div class="pl-tablist" data-tablist role="tablist" aria-label="Prompt Lab cases" hidden>
+    {data.cases.map((c) => (
+      <button type="button" role="tab" id={`pl-tab-${c.id}`} aria-controls={`pl-case-${c.id}`} aria-selected="false" tabindex="-1">
+        <span class="pl-tab-id">{shortCase(c.id)}</span> {c.title_en}
+      </button>
+    ))}
+  </div>
+
+  {data.cases.map((c) => (
+    <article class="pl-case" id={`pl-case-${c.id}`} data-tabpanel aria-labelledby={`pl-case-${c.id}-h`}>
+      <h3 id={`pl-case-${c.id}-h`}>
+        <code>{c.id}</code> · {c.title_en}
+        {c.critical && <span class="pl-badge pl-badge--critical">Critical case</span>}
+      </h3>
+
+      <ol class="pl-steps">
+        <li class="pl-step">
+          <h4>1 · Original prompt</h4>
+          <blockquote class="pl-prompt" lang="es">{c.original.prompt}</blockquote>
+          <details class="pl-details">
+            <summary>Context given to the auditor</summary>
+            <dl class="pl-context" lang="es">
+              {Object.entries(c.original.context).map(([k, v]) => (<><dt lang="en">{CONTEXT_KEYS[k] ?? k}</dt><dd>{String(v)}</dd></>))}
+            </dl>
+          </details>
+          <p class="pl-src">Public input (Spanish, verbatim) · <a href={fileAt(c.original.source.path)}><code>{c.original.source.path}</code></a> @ <code>{short}</code></p>
+        </li>
+
+        <li class="pl-step">
+          <h4>2 · v0.4 revision</h4>
+          <p class="pl-pending"><span class="pl-badge pl-badge--pending">PENDING</span> No saved v0.4 output for this case is public.</p>
+          <div class="pl-hist">
+            <p class="pl-label"><span class="pl-origin pl-origin--saved">SAVED</span> {c.historical.label} · 10 cases</p>
+            <table class="pl-table">
+              <caption>
+                What the earlier run recorded for this case. Date {c.historical.date} · model observed <code>{c.historical.model_observed}</code> · CLI {c.historical.cli_version} · version: {c.historical.version} · review: <strong>{c.historical.review}</strong> (automatic contract checks only) · origin: SAVED.
+              </caption>
+              <thead><tr><th scope="col">Variant</th><th scope="col">Decision</th><th scope="col">Automatic check</th></tr></thead>
+              <tbody>
+                {c.historical.variants.map((v) => (
+                  <tr>
+                    <th scope="row">{v.variant} <span class="pl-note">(16 Nov)</span></th>
+                    <td>{v.decision_en} <code>{v.decision}</code></td>
+                    <td>{v.automatic_checks_pass ? 'Pass' : 'Fail'}{v.automatic_check_errors.length > 0 && (<> · <span lang="es">{v.automatic_check_errors.join(' ')}</span></>)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p class="pl-src">Responses are not published; only their decision, check result and sha256. Source <a href={`/${c.historical.source.path.replace(/^public\//, '')}`}><code>{c.historical.source.path.replace(/^public\//, '')}</code></a>.</p>
+          </div>
+        </li>
+
+        <li class="pl-step">
+          <h4>3 · Why</h4>
+          <p><span class="pl-k">Expected decision</span> <strong>{c.expected.decisions_en.join(' or ')}</strong></p>
+          <p>{c.expected.paraphrase_en} <span class="pl-note">(English paraphrase)</span></p>
+          <details class="pl-details">
+            <summary>Rubric, verbatim (Spanish)</summary>
+            <p lang="es">{c.expected.rubric}</p>
+          </details>
+          <p class="pl-src">Rubric from the public development bank · <a href={fileAt(c.expected.source.path)}><code>{c.expected.source.path}</code></a> @ <code>{short}</code></p>
+        </li>
+      </ol>
+    </article>
+  ))}
+
+  <footer class="pl-foot">
+    <details class="pl-details">
+      <summary>Earlier evaluation (16 Nov 2026, 10 cases, not v0.4)</summary>
+      <p class="pl-label"><span class="pl-origin pl-origin--saved">SAVED</span> {hist.label}</p>
+      <table class="pl-table">
+        <caption>{hist.responses} responses on 10 cases, one per case and variant. Human reviews: {hist.human_reviews}. Reserved cases executed: {hist.reserved_executed ? 'yes' : 'no'}. Model observed <code>{hist.model_observed}</code>, CLI {hist.cli_version}.</caption>
+        <thead><tr><th scope="col">Variant</th><th scope="col">Automatic contract checks</th><th scope="col">Critical failures</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">baseline</th><td>{hist.baseline.automatic_pass}/{hist.baseline.expected}</td><td>{hist.baseline.failed_critical_automatic.length} (<code>{hist.baseline.failed_critical_automatic.join(', ')}</code>)</td></tr>
+          <tr><th scope="row">candidate</th><td>{hist.candidate.automatic_pass}/{hist.candidate.expected}</td><td>{hist.candidate.failed_critical_automatic.length} (<code>{hist.candidate.failed_critical_automatic.join(', ')}</code>)</td></tr>
+        </tbody>
+      </table>
+      <p class="pl-src">D06 was later retired from the active bank; this historical result keeps its 10-case denominator. Source <a href={`/${hist.source.path.replace(/^public\//, '')}`}><code>{hist.source.path.replace(/^public\//, '')}</code></a>.</p>
+    </details>
+
+    <div class="pl-replay">
+      <p class="pl-label"><span class="pl-origin pl-origin--saved">SAVED</span> {replay.label} · no model</p>
+      <p>Steps <code>{replay.steps.join(' → ')}</code>. Contract check: {replay.contract_check ? 'pass' : 'fail'} on an artificial response. Real passed responses: <strong>{replay.real_passed_responses}</strong>. Selection: <code>{replay.selection}</code>. It checks the plumbing, not the auditor.</p>
+      <p class="pl-src">Source <a href={`/${replay.source.path.replace(/^public\//, '')}`}><code>{replay.source.path.replace(/^public\//, '')}</code></a>.</p>
+    </div>
+
+    <p class="pl-final">Personal use choice — not a general benchmark.</p>
+  </footer>
+</section>
+
+<script>
+  import { enhanceTabs } from './lib/tabs.mjs'
+
+  function initPromptLabDemo() {
+    document.querySelectorAll<HTMLElement>('[data-pl-demo]').forEach((root) => {
+      const ids = Array.from(root.querySelectorAll<HTMLElement>('[data-tabpanel]')).map((p) => p.id)
+      const fromHash = ids.indexOf(location.hash.slice(1))
+      enhanceTabs(root, { initial: fromHash >= 0 ? fromHash : 0 })
+    })
+  }
+  initPromptLabDemo()
+  document.addEventListener('astro:page-load', initPromptLabDemo)
+</script>
+
+<style>
+  .pl { font-family: var(--sans); color: var(--text); margin: 32px 0; padding: 24px 0; border-top: 1px solid var(--border-active); }
+  .pl [hidden] { display: none !important; }
+  .pl-eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sec); margin: 0 0 8px; }
+  .pl h2 { font-size: var(--text-subsection); font-weight: 400; color: var(--text-heading); margin: 0 0 12px; line-height: 1.3; }
+  .pl h3 { font-size: var(--text-body-lg); font-weight: 500; color: var(--text-heading); margin: 0 0 16px; line-height: 1.4; }
+  .pl h4 { font: 500 12px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-sec); margin: 0 0 10px; }
+  .pl p { margin: 0 0 10px; }
+  .pl code { font-family: var(--mono); font-size: 0.85em; overflow-wrap: anywhere; }
+  .pl a { color: var(--sea-text); text-decoration: underline; text-underline-offset: 2px; }
+  .pl a:focus-visible, .pl button:focus-visible, .pl summary:focus-visible, .pl [data-tabpanel]:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+  .pl-k { font: 12px var(--mono); color: var(--text-sec); margin-right: 6px; }
+  .pl-note { font-size: 12px; color: var(--text-sec); font-weight: 400; }
+  .pl-facts { list-style: none; padding: 0; margin: 12px 0 16px; font-size: 14px; }
+  .pl-facts li { padding: 4px 0; }
+  .pl-notice { border-left: 3px solid var(--warm); background: var(--fill-warm); padding: 12px 16px; margin: 0 0 20px; font-size: 14px; }
+  .pl-badge, .pl-origin { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: 0.08em; padding: 5px 7px; border: 1px solid currentColor; border-radius: 3px; vertical-align: 0.1em; }
+  .pl-badge--pending { color: var(--text-heading); border-color: var(--warm); background: var(--fill-warm); }
+  .pl-badge--critical { color: var(--text-heading); margin-left: 8px; }
+  .pl-origin--saved { color: var(--text-heading); border-color: var(--sea-text); background: var(--fill-sea); }
+  .pl-index ol { padding-left: 20px; margin: 0 0 20px; font-size: 14px; }
+  .pl-index li { padding: 3px 0; }
+  .pl-tablist { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .pl-tablist [role='tab'] { min-height: 44px; padding: 8px 14px; font: 13px/1.3 var(--sans); color: var(--text); background: transparent; border: 1px solid var(--border-active); border-radius: 4px; cursor: pointer; text-align: left; }
+  .pl-tablist [role='tab'][aria-selected='true'] { background: var(--fill-active); border-color: var(--sea-text); color: var(--text-heading); font-weight: 500; box-shadow: inset 0 -3px 0 var(--sea); }
+  .pl-tab-id { font-family: var(--mono); font-size: 12px; color: var(--text-sec); }
+  .pl-case { padding: 4px 0 8px; }
+  .pl-case + .pl-case { border-top: 1px dashed var(--border-active); padding-top: 20px; }
+  .pl-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .pl-step { border: 1px solid var(--border-active); border-radius: 4px; padding: 14px 16px; background: rgba(255, 255, 255, 0.45); }
+  .pl-prompt { margin: 0 0 10px; padding: 10px 14px; border-left: 3px solid var(--teal); font-family: var(--mono); font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+  .pl-details { margin: 6px 0 10px; font-size: 14px; }
+  .pl-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--sea-text); }
+  .pl-context { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 6px 0 0; }
+  .pl-context dt { font: 12px var(--mono); color: var(--text-sec); }
+  .pl-context dd { margin: 0; }
+  .pl-src { font-size: 12px; color: var(--text-sec); }
+  .pl-pending { font-size: 14px; }
+  .pl-hist { border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px; }
+  .pl-label { font-size: 13px; }
+  .pl-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .pl-table caption { text-align: left; font-size: 12px; color: var(--text-sec); margin-bottom: 6px; line-height: 1.6; }
+  .pl-table th, .pl-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border-active); vertical-align: top; }
+  .pl-table thead th { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-sec); }
+  .pl-foot { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .pl-replay { border: 1px dashed var(--border-active); padding: 12px 16px; margin: 12px 0; font-size: 14px; }
+  .pl-final { font-size: 13px; color: var(--text-sec); font-style: italic; }
+  @media (max-width: 480px) {
+    .pl-step { padding: 12px; }
+    .pl-context { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pl * { transition: none !important; animation: none !important; }
+  }
+</style>

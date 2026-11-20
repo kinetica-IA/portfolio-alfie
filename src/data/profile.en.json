@@ -1,0 +1,37 @@
+{
+  "role": "AI & Workflow Automation",
+  "level": "Entry level",
+  "headline": "AI-assisted workflows, built to be checked.",
+  "subtitle": "Entry-level profile in AI & workflow automation. Four public projects with tests, saved results and stated limits. Moving to Latvia on 7 January 2027 — open to daily on-site work in Riga.",
+  "availability": [
+    { "term": "Base", "detail": "Ogre, Latvia, from 7 January 2027" },
+    { "term": "Work", "detail": "Open to daily on-site work in Riga" },
+    { "term": "English", "detail": "Spoken B2; reading and writing at C level (self-assessed, no certificate)" }
+  ],
+  "competencies": [
+    {
+      "title": "Evaluating LLM prompts with traceable results",
+      "evidence": "Prompt Lab v0.4: 9 active and 4 reserved cases; human verdicts logged apart from model reviews. On 18 Nov, 10/10 automatic checks vs 8/10 baseline, with partial human review.",
+      "project": "prompt-lab",
+      "linkLabel": "Prompt Lab case"
+    },
+    {
+      "title": "Rule-based checks with explicit pass / review / error states",
+      "evidence": "Editorial checker v1.0: JSON output and exit codes 0 / 1 / 2, never an automatic approval; 12 acceptance tests reported passing.",
+      "project": "editorial-checker",
+      "linkLabel": "Editorial checker case"
+    },
+    {
+      "title": "Reconciling and evaluating time-ordered data without leakage",
+      "evidence": "Polar, N=1 retrospective: expanding-history evaluation; 5 input variables reconciled from raw export to CSV with no discrepancies.",
+      "project": "polar",
+      "linkLabel": "Polar case"
+    }
+  ],
+  "contact": {
+    "email": "alfon.atman@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/navarro-kinetica-ai",
+    "github": "https://github.com/kinetica-IA",
+    "githubLabel": "github.com/kinetica-IA"
+  }
+}

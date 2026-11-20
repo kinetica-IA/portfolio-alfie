@@ -1,0 +1,25 @@
+---
+// /projects/website/ — English case. Spanish equivalent: /lab/proyectos/web/.
+// The coordinator replaces the INSERT markers below with the components of
+// agents 2 and 3 (they are not imported yet so the build does not break).
+import Layout from '../../layouts/Layout.astro'
+import CaseStudy from '../../components/site/CaseStudy.astro'
+import ProjectDiagram from '../../components/evidence/ProjectDiagram.astro'
+import portfolio from '../../data/portfolio.json'
+
+const project = portfolio.find(p => p.slug === 'website')!
+---
+<Layout
+  title={project.en.name}
+  description="Static Astro and React site deployed to GitHub Pages through GitHub Actions. What was checked on 18 Nov 2026 and what has not been measured yet."
+  lang="en"
+  alternates={{ en: '/projects/website/', es: '/lab/proyectos/web/' }}
+  ogImage="/og/website.png"
+>
+  <CaseStudy project={project}>
+  <section slot="evidence" class="case-block" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <ProjectDiagram project="website" />
+  </section>
+  </CaseStudy>
+</Layout>

@@ -1,160 +1,144 @@
-# kineticaai.com — Portfolio Alfonso Navarro
+# kineticaai.com
 
-**Alfonso Navarro** — Biomechanist, Osteopath, Clinical AI maker
+Source code of [www.kineticaai.com](https://www.kineticaai.com), Alfonso Navarro's
+portfolio site. It is a static site built with **Astro 6** and **React 19** and
+published on **GitHub Pages**.
 
-Live portfolio at **[kineticaai.com](https://kineticaai.com)** — a biodynamic living document that updates automatically with real physiological data.
+The site serves two audiences from one build:
 
----
+- an **English technical portfolio** for employers: the root page and `/projects/`;
+- the **Spanish clinical site** (osteopathy and biomechanics) under `/es/`.
 
-## What makes this portfolio "living"
+| Route | Language | Content |
+|---|---|---|
+| `/` | English | Role, skills, availability and entry to the projects |
+| `/projects/` | English | Index of the four projects |
+| `/projects/{website,prompt-lab,polar,editorial-checker}/` | English | One case page per project, with its demo and stated limits |
+| `/es/` | Spanish | Clinical home, about, reports (`/es/informes/`) and contact |
 
-| Layer | What it does |
-|-------|-------------|
-| **Polar AccessLink API** | Nightly GitHub Action fetches yesterday's HRV, ANS charge, sleep fragmentation from Polar Grit X2 |
-| **DSQ Diary** | Daily symptom log via web form at `/diary` — writes directly to `data/diary_live.csv` via GitHub API |
-| **Auto-retrain** | Every diary commit triggers `polar-retrain.yml` → reruns the LOO-CV Logistic Regression predictor → updates `polar_live.json` |
-| **Biometrics section** | Portfolio fetches `public/data/polar_live.json` at page load and renders live metrics + sparkline |
+URLs published before this structure keep working, either directly or through a
+static redirect page (GitHub Pages has no server-side redirects).
 
----
+## The four projects
 
-## Key finding
+| Project | Where the code lives | What it is |
+|---|---|---|
+| **Website** | This repository | The Astro/React site itself, built statically and deployed with GitHub Actions. |
+| **Prompt Lab** | Separate public repository: [kinetica-IA/prompt-lab](https://github.com/kinetica-IA/prompt-lab) | A prompt auditor (auditor v0.4, pilot infrastructure 0.2.0) with local checks for saved responses. This site only shows saved outputs; it does not call any model. |
+| **Polar retrospective (N-of-1)** | [`scripts/polar/`](scripts/polar/README.md) | A retrospective benchmark on one person's wearable and symptom-diary data, evaluated with a growing history (each day is scored only by a model trained on earlier days). Personal data is not included; the site shows aggregate results only. |
+| **Editorial checker v1.0** | [`scripts/editorial/`](scripts/editorial/README.md) | A deterministic, standard-library Python CLI that flags lines in Markdown content for human review. Exit codes: `0` no findings under its limited rules, `1` needs human review, `2` error. It always reports `clinical_or_publication_approval: false`. |
 
-> **Autonomic dysfunction predicted from nocturnal HRV**
-> AUC 0.83 · CI95 [0.72, 0.94] · N = 55 paired days · LOO-CV · Bootstrap 1000×
-> Features: hrv_rmssd_night_t0 · recovery_sublevel_t3
+Each project page on the site states what was tested, how, and what is still
+unverified. The detailed documentation of the two Python tools is in Spanish, in
+their own README files.
 
-> Numbers update on every pipeline run. Current canonical values live in
-> `public/data/polar_live.json` (read by portfolio runtime).
+## Requirements
 
-This is an N=1 longitudinal study, self-funded, reproducible. Full dataset and methodology:
-→ [github.com/kinetica-IA/polar-lyme-predictor](https://github.com/kinetica-IA/polar-lyme-predictor)
+- **Node.js `>=22.12.0 <23`** (declared in `package.json` `engines`; `.nvmrc` pins major version 22).
+- **npm**, using the committed `package-lock.json` (`npm ci`, not `npm install`, to reproduce a build).
+- **Python 3.13** for the tools in `scripts/` (not needed to build the site).
 
----
+If you use nvm, `nvm use` selects the version in `.nvmrc`. Neither `.nvmrc` nor
+`engines` changes the Node version of your shell by itself; check with
+`node --version`.
 
-## Repo structure
+## Commands
 
-```
-portfolio-alfie/
-├── .github/
-│   └── workflows/
-│       ├── deploy.yml              # Astro build → GitHub Pages
-│       ├── polar-biometrics.yml    # Nightly: fetch Polar API → polar_live.json
-│       └── polar-retrain.yml       # On diary push: retrain predictor
-│
-├── data/
-│   └── diary_live.csv              # 61+ DSQ-PEM symptom entries (appends daily)
-│
-├── public/
-│   ├── data/
-│   │   └── polar_live.json         # 243-day biometric series + v3 multi-target predictor
-│   └── diary.html                  # Standalone DSQ web form (no server needed)
-│
-├── scripts/
-│   ├── fetch_polar_live.py         # Polar AccessLink v3 → polar_live.json
-│   ├── polar_seed.py               # One-time seed from CSV export
-│   ├── retrain_predictor.py        # LOO-CV LogReg, writes to polar_live.json
-│   └── log_diary.py                # CLI diary entry (--push, --history flags)
-│
-└── src/
-    └── components/sections/
-        ├── Biometrics.astro         # Live HRV / ANS / Sleep fragmentation cards
-        └── Projects.astro           # Research & engineering cards
+From the repository root, with Node 22 active:
+
+```sh
+npm ci            # install the exact dependency tree from package-lock.json
+npm run dev       # local development server (astro dev)
+npm run build     # static build into dist/ (astro build)
+npm run preview   # serve the built dist/ locally (astro preview)
 ```
 
----
+`dist/`, `.astro/` and `node_modules/` are local build artefacts and are not committed.
 
-## DSQ Diary web form
+### Front-end data and component tests
 
-Navigate to `kineticaai.com/diary` from any device (phone, tablet).
+Node's built-in test runner, no extra dependencies:
 
-- Enter your GitHub Personal Access Token once (stored in browser, `repo` scope)
-- Score fatigue, PEM, brain fog, autonomic dysfunction, pain (0–10 sliders)
-- Hit **Save** → form reads `diary_live.csv`, upserts today's row, writes back → retrain fires in ~1 min
-
-Token setup: [github.com/settings/tokens/new?scopes=repo](https://github.com/settings/tokens/new?scopes=repo&description=DSQ-Diary)
-
----
-
-## GitHub Actions
-
-### `polar-biometrics.yml` — daily at 06:00 UTC
-```
-Runs: scripts/fetch_polar_live.py
-Env:  POLAR_ACCESS_TOKEN (GitHub Secret), POLAR_USER_ID=63255666
-Writes: public/data/polar_live.json  →  git push
+```sh
+node --test "tests/**/*.test.mjs"
 ```
 
-### `polar-retrain.yml` — on push to `data/diary_live.csv`
-```
-Runs: scripts/retrain_predictor.py
-Deps: numpy scikit-learn scipy
-Writes: polar_live.json["predictor"] (multi-target v3)  →  git push
-```
+### Python tools
 
----
+Editorial checker (standard library only, no install step):
 
-## Data schema
-
-### `polar_live.json`
-```json
-{
-  "updated_at": "2026-03-23T06:00:00Z",
-  "latest": {
-    "date": "2026-03-22",
-    "hrv_rmssd_night": 39.0,
-    "hrv_rri_mean_ms": 904.0,
-    "ans_charge": 52,
-    "sleep_wake_min": 28.0,
-    "sleep_interruptions": 18,
-    "steps": 2686
-  },
-  "series": [ /* 243+ days */ ],
-  "predictor": {
-    "model_version": "v3",
-    "auc": 0.829,
-    "n_training": 55,
-    "targets": {
-      "disfuncion_autonomica": {
-        "best_auc": 0.8288,
-        "best_auc_ci95": [0.7151, 0.9365],
-        "selected_features": ["hrv_rmssd_night_t0", "recovery_sublevel_t3"],
-        "n_training": 55
-      }
-      /* + fatiga, niebla_mental, pem, severity */
-    }
-  }
-}
+```sh
+python3 -m unittest discover -s scripts/editorial -v
+python3 scripts/editorial/revisar_contenido.py --content-root src/content
 ```
 
-### `diary_live.csv` columns
-`date · schema_version · severidad_global · fatiga · pem · niebla_mental · disfuncion_autonomica · dolor · nota`
+The checker writes JSON to stdout and does not modify files. It is not wired into
+`npm run build`, CI or any hook.
 
----
+Polar benchmark tests (synthetic data only), in a virtual environment outside the
+repository or in the ignored `.venv/`:
 
-## Stack
-
-- **Astro** static site → GitHub Pages (Node 20, deploy on push to `main`)
-- **Python 3.11** · httpx · scikit-learn · scipy · numpy
-- **Polar Grit X2** wearable (HRV, sleep, activity via AccessLink v3)
-- **GitHub Contents API** (diary form reads/writes CSV without a backend)
-
----
-
-## Local seed (first-time setup)
-
-```bash
-# After cloning:
-python scripts/polar_seed.py          # reads polar_daily_6m.csv → polar_live.json
-python scripts/retrain_predictor.py   # builds predictor block in polar_live.json
-git add public/data/polar_live.json
-git commit -m "feat: seed biometrics history"
-git push
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r scripts/polar/requirements.txt
+.venv/bin/python -m unittest discover -s scripts/polar -v
 ```
 
----
+The tests build small synthetic tables in temporary folders. Running
+`train_retrospective.py` itself needs private input files that are not part of
+this repository; its private output (`private-models-and-provenance.json`) must
+never be committed. See [`scripts/polar/README.md`](scripts/polar/README.md).
 
-## Links
+## Repository layout
 
-- Portfolio: [kineticaai.com](https://kineticaai.com)
-- Predictor repo: [kinetica-IA/polar-lyme-predictor](https://github.com/kinetica-IA/polar-lyme-predictor)
-- LinkedIn: [navarro-kinetica-ai](https://www.linkedin.com/in/navarro-kinetica-ai)
+```
+.github/workflows/deploy.yml   build + deploy to GitHub Pages
+astro.config.mjs               site URL, React and sitemap integrations
+public/                        static files copied as-is (favicon, CNAME, robots.txt,
+                               og-image, standalone HTML artefacts, aggregate JSON,
+                               portfolio demo files, social preview images in og/)
+scripts/editorial/             editorial checker v1.0 (Python, stdlib) and its tests
+scripts/polar/                 Polar retrospective benchmark (Python) and its tests
+scripts/generate-og.mjs        generator for the social preview images in public/og/
+src/content/                   Markdown collections (informes, lab, pages)
+src/content.config.ts          Zod schemas for the content collections
+src/data/                      structured project data (portfolio.json, demo data)
+src/components/                React/Astro components (site/, demos/, evidence/)
+src/layouts/                   page layout
+src/pages/                     routes (file-based routing)
+src/styles/                    design tokens and global CSS
+tests/                         Node test-runner tests for demo data, components and assets
+```
+
+`public/pranayama/` holds a separate standalone static app; it is not one of the
+four portfolio projects.
+
+Repository documents:
+
+- [`CLAUDE.md`](CLAUDE.md): content and publishing contract for the clinical content (Spanish).
+- [`DESARROLLO-LOCAL.md`](DESARROLLO-LOCAL.md): local development notes (Spanish).
+- [`CONSOLIDACION.md`](CONSOLIDACION.md) and [`AUDIT.md`](AUDIT.md): historical records of earlier reviews.
+
+## Deployment
+
+`.github/workflows/deploy.yml` runs on every push to `main` and on manual dispatch
+(`workflow_dispatch`). It installs dependencies with `npm ci` on Node 22, runs
+`npm run build` and publishes `dist/` to GitHub Pages; `public/CNAME` maps it to
+`www.kineticaai.com`.
+
+**There is no staging branch: a push to `main` publishes the live site.** Review
+the full diff before merging.
+
+The workflow also declares a `workflow_run` trigger for a workflow named
+"Biometrics Live Update". That workflow is no longer in this repository.
+
+## Data and privacy
+
+- Health data, diaries, wearable exports, trained models and credentials do not
+  belong in this repository.
+- Published Polar figures are aggregates (`public/data/polar-retrospective-summary.json`).
+- `public/portfolio-demo/` contains two downloadable code bundles (the editorial
+  checker with two synthetic example files; the Polar benchmark with a synthetic
+  demo) and two Prompt Lab JSON files of saved outputs (a dated evaluation record
+  and a synthetic replay).
+- `.env` files and `.venv/` are ignored by Git.

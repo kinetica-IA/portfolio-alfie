@@ -8,7 +8,7 @@ export default function FounderContact() {
 
   return (
     <section className="section founder-contact" id="contacto" ref={ctaRef}>
-      <span className="eyebrow" style={{ color: 'var(--teal)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+      <span className="eyebrow" style={{ color: 'var(--teal-text)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
         <CellSymbol color="var(--clay)" size={44} />
         CONTACTO
       </span>
@@ -91,7 +91,7 @@ export default function FounderContact() {
         }
         .fc-btn--primary {
           border: 1.5px solid var(--green);
-          color: var(--green);
+          color: var(--green-text);
         }
         .fc-btn--primary:hover {
           background: var(--green);
@@ -103,7 +103,7 @@ export default function FounderContact() {
           color: var(--text-dim);
         }
         .fc-btn--secondary:hover {
-          border-color: var(--teal);
+          border-color: var(--teal-text);
           color: var(--text);
         }
         @media (max-width: 480px) {

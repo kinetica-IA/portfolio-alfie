@@ -1,0 +1,31 @@
+---
+// /projects/polar/ — English case. Spanish equivalent: /lab/proyectos/polar/.
+// The coordinator replaces the INSERT markers below with the components of
+// agents 2 and 3 (they are not imported yet so the build does not break).
+import Layout from '../../layouts/Layout.astro'
+import CaseStudy from '../../components/site/CaseStudy.astro'
+import ProjectDiagram from '../../components/evidence/ProjectDiagram.astro'
+import PolarDemo from '../../components/demos/PolarDemo.astro'
+import portfolio from '../../data/portfolio.json'
+
+const project = portfolio.find(p => p.slug === 'polar')!
+---
+<Layout
+  title={project.en.name}
+  description="N=1 retrospective study of Polar watch metrics and a symptom diary, evaluated with an expanding history. No causal or clinical claims."
+  lang="en"
+  alternates={{ en: '/projects/polar/', es: '/lab/proyectos/polar/' }}
+  ogImage="/og/polar.png"
+>
+  <CaseStudy project={project}>
+  <section slot="evidence" class="case-block" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <ProjectDiagram project="polar" />
+  </section>
+
+  <section slot="demo" class="case-block" aria-labelledby="demo-title">
+    <h2 id="demo-title">Explore the method and the aggregated results</h2>
+    <PolarDemo />
+  </section>
+  </CaseStudy>
+</Layout>

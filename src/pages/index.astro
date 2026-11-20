@@ -1,22 +1,20 @@
 ---
-// src/pages/index.astro
+// / — English home for employers (lang="en"). The Spanish clinical home
+// moved to /es/ (src/pages/es/index.astro).
+// Order: hero (role, availability, See projects / Contact) → three
+// competencies with evidence → contact. Detailed limits live in each case.
 import Layout from '../layouts/Layout.astro'
-import App from '../App.jsx'
-import { getCollection } from 'astro:content'
-
-const informesEntries = await getCollection('informes')
-const labEntries = await getCollection('lab')
-
-const informes = informesEntries
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
-
-const lab = labEntries
-  .filter(e => !e.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .map(e => ({ slug: e.data.slug, title: e.data.title, summary: e.data.summary }))
+import HomeHero from '../components/site/HomeHero.astro'
+import Competencies from '../components/site/Competencies.astro'
+import ContactBlock from '../components/site/ContactBlock.astro'
 ---
 
-<Layout>
-  <App client:load informes={informes} lab={lab} />
+<Layout
+  lang="en"
+  alternates={{ en: '/', es: '/es/' }}
+  ogImage="/og/home.png"
+>
+  <HomeHero />
+  <Competencies />
+  <ContactBlock id="contact" showAvailability={false} />
 </Layout>

@@ -1,4 +1,6 @@
 ---
+// /lab/<slug>/ — Spanish technical articles, same URL, lang="es".
+// Drafts stay excluded (!draft filter below).
 import Layout from '../../layouts/Layout.astro'
 import { getCollection, render } from 'astro:content'
 
@@ -19,9 +21,9 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
-<Layout title={entry.data.title} description={entry.data.summary}>
+<Layout title={entry.data.title} description={entry.data.summary} lang="es" langSwitchHref={entry.data.slug === 'polar-retrospectivo' ? '/projects/polar/' : '/'} ogImage="/og/es.png">
   <article class="section lab-entry-page">
-    <span class="eyebrow" style="color: var(--teal)">{KIND_LABEL[entry.data.kind] ?? entry.data.kind}</span>
+    <span class="eyebrow" style="color: var(--teal-text)">{KIND_LABEL[entry.data.kind] ?? entry.data.kind}</span>
     <h1 class="lab-entry-title">{entry.data.title}</h1>
     {entry.data.kind === 'n-of-1' && (
       <p class="lab-entry-note">Auto-observación n-de-1. No es un ensayo clínico ni un producto diagnóstico.</p>
@@ -69,6 +71,6 @@ const { Content } = await render(entry)
       font-size: var(--text-caption);
       color: var(--text-dim);
     }
-    .lab-entry-back:hover { color: var(--teal); }
+    .lab-entry-back:hover { color: var(--teal-text); }
   </style>
 </Layout>

@@ -1,0 +1,81 @@
+---
+// English contact block, used on the home page (#contact) and on /contact/.
+// Only contact routes already published in the repo: email, LinkedIn, GitHub org.
+import profile from '../../data/profile.en.json'
+import Availability from './Availability.astro'
+
+interface Props { headingLevel?: 1 | 2; id?: string; showAvailability?: boolean }
+const { headingLevel = 2, id = 'contact', showAvailability = true } = Astro.props
+const Heading = headingLevel === 1 ? 'h1' : 'h2'
+const c = profile.contact
+---
+<section class="section contact" id={id} aria-labelledby={`${id}-title`}>
+  <span id="contacto" class="contact-legacy-anchor" aria-hidden="true"></span>
+  <p class="eyebrow contact-eyebrow">Contact</p>
+  <Heading id={`${id}-title`} class="contact-title">Get in touch</Heading>
+  <p class="contact-lead">Email is the quickest way to reach me.</p>
+  <ul class="contact-links">
+    <li><a class="btn btn--primary" href={`mailto:${c.email}`}>Email {c.email}</a></li>
+    <li><a class="btn btn--secondary" href={c.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn<span aria-hidden="true">&nbsp;↗</span><span class="visually-hidden"> (opens in a new tab)</span></a></li>
+    <li><a class="btn btn--secondary" href={c.github} target="_blank" rel="noopener noreferrer">GitHub: kinetica-IA<span aria-hidden="true">&nbsp;↗</span><span class="visually-hidden"> (opens in a new tab)</span></a></li>
+  </ul>
+  {showAvailability && (
+    <div class="contact-avail">
+      <h3 class="contact-sub">Availability</h3>
+      <Availability />
+    </div>
+  )}
+  <p class="contact-es" lang="es">¿Buscas la consulta clínica? <a href="/es/#contacto" hreflang="es">Contacto en español</a>.</p>
+</section>
+
+<style>
+  .contact { position: relative; }
+  .contact-legacy-anchor { position: absolute; top: 0; }
+  .contact-eyebrow { color: var(--clay-text); font-size: var(--text-caption); }
+  .contact-title {
+    font-family: var(--sans);
+    font-size: var(--text-section);
+    font-weight: 400;
+    color: var(--text-heading);
+    margin: 12px 0 12px;
+  }
+  .contact-lead {
+    font-size: var(--text-body-lg);
+    font-weight: 300;
+    color: var(--text-sec);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+  .contact-links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px 0 8px;
+  }
+  .contact-links .btn { overflow-wrap: anywhere; }
+  .contact-avail { margin-top: 28px; max-width: 640px; }
+  .contact-sub {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+    margin-bottom: 10px;
+  }
+  .contact-es {
+    margin-top: 28px;
+    font-size: 0.9375rem;
+    color: var(--text-sec);
+  }
+  .contact-es a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  @media (max-width: 480px) {
+    .contact-links { flex-direction: column; }
+    .contact-links .btn { width: 100%; }
+  }
+</style>

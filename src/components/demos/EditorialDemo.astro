@@ -1,0 +1,227 @@
+---
+/**
+ * EditorialDemo — saved output of the local editorial reviewer on synthetic samples. No props.
+ * One instance per page (line anchors are `ed-<sample>-L<n>`).
+ * Data: src/data/demos/editorial/editorial-demo.json, produced by running the unmodified
+ * scripts/editorial/revisar_contenido.py (see README.md). There is no text input on purpose:
+ * this page never analyses visitor text.
+ */
+import data from '../../data/demos/editorial/editorial-demo.json'
+import { splitLines, lineId, flaggedLines } from './lib/editorial.mjs'
+
+const codeOf = Object.fromEntries(data.status_codes.map((s) => [s.status, s]))
+const rulesEn = data.rules_en as Record<string, string>
+const samples = data.samples.map((s) => {
+  const file = s.files[0]
+  const row = s.result.files?.[0] ?? { findings: [], errors: [] }
+  return {
+    ...s,
+    file,
+    row,
+    lines: splitLines(file.text),
+    flagged: flaggedLines(s.result),
+    status: codeOf[s.result.status],
+  }
+})
+const shortSha = (x: string) => x.slice(0, 12)
+---
+<section class="ed" data-ed-demo aria-labelledby="ed-title">
+  <header class="ed-head">
+    <p class="ed-eyebrow">Interactive evidence · local editorial reviewer {data.reviewer.version}</p>
+    <h2 id="ed-title">Markdown in, findings and exit code out</h2>
+    <p class="ed-lede"><span class="ed-origin">SAVED</span> Saved output of the local reviewer on synthetic samples. This page does not analyse your text.</p>
+    <p><strong>No warnings ≠ approved.</strong> The reviewer always returns <code>approval: false</code>. It does not check facts, resolve DOIs or detect personal data.</p>
+    <table class="ed-table ed-codes">
+      <caption>Status and exit code of the reviewer</caption>
+      <thead><tr><th scope="col">Exit code</th><th scope="col">Status (verbatim)</th><th scope="col">Meaning</th></tr></thead>
+      <tbody>
+        {data.status_codes.map((s) => (<tr><td><code>{s.code}</code></td><td><code>{s.status}</code></td><td>{s.en}</td></tr>))}
+      </tbody>
+    </table>
+    <p class="ed-small">The samples are invented and written in Spanish because the rules target Spanish patient-facing copy. The DOIs in them are fictitious placeholders.</p>
+  </header>
+
+  <nav class="ed-index" data-tabs-index aria-label="Editorial samples">
+    <ol>
+      {samples.map((s) => <li><a href={`#ed-sample-${s.id}`}>{s.label} · exit code {s.run.exit_code}</a></li>)}
+    </ol>
+  </nav>
+
+  <div class="ed-tablist" data-tablist role="tablist" aria-label="Editorial samples" hidden>
+    {samples.map((s) => (
+      <button type="button" role="tab" id={`ed-tab-${s.id}`} aria-controls={`ed-sample-${s.id}`} aria-selected="false" tabindex="-1">
+        {s.label} <span class="ed-tab-code">exit {s.run.exit_code}</span>
+      </button>
+    ))}
+  </div>
+
+  {samples.map((s) => (
+    <article class="ed-sample" id={`ed-sample-${s.id}`} data-tabpanel data-sample={s.id} aria-labelledby={`ed-sample-${s.id}-h`}>
+      <h3 id={`ed-sample-${s.id}-h`}>{s.label}</h3>
+      <p>{s.summary}</p>
+
+      <dl class={`ed-status ed-status--${s.run.exit_code}`}>
+        <div><dt>Origin</dt><dd><span class="ed-origin">SAVED</span> synthetic sample</dd></div>
+        <div><dt>Status</dt><dd><code>{s.result.status}</code> <span class="ed-small">({s.status?.en})</span></dd></div>
+        <div><dt>Exit code</dt><dd><code>{s.run.exit_code}</code></dd></div>
+        <div><dt>Approval</dt><dd><code>approval: {String(s.result.clinical_or_publication_approval)}</code></dd></div>
+      </dl>
+
+      <div class="ed-grid">
+        <div class="ed-source">
+          <h4>Source · <code>{s.file.reviewer_path}</code></h4>
+          <div class="ed-code" role="group" aria-label={`Source of ${s.label}, ${s.lines.length} lines`} lang="es">
+            {s.lines.map((text, i) => {
+              const n = i + 1
+              const flagged = s.flagged.has(n)
+              return (
+                <div class={`ed-line${flagged ? ' ed-line--flagged' : ''}`} id={lineId(s.id, n)} tabindex="-1">
+                  <span class="ed-ln" lang="en">{n}</span><span class="ed-text">{text === '' ? ' ' : text}</span>{flagged && <span class="ed-flag" lang="en">flagged</span>}
+                </div>
+              )
+            })}
+          </div>
+          <p class="ed-small">sha256 <code title={s.file.sha256}>{shortSha(s.file.sha256)}…</code> · {s.file.path}</p>
+        </div>
+
+        <div class="ed-findings">
+          <h4>Warnings ({s.row.findings.length})</h4>
+          {s.row.findings.length === 0 ? (
+            <p>No warnings under these rules. That is not an approval.</p>
+          ) : (
+            <ol class="ed-list">
+              {s.row.findings.map((f) => (
+                <li>
+                  <a href={`#${lineId(s.id, f.line)}`} data-line-link>Line {f.line}</a> · <code>{f.rule}</code>
+                  {f.expression && <> · «<span lang="es">{f.expression}</span>»</>}
+                  <p class="ed-small">{rulesEn[f.rule] ?? ''}</p>
+                  <p class="ed-small ed-msg" lang="es">{f.message}</p>
+                </li>
+              ))}
+            </ol>
+          )}
+          {(s.row.errors.length > 0 || s.result.errors.length > 0) && (
+            <>
+              <h4>Errors ({s.row.errors.length + s.result.errors.length})</h4>
+              <ul class="ed-list ed-errors">
+                {[...s.row.errors, ...s.result.errors].map((e) => (
+                  <li><span lang="es">{e}</span><p class="ed-small">The file was not fully reviewed, so the run ends in <code>ERROR</code> rather than a pass.</p></li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
+
+      <details class="ed-details">
+        <summary>Saved run: command, date and raw JSON</summary>
+        <dl class="ed-run">
+          <div><dt>Command</dt><dd><code>{s.run.command}</code> (from the repository root)</dd></div>
+          <div><dt>Date</dt><dd><time datetime={s.run.date}>{s.run.date}</time></dd></div>
+          <div><dt>Reviewer</dt><dd><code>{data.reviewer.path}</code> v{data.reviewer.version} · {data.reviewer.runtime}</dd></div>
+          <div><dt>Exit code</dt><dd><code>{s.run.exit_code}</code></dd></div>
+          <div><dt>stdout sha256</dt><dd><code>{s.run.stdout_sha256}</code></dd></div>
+        </dl>
+        <pre class="ed-raw" lang="es" tabindex="0" aria-label={`Raw JSON output for ${s.label}`}>{s.run.stdout}</pre>
+      </details>
+    </article>
+  ))}
+</section>
+
+<script>
+  import { enhanceTabs } from './lib/tabs.mjs'
+  import { parseLineHash } from './lib/editorial.mjs'
+
+  function focusLine(id: string) {
+    const el = document.getElementById(id)
+    if (!el) return false
+    el.scrollIntoView({ block: 'center', behavior: 'auto' })
+    el.focus({ preventScroll: true })
+    return true
+  }
+
+  function initEditorialDemo() {
+    document.querySelectorAll<HTMLElement>('[data-ed-demo]').forEach((root) => {
+      if (root.dataset.edEnhanced === 'true') return
+      root.dataset.edEnhanced = 'true'
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-tabpanel]'))
+      const target = parseLineHash(location.hash)
+      const panelFromHash = panels.findIndex(
+        (p) => p.id === location.hash.slice(1) || (target !== null && p.dataset.sample === target.sampleId),
+      )
+      enhanceTabs(root, { initial: panelFromHash >= 0 ? panelFromHash : 0 })
+      if (target && panelFromHash >= 0) focusLine(location.hash.slice(1))
+
+      root.addEventListener('click', (event) => {
+        const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-line-link]')
+        if (!link) return
+        const id = link.getAttribute('href')!.slice(1)
+        if (!document.getElementById(id)) return
+        event.preventDefault()
+        history.replaceState(history.state, '', `#${id}`)
+        root.querySelectorAll('.ed-line--target').forEach((n) => n.classList.remove('ed-line--target'))
+        document.getElementById(id)!.classList.add('ed-line--target')
+        focusLine(id)
+      })
+    })
+  }
+  initEditorialDemo()
+  document.addEventListener('astro:page-load', initEditorialDemo)
+</script>
+
+<style>
+  .ed { font-family: var(--sans); color: var(--text); margin: 32px 0; padding: 24px 0; border-top: 1px solid var(--border-active); }
+  .ed [hidden] { display: none !important; }
+  .ed-eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sec); margin: 0 0 8px; }
+  .ed h2 { font-size: var(--text-subsection); font-weight: 400; color: var(--text-heading); margin: 0 0 12px; line-height: 1.3; }
+  .ed h3 { font-size: var(--text-body-lg); font-weight: 500; color: var(--text-heading); margin: 0 0 8px; }
+  .ed h4 { font: 500 12px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-sec); margin: 0 0 8px; }
+  .ed p { margin: 0 0 10px; }
+  .ed code { font-family: var(--mono); font-size: 0.85em; overflow-wrap: anywhere; }
+  .ed a { color: var(--sea-text); text-decoration: underline; text-underline-offset: 2px; }
+  .ed a:focus-visible, .ed button:focus-visible, .ed summary:focus-visible, .ed [data-tabpanel]:focus-visible, .ed-raw:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+  .ed-lede { font-size: var(--text-body-lg); }
+  .ed-small { font-size: 12px; color: var(--text-sec); }
+  .ed-origin { display: inline-block; font: 500 11px/1 var(--mono); letter-spacing: 0.08em; padding: 5px 7px; border: 1px solid var(--sea); border-radius: 3px; background: var(--fill-sea); color: var(--text-heading); vertical-align: 0.1em; }
+  .ed-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  .ed-table caption { text-align: left; font-size: 12px; color: var(--text-sec); margin-bottom: 6px; }
+  .ed-table th, .ed-table td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--border-active); vertical-align: top; }
+  .ed-table thead th { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-sec); }
+  .ed-index ol { padding-left: 20px; margin: 0 0 20px; font-size: 14px; }
+  .ed-tablist { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .ed-tablist [role='tab'] { min-height: 44px; padding: 8px 14px; font: 13px/1.3 var(--sans); color: var(--text); background: transparent; border: 1px solid var(--border-active); border-radius: 4px; cursor: pointer; }
+  .ed-tablist [role='tab'][aria-selected='true'] { background: var(--fill-active); border-color: var(--sea-text); color: var(--text-heading); font-weight: 500; box-shadow: inset 0 -3px 0 var(--sea); }
+  .ed-tab-code { font: 11px var(--mono); color: var(--text-sec); margin-left: 4px; }
+  .ed-sample + .ed-sample { border-top: 1px dashed var(--border-active); padding-top: 20px; margin-top: 20px; }
+  .ed-status { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 16px; padding: 10px 14px; border-left: 3px solid var(--teal); background: rgba(255, 255, 255, 0.5); font-size: 14px; }
+  .ed-status--1 { border-left-color: var(--warm); }
+  .ed-status--2 { border-left-color: var(--clay); }
+  .ed-status dt { font: 11px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-sec); }
+  .ed-status dd { margin: 0; }
+  .ed-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; }
+  .ed-code { font: 13px/1.6 var(--mono); border: 1px solid var(--border-active); border-radius: 4px; background: rgba(255, 255, 255, 0.6); padding: 6px 0; overflow-x: auto; }
+  .ed-line { display: flex; gap: 10px; padding: 0 10px 0 0; scroll-margin-top: calc(var(--header-h, 56px) + 24px); }
+  .ed-ln { flex: 0 0 2.6em; text-align: right; color: var(--text-sec); user-select: none; border-right: 1px solid var(--border-active); padding-right: 8px; }
+  .ed-text { white-space: pre-wrap; overflow-wrap: anywhere; flex: 1 1 auto; min-width: 0; }
+  .ed-flag { flex: 0 0 auto; align-self: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-heading); border: 1px solid var(--warm); border-radius: 3px; padding: 1px 4px; }
+  .ed-line--flagged { background: var(--fill-warm); }
+  .ed-line:target, .ed-line--target, .ed-line:focus { background: rgba(196, 133, 90, 0.25); outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+  .ed-list { padding-left: 20px; margin: 0 0 12px; font-size: 14px; }
+  .ed-list li { padding: 6px 0; }
+  .ed-list a { display: inline-block; min-height: 24px; }
+  .ed-msg { font-style: italic; }
+  .ed-details { margin-top: 14px; font-size: 14px; }
+  .ed-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--sea-text); }
+  .ed-run { margin: 6px 0 10px; display: grid; gap: 4px; }
+  .ed-run div { display: grid; grid-template-columns: 9em 1fr; gap: 8px; }
+  .ed-run dt { font: 12px var(--mono); color: var(--text-sec); }
+  .ed-run dd { margin: 0; }
+  .ed-raw { font: 12px/1.5 var(--mono); max-height: 22rem; overflow: auto; padding: 10px 12px; border: 1px solid var(--border-active); background: rgba(255, 255, 255, 0.6); white-space: pre; }
+  @media (max-width: 720px) {
+    .ed-grid { grid-template-columns: 1fr; }
+    .ed-run div { grid-template-columns: 1fr; gap: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ed * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>

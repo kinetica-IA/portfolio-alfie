@@ -1,0 +1,212 @@
+---
+// English case-study template used by src/pages/projects/<slug>.astro.
+// Order: title → "At a glance" (What it is / What I did / Proof / Limits) →
+// one row of actions → slot "evidence" (diagram) → slot "demo" →
+// proof in detail → process → limits → slot "extra" → next step → AI note.
+// Figures come only from src/data/portfolio.json (item.en).
+interface Action { label: string; href: string; kind?: string; external?: boolean; download?: boolean; hreflang?: string }
+interface Props { project: any }
+const { project } = Astro.props
+const en = project.en
+const actions = en.actions as Action[]
+const esHref = `/lab/proyectos/${project.id}/`
+---
+<article class="section case" aria-labelledby="case-title">
+  <a class="case-back" href="/projects/"><span aria-hidden="true">←</span> All projects</a>
+  <p class="case-discipline">{en.discipline}</p>
+  <h1 id="case-title" class="case-title">{en.name}</h1>
+  <p class="case-status"><span class="visually-hidden">Status: </span>{en.status}</p>
+
+  <section class="glance" aria-labelledby="glance-title">
+    <h2 id="glance-title" class="glance-heading">At a glance</h2>
+    <dl class="glance-list">
+      <div class="glance-row"><dt>What it is</dt><dd>{en.glance.what}</dd></div>
+      <div class="glance-row"><dt>What I did</dt><dd>{en.glance.did}</dd></div>
+      <div class="glance-row"><dt>Proof</dt><dd>{en.glance.proof}</dd></div>
+      <div class="glance-row glance-row--limits"><dt>Limits</dt><dd>{en.glance.limits}</dd></div>
+    </dl>
+  </section>
+
+  {actions.length > 0 && (
+    <div class="case-actions" role="group" aria-label="Project links">
+      {actions.map((a, i) => (
+        <a
+          class:list={['btn', i === 0 ? 'btn--primary' : 'btn--secondary']}
+          href={a.href}
+          hreflang={a.hreflang}
+          target={a.external ? '_blank' : undefined}
+          rel={a.external ? 'noopener noreferrer' : undefined}
+          download={a.download ? '' : undefined}
+          data-astro-reload={a.download || a.href.endsWith('.json') ? true : undefined}
+        >
+          {a.label}{a.external && <span aria-hidden="true">&nbsp;↗</span>}{a.external && <span class="visually-hidden"> (opens in a new tab)</span>}
+        </a>
+      ))}
+    </div>
+  )}
+
+  <slot name="evidence" />
+  <slot name="demo" />
+
+  <section class="case-block" aria-labelledby="proof-title">
+    <h2 id="proof-title">Proof in detail</h2>
+    <ul>{en.proof.map((item: string) => <li>{item}</li>)}</ul>
+  </section>
+
+  <section class="case-block" aria-labelledby="process-title">
+    <h2 id="process-title">Process</h2>
+    <ol class="case-flow">{en.flow.map((step: string) => <li>{step}</li>)}</ol>
+  </section>
+
+  <section class="case-block case-limits" aria-labelledby="limits-title">
+    <h2 id="limits-title">Limits</h2>
+    <ul>{en.limits.map((item: string) => <li>{item}</li>)}</ul>
+  </section>
+
+  <slot name="extra" />
+
+  <section class="case-block" aria-labelledby="next-title">
+    <h2 id="next-title">Next step</h2>
+    <p>{en.next}</p>
+    <h3>Measurement</h3>
+    <p>{en.metric}</p>
+  </section>
+
+  <section class="case-block case-credit" aria-labelledby="credit-title">
+    <h2 id="credit-title">How it was built</h2>
+    <p>{en.aiNote}</p>
+  </section>
+
+  <p class="case-foot">
+    <a class="case-back" href="/projects/"><span aria-hidden="true">←</span> All projects</a>
+    <a class="case-back" href={esHref} hreflang="es" lang="es">Ficha en español</a>
+  </p>
+</article>
+
+<style>
+  .case { max-width: 760px; }
+  .case-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+  }
+  .case-discipline {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+  }
+  .case-title {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: var(--text-section);
+    line-height: 1.2;
+    color: var(--text-heading);
+    margin: 8px 0 10px;
+  }
+  .case-status {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    color: var(--sea-text);
+    background: var(--fill-teal);
+    padding: 4px 10px;
+  }
+  .glance {
+    margin: 20px 0 0;
+    border: 1px solid var(--border-active);
+    border-top: 2px solid var(--teal);
+    padding: 16px 20px 8px;
+  }
+  .glance-heading {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+    margin-bottom: 4px;
+  }
+  .glance-list { margin: 0; }
+  .glance-row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+  }
+  .glance-row:first-child { border-top: none; }
+  .glance-row dt {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    color: var(--text-dim);
+    padding-top: 2px;
+  }
+  .glance-row dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .glance-row--limits dt { color: var(--warm-text); }
+  .case-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 8px;
+  }
+  .case-actions .btn { padding: 10px 16px; }
+  .case :global(.case-block) {
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+  }
+  .case :global(.case-block > h2) {
+    font-family: var(--sans);
+    font-size: var(--text-subsection);
+    font-weight: 400;
+    color: var(--text-heading);
+    margin-bottom: 14px;
+  }
+  .case :global(.case-block h3) {
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--text-heading);
+    margin: 18px 0 8px;
+  }
+  .case :global(.case-block p),
+  .case :global(.case-block li) {
+    font-size: var(--text-body);
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text-sec);
+  }
+  .case :global(.case-block ul),
+  .case :global(.case-block ol) { padding-left: 20px; }
+  .case :global(.case-block li) { padding: 4px 0; }
+  .case-flow {
+    font-family: var(--mono);
+  }
+  .case-flow li { font-size: var(--text-caption) !important; }
+  .case-limits {
+    border-left: 2px solid var(--warm);
+    padding-left: 18px !important;
+  }
+  .case-credit p { font-size: 0.9375rem !important; }
+  .case-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 480px) {
+    .glance { padding: 12px 14px 4px; }
+    .glance-row { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
+    .case-actions { flex-direction: column; align-items: stretch; }
+  }
+</style>

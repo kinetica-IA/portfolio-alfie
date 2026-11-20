@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "demo": "editorial",
+  "origin": "SAVED",
+  "origin_note": "Real output of the unmodified local reviewer, run on invented (synthetic) Markdown samples.",
+  "generated_at": "2026-11-20T18:16:59.288Z",
+  "generator": "node src/data/demos/_tools/build-editorial-fixtures.mjs",
+  "reviewer": {
+    "path": "scripts/editorial/revisar_contenido.py",
+    "version": "1.0.0",
+    "sha256": "7dfee8e0536fcb9f7321b289c0477c7743560825499b240165ec04c54b854a69",
+    "runtime": "Python 3.13.11"
+  },
+  "status_codes": [
+    {
+      "status": "SIN_HALLAZGOS_EN_ESTAS_REGLAS",
+      "code": 0,
+      "en": "No findings under these rules"
+    },
+    {
+      "status": "REQUIERE_REVISION_HUMANA",
+      "code": 1,
+      "en": "Needs human review"
+    },
+    {
+      "status": "ERROR",
+      "code": 2,
+      "en": "Error: not fully reviewed"
+    }
+  ],
+  "rules_en": {
+    "REFERENCIAS_PENDIENTES": "No DOI declared in the literal format the rule expects. Sources must be checked by a person; no DOI is resolved.",
+    "EXPRESION_A_REVISAR": "Expression from the watch list. A person decides whether it is a problem; nothing is blocked or rewritten.",
+    "EXPRESION_CON_CONTEXTO": "Watch-list expression next to a negation, quote or example marker. Still needs a human reading."
+  },
+  "samples": [
+    {
+      "id": "no-findings",
+      "label": "Sample A · clean",
+      "summary": "Declares a (fictitious) DOI and avoids the flagged expressions.",
+      "synthetic": true,
+      "origin": "SAVED",
+      "run": {
+        "date": "2026-11-20T18:16:59.288Z",
+        "command": "python3 scripts/editorial/revisar_contenido.py --content-root src/data/demos/editorial/samples/no-findings",
+        "cwd": "repository root",
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "{\n  \"version\": \"1.0.0\",\n  \"scope\": \"Solo Markdown de informes y lab; reglas clínicas solo en informes\",\n  \"status\": \"SIN_HALLAZGOS_EN_ESTAS_REGLAS\",\n  \"files\": [\n    {\n      \"file\": \"informes/pausas-activas.md\",\n      \"collection\": \"informes\",\n      \"draft_literal\": null,\n      \"findings\": [],\n      \"errors\": [],\n      \"sha256\": \"052999065d02d3b46e1eadafd04ebfb12231fb674ca51cf54343b7e20852c081\"\n    }\n  ],\n  \"errors\": [],\n  \"clinical_or_publication_approval\": false,\n  \"not_checked\": [\n    \"Veracidad clínica o legal\",\n    \"Resolución y correspondencia de DOI\",\n    \"Datos personales\",\n    \"Calidad semántica de respuestas\",\n    \"Frontmatter completo: lo valida Astro\",\n    \"Páginas fuera de informes/lab y contenido dentro de bloques de código\"\n  ]\n}\n",
+        "stdout_sha256": "ca32350abfb7e390dce76973f1c72e571e5163853af308039fdd15eec575489d"
+      },
+      "result": {
+        "version": "1.0.0",
+        "scope": "Solo Markdown de informes y lab; reglas clínicas solo en informes",
+        "status": "SIN_HALLAZGOS_EN_ESTAS_REGLAS",
+        "files": [
+          {
+            "file": "informes/pausas-activas.md",
+            "collection": "informes",
+            "draft_literal": null,
+            "findings": [],
+            "errors": [],
+            "sha256": "052999065d02d3b46e1eadafd04ebfb12231fb674ca51cf54343b7e20852c081"
+          }
+        ],
+        "errors": [],
+        "clinical_or_publication_approval": false,
+        "not_checked": [
+          "Veracidad clínica o legal",
+          "Resolución y correspondencia de DOI",
+          "Datos personales",
+          "Calidad semántica de respuestas",
+          "Frontmatter completo: lo valida Astro",
+          "Páginas fuera de informes/lab y contenido dentro de bloques de código"
+        ]
+      },
+      "files": [
+        {
+          "path": "src/data/demos/editorial/samples/no-findings/informes/pausas-activas.md",
+          "reviewer_path": "informes/pausas-activas.md",
+          "sha256": "052999065d02d3b46e1eadafd04ebfb12231fb674ca51cf54343b7e20852c081",
+          "text": "---\ntitle: Muestra sintética A\nslug: muestra-sintetica-a\nsummary: Texto inventado para probar el revisor local. No es contenido clínico real.\npubmed_refs:\n  - doi: 10.0000/referencia.ficticia.a\n    title: Referencia ficticia, solo para la muestra\ndate: 2026-11-20\n---\n\n# Pausas activas en el escritorio\n\nEste texto es una muestra inventada para la demostración del revisor.\n\nDescribe pausas breves para levantarse y caminar durante la jornada.\nCada persona responde de forma distinta; ante cualquier molestia,\nconviene consultarlo con un profesional.\n"
+        }
+      ]
+    },
+    {
+      "id": "needs-review",
+      "label": "Sample B · flagged",
+      "summary": "No DOI declared, a promise-like sentence and a negated one. A phrase inside a code block is ignored by design.",
+      "synthetic": true,
+      "origin": "SAVED",
+      "run": {
+        "date": "2026-11-20T18:16:59.288Z",
+        "command": "python3 scripts/editorial/revisar_contenido.py --content-root src/data/demos/editorial/samples/needs-review",
+        "cwd": "repository root",
+        "exit_code": 1,
+        "stderr": "",
+        "stdout": "{\n  \"version\": \"1.0.0\",\n  \"scope\": \"Solo Markdown de informes y lab; reglas clínicas solo en informes\",\n  \"status\": \"REQUIERE_REVISION_HUMANA\",\n  \"files\": [\n    {\n      \"file\": \"informes/oferta-ficticia.md\",\n      \"collection\": \"informes\",\n      \"draft_literal\": null,\n      \"findings\": [\n        {\n          \"rule\": \"REFERENCIAS_PENDIENTES\",\n          \"line\": 1,\n          \"message\": \"No se detecta DOI declarado en el formato literal esperado; revisar fuentes. No se ha resuelto ningún DOI.\"\n        },\n        {\n          \"rule\": \"EXPRESION_A_REVISAR\",\n          \"line\": 12,\n          \"expression\": \"garantizados\",\n          \"excerpt\": \"Resultados garantizados en 3 sesiones.\",\n          \"message\": \"Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente.\"\n        },\n        {\n          \"rule\": \"EXPRESION_A_REVISAR\",\n          \"line\": 12,\n          \"expression\": \"en 3 sesiones\",\n          \"excerpt\": \"Resultados garantizados en 3 sesiones.\",\n          \"message\": \"Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente.\"\n        },\n        {\n          \"rule\": \"EXPRESION_CON_CONTEXTO\",\n          \"line\": 14,\n          \"expression\": \"curación\",\n          \"excerpt\": \"No prometo una curación: cada caso es distinto.\",\n          \"message\": \"Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente.\"\n        }\n      ],\n      \"errors\": [],\n      \"sha256\": \"e602140e36f940cda35a22205d95c1933b9dbb6e27674ca069c38b98b17a6c06\"\n    }\n  ],\n  \"errors\": [],\n  \"clinical_or_publication_approval\": false,\n  \"not_checked\": [\n    \"Veracidad clínica o legal\",\n    \"Resolución y correspondencia de DOI\",\n    \"Datos personales\",\n    \"Calidad semántica de respuestas\",\n    \"Frontmatter completo: lo valida Astro\",\n    \"Páginas fuera de informes/lab y contenido dentro de bloques de código\"\n  ]\n}\n",
+        "stdout_sha256": "54fe53f7fb5090340507070bcc510c84446c9c0a1b946f25756ea0727e25f8ae"
+      },
+      "result": {
+        "version": "1.0.0",
+        "scope": "Solo Markdown de informes y lab; reglas clínicas solo en informes",
+        "status": "REQUIERE_REVISION_HUMANA",
+        "files": [
+          {
+            "file": "informes/oferta-ficticia.md",
+            "collection": "informes",
+            "draft_literal": null,
+            "findings": [
+              {
+                "rule": "REFERENCIAS_PENDIENTES",
+                "line": 1,
+                "message": "No se detecta DOI declarado en el formato literal esperado; revisar fuentes. No se ha resuelto ningún DOI."
+              },
+              {
+                "rule": "EXPRESION_A_REVISAR",
+                "line": 12,
+                "expression": "garantizados",
+                "excerpt": "Resultados garantizados en 3 sesiones.",
+                "message": "Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente."
+              },
+              {
+                "rule": "EXPRESION_A_REVISAR",
+                "line": 12,
+                "expression": "en 3 sesiones",
+                "excerpt": "Resultados garantizados en 3 sesiones.",
+                "message": "Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente."
+              },
+              {
+                "rule": "EXPRESION_CON_CONTEXTO",
+                "line": 14,
+                "expression": "curación",
+                "excerpt": "No prometo una curación: cada caso es distinto.",
+                "message": "Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente."
+              }
+            ],
+            "errors": [],
+            "sha256": "e602140e36f940cda35a22205d95c1933b9dbb6e27674ca069c38b98b17a6c06"
+          }
+        ],
+        "errors": [],
+        "clinical_or_publication_approval": false,
+        "not_checked": [
+          "Veracidad clínica o legal",
+          "Resolución y correspondencia de DOI",
+          "Datos personales",
+          "Calidad semántica de respuestas",
+          "Frontmatter completo: lo valida Astro",
+          "Páginas fuera de informes/lab y contenido dentro de bloques de código"
+        ]
+      },
+      "files": [
+        {
+          "path": "src/data/demos/editorial/samples/needs-review/informes/oferta-ficticia.md",
+          "reviewer_path": "informes/oferta-ficticia.md",
+          "sha256": "e602140e36f940cda35a22205d95c1933b9dbb6e27674ca069c38b98b17a6c06",
+          "text": "---\ntitle: Muestra sintética B\nslug: muestra-sintetica-b\nsummary: Texto inventado con expresiones que el revisor debe señalar.\ndate: 2026-11-20\n---\n\n# Un anuncio ficticio\n\nEste texto es una muestra inventada para la demostración del revisor.\n\nResultados garantizados en 3 sesiones.\n\nNo prometo una curación: cada caso es distinto.\n\n```text\nDentro de un bloque de código no se revisa: sin riesgos.\n```\n\nEl texto termina aquí.\n"
+        }
+      ]
+    },
+    {
+      "id": "error",
+      "label": "Sample C · error",
+      "summary": "A code block is opened and never closed, so the rest of the file cannot be reviewed.",
+      "synthetic": true,
+      "origin": "SAVED",
+      "run": {
+        "date": "2026-11-20T18:16:59.288Z",
+        "command": "python3 scripts/editorial/revisar_contenido.py --content-root src/data/demos/editorial/samples/error",
+        "cwd": "repository root",
+        "exit_code": 2,
+        "stderr": "",
+        "stdout": "{\n  \"version\": \"1.0.0\",\n  \"scope\": \"Solo Markdown de informes y lab; reglas clínicas solo en informes\",\n  \"status\": \"ERROR\",\n  \"files\": [\n    {\n      \"file\": \"informes/bloque-sin-cierre.md\",\n      \"collection\": \"informes\",\n      \"draft_literal\": null,\n      \"findings\": [\n        {\n          \"rule\": \"EXPRESION_CON_CONTEXTO\",\n          \"line\": 15,\n          \"expression\": \"sin riesgo\",\n          \"excerpt\": \"Un tratamiento sin riesgo no existe.\",\n          \"message\": \"Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente.\"\n        }\n      ],\n      \"errors\": [\n        \"Bloque de código sin cierre: no se acredita cobertura del resto del texto\"\n      ],\n      \"sha256\": \"728a91ec7dcb6f49f75e444988ac077fd83efb5273f2347bedfc01889f1953a6\"\n    }\n  ],\n  \"errors\": [],\n  \"clinical_or_publication_approval\": false,\n  \"not_checked\": [\n    \"Veracidad clínica o legal\",\n    \"Resolución y correspondencia de DOI\",\n    \"Datos personales\",\n    \"Calidad semántica de respuestas\",\n    \"Frontmatter completo: lo valida Astro\",\n    \"Páginas fuera de informes/lab y contenido dentro de bloques de código\"\n  ]\n}\n",
+        "stdout_sha256": "33efb09ef34486c702197ddf121c08d1ebf65928c69207b0a887d28249c60d76"
+      },
+      "result": {
+        "version": "1.0.0",
+        "scope": "Solo Markdown de informes y lab; reglas clínicas solo en informes",
+        "status": "ERROR",
+        "files": [
+          {
+            "file": "informes/bloque-sin-cierre.md",
+            "collection": "informes",
+            "draft_literal": null,
+            "findings": [
+              {
+                "rule": "EXPRESION_CON_CONTEXTO",
+                "line": 15,
+                "expression": "sin riesgo",
+                "excerpt": "Un tratamiento sin riesgo no existe.",
+                "message": "Revisión humana: puede ser cita, negación o explicación. No se bloquea ni reescribe automáticamente."
+              }
+            ],
+            "errors": [
+              "Bloque de código sin cierre: no se acredita cobertura del resto del texto"
+            ],
+            "sha256": "728a91ec7dcb6f49f75e444988ac077fd83efb5273f2347bedfc01889f1953a6"
+          }
+        ],
+        "errors": [],
+        "clinical_or_publication_approval": false,
+        "not_checked": [
+          "Veracidad clínica o legal",
+          "Resolución y correspondencia de DOI",
+          "Datos personales",
+          "Calidad semántica de respuestas",
+          "Frontmatter completo: lo valida Astro",
+          "Páginas fuera de informes/lab y contenido dentro de bloques de código"
+        ]
+      },
+      "files": [
+        {
+          "path": "src/data/demos/editorial/samples/error/informes/bloque-sin-cierre.md",
+          "reviewer_path": "informes/bloque-sin-cierre.md",
+          "sha256": "728a91ec7dcb6f49f75e444988ac077fd83efb5273f2347bedfc01889f1953a6",
+          "text": "---\ntitle: Muestra sintética C\nslug: muestra-sintetica-c\nsummary: Texto inventado con un bloque de código que no se cierra.\npubmed_refs:\n  - doi: 10.0000/referencia.ficticia.c\n    title: Referencia ficticia, solo para la muestra\ndate: 2026-11-20\n---\n\n# Un borrador incompleto\n\nEste texto es una muestra inventada para la demostración del revisor.\n\nUn tratamiento sin riesgo no existe.\n\n```text\nEste bloque de código no tiene cierre, así que el resto\ndel archivo no se puede revisar.\n\nUna curación rápida en 2 sesiones.\n"
+        }
+      ]
+    }
+  ]
+}

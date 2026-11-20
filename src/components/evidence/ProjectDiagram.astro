@@ -1,0 +1,350 @@
+---
+/**
+ * ProjectDiagram — accessible step-by-step SVG diagram for one case study.
+ *
+ * Usage:
+ *   import ProjectDiagram from '../../components/evidence/ProjectDiagram.astro'
+ *   <ProjectDiagram project="prompt-lab" />
+ *
+ * Props:
+ *   project  'website' | 'prompt-lab' | 'polar' | 'editorial-checker'  (required)
+ *   id       optional DOM id prefix; only needed if the same project diagram
+ *            appears twice on one page.
+ *
+ * Content and sources live in ./diagrams.mjs (each step cites path:line).
+ * Without JS: the full diagram and the ordered list of all steps are shown.
+ * With JS: "Previous step" / "Next step" highlight one step at a time; nothing
+ * moves on its own. The live region only speaks after a button press.
+ */
+import { getDiagram, layoutFlow, layoutTimeline } from './diagrams.mjs'
+
+interface Props {
+  project: 'website' | 'prompt-lab' | 'polar' | 'editorial-checker'
+  id?: string
+}
+
+const { project, id } = Astro.props
+const d = getDiagram(project)
+const base = id ?? `pd-${project}`
+const total = d.steps.length
+const isFlow = d.kind === 'flow'
+const orientations = ['wide', 'tall'] as const
+const layouts = Object.fromEntries(
+  orientations.map((o) => [o, isFlow ? layoutFlow(d, o) : layoutTimeline(d, o)]),
+) as Record<'wide' | 'tall', any>
+---
+<figure class="pd" data-pd data-total={total} id={base} aria-labelledby={`${base}-cap`}>
+  <figcaption id={`${base}-cap`} class="pd-cap">{d.title}</figcaption>
+
+  <div class="pd-canvas">
+    {orientations.map((o) => {
+      const L = layouts[o]
+      const sid = `${base}-${o}`
+      return (
+        <svg
+          class={`pd-svg pd-svg--${o}`}
+          role="img"
+          aria-labelledby={`${sid}-title ${sid}-desc`}
+          viewBox={`0 0 ${L.width} ${L.height}`}
+          width={L.width}
+          height={L.height}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title id={`${sid}-title`}>{d.title}</title>
+          <desc id={`${sid}-desc`}>{d.desc}</desc>
+          <defs>
+            <marker id={`${sid}-arrow`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="pd-arrowhead" d="M0,0 L10,5 L0,10 z" />
+            </marker>
+          </defs>
+
+          {isFlow && (
+            <>
+              {L.arrows.map((a: any) => (
+                <line
+                  class="pd-arrow"
+                  data-step={a.step}
+                  x1={a.x1} y1={a.y1} x2={a.x2} y2={a.y2}
+                  marker-end={`url(#${sid}-arrow)`}
+                />
+              ))}
+              {L.nodes.map((n: any) => {
+                const c = L.cfg
+                const inner = n.w - 2 * c.pad
+                const labelTop = n.y + c.pad + 22 + 6
+                return (
+                  <g class="pd-step" data-step={n.step}>
+                    <rect class="pd-node" x={n.x} y={n.y} width={n.w} height={n.h} rx="10" />
+                    <circle class="pd-num" cx={n.x + c.pad + 11} cy={n.y + c.pad + 11} r="11" />
+                    <text class="pd-num-text" x={n.x + c.pad + 11} y={n.y + c.pad + 15.5} text-anchor="middle">{n.step}</text>
+                    <text class="pd-label" style={`font-size:${c.font}px`}>
+                      {n.labelLines.map((line: string, k: number) => (
+                        <tspan x={n.x + c.pad} y={labelTop + k * c.lineH + c.font * 0.95}>{line}</tspan>
+                      ))}
+                    </text>
+                    {n.branches.map((b: any) => (
+                      <g class="pd-branch">
+                        <rect class="pd-branch-box" x={n.x + c.pad} y={n.y + b.y} width={inner} height={b.h} rx="6" />
+                        <text class="pd-branch-text" style={`font-size:${c.bFont}px`}>
+                          {b.lines.map((line: string, k: number) => (
+                            <tspan x={n.x + c.pad + 8} y={n.y + b.y + 6 + k * c.bLineH + c.bFont * 0.95}>{line}</tspan>
+                          ))}
+                        </text>
+                      </g>
+                    ))}
+                    {n.tag && (
+                      <g class="pd-tag">
+                        <rect class="pd-tag-box" x={n.x + c.pad} y={n.y + n.tag.y} width={inner} height={n.tag.h} rx="13" />
+                        <text class="pd-tag-text" x={n.x + n.w / 2} y={n.y + n.tag.y + 17.5} text-anchor="middle">{n.tag.text}</text>
+                      </g>
+                    )}
+                  </g>
+                )
+              })}
+            </>
+          )}
+
+          {!isFlow && (
+            <>
+              <text class="pd-tl-heading" x={L.margin} y={L.header.y} style={`font-size:${L.cfg.font}px`}>Growing history</text>
+              <g class="pd-step" data-step="5">
+                <rect class="pd-badge" x={L.width - L.margin - L.header.badgeW} y={L.header.y - L.cfg.font - 2} width={L.header.badgeW} height={L.cfg.font + 12} rx="6" />
+                <text class="pd-badge-text" x={L.width - L.margin - L.header.badgeW / 2} y={L.header.y + 2} text-anchor="middle" style={`font-size:${L.cfg.small + 1}px`}>{d.badge}</text>
+              </g>
+
+              <g class="pd-step" data-step="1">
+                <text class="pd-tl-small" x={L.margin} y={L.axis.labelY} style={`font-size:${L.cfg.small}px`}>Days</text>
+                <line class="pd-arrow" x1={L.axis.x1} y1={L.axis.y} x2={L.axis.x2} y2={L.axis.y} marker-end={`url(#${sid}-arrow)`} />
+              </g>
+
+              <g class="pd-step" data-step="2">
+                <path class="pd-bracket" d={`M${L.bracket.x1},${L.bracket.y + 8} V${L.bracket.y} H${L.bracket.x2} V${L.bracket.y + 8}`} />
+                <text class="pd-tl-small" style={`font-size:${L.cfg.small}px`} text-anchor="middle">
+                  {L.bracket.lines.map((line: string, k: number) => (
+                    <tspan x={(L.bracket.x1 + L.bracket.x2) / 2} y={L.bracket.textY + k * (L.cfg.small + 4)}>{line}</tspan>
+                  ))}
+                </text>
+              </g>
+
+              {L.rows.map((r: any, ri: number) => (
+                <g class="pd-step" data-step={r.step}>
+                  <text class="pd-tl-label" x={L.margin} y={r.y + r.h / 2 + 5} style={`font-size:${L.cfg.font}px`}>
+                    {o === 'wide' ? (ri === 0 ? 'Evaluate day t' : 'Evaluate day t+1') : (ri === 0 ? 'Fold t' : 'Fold t+1')}
+                  </text>
+                  {r.cells.map((cell: any) => (
+                    <rect class={`pd-cell pd-cell--${cell.state}`} x={cell.x} y={r.y} width={cell.w} height={r.h} rx="3" />
+                  ))}
+                </g>
+              ))}
+
+              {L.legend.items.map((it: any) => (
+                <g class="pd-legend">
+                  <rect class={`pd-cell pd-cell--${it.state}`} x={it.x} y={it.y - 12} width="14" height="14" rx="2" />
+                  <text class="pd-tl-small" x={it.x + 22} y={it.y} style={`font-size:${L.cfg.small}px`}>{it.text}</text>
+                </g>
+              ))}
+              <text class="pd-tl-note" x={L.margin} y={L.note.y} style={`font-size:${L.cfg.small}px`}>{L.note.text}</text>
+            </>
+          )}
+        </svg>
+      )
+    })}
+  </div>
+
+  <div class="pd-controls" data-pd-controls hidden>
+    <button type="button" class="pd-btn" data-pd-prev>Previous step</button>
+    <button type="button" class="pd-btn" data-pd-next>Next step</button>
+    <button type="button" class="pd-btn pd-btn--ghost" data-pd-all>Show all steps</button>
+  </div>
+  <p class="pd-status" aria-live="polite" data-pd-status></p>
+
+  <ol class="pd-steps">
+    {d.steps.map((s, i) => (
+      <li data-step={i + 1} data-title={s.title} data-detail={s.detail}>
+        <strong>{s.title}.</strong> {s.detail}
+      </li>
+    ))}
+  </ol>
+</figure>
+
+<script>
+  function initProjectDiagrams() {
+    document.querySelectorAll<HTMLElement>('[data-pd]:not([data-pd-ready])').forEach((fig) => {
+      fig.setAttribute('data-pd-ready', '')
+      const total = Number(fig.dataset.total) || 0
+      const controls = fig.querySelector<HTMLElement>('[data-pd-controls]')
+      const prev = fig.querySelector<HTMLButtonElement>('[data-pd-prev]')
+      const next = fig.querySelector<HTMLButtonElement>('[data-pd-next]')
+      const all = fig.querySelector<HTMLButtonElement>('[data-pd-all]')
+      const status = fig.querySelector<HTMLElement>('[data-pd-status]')
+      const items = Array.from(fig.querySelectorAll<HTMLLIElement>('.pd-steps li'))
+      if (!controls || !prev || !next || !all || !status || total === 0) return
+
+      let current = 0 // 0 = all steps shown, 1..total = one highlighted step
+
+      const setDisabled = (btn: HTMLButtonElement, off: boolean) => {
+        btn.setAttribute('aria-disabled', off ? 'true' : 'false')
+      }
+
+      function render(announce: boolean) {
+        fig.querySelectorAll<Element>('[data-step]').forEach((el) => {
+          el.classList.toggle('is-active', Number(el.getAttribute('data-step')) === current)
+        })
+        items.forEach((li, i) => {
+          if (i + 1 === current) li.setAttribute('aria-current', 'step')
+          else li.removeAttribute('aria-current')
+        })
+        if (current === 0) fig.removeAttribute('data-active')
+        else fig.setAttribute('data-active', String(current))
+        setDisabled(prev!, current === 0)
+        setDisabled(next!, current === total)
+        setDisabled(all!, current === 0)
+        if (!announce) return
+        if (current === 0) {
+          status!.textContent = `Showing all ${total} steps.`
+        } else {
+          const li = items[current - 1]
+          status!.textContent = `Step ${current} of ${total}: ${li.dataset.title}. ${li.dataset.detail}`
+        }
+      }
+
+      const go = (n: number) => {
+        const clamped = Math.max(0, Math.min(total, n))
+        if (clamped === current) return
+        current = clamped
+        render(true)
+      }
+
+      prev.addEventListener('click', () => go(current - 1))
+      next.addEventListener('click', () => go(current + 1))
+      all.addEventListener('click', () => go(0))
+
+      controls.hidden = false
+      render(false)
+    })
+  }
+
+  initProjectDiagrams()
+  document.addEventListener('astro:page-load', initProjectDiagrams)
+</script>
+
+<style>
+  .pd {
+    container-type: inline-size;
+    margin: var(--space-element) 0;
+    padding: 16px;
+    border: 1px solid var(--border-active);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  .pd-cap {
+    font-family: var(--mono);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+    margin-bottom: 12px;
+  }
+
+  .pd-canvas {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pd-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .pd-svg--wide { display: none; }
+  .pd-svg--tall { max-width: 440px; margin: 0 auto; }
+
+  @container (min-width: 760px) {
+    .pd-svg--wide { display: block; }
+    .pd-svg--tall { display: none; }
+  }
+
+  /* SVG marks */
+  .pd-node { fill: rgba(255, 255, 255, 0.85); stroke: var(--teal); stroke-width: 1.25; }
+  .pd-num { fill: var(--text-heading); }
+  .pd-num-text { fill: #fff; font-family: var(--mono); font-size: 12px; font-weight: 500; }
+  .pd-label { fill: var(--text-heading); font-family: var(--sans); font-weight: 600; }
+  .pd-branch-box { fill: var(--fill-sea); stroke: var(--sea); stroke-width: 1; }
+  .pd-branch-text { fill: var(--text-heading); font-family: var(--sans); font-weight: 500; }
+  .pd-tag-box { fill: var(--fill-warm); stroke: var(--warm); stroke-width: 1.25; }
+  .pd-tag-text { fill: var(--text-heading); font-family: var(--mono); font-size: 13px; font-weight: 500; }
+  .pd-arrow { stroke: var(--sea); stroke-width: 1.5; fill: none; }
+  .pd-arrowhead { fill: var(--sea); }
+
+  .pd-tl-heading { fill: var(--text-heading); font-family: var(--sans); font-weight: 600; }
+  .pd-tl-label { fill: var(--text-heading); font-family: var(--mono); font-weight: 500; }
+  .pd-tl-small { fill: var(--text-sec); font-family: var(--sans); }
+  .pd-tl-note { fill: var(--text-sec); font-family: var(--mono); }
+  .pd-badge { fill: var(--fill-warm); stroke: var(--warm); stroke-width: 1.25; }
+  .pd-badge-text { fill: var(--text-heading); font-family: var(--mono); font-weight: 500; }
+  .pd-bracket { fill: none; stroke: var(--text-sec); stroke-width: 1.25; }
+  .pd-cell--train { fill: var(--sea); }
+  .pd-cell--eval { fill: var(--warm); stroke: var(--text-heading); stroke-width: 2; }
+  .pd-cell--unused { fill: none; stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 3 2; }
+
+  /* Step highlighting (only after the user presses a button) */
+  .pd [data-step] { transition: opacity 0.2s ease; }
+  .pd[data-active] [data-step] { opacity: 0.3; }
+  .pd[data-active] [data-step].is-active { opacity: 1; }
+  .pd[data-active] .pd-steps li { opacity: 0.6; }
+  .pd[data-active] .pd-steps li.is-active { opacity: 1; }
+  .pd-step.is-active .pd-node { stroke: var(--text-heading); stroke-width: 2.5; }
+
+  /* Controls */
+  .pd-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .pd-controls[hidden] { display: none; }
+  .pd-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--sea);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text-heading);
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .pd-btn:hover { background: var(--fill-sea); }
+  .pd-btn--ghost { border-color: var(--border-active); }
+  .pd-btn[aria-disabled='true'] { opacity: 0.5; cursor: default; }
+  .pd-btn[aria-disabled='true']:hover { background: var(--bg); }
+
+  .pd-status {
+    min-height: 1.5em;
+    margin-top: 10px;
+    font-size: 0.9375rem;
+    color: var(--text-heading);
+  }
+  .pd-status:empty { min-height: 0; margin-top: 0; }
+
+  .pd-steps {
+    margin: 12px 0 0;
+    padding-left: 1.4em;
+    display: grid;
+    gap: 6px;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+  .pd-steps li { padding: 4px 8px; border-radius: 6px; }
+  .pd-steps strong { color: var(--text-heading); font-weight: 600; }
+  .pd-steps li[aria-current='step'] { background: var(--fill-sea); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pd [data-step] { transition: none; }
+  }
+</style>
